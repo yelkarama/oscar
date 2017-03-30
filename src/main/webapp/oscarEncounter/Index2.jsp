@@ -43,9 +43,7 @@
     
     String eChart$ = "_eChart$"+demographic$;
 
-%>
-<%
-       boolean authed=true;
+    boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
