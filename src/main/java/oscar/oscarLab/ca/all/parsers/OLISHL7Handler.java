@@ -1326,10 +1326,18 @@ public class OLISHL7Handler implements MessageHandler {
 	public String getMsgDate() {
 		//return 
 		//Temporary fix until we change how the MessageUploader grabs the observation date.
+		//The MsgDate can be either date + time or just date. If just date then length is 10 and if date plus time we only want
+		//the first 19 characters. We drop the time zone. Format is YYYY-MM-DD or YYYY-MM-DD HH:MM:SS XXX
+
 		
 		try {
 			String dateString = getCollectionDateTime(0);
-			return dateString.substring(0, 19);
+			 int lenDatestring = dateString.length();
+			 if (lenDatestring > 18) {
+			     lenDatestring = 19;}
+			 else {lenDatestring = 10;
+			 }
+			 return dateString.substring(0, lenDatestring);
 		} catch (Exception e) {
 			return ("");
 		}
@@ -1764,6 +1772,7 @@ public class OLISHL7Handler implements MessageHandler {
 	}
 
 	public String getCollectionDateTime(int obrIndex) {
+		//* CollectDateTime can be either just a date or a date plus time. We need to handle both cases
 		obrIndex++;
 		Segment obr;
 
@@ -1776,11 +1785,19 @@ public class OLISHL7Handler implements MessageHandler {
 			String from = getString(Terser.get(obr, 7, 0, 1, 1));
 			if (from.length() > 13) {
 				from = formatDateTime(from);
+			 } else {
+			   if (from.length() > 0 && from.length() < 9) {
+			       from = formatDate(from);
+			    }
 			}
 			String to = getString(Terser.get(obr, 8, 0, 1, 1));
 			if (to.length() > 13) {
 				to = formatDateTime(to);
-			}
+			} else {
+			  if (to.length() > 0 && to.length() < 9) {
+			        to = formatDate(to);
+			   }
+			} 
 			boolean hasBoth = stringIsNotNullOrEmpty(from) && stringIsNotNullOrEmpty(to);
 			return String.format("%s %s %s", from, hasBoth ? "-" : "", to);
 		} catch (Exception e) {
