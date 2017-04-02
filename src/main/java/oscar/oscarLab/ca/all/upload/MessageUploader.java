@@ -162,7 +162,6 @@ public final class MessageUploader {
             for (int i=0; i < docNums.size(); i++) {
 				//logger.debug(i + " " + docNums.get(i));
 			}
-
 			try {
 				// reformat date
 				// The obrDate can be either date or date with time

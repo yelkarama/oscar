@@ -1329,7 +1329,6 @@ public class OLISHL7Handler implements MessageHandler {
 		//The MsgDate can be either date + time or just date. If just date then length is 10 and if date plus time we only want
 		//the first 19 characters. We drop the time zone. Format is YYYY-MM-DD or YYYY-MM-DD HH:MM:SS XXX
 
-		
 		try {
 			String dateString = getCollectionDateTime(0);
 			 int lenDatestring = dateString.length();
