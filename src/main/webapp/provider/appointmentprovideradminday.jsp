@@ -620,7 +620,7 @@ function review(key) {
 String [] curProvider_no;
 String [] curProviderName;
 //initial provider bean for all the application
-if(providerBean.isEmpty()) {
+if(providerBean.isEmpty() && providerDao.getActiveProviders().size()>0) {
 	for(Provider p : providerDao.getActiveProviders()) {
 		 providerBean.setProperty(p.getProviderNo(),p.getFormattedName());
 	}
