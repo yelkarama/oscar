@@ -79,20 +79,24 @@
 	  if (request.getParameter("appointment") != null) { logData += "\nappointment_no=" + request.getParameter("appointment"); }
 	  LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), LogConst.READ, "eForm",
 			  request.getParameter("fdid"), eForm.getDemographicNo(), logData);
-         out.print(eForm.getFormHtml());
+String htmlDocument = eForm.getFormHtml();	
+
 	 String providerName = "";
           if(null != provider_no){
                         ProviderDao proDao = SpringUtils.getBean(ProviderDao.class);
                         providerName = proDao.getProviderName(provider_no);
           }
           String setProviderName = "<script type=\"text/javascript\"> var setProviderName='" + providerName + "';</script>";
-          out.print(setProviderName);
+          //out.print(setProviderName);
           String setEformName = "<script type=\"text/javascript\"> var setEformName='" + eForm.getFormName() + "';</script>";
-          out.print(setEformName);
+          //out.print(setEformName);
           String currentTimeStamp = "<script type=\"text/javascript\"> var currentTimeStamp='" + timeStamp + "';</script>";
-          out.print(currentTimeStamp);
+          //out.print(currentTimeStamp);
           String pasteFaxNoteStr = "<script type=\"text/javascript\"> var pasteFaxNote='" + String.valueOf(pasteFaxNote) + "';</script>";
-          out.print(pasteFaxNoteStr);
+          //out.print(pasteFaxNoteStr);
+
+          htmlDocument=htmlDocument.replaceFirst("</head>",setProviderName+setEformName+currentTimeStamp+pasteFaxNoteStr + "</head>");
+
   } else {  //if form is viewed from admin screen
       EForm eForm = new EForm(id, "-1"); //form cannot be submitted, demographic_no "-1" indicate this specialty
       eForm.setContextPath(request.getContextPath());
@@ -103,8 +107,9 @@
 	  if (request.getParameter("appointment") != null) { logData += "\nappointment_no=" + request.getParameter("appointment"); }
 	  LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), LogConst.READ, "eForm",
 			  request.getParameter("fdid"), eForm.getDemographicNo(), logData);
-      out.print(eForm.getFormHtml());
+      //out.print(eForm.getFormHtml());
   }
+          out.print(htmlDocument);
 %>
 <%
 String iframeResize = (String) session.getAttribute("useIframeResizing");
