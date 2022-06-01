@@ -100,7 +100,7 @@ function paste2Note(){
                 }
                 var text ="[Faxed eform " + setEformName + " to " + faxName.trim() + " Fax#: " + faxNo + " by " + setProviderName + ", " + currentTimeStamp + "]"+"\n";
                 var noteEditor = "noteEditor"+demoNo;
-		alert(text); 
+			//console.log(text); 
 
                 if( window.parent.opener.document.forms["caseManagementEntryForm"] != undefined ) {
                 window.parent.opener.pasteToEncounterNote(text);
