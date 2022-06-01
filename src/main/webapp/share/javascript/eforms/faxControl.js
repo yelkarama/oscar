@@ -67,9 +67,9 @@ jQuery(document).ready(function() {
 
 
 function paste2Note(){
-	//try{
-                //if(pasteFaxNote == 0)
-                //        return;
+	try{
+                if(pasteFaxNote == 0)
+                        return;
                 var demoNo = getSearchValue("demographic_no");
                 if (demoNo == "") { demoNo = getSearchValue("efmdemographic_no", jQuery("form").attr('action')); }
                 var faxName = "";
@@ -115,9 +115,10 @@ function paste2Note(){
               }else if( window.parent.opener.parent.opener.document.getElementById(noteEditor) != undefined ){
                 window.parent.opener.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.parent.opener.document.getElementById(noteEditor).value + text;
               }
-        //}catch (e){
-        //      alert ("ERROR: could not paste to EMR");
-        //}
+        }catch (e){
+              console.log("ERROR: could not paste to EMR");
+              //alert ("ERROR: could not paste to EMR");
+        }
 }
 
 
