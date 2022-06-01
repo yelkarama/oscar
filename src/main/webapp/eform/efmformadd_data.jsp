@@ -26,6 +26,9 @@
 
 <%@ page import="oscar.util.*, oscar.eform.data.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="org.oscarehr.util.SpringUtils"%>
 <%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%
   if (request.getAttribute("page_errors") != null) {
@@ -80,6 +83,36 @@ function hideDiv() {
   thisEForm.setSource(source);
   thisEForm.setFdid("");
   out.print(thisEForm.getFormHtml());
+
+
+
+
+  String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime());
+
+    // pasteFaxNote is a stub if we want to add properties to turn off the paste to chart notification
+    // if set to 0 the note will not be pasted
+      int pasteFaxNote = 1;
+
+      String providerName = "";
+      if(null != provider_no){
+        ProviderDao proDao = SpringUtils.getBean(ProviderDao.class);
+        providerName = proDao.getProviderName(provider_no);
+      }
+
+     String setProviderName = "<script type=\"text/javascript\"> var setProviderName='" + providerName + "';</script>";
+      out.print(setProviderName);
+      String setEformName = "<script type=\"text/javascript\"> var setEformName='" + thisEForm.getFormName() + "';</script>";
+      out.print(setEformName);
+
+      String currentTimeStamp = "<script type=\"text/javascript\"> var currentTimeStamp='" + timeStamp + "';</script>";
+    out.print(currentTimeStamp);
+
+      String pasteFaxNoteStr = "<script type=\"text/javascript\"> var pasteFaxNote='" + String.valueOf(pasteFaxNote) + "';</script>";
+     out.print(pasteFaxNoteStr);
+
+
+
+
 %>
 <%
 String iframeResize = (String) session.getAttribute("useIframeResizing");
