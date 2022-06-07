@@ -48,6 +48,9 @@
 <%@page import="org.oscarehr.common.model.Appointment"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Calendar" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao"%>
 <%@ page import="org.oscarehr.common.dao.FaxConfigDao, org.oscarehr.common.model.FaxConfig" %>
@@ -327,10 +330,6 @@ function printIframe(){
 	            {
 	                window.print();
 	            }
-            if(rxToPaste != null) {
-                    pasteRxToEchart();
-                }
-
 
 			}
 			else
@@ -338,9 +337,7 @@ function printIframe(){
 				preview.focus();
 				preview.print();
                 
-                if(rxToPaste != null) {
-                    pasteRxToEchart();
-                }
+
 				self.onfocus = function () {
                     self.setTimeout(
                         function(){
@@ -351,55 +348,109 @@ function printIframe(){
 			}
 	}
     
-function printPaste2Parent(print){
-   try{
-      text =""; 
-      if (document.all){
-         text += preview.document.forms[0].rx_no_newlines.value
-      } else {
-         text += preview.document.forms[0].rx_no_newlines.value;
-      }
-      if (document.getElementById('additionalNotes').value){
-           text+=document.getElementById('additionalNotes').value+"\n";
-      }
-	  if(!print){
-            text+="Fax sent to: "+ '<%=prefPharmacy%>'+" ("+ '<%=prefPharmacyFax%>'+")";
-      }
+function printPaste2Parent(print, fax){
+   	try {
+      		
+		<%
+                        String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", request.getLocale()).format(Calendar.getInstance().getTime());
+                %>
 
-      //we support pasting into orig encounter and new casemanagement
-      demographicNo = <%=bean.getDemographicNo()%>;
-      noteEditor = "noteEditor"+demographicNo;
-      if( window.parent.opener.document.forms["caseManagementEntryForm"] != undefined ) {
-          //oscarLog("3");
-        window.parent.opener.pasteToEncounterNote(text);
-      }else if( window.parent.opener.document.encForm != undefined ){
-          //oscarLog("4");
-        window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + text;
-      }else if( window.parent.opener.document.getElementById(noteEditor) != undefined ){
-    	window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + text; 
-      } else {
-			rxToPaste = text;
-			if (!print) {
-			    pasteRxToEchart();
-            }
-      }
-      
-   }catch (e){
-      alert ("ERROR: could not paste to EMR" + e);
-   }
-   
-   if (print) { printIframe(); }
-   
+		// add prescription details to paste text 
+                rxToPaste = preview.document.forms[0].rx_no_newlines.value;
+
+		// add additional notes to paste text
+		docnotes =  document.getElementById('additionalNotes').value;
+		if (docnotes.length > 0) {
+			rxToPaste += document.getElementById('additionalNotes').value + "\n";
+                }
+
+     		if (print) { // add footer below medications if printed 
+                	rxToPaste += "[Prescribed and printed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>,  <%= timeStamp %>]\n";
+     		} else if (fax) { // add footer below medications if faxed 
+                	rxToPaste += "[Faxed to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax#: "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
+                        rxToPaste += ", <%=timeStamp%>]\n";
+     		}
+
+      		//we support pasting into orig encounter and new casemanagement
+      		demographicNo = <%=bean.getDemographicNo()%>;
+      		noteEditor = "noteEditor"+demographicNo;
+      		if (window.parent.opener) {
+                  	if (window.parent.opener.document.forms["caseManagementEntryForm"] != undefined 
+                            && window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo
+                            && window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === "<%=bean.getDemographicNo()%>") {
+                            // opened from casemanagement echart
+                          	window.parent.opener.pasteToEncounterNote(rxToPaste);
+              			if (print) {
+                  			printIframe();
+              			}
+                 	} else if (window.parent.opener.document.encForm != undefined) {
+                            // opened from old encounter  **deprecated**
+                        	window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + rxToPaste;
+              			if (print) {
+                  			printIframe();
+              			}
+                  	} else if (window.parent.opener.document.getElementById(noteEditor) != undefined) {
+                        	window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + rxToPaste;
+                            // also **deprecated**
+              			if (print) {
+                  			printIframe();
+              			}
+                  	} else {
+                            //not opened from echart but there is a parent window           
+              			if (print) {
+                  			printIframe();
+              			}
+            			pasteRxToEchart();                    	
+                        
+                  	}
+          	} else {
+                    // not opened from a window, at least none that exists
+
+                  	if (print) {
+                  	    printIframe();
+              		}
+            		pasteRxToEchart();
+
+          	}
+   	} catch (e) {
+      		alert ("ERROR: could not paste to EMR" + e);
+            // but at least we can print the Rx
+            if (print) { printIframe();}
+      		
+   	}
+    
 }
+
+
+
+
+
+        function openEncounter() {
+                var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
+                var currentDate = new Date().toISOString().substring(0, 10);
+                var url = "../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=Encode.forUriComponent(ProviderData.getProviderName(bean.getProviderNo()))%>&curDate=" + currentDate;
+
+                if (window.parent.opener && window.parent.opener.document.forms["caseManagementEntryForm"] != undefined) {
+                        // redirect if encounter window open
+                        window.parent.opener.location = url;
+                        return window.parent.opener;
+                }
+
+                return window.open(url, "encounter", windowprops);
+        }
 
 
 var rxToPaste = null;
 
 function pasteRxToEchart() {
-    var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
-    var currentDate = new Date().toISOString().substring(0, 10);
-    var encounterWindow = window.open("../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=ProviderData.getProviderName(bean.getProviderNo())%>&curDate=" + currentDate, "encounter", windowprops);
-    encounterWindow.rxToPaste = rxToPaste;
+    if(rxToPaste != null) {
+        // something to paste! 
+        var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
+        var currentDate = new Date().toISOString().substring(0, 10);
+        var encounterWindow = window.open("../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=ProviderData.getProviderName(bean.getProviderNo())%>&curDate=" + currentDate, "encounter", windowprops);
+        encounterWindow.rxToPaste = rxToPaste;
+
+    }   
 }
 
 function addressSelect() {
@@ -699,7 +750,7 @@ function toggleView(form) {
 						<td><span><input type=button
 							<%=reprint.equals("true")?"disabled='true'":""%> value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
 							class="ControlPushButton" style="width: 155px"
-							onClick="javascript:printPaste2Parent(true);" /></span></td>
+							onClick="javascript:printPaste2Parent(true, false);" /></span></td>
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
 					    	FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
@@ -709,11 +760,11 @@ function toggleView(form) {
 					<tr>                            
                             <td><span><input type=button value="Fax & Paste into EMR"
                                     class="ControlPushButton" id="faxButton" style="width: 155px"
-                                    onClick="sendFax();printPaste2Parent(false);clearPending('close');parent.window.close();" disabled/></span> 
-		        	    <span>&nbsp;&nbsp;&nbsp;
-                                           <select id="faxNumber" name="faxNumber" <% if (faxConfigs.size() == 1) {
-                                                   // hide the picklist of fax gateways if only exists
-                                                  %> hidden <%}%>>
+                                    onClick="sendFax();printPaste2Parent(false, true);clearPending('close');parent.window.close();" disabled/></span> 
+                                 <span>&nbsp;&nbsp;&nbsp;
+                                            <select id="faxNumber" name="faxNumber" <% if (faxConfigs.size() == 1) {
+                                                    // hide the picklist of fax gateways if only exists
+                                                   %> hidden <%}%>>
                                  	<%
                                  		for( FaxConfig faxConfig : faxConfigs ) {
                                  	%>
