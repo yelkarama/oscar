@@ -177,22 +177,30 @@
         <% } %>  
         <oscar:phrverification demographicNo="<%=demoNo%>"><bean:message key="phr.verification.link"/></oscar:phrverification> 
         &nbsp;
-        <% String STAR="*";
-            if ( showCell && !StringUtils.isEmpty(StringUtils.trimToEmpty(demoExt.get("demo_cell"))) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR) ) { %>
-	        <bean:message key="oscarencounter.header.cell"/>&nbsp;
-            <span id="cell" title="<bean:message key="oscarencounter.header.phone"/>&nbsp;<%=bean.phone%>" onclick="copySpanToClipboard(this.id)"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span>
-        <% } else { %>
-        	<bean:message key="oscarencounter.header.phone"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
-        <% }  %>
-         &nbsp;            
-        <% if (showEmailIndicator) { %>
-        	<% if (demographic.getConsentToUseEmailForCare() != null && demographic.getConsentToUseEmailForCare()){ %>
-	        	<a href="mailto:<%=bean.email%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=bean.email%></a>
-        	<% } else { %>
-        		<span id="email" onclick="copySpanToClipboard(this.id)"><%=bean.email%></span>
-        	<% }  %>       	
-            &nbsp;
-        <% }  %>
+       <% String STAR="*";
+            if ( !StringUtils.endsWith(StringUtils.trimToEmpty(demoExt.get("demo_cell")),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(demographic.getPhone2()),STAR) ) {
+                //no patient preference noted so invoke logic for provider preference
+                if ( showCell && !StringUtils.isEmpty(StringUtils.trimToEmpty(demoExt.get("demo_cell"))) ) { %>
+                            <bean:message key="oscarencounter.header.cell"/>&nbsp;
+                            <span id="cell" title="<bean:message key="oscarencounter.header.phone"/>&nbsp;<%=bean.phone%>" onclick="copySpanToClipboard(this.id)"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span>
+                        <% } else { %>
+                            <bean:message key="oscarencounter.header.phone"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
+                <% }
+                } else {
+                    if ( StringUtils.endsWith(StringUtils.trimToEmpty(demoExt.get("demo_cell")),STAR) ) { %>
+                            <bean:message key="oscarencounter.header.cell"/>&nbsp;
+                            <span id="cell" title="<bean:message key="oscarencounter.header.phone"/>&nbsp;<%=bean.phone%>" onclick="copySpanToClipboard(this.id)"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span>
+                 <% }
+                    if ( StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR)) { %>
+                            <bean:message key="oscarencounter.header.phone"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
+                    <% }
+                    if ( StringUtils.endsWith(StringUtils.trimToEmpty(demographic.getPhone2()),STAR)) { %>
+                            <bean:message key="demographic.demographicaddrecordhtm.formPhoneWork"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=demographic.getPhone2()%></span>
+                    <% }              
+                }
+        %>
+
+
 		<span id="encounterHeaderExt"></span>
 		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.apptHistory" rights="r">
 		<a href="javascript:popupPage(555,1000,'ApptHist','<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no=<%=bean.demographicNo%>&amp;last_name=<%=bean.patientLastName.replaceAll("'", "\\\\'")%>&amp;first_name=<%=bean.patientFirstName.replaceAll("'", "\\\\'")%>&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25')" style="font-size: 11px;text-decoration:none;" title="<bean:message key="oscarEncounter.Header.nextApptMsg"/>"><span style="margin-left:20px;"><bean:message key="oscarEncounter.Header.nextAppt"/>: <oscar:nextAppt demographicNo="<%=bean.demographicNo%>"/></span></a>
