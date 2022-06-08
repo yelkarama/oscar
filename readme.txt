@@ -2,7 +2,7 @@
 OSCAR McMaster Project
 ======================
 
-Note: this readme is now out of date, and marked for change. For the latest documentation, visit https://oscaremr.atlassian.net/wiki/display/OS
+Note: this readme is now out of date, and marked for change. For the latest documentation, visit https://worldoscar.org
 
 
 ------------
