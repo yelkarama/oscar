@@ -330,6 +330,10 @@ function printIframe(){
 	            {
 	                window.print();
 	            }
+            if(rxToPaste != null) {
+                    pasteRxToEchart();
+                }
+
 
 			}
 			else
@@ -337,7 +341,9 @@ function printIframe(){
 				preview.focus();
 				preview.print();
                 
-
+                //if(rxToPaste != null) {
+                //    pasteRxToEchart();
+                //}
 				self.onfocus = function () {
                     self.setTimeout(
                         function(){
@@ -348,9 +354,10 @@ function printIframe(){
 			}
 	}
     
-function printPaste2Parent(print, fax){
+function printPaste2Parent(type){
    	try {
-      		
+            var signNote = "no";  // change to "sign" to have note saved and signed
+      		rxToPaste = "";
 		<%
                         String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", request.getLocale()).format(Calendar.getInstance().getTime());
                 %>
@@ -364,10 +371,10 @@ function printPaste2Parent(print, fax){
 			rxToPaste += document.getElementById('additionalNotes').value + "\n";
                 }
 
-     		if (print) { // add footer below medications if printed 
+     		if (type=="print") { // add footer below medications if printed 
                 	rxToPaste += "[Prescribed and printed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>,  <%= timeStamp %>]\n";
-     		} else if (fax) { // add footer below medications if faxed 
-                	rxToPaste += "[Faxed to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax#: "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
+     		} else if (type=="fax") { // add footer below medications if faxed 
+                	rxToPaste += "[Faxed to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax:# "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
                         rxToPaste += ", <%=timeStamp%>]\n";
      		}
 
@@ -380,49 +387,82 @@ function printPaste2Parent(print, fax){
                             && window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === "<%=bean.getDemographicNo()%>") {
                             // opened from casemanagement echart
                           	window.parent.opener.pasteToEncounterNote(rxToPaste);
-              			if (print) {
+              			if (type=="print") {
                   			printIframe();
               			}
                  	} else if (window.parent.opener.document.encForm != undefined) {
                             // opened from old encounter  **deprecated**
                         	window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + rxToPaste;
-              			if (print) {
+              			if (type=="print") {
                   			printIframe();
               			}
                   	} else if (window.parent.opener.document.getElementById(noteEditor) != undefined) {
                         	window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + rxToPaste;
                             // also **deprecated**
-              			if (print) {
+              			if (type=="print") {
                   			printIframe();
               			}
                   	} else {
-                            //not opened from echart but there is a parent window           
-              			if (print) {
-                  			printIframe();
-              			}
-            			pasteRxToEchart();                    	
+                            //not opened from echart but there is a parent window
+                            signNote = "sign";
+                          	writeToEncounter(type, signNote);
                         
+
                   	}
           	} else {
                     // not opened from a window, at least none that exists
-
-                  	if (print) {
-                  	    printIframe();
-              		}
-            		pasteRxToEchart();
-
+                    signNote = "sign"
+                  	writeToEncounter(type, signNote);
           	}
    	} catch (e) {
       		alert ("ERROR: could not paste to EMR" + e);
-            // but at least we can print the Rx
-            if (print) { printIframe();}
+            // but at least we should print the Rx
+            if (type=="print") { printIframe();}
       		
    	}
     
 }
 
 
+        function writeToEncounter(type, signNote) {
 
+        try {
+                        var rxNoNewLines = "";
+                        if (preview.document.forms[0].rx_no_newlines) {
+                                if (document.all){
+                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value
+                                } else {
+                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value + "\n";
+                                }
+                        }
+
+                        var additionalNotes = "";
+                        if (document.getElementById('additionalNotes')) {
+                                additionalNotes = document.getElementById('additionalNotes').value;
+                        }
+
+                        console.log("writing "+rxToPaste +" to encounter encoded as " + encodeURI(rxToPaste) +" with type is "+type + " and sign set to "+ signNote);
+                        var url = "<%=request.getContextPath() %>/oscarRx/WriteToEncounter.do";
+                        new Ajax.Request(url, {method: 'post',
+                                parameters: "sign=" + signNote + "&body="+ encodeURI(rxToPaste).replace('#','%23'),
+                                onSuccess:function(ret){
+                                        //console.log("success")
+                                        if (type=="print") {
+                                                printIframe();
+                                        }
+                                        //openEncounter();
+                                },
+                                onError: function(e) {
+                                        alert("ERROR: could not paste to EMR" + e);
+                                        if (type=="print") {
+                                                printIframe();
+                                        }
+                                        //openEncounter();
+                                }});
+                } catch (e) {
+                        alert("ERROR: could not paste to EMR" + e);
+                }
+        }
 
 
         function openEncounter() {
@@ -436,20 +476,18 @@ function printPaste2Parent(print, fax){
                         return window.parent.opener;
                 }
 
-                return window.open(url, "encounter", windowprops);
+                return window.open(url, "encounter<%= bean.getDemographicNo() %>", windowprops);
         }
 
 
 var rxToPaste = null;
 
 function pasteRxToEchart() {
-    if(rxToPaste != null) {
-        // something to paste! 
-        var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
-        var currentDate = new Date().toISOString().substring(0, 10);
-        var encounterWindow = window.open("../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=ProviderData.getProviderName(bean.getProviderNo())%>&curDate=" + currentDate, "encounter<%= bean.getDemographicNo() %>", windowprops);        encounterWindow.rxToPaste = rxToPaste;
+    var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
+    var currentDate = new Date().toISOString().substring(0, 10);
+    var encounterWindow = window.open("../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=ProviderData.getProviderName(bean.getProviderNo())%>&curDate=" + currentDate, "encounter", windowprops);
+    encounterWindow.rxToPaste = rxToPaste;
 
-    }   
 }
 
 function addressSelect() {
@@ -508,6 +546,10 @@ function refreshImage()
 
 function sendFax()
 {
+    console.log("sending fax");
+	if ('function' === typeof window.onbeforeunload) {
+		window.onbeforeunload = null;
+	}
 	var faxNumber = document.getElementById('faxNumber');
 	frames['preview'].document.getElementById('finalFax').value = faxNumber.options[faxNumber.selectedIndex].value;
 	frames['preview'].document.getElementById('pdfId').value='<%=signatureRequestId%>';	
@@ -690,6 +732,7 @@ function toggleView(form) {
                                     $("selectedPharmacy").innerHTML="";
                                     frames['preview'].document.getElementById('pharmaShow').value='false';
                                 }
+                                
                             </script>
 
 				<table cellpadding=10 cellspacingp=0>
@@ -749,7 +792,7 @@ function toggleView(form) {
 						<td><span><input type=button
 							<%=reprint.equals("true")?"disabled='true'":""%> value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
 							class="ControlPushButton" style="width: 155px"
-							onClick="javascript:printPaste2Parent(true, false);" /></span></td>
+							onClick="printPaste2Parent('print');document.getElementById('close').focus();" /></span></td>
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
 					    	FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
@@ -759,7 +802,7 @@ function toggleView(form) {
 					<tr>                            
                             <td><span><input type=button value="Fax & Paste into EMR"
                                     class="ControlPushButton" id="faxButton" style="width: 155px"
-                                    onClick="sendFax();printPaste2Parent(false, true);clearPending('close');parent.window.close();" disabled/></span> 
+                                    onClick="sendFax();printPaste2Parent('fax');document.getElementById('close').focus();" disabled/></span> 
                                  <span>&nbsp;&nbsp;&nbsp;
                                             <select id="faxNumber" name="faxNumber" <% if (faxConfigs.size() == 1) {
                                                     // hide the picklist of fax gateways if only exists
@@ -784,7 +827,7 @@ function toggleView(form) {
 					</tr>
 					<tr>
 						<!--td width=10px></td-->
-						<td><span><input type=button value="<bean:message key="ViewScript.msgBackToOscar"/>"
+						<td><span><input type=button id="close" value="<bean:message key="ViewScript.msgBackToOscar"/>"
 							class="ControlPushButton" style="width: 155px"
                                                         onClick="javascript:clearPending('close');parent.window.close();" /></span></td>
 							<!--onClick="javascript:clearPending('close');" /></span></td>-->
