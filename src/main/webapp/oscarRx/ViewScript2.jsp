@@ -366,9 +366,10 @@ function printPaste2Parent(type){
                 rxToPaste = preview.document.forms[0].rx_no_newlines.value;
 
 		// add additional notes to paste text
-		docnotes =  document.getElementById('additionalNotes').value;
+<%=reprint.equalsIgnoreCase("true") ? "docnotes='Reprint'" : "docnotes =  document.getElementById('additionalNotes').value;" %>
+		
 		if (docnotes.length > 0) {
-			rxToPaste += document.getElementById('additionalNotes').value + "\n";
+			rxToPaste += docnotes + "\n";
                 }
 
      		if (type=="print") { // add footer below medications if printed 
@@ -427,19 +428,19 @@ function printPaste2Parent(type){
         function writeToEncounter(type, signNote) {
 
         try {
-                        var rxNoNewLines = "";
-                        if (preview.document.forms[0].rx_no_newlines) {
-                                if (document.all){
-                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value
-                                } else {
-                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value + "\n";
-                                }
-                        }
+                        //var rxNoNewLines = "";
+                       //if (preview.document.forms[0].rx_no_newlines) {
+                        //        if (document.all){
+                        //                rxNoNewLines += preview.document.forms[0].rx_no_newlines.value
+                        //        } else {
+                         //               rxNoNewLines += preview.document.forms[0].rx_no_newlines.value + "\n";
+                        //        }
+                        //}
 
-                        var additionalNotes = "";
-                        if (document.getElementById('additionalNotes')) {
-                                additionalNotes = document.getElementById('additionalNotes').value;
-                        }
+                       // var additionalNotes = "";
+                        //if (document.getElementById('additionalNotes')) {
+                        //        additionalNotes = document.getElementById('additionalNotes').value;
+                        //}
 
                         console.log("writing "+rxToPaste +" to encounter encoded as " + encodeURI(rxToPaste) +" with type is "+type + " and sign set to "+ signNote);
                         var url = "<%=request.getContextPath() %>/oscarRx/WriteToEncounter.do";
@@ -790,7 +791,7 @@ function toggleView(form) {
 					</tr>
 					<tr>
 						<td><span><input type=button
-							<%=reprint.equals("true")?"disabled='true'":""%> value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
+							value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
 							class="ControlPushButton" style="width: 155px"
 							onClick="printPaste2Parent('print');document.getElementById('close').focus();" /></span></td>
 					</tr>
