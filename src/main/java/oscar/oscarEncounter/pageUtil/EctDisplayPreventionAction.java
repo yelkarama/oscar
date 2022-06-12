@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.caisi_integrator.ws.CachedDemographicPrevention;
 import org.oscarehr.common.dao.BillingONItemDao;
-import org.oscarehr.common.model.BillingONItem;
+
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
