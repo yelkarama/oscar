@@ -366,15 +366,16 @@ function printPaste2Parent(type){
                 rxToPaste = preview.document.forms[0].rx_no_newlines.value;
 
 		// add additional notes to paste text
-		docnotes =  document.getElementById('additionalNotes').value;
+        <%=reprint.equalsIgnoreCase("true") ? "docnotes=''" : "docnotes =  document.getElementById('additionalNotes').value;" %>
+		
 		if (docnotes.length > 0) {
-			rxToPaste += document.getElementById('additionalNotes').value + "\n";
+			rxToPaste += docnotes + "\n";
                 }
 
      		if (type=="print") { // add footer below medications if printed 
-                	rxToPaste += "[Prescribed and printed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>,  <%= timeStamp %>]\n";
+                	rxToPaste += "[<%=reprint.equalsIgnoreCase("true") ? "Reprinted" : "Prescribed and printed"%> by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>,  <%= timeStamp %>]\n";
      		} else if (type=="fax") { // add footer below medications if faxed 
-                	rxToPaste += "[Faxed to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax:# "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
+                	rxToPaste += "[<%=reprint.equalsIgnoreCase("true") ? "Reprinted and faxed" : "Faxed"%> to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax:# "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
                         rxToPaste += ", <%=timeStamp%>]\n";
      		}
 
@@ -427,19 +428,6 @@ function printPaste2Parent(type){
         function writeToEncounter(type, signNote) {
 
         try {
-                        var rxNoNewLines = "";
-                        if (preview.document.forms[0].rx_no_newlines) {
-                                if (document.all){
-                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value
-                                } else {
-                                        rxNoNewLines += preview.document.forms[0].rx_no_newlines.value + "\n";
-                                }
-                        }
-
-                        var additionalNotes = "";
-                        if (document.getElementById('additionalNotes')) {
-                                additionalNotes = document.getElementById('additionalNotes').value;
-                        }
 
                         console.log("writing "+rxToPaste +" to encounter encoded as " + encodeURI(rxToPaste) +" with type is "+type + " and sign set to "+ signNote);
                         var url = "<%=request.getContextPath() %>/oscarRx/WriteToEncounter.do";
@@ -790,9 +778,9 @@ function toggleView(form) {
 					</tr>
 					<tr>
 						<td><span><input type=button
-							<%=reprint.equals("true")?"disabled='true'":""%> value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
+							value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
 							class="ControlPushButton" style="width: 155px"
-							onClick="printPaste2Parent('print');document.getElementById('close').focus();" /></span></td>
+							onClick="printPaste2Parent('print');setTimeout(function() {self.parent.close()}, 2500);" /></span></td>
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
 					    	FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
@@ -802,7 +790,7 @@ function toggleView(form) {
 					<tr>                            
                             <td><span><input type=button value="Fax & Paste into EMR"
                                     class="ControlPushButton" id="faxButton" style="width: 155px"
-                                    onClick="sendFax();printPaste2Parent('fax');document.getElementById('close').focus();" disabled/></span> 
+                                    onClick="sendFax();printPaste2Parent('fax');setTimeout(function() {self.parent.close()}, 2500);" disabled/></span> 
                                  <span>&nbsp;&nbsp;&nbsp;
                                             <select id="faxNumber" name="faxNumber" <% if (faxConfigs.size() == 1) {
                                                     // hide the picklist of fax gateways if only exists
