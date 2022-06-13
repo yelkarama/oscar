@@ -48,6 +48,8 @@
 <%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.util.MiscUtils" %>
 <%@page import="org.oscarehr.managers.PreventionManager" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -86,7 +88,8 @@ if(!authed) {
   String hin = demo.getHin()+demo.getVer();
   String mrp = demo.getProviderNo();
   PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
-
+  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  String todayString = simpleDateFormat.format(Calendar.getInstance().getTime());
   PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
   ArrayList<HashMap<String,String>> prevList = pdc.getPreventions();
 
@@ -95,6 +98,8 @@ if(!authed) {
 
 
   Prevention p = PreventionData.getPrevention(loggedInInfo, Integer.valueOf(demographic_no));
+
+	String billRegion = OscarProperties.getInstance().getProperty("billregion", "ON").trim().toUpperCase();
 
   Integer demographicId=Integer.parseInt(demographic_no);
   PreventionData.addRemotePreventions(loggedInInfo, p, demographicId);
@@ -172,7 +177,7 @@ if(!authed) {
 	href="../share/css/OscarStandardLayout.css" />
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script> <!-- note that 1.9 has a mapping issue -->
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
 
 <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
@@ -244,11 +249,14 @@ span.footnote {
     border: 1px solid #000;
     width: 4px;
 }
+.MainTableLeftColumn {
+    max-width: 220px;
+}
 </style>
 
 <link rel="stylesheet" type="text/css" href="../share/css/niftyCorners.css" />
 <link rel="stylesheet" type="text/css" href="../share/css/niftyPrint.css" media="print" />
-<!-- this doesn't exist link rel="stylesheet" type="text/css" href="preventPrint.css" media="print" /> -->
+<!-- link rel="stylesheet" type="text/css" href="preventPrint.css" media="print" / -->
 
 <script type="text/javascript" src="../share/javascript/nifty.js"></script>
 <script type="text/javascript">
@@ -613,9 +621,17 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 		<td class="MainTableTopRowRightColumn">
 		<table class="TopStatusBar">
 			<tr>
-				<td><%=nameAge%></td>
+				<td><%=Encode.forHtml(nameAge)%>
+                </td>
 				<td>&nbsp;</td>
 				<td style="text-align: right">
+                <% if (billRegion.equals("ON")) { %>
+					<a title="Open Billing Page" 
+					   onclick="popupFocusPage(700, 1000, '../billing.do?billRegion=ON&amp;billForm=MFP&amp;hotclick=&amp;appointment_no=0&amp;demographic_name=<%=Encode.forUriComponent(demo.getLastName())%>%2C<%=Encode.forUriComponent(demo.getFirstName())%>&amp;demographic_no=<%=demographic_no%>&amp;providerview=1&amp;user_no=<%=(String) session.getValue("user")%>&amp;apptProvider_no=none&amp;appointment_date=<%=todayString%>&amp;start_time=0:00:00&amp;bNewForm=1&amp;status=t','_self');return false;"
+					   href="javascript: function myFunction() {return false; }">
+						B
+					</a>&nbsp;|
+                <% } %>
 					<%
 					if(canUpdateCVC) {
 					%>
@@ -644,7 +660,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
                 String prevName = h.get("name");
                 String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
                 String hcType = h.get("healthCanadaType");
-            	if(hcType == null) {
+            	if(hcType == null) { // the case for all screenings in the left column
 		            if(!preventionManager.hideItem(prevName) && !OTHERS.contains(prevName)){
 		            	List<CVCMapping> mappings = cvcMappingDao.findMultipleByOscarName(prevName);
 			            if(mappings != null && mappings.size()>1) {%>
@@ -785,8 +801,10 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 		trying to print</p>
 		<%
                     }
+
                    %> <span style="font-size: larger;">Prevention
 		Recommendations</span>
+<script>console.log("Prevention Recommendations at "+new Date().toLocaleString());</script>
 		<ul>
 			<% for (int i = 0 ;i < warnings.size(); i++){
                        String warn = (String) warnings.get(i);%>
@@ -892,6 +910,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
                %>
 
 		<div class="preventionSection"><!-- <%=prevName%> <%=i%> of <%=prevList.size()%> -->
+
 		<%
 		 String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
          boolean ispa = h.get("ispa") != null ? Boolean.valueOf(h.get("ispa")) : false;
@@ -1228,7 +1247,7 @@ YAHOO.example.BasicRemote = function() {
            };
        }
        }();
-
+console.log("basic remote at "+new Date().toLocaleString());
 </script>
 </body>
 </html:html> 
