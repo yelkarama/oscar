@@ -27,6 +27,7 @@ package oscar.oscarEncounter.pageUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.caisi_integrator.ws.CachedDemographicPrevention;
 import org.oscarehr.common.dao.BillingONItemDao;
-import org.oscarehr.common.model.BillingONItem;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
@@ -73,6 +73,7 @@ public class EctDisplayPreventionAction extends EctDisplayAction {
         		url += ";return false;";
         		Dao.setRightURL(url);
         		Dao.setRightHeadingID(cmd);  //no menu so set div id to unique id for this action
+			List<String> exclusions = Collections.<String>emptyList(); 
 
         		//list warnings first as module items
         		Prevention p = PreventionData.getPrevention(loggedInInfo, Integer.valueOf(bean.demographicNo));
@@ -88,14 +89,20 @@ public class EctDisplayPreventionAction extends EctDisplayAction {
         		PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
         		ArrayList<HashMap<String,String>> prevList = pdc.getPreventions();
         		Map warningTable = p.getWarningMsgs();
+			
+			// error catching for if not in Ontario, as this will fail
+			try {
+        			BillingONItemDao billingONItemDao = SpringUtils.getBean(BillingONItemDao.class);
+        			exclusions = billingONItemDao.getPreventionExclusionsByDemographicNo(Integer.valueOf(bean.demographicNo));
+			}
+			catch (Exception e) {
+				// no action needed; a quiet fail is acceptable if not in Ontario the above will not work
+			}
 
-        		BillingONItemDao billingONItemDao = SpringUtils.getBean(BillingONItemDao.class);
-        		List<String> exclusions = billingONItemDao.getPreventionExclusionsByDemographicNo(Integer.valueOf(bean.demographicNo));
-
-        		String abnormalColour = "#EE5F5B";
-        		String highliteColour = "#FF0000";
-        		String inelligibleColour = "#E6AC00";
-        		String pendingColour = "#FF00FF";
+        		String abnormalColour = "#EE5F5B";	// dark red
+        		String highliteColour = "#FF0000";	// red
+        		String inelligibleColour = "#E6AC00"; 	// dark yellow
+        		String pendingColour = "#FF00FF";	// purple
         		String refusedColour = "#EAACAC";       //light pink
         		Date date = null;
 
