@@ -172,7 +172,7 @@ if(!authed) {
 	href="../share/css/OscarStandardLayout.css" />
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script> <!-- note that 1.9 has a mapping issue -->
 
 <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
@@ -248,7 +248,7 @@ span.footnote {
 
 <link rel="stylesheet" type="text/css" href="../share/css/niftyCorners.css" />
 <link rel="stylesheet" type="text/css" href="../share/css/niftyPrint.css" media="print" />
-<link rel="stylesheet" type="text/css" href="preventPrint.css" media="print" />
+<!-- this doesn't exist link rel="stylesheet" type="text/css" href="preventPrint.css" media="print" /> -->
 
 <script type="text/javascript" src="../share/javascript/nifty.js"></script>
 <script type="text/javascript">
