@@ -177,6 +177,7 @@
         <% } %>  
         <oscar:phrverification demographicNo="<%=demoNo%>"><bean:message key="phr.verification.link"/></oscar:phrverification> 
         &nbsp;
+
        <% String STAR="*";
             if ( !StringUtils.endsWith(StringUtils.trimToEmpty(demoExt.get("demo_cell")),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(demographic.getPhone2()),STAR) ) {
                 //no patient preference noted so invoke logic for provider preference
@@ -199,7 +200,15 @@
                     <% }              
                 }
         %>
-
+        &nbsp;            
+        <% if (showEmailIndicator) { %>
+        	<% if (demographic.getConsentToUseEmailForCare() != null && demographic.getConsentToUseEmailForCare()){ %>
+	        	<a href="mailto:<%=bean.email%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=bean.email%></a>
+        	<% } else { %>
+        		<span id="email" onclick="copySpanToClipboard(this.id)"><%=bean.email%></span>
+        	<% }  %>       	
+            &nbsp;
+        <% }  %>
 
 		<span id="encounterHeaderExt"></span>
 		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.apptHistory" rights="r">
