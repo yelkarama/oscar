@@ -317,7 +317,7 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 		infoTable.addCell(setInfoCell(cell, getResource("msgConsultant")));
 		infoTable.addCell(setDataCell(cell, reqFrm.getSpecailistsName(reqFrm.specialist)));
 
-		infoTable.addCell(setInfoCell(cell, getResource("msgPhone")));
+		infoTable.addCell(setInfoCell(cell, getResource("formPhone")));
 		if ((reqFrm.getSpecailistsName(reqFrm.specialist) == null) || (reqFrm.getSpecailistsName(reqFrm.specialist).equals("-1")) || (reqFrm.getSpecailistsName(reqFrm.specialist).equals(""))) {
 			infoTable.addCell(setDataCell(cell, ""));
 		} else {
