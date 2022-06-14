@@ -56,6 +56,7 @@
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
 	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
     String changedStatus = null;
+     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 <html:html locale="true">
 <head>
@@ -71,7 +72,7 @@
 	</tr>
 </table>
 <%
-  String updateuser = (String) session.getAttribute("user");
+  String updateuser = loggedInInfo.getLoggedInProviderNo();
 
   int rowsAffected = 0;
   Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
