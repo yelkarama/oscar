@@ -53,10 +53,14 @@
 <%@page import="org.oscarehr.common.model.Appointment" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="oscar.util.ConversionUtils" %>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+
+
 <%
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
 	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
-%>
+ 	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+	%>
 <%
   if (request.getParameter("groupappt") != null) {
     boolean bSucc = false;
@@ -145,7 +149,7 @@
 	            appointmentArchiveDao.archiveAppointment(appt);
                 if(appt != null) {
                 	appt.setStatus("C");
-                	appt.setLastUpdateUser(userName);
+                	appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
                 	appointmentDao.merge(appt);
                 	rowsAffected=1;
                 }

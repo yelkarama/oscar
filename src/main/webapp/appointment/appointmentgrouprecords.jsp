@@ -50,11 +50,13 @@
 <%@page import="org.oscarehr.common.dao.ScheduleDateDao" %>
 <%@page import="org.oscarehr.common.model.ScheduleDate" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
 	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
 	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 	ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
+	 LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 <%
 	String curProvider_no = request.getParameter("provider_no");
@@ -192,7 +194,7 @@
 	            appointmentArchiveDao.archiveAppointment(appt);
 	            if(appt != null) {
 	              	appt.setStatus("C");
-	              	appt.setLastUpdateUser(userName);
+	              	appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
 	              	appointmentDao.merge(appt);
 	              	rowsAffected=1;
 	              }

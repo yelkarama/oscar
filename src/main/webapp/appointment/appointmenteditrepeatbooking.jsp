@@ -54,12 +54,15 @@
 <%@page import="org.oscarehr.common.model.Appointment" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+
 <%
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
 	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
 	SimpleDateFormat dayFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 <%!
   GregorianCalendar addDateByYMD(GregorianCalendar cal, String unit, int n) {
@@ -179,7 +182,7 @@
             	for(Appointment a:appts) {
             		a.setStatus("C");
             		a.setUpdateDateTime(ConversionUtils.fromTimestampString(createdDateTime));
-            		a.setLastUpdateUser(userName);
+            		a.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
             		appointmentDao.merge(a);
             		rowsAffected++;
             	}
@@ -250,7 +253,7 @@
 					appt.setLocation(request.getParameter("location"));
 					appt.setResources(request.getParameter("resources"));
 					appt.setUpdateDateTime(ConversionUtils.fromTimestampString(createdDateTime));
-					appt.setLastUpdateUser(userName);
+					appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
 					appt.setUrgency(request.getParameter("urgency"));
 					appt.setReasonCode(Integer.parseInt(request.getParameter("reasonCode")));
 					appointmentDao.merge(appt);
