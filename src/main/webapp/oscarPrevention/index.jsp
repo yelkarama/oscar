@@ -59,8 +59,8 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-	long startTime = System.nanoTime();
-    long endTime = System.nanoTime();
+	// long startTime = System.nanoTime();
+    // long endTime = System.nanoTime();
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	boolean authed=true;
 %>
@@ -102,7 +102,12 @@ if(!authed) {
   Prevention p = PreventionData.getPrevention(loggedInInfo, Integer.valueOf(demographic_no));
 
   Integer demographicId=Integer.parseInt(demographic_no);
-  PreventionData.addRemotePreventions(loggedInInfo, p, demographicId);
+	String billRegion = OscarProperties.getInstance().getProperty("billregion", "ON").trim().toUpperCase();
+    boolean bComment = OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes");
+    boolean bShowAll = OscarProperties.getInstance().getBooleanProperty("showAllPreventions","yes");
+    boolean bIntegrator = loggedInInfo.getCurrentFacility().isIntegratorEnabled();
+
+  if (bIntegrator){PreventionData.addRemotePreventions(loggedInInfo, p, demographicId);}
   Date demographicDateOfBirth=PreventionData.getDemographicDateOfBirth(loggedInInfo, Integer.valueOf(demographic_no));
   String demographicDob = oscar.util.UtilDateUtilities.DateToString(demographicDateOfBirth);
 
@@ -123,10 +128,6 @@ if(!authed) {
 
   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
   String todayString = simpleDateFormat.format(Calendar.getInstance().getTime());
-
-	String billRegion = OscarProperties.getInstance().getProperty("billregion", "ON").trim().toUpperCase();
-    boolean bComment = OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes");
-    boolean bShowAll = OscarProperties.getInstance().getBooleanProperty("showAllPreventions","yes");
 
   boolean printError = request.getAttribute("printError") != null;
 
@@ -262,6 +263,12 @@ span.footnote {
 	border: 1px solid #000;
 	width: 4px;
 }
+.MainTableLeftColumn{
+    min-width: 200px;
+}
+.MainTableRightColumn{
+    padding-left:20px;
+}
 </style>
 
 <link rel="stylesheet" type="text/css"
@@ -348,7 +355,7 @@ function sendToPhr(button) {
 function addByLot() {
 	var lotNbr = $("#lotNumberToAdd").val();
 	
-	popup(600,900,'AddPreventionData.jsp?demographic_no=<%=demographic_no%>&lotNumber=' + lotNbr,'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
+	popup(820,800,'AddPreventionData.jsp?demographic_no=<%=demographic_no%>&lotNumber=' + lotNbr,'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
 	
 }
 
@@ -388,7 +395,7 @@ div.news {
 }
 
 div.leftBox {
-	width: 90%;
+	width: 200px;
 	margin-top: 2px;
 	margin-left: 3px;
 	margin-right: 3px;
@@ -527,11 +534,15 @@ table.colour_codes {
 	border: 1px solid #999999;
 }
 
-li {
+div.leftBox li {
 	width: 200px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+.yui-ac-bd li {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 div.recommendations li {
@@ -663,8 +674,8 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						<ul>
 							<%
 
-            endTime = System.nanoTime();
-            System.out.println("Starting Screening List after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Starting Screening List after " + (endTime - startTime)/1000 + " milliseconds");
              for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -676,14 +687,14 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 			            if(mappings != null && mappings.size()>1) {%>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(600,1100,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=prevName%>
 							</a></li>
 							<%  } else {
 			            %>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(820,800,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=prevName%>
 							</a></li>
 							<%
@@ -697,8 +708,8 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						<p>Immunizations</p>
 						<ul>
 							<%
-            endTime = System.nanoTime();
-            System.out.println("Starting Immunizations after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Starting Immunizations after " + (endTime - startTime)/1000 + " milliseconds");
             for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -717,14 +728,14 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 			            if(mappings != null && mappings.size()>1) {%>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(600,1100,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=ispa1 %><%=prevName%>
 							</a></li>
 							<%  } else {
 			            %>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(820,800,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=ispa1 %><%=prevName%>
 							</a></li>
 							<%
@@ -738,8 +749,8 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						<ul>
 							<%
 if(bShowAll){
-            endTime = System.nanoTime();
-            System.out.println("Starting Other after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Starting Other after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -754,14 +765,14 @@ if(bShowAll){
 			            if(mappings != null && mappings.size()>1) {%>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(600,1100,'AddPreventionDataDisambiguate.jsp?<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=prevName%>
 							</a></li>
 							<%  } else {
 			            %>
 							<li style="margin-top: 2px;"><a
 								href="javascript: function myFunction() {return false; }"
-								onclick="javascript:popup(600,900,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
+								onclick="javascript:popup(820,800,'AddPreventionData.jsp?4=4&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%= java.net.URLEncoder.encode(prevName) %>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%= java.net.URLEncoder.encode(h.get("resultDesc")) %>','addPreventionData<%=Math.abs(prevName.hashCode()) %>')"
 								title="<%=h.get("desc")%>"> <%=prevName%>
 							</a></li>
 							<%
@@ -773,7 +784,9 @@ if(bShowAll){
 	        %>
 						</ul>
 					</div>
-				</div> <oscar:oscarPropertiesCheck property="IMMUNIZATION_IN_PREVENTION"
+				</div> 
+<% if(bShowAll){  %>    <!-- old AND broken functionality -->          
+                <oscar:oscarPropertiesCheck property="IMMUNIZATION_IN_PREVENTION"
 					value="yes">
 					<a href="javascript: function myFunction() {return false; }"
 						onclick="javascript:popup(700,960,'<rewrite:reWrite jspPage="../oscarEncounter/immunization/initSchedule.do"/>?demographic_no=<%=demographic_no%>','oldImms')">Old
@@ -781,13 +794,14 @@ if(bShowAll){
 					</a>
 					<br>
 				</oscar:oscarPropertiesCheck>
+<% }  %>  
 			</td>
 
 			<form name="printFrm" method="post" onsubmit="return onPrint();"
 				action="<rewrite:reWrite jspPage="printPrevention.do"/>">
 				<input type="hidden" name="immunizationOnly" value="false" />
 				<td valign="top" class="MainTableRightColumn"><a href="#"
-					onclick="popup(600,800,'http://www.phac-aspc.gc.ca/im/is-cv/index-eng.php')">Immunization
+					onclick="popup(600,800,'https://www.canada.ca/en/public-health/services/publications/healthy-living/canadian-immunization-guide-part-1-key-immunization-information/page-13-recommended-immunization-schedules.html')">Immunization
 						Schedules - Public Health Agency of Canada</a> <%
 				if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user")))
 				{
@@ -840,7 +854,7 @@ if(bShowAll){
 						<tr>
 							<td style="font-size: 12pt">Add by Brand/Generic/Lot#</td>
 							<td><input type="text" id="lotNumberToAdd2"
-								name="lotNumberToAdd2" size="20" />
+								name="lotNumberToAdd2" size="40" />
 							<div id="lotNumberToAdd2_choices" class="autocomplete"></div></td>
 						</tr>
 					</table> <% } %> <br /> <%if(dhirEnabled) {%> <input type="button"
@@ -894,8 +908,8 @@ if(bShowAll){
                  if (!oscar.OscarProperties.getInstance().getBooleanProperty("PREVENTION_CLASSIC_VIEW","yes")){
                    ArrayList<Map<String,Object>> hiddenlist = new ArrayList<Map<String,Object>>();
                    Map<String,String> shownBefore = new HashMap<String,String>();//See explanation below.
-            endTime = System.nanoTime();
-            System.out.println("Starting Listing Preventions Provided after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Starting Listing Preventions Provided after " + (endTime - startTime)/1000 + " milliseconds");
                   for (int i = 0 ; i < prevList.size(); i++){
                   		HashMap<String,String> h = prevList.get(i);
                         String prevName = h.get("name");
@@ -908,7 +922,7 @@ if(bShowAll){
                         		shownBefore.put(prevName, prevName);
                         }
                         ArrayList<Map<String,Object>> alist = PreventionData.getPreventionData(loggedInInfo, prevName, Integer.valueOf(demographic_no));
-                        PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId,prevName,demographicDateOfBirth);
+                        if (bIntegrator){PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId,prevName,demographicDateOfBirth);}
                         boolean show = pdc.display(loggedInInfo, h, demographic_no,alist.size());
                         if(!show){
                             Map<String,Object> h2 = new HashMap<String,Object>();
@@ -950,14 +964,14 @@ if(bShowAll){
 												if (mappings != null && mappings.size() > 1) {
 												%>
 												<a href="javascript: function myFunction() {return false; }"
-													onclick="javascript:popup(600,900,'AddPreventionDataDisambiguate.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
+													onclick="javascript:popup(600,1100,'AddPreventionDataDisambiguate.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
 													<span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
 												</a>
 												<%
 												} else {
 												%>
 												<a href="javascript: function myFunction() {return false; }"
-													onclick="javascript:popup(600,900,'AddPreventionData.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
+													onclick="javascript:popup(820,800,'AddPreventionData.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
 													<span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
 												</a>
 												<%
@@ -973,7 +987,7 @@ if(bShowAll){
 											Map<String, String> hExt = PreventionData.getPreventionKeyValues((String) hdata.get("id"));
 											result = hExt.get("result");
 
-											String onClickCode = "javascript:popup(600,900,'AddPreventionData.jsp?id=" + hdata.get("id")
+											String onClickCode = "javascript:popup(820,800,'AddPreventionData.jsp?id=" + hdata.get("id")
 											+ "&amp;demographic_no=" + demographic_no + "','addPreventionData')";
 											if (hdata.get("id") == null)
 												onClickCode = "popup(300,500,'display_remote_prevention.jsp?remoteFacilityId="
@@ -1089,7 +1103,7 @@ if(bShowAll){
 													<p>
 														<a
 															href="javascript: function myFunction() {return false; }"
-															onclick="javascript:popup(600,900,'AddPreventionData.jsp?2=2&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
+															onclick="javascript:popup(820,800,'AddPreventionData.jsp?2=2&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
 															<span title="<%=h.get("desc")%>"
 															style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
 														</a> <br />
@@ -1103,7 +1117,7 @@ if(bShowAll){
 													result = hExt.get("result");
 												%>
 												<div class="preventionProcedure"
-													onclick="javascript:popup(600,900,'AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')"
+													onclick="javascript:popup(820,800,'AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')"
 													title="fade=[on] header=[<%=StringEscapeUtils.escapeHtml((String) hdata.get("age"))%> -- Date:<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>] body=[<%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%>&lt;br/&gt;Administered By: <%=StringEscapeUtils.escapeHtml((String) hdata.get("provider_name"))%>]">
 													<p <%=r(hdata.get("refused"), result)%>>
 														Age:
@@ -1192,7 +1206,7 @@ if(bShowAll){
 														<p>
 															<a
 																href="javascript: function myFunction() {return false; }"
-																onclick="javascript:popup(600,900,'AddPreventionData.jsp?3=3&prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs(h.get("name").hashCode())%>')">
+																onclick="javascript:popup(820,800,'AddPreventionData.jsp?3=3&prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs(h.get("name").hashCode())%>')">
 																<span title="<%=h.get("desc")%>"
 																style="font-weight: bold;"><%=h.get("name")%></span>
 															</a> <br />
@@ -1202,14 +1216,14 @@ if(bShowAll){
 													String prevType = h.get("name");
 													ArrayList<Map<String, Object>> alist = PreventionData.getPreventionData(loggedInInfo, prevType,
 															Integer.valueOf(demographic_no));
-													PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId, prevType, demographicDateOfBirth);
+													if (bIntegrator){PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId, prevType, demographicDateOfBirth);}
 													String result;
 													for (int k = 0; k < alist.size(); k++) {
 														Map<String, Object> hdata = alist.get(k);
 														Map<String, String> hExt = PreventionData.getPreventionKeyValues((String) hdata.get("id"));
 														result = hExt.get("result");
 
-														String onClickCode = "javascript:popup(600,900,'AddPreventionData.jsp?id=" + hdata.get("id")
+														String onClickCode = "javascript:popup(820,800,'AddPreventionData.jsp?id=" + hdata.get("id")
 														+ "&amp;demographic_no=" + demographic_no + "','addPreventionData')";
 														if (hdata.get("id") == null)
 															onClickCode = "popup(300,500,'display_remote_prevention.jsp?remoteFacilityId="
@@ -1259,14 +1273,14 @@ if(bShowAll){
 
 			<%
 if(bShowAll){
-            endTime = System.nanoTime();
-            System.out.println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0; i < prevList.size(); i++) {
 				HashMap<String, String> h = prevList.get(i);
 				String prevName = h.get("name");
 				ArrayList<Map<String, Object>> alist = PreventionData.getPreventionData(loggedInInfo, prevName,
 				Integer.valueOf(demographic_no));
-				PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId, prevName, demographicDateOfBirth);
+				if (bIntegrator){PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId, prevName, demographicDateOfBirth);}
 				if (alist.size() > 0) {
 			%>
 			<input type="hidden" id="preventionHeader<%=i%>"
@@ -1299,8 +1313,8 @@ if(bShowAll){
  }
  } //for there are preventions
 }
-            endTime = System.nanoTime();
-            System.out.println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
+            // endTime = System.nanoTime();
+            // System.out.println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
  %>
 								</form>
 		</tr>
@@ -1349,10 +1363,10 @@ YAHOO.example.BasicRemote = function() {
 	
         	  //We need to load AddPreventionData with possible brand name, and possible lotnumber/exp.
         	  if(oData[4].length > 0) {
-        		popup(465,635,'AddPreventionData.jsp?demographic_no=<%=demographic_no%>&lotNumber=' + oData[4],'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
+        		popup(820,800,'AddPreventionData.jsp?demographic_no=<%=demographic_no%>&lotNumber=' + oData[4],'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
         		document.getElementById('lotNumberToAdd2').value = '';
         	  } else {
-        		 popup(465,635,'AddPreventionData.jsp?search=true&demographic_no=<%=demographic_no%>&snomedId=' + oData[2] + '&brandSnomedId=' + oData[3],'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
+        		 popup(820,800,'AddPreventionData.jsp?search=true&demographic_no=<%=demographic_no%>&snomedId=' + oData[2] + '&brandSnomedId=' + oData[3],'addPreventionData' + <%=new java.util.Random().nextInt(10000) + 1%> );
           		document.getElementById('lotNumberToAdd2').value = '';  
         	  }
 
