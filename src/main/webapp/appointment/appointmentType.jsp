@@ -67,6 +67,19 @@ function getFields(idx) {
 		resSel = document.getElementById('resId').innerHTML = resArray[idx-1];
 	}	
 }
+
+// function to save the values from this page to the appt page on submission
+
+function saveValues(typeSel, reasonSel, locSel, durSel, notesSel, resSel) {
+	// get any value for reason already set on appointment page
+	var origReason = window.opener.jQuery("[name=reason").val();
+	
+	reasonSel = reasonSel.concat(" -- ".concat(origReason));
+	
+	window.opener.setType(typeSel,reasonSel,locSel,durSel,notesSel,resSel);
+}
+
+
 </script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
@@ -86,7 +99,7 @@ function getFields(idx) {
 <%   } %>
 			</select>
 		</td>
-		<td><input type="button" name="Select" value="<bean:message key="global.btnAdd" />" class="btn btn-primary" style="margin-bottom:10px;" onclick="window.opener.setType(typeSel,reasonSel,locSel,durSel,notesSel,resSel); window.close()"><INPUT TYPE="RESET" id="backButton" class="btn btn-link" style="margin-bottom:10px;" VALUE="<bean:message key="global.btnCancel" />" onClick="window.close();">
+		<td><input type="button" name="Select" value="<bean:message key="global.btnAdd" />" class="btn btn-primary" style="margin-bottom:10px;" onclick="saveValues(typeSel,reasonSel,locSel,durSel,notesSel,resSel); window.close()"><INPUT TYPE="RESET" id="backButton" class="btn btn-link" style="margin-bottom:10px;" VALUE="<bean:message key="global.btnCancel" />" onClick="window.close();">
 	</tr>
 	<tr>
 		<td><bean:message key="Appointment.formDuration" /></td>
