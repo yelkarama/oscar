@@ -675,7 +675,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 							<%
 
             // endTime = System.nanoTime();
-            // System.out.println("Starting Screening List after " + (endTime - startTime)/1000 + " milliseconds");
+            //  .println("Starting Screening List after " + (endTime - startTime)/1000 + " milliseconds");
              for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -709,7 +709,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						<ul>
 							<%
             // endTime = System.nanoTime();
-            // System.out.println("Starting Immunizations after " + (endTime - startTime)/1000 + " milliseconds");
+            // .println("Starting Immunizations after " + (endTime - startTime)/1000 + " milliseconds");
             for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -750,7 +750,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 							<%
 if(bShowAll){
             // endTime = System.nanoTime();
-            // System.out.println("Starting Other after " + (endTime - startTime)/1000 + " milliseconds");
+            // .println("Starting Other after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -909,7 +909,7 @@ if(bShowAll){
                    ArrayList<Map<String,Object>> hiddenlist = new ArrayList<Map<String,Object>>();
                    Map<String,String> shownBefore = new HashMap<String,String>();//See explanation below.
             // endTime = System.nanoTime();
-            // System.out.println("Starting Listing Preventions Provided after " + (endTime - startTime)/1000 + " milliseconds");
+            // .println("Starting Listing Preventions Provided after " + (endTime - startTime)/1000 + " milliseconds");
                   for (int i = 0 ; i < prevList.size(); i++){
                   		HashMap<String,String> h = prevList.get(i);
                         String prevName = h.get("name");
@@ -1274,7 +1274,7 @@ if(bShowAll){
 			<%
 if(bShowAll){
             // endTime = System.nanoTime();
-            // System.out.println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
+            // .println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0; i < prevList.size(); i++) {
 				HashMap<String, String> h = prevList.get(i);
 				String prevName = h.get("name");
@@ -1314,7 +1314,7 @@ if(bShowAll){
  } //for there are preventions
 }
             // endTime = System.nanoTime();
-            // System.out.println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
+            // .println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
  %>
 								</form>
 		</tr>
