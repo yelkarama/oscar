@@ -238,10 +238,6 @@ console.log("minute="+minute+" minDeg ="+minuteDeg);
 <script type="text/javascript">
 
 function onAdd() {
-    if (document.ADDAPPT.notes.value.length > 255) {
-      window.alert("<bean:message key="appointment.editappointment.msgNotesTooBig"/>");
-      return false;
-    }
     return calculateEndTime() ;
 }
 
@@ -985,7 +981,7 @@ function parseSearch() {
         </tr>
         <tr>
             <td></td><td>
-				<textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":request.getParameter("reason")%></textarea>
+		    <textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18" maxlength="80"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":request.getParameter("reason")%></textarea>
             </td>
         </tr>
             <%
@@ -1128,7 +1124,7 @@ function parseSearch() {
                 <bean:message key="Appointment.formNotes" />:
             </td>
             <td>
-                <textarea name="notes" tabindex="3" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
+                <textarea name="notes" tabindex="3" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
             </td>
         </tr>
         <tr>

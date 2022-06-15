@@ -314,11 +314,6 @@ function onSub() {
        return (confirm("<bean:message key="appointment.editappointment.msgDeleteConfirmation"/>")) ;
     }
   }
-  if( saveTemp==2 ) {
-    if (document.EDITAPPT.notes.value.length > 255) {
-      window.alert("<bean:message key="appointment.editappointment.msgNotesTooBig"/>");
-      return false;
-    }
     return calculateEndTime() ;
   } else
       return true;
@@ -814,7 +809,7 @@ function parseSearch() {
         <tr>
             <td></td><td>
 				<textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" placeholder="<bean:message key="Appointment.formReason" />"
-					cols="18"><%=Encode.forHtml(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
+					cols="18" maxlength="80"><%=Encode.forHtml(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
             </td>
         </tr>
         <tr>
@@ -1021,7 +1016,7 @@ function parseSearch() {
             </td>
             <td>
                 <textarea name="notes" tabindex="3" rows="2" wrap="virtual"
-					cols="18"><%=bFirstDisp?appt.getNotes():request.getParameter("notes")%></textarea>
+					cols="18" maxlength="255"><%=bFirstDisp?appt.getNotes():request.getParameter("notes")%></textarea>
             </td>
         </tr>
         <tr>
