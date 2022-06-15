@@ -59,8 +59,10 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+	long startTime = System.nanoTime();
+    long endTime = System.nanoTime();
+    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+	boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_prevention"
 	rights="r" reverse="<%=true%>">
@@ -659,7 +661,11 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 					<div style="background-color: #EEEEFF;">
 						<p>Screenings</p>
 						<ul>
-							<%for (int i = 0 ; i < prevList.size(); i++){
+							<%
+
+            endTime = System.nanoTime();
+            System.out.println("Starting Screening List after " + (endTime - startTime)/1000 + " milliseconds");
+             for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
                 String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
@@ -690,7 +696,10 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						</ul>
 						<p>Immunizations</p>
 						<ul>
-							<%for (int i = 0 ; i < prevList.size(); i++){
+							<%
+            endTime = System.nanoTime();
+            System.out.println("Starting Immunizations after " + (endTime - startTime)/1000 + " milliseconds");
+            for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
                 String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
@@ -728,6 +737,9 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 						<p>Other</p>
 						<ul>
 							<%
+if(bShowAll){
+            endTime = System.nanoTime();
+            System.out.println("Starting Other after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0 ; i < prevList.size(); i++){
 				HashMap<String,String> h = prevList.get(i);
                 String prevName = h.get("name");
@@ -757,6 +769,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 		            }
 	            }
 			}
+}
 	        %>
 						</ul>
 					</div>
@@ -881,6 +894,8 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
                  if (!oscar.OscarProperties.getInstance().getBooleanProperty("PREVENTION_CLASSIC_VIEW","yes")){
                    ArrayList<Map<String,Object>> hiddenlist = new ArrayList<Map<String,Object>>();
                    Map<String,String> shownBefore = new HashMap<String,String>();//See explanation below.
+            endTime = System.nanoTime();
+            System.out.println("Starting Listing Preventions Provided after " + (endTime - startTime)/1000 + " milliseconds");
                   for (int i = 0 ; i < prevList.size(); i++){
                   		HashMap<String,String> h = prevList.get(i);
                         String prevName = h.get("name");
@@ -1243,6 +1258,9 @@ if(bShowAll){
 				value="<%=demographic_no%>" />
 
 			<%
+if(bShowAll){
+            endTime = System.nanoTime();
+            System.out.println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
 			for (int i = 0; i < prevList.size(); i++) {
 				HashMap<String, String> h = prevList.get(i);
 				String prevName = h.get("name");
@@ -1280,6 +1298,9 @@ if(bShowAll){
  }
  }
  } //for there are preventions
+}
+            endTime = System.nanoTime();
+            System.out.println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
  %>
 								</form>
 		</tr>
@@ -1381,4 +1402,5 @@ String r(Object re, String result){
         }
         return ret;
     }
+
 %>
