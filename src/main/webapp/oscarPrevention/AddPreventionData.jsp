@@ -1211,7 +1211,9 @@ function changeSite(el) {
             	   		return true;
                	}
                </script>
-               <input type="submit" value="Save & Submit" name="action" onclick="return validateSubmitSave();" <%=(dhirEnabled) ? "" : "title='DHIR not enabled' disabled" %> >
+            <% if(dhirEnabled){ %>
+               <input type="submit" value="Save & Submit" name="action" onclick="return validateSubmitSave();" <%=(dhirEnabled) ? "title='Send to DHIR'" : "disabled title='DHIR not enabled' disabled" %> >
+            <% } %>
                 <% } 
    					
    					//} 
