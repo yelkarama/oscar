@@ -35,11 +35,11 @@ import org.oscarehr.util.SpringUtils;
 import oscar.oscarEncounter.data.EctProgram;
 
 import javax.servlet.http.HttpSession;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class WriteToEncounterUtil {
 
@@ -84,11 +84,10 @@ public class WriteToEncounterUtil {
     }
     
     private static String generateNote(String noteBody, String moduleName, boolean addDateAndTypeString) {
-        GregorianCalendar now = new GregorianCalendar();
-        int curYear = now.get(Calendar.YEAR);
-        int curMonth = (now.get(Calendar.MONTH)+1);
-        int curDay = now.get(Calendar.DAY_OF_MONTH);
-        String dateAndTypeString = "["+curYear+"-"+curMonth+"-"+curDay+" .: " + moduleName + "]\n";
+
+        SimpleDateFormat df =  new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        String formattedDate = df.format(new Date());
+        String dateAndTypeString = "["+formattedDate+" .: " + moduleName + "]\n";
         
         String note = addDateAndTypeString ? dateAndTypeString : "";
         note += noteBody;
