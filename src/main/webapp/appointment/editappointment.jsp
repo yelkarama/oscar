@@ -314,6 +314,7 @@ function onSub() {
        return (confirm("<bean:message key="appointment.editappointment.msgDeleteConfirmation"/>")) ;
     }
   }
+   if( saveTemp==2 ) {
     return calculateEndTime() ;
   } else
       return true;
