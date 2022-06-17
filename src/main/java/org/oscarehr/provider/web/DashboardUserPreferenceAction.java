@@ -35,7 +35,7 @@ import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class DashboardUserPreferenceAction extends DispatchAction {
 

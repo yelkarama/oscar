@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;

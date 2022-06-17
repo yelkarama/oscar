@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.oscarBilling.ca.on.data.JdbcBillingRAImpl;
 

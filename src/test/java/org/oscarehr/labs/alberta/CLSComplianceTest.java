@@ -25,7 +25,7 @@ package org.oscarehr.labs.alberta;
 
 import static org.junit.Assert.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import oscar.oscarLab.ca.all.parsers.CLSHandler;

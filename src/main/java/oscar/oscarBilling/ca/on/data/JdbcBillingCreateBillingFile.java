@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.ON.dao.BillingONDiskNameDao;
 import org.oscarehr.billing.CA.ON.dao.BillingONFilenameDao;
 import org.oscarehr.billing.CA.ON.dao.BillingONHeaderDao;

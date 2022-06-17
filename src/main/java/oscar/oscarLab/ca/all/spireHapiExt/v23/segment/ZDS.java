@@ -24,7 +24,7 @@
 //package oscar.v23.segment;
 package oscar.oscarLab.ca.all.spireHapiExt.v23.segment;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Type;

@@ -32,7 +32,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.MdsMSHDao;
 import org.oscarehr.common.dao.MdsNTEDao;
 import org.oscarehr.common.dao.MdsOBRDao;

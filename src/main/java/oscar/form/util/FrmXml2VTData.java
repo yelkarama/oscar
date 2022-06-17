@@ -36,7 +36,7 @@ import noNamespace.SitePatientVisitRecordsDocument;
 import noNamespace.SitePatientVisitRecordsDocument.SitePatientVisitRecords;
 
 import org.apache.commons.lang.WordUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.form.data.FrmVTData;
 

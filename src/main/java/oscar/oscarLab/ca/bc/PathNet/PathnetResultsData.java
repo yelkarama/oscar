@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.Hl7MessageDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7MshDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7ObrDao;

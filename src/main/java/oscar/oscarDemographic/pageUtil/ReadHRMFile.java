@@ -45,7 +45,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.hospitalReportManager.SFTPConnector;
 import org.oscarehr.hospitalReportManager.xsd.DateFullOrPartial;
 import org.oscarehr.hospitalReportManager.xsd.OmdCds;

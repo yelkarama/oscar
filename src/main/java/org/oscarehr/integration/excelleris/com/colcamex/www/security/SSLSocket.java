@@ -44,7 +44,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 /**
  * @author Dennis Warren Colcamex Resources
  * 

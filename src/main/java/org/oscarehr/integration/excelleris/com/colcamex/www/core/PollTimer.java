@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import static java.util.concurrent.TimeUnit.*;
 
 /**

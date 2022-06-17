@@ -25,7 +25,7 @@ package org.oscarehr.integration.excelleris.com.colcamex.www.core;
 
 import java.util.ArrayList;
 import java.util.Date;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Dennis Warren Colcamex Resources

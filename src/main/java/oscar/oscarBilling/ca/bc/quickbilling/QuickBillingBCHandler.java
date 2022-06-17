@@ -39,7 +39,7 @@ import java.util.Properties;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.common.model.Demographic;

@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.LabelValueBean;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.billing.CA.ON.dao.BillingPercLimitDao;

@@ -32,7 +32,7 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.ControllerHandler;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.PollTimer;
 

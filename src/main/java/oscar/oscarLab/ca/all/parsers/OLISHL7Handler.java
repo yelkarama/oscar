@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.oscarehr.olis.dao.OLISRequestNomenclatureDao;
 import org.oscarehr.olis.dao.OLISResultNomenclatureDao;

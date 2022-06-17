@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;

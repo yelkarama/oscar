@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.TimerTask;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.dao.UserPropertyDAO;

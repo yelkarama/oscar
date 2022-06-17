@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ScheduledFuture;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.main.*;
 import oscar.util.StringUtils;
 

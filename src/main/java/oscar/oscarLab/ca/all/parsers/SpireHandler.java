@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.oscarLab.ca.all.spireHapiExt.v23.message.ORU_R01;
 import oscar.util.UtilDateUtilities;
