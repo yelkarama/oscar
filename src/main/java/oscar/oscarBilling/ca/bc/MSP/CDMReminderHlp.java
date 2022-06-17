@@ -41,7 +41,7 @@ public class CDMReminderHlp {
     crt.resolveTicklers(loggedInInfo, providerNo, cdmPatientNos, remString);
 
     for (Iterator iter = cdmPatients.iterator(); iter.hasNext(); ) {
-    	MiscUtilsOld.checkShutdownSignaled();
+    	MiscUtils.checkShutdownSignaled();
 
       String[] dxRecord = (String[]) iter.next();
       String demoNo = dxRecord[0];

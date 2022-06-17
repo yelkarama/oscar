@@ -54,7 +54,7 @@ public class ProEditMyOscarIdAction extends Action {
 
         DynaActionForm frm = (DynaActionForm)form;
         String loginId = (String)frm.get("myOscarLoginId");
-        loginId=MiscUtilsOld.getUserNameNoDomain(loginId);
+        loginId=MiscUtils.getUserNameNoDomain(loginId);
                 
         if( ProviderMyOscarIdData.getMyOscarId(providerNo).equals(loginId) ) {
             ActionMessages errors = new ActionMessages();
