@@ -36,7 +36,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtilsOld;
+import org.oscarehr.util.MiscUtils;
 
 import oscar.oscarProvider.data.ProviderMyOscarIdData;
 

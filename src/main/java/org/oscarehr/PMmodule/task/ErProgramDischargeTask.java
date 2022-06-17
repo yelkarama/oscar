@@ -38,7 +38,7 @@ import org.oscarehr.common.model.Admission;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.MiscUtilsOld;
+
 import org.oscarehr.util.ShutdownException;
 
 public class ErProgramDischargeTask extends TimerTask {

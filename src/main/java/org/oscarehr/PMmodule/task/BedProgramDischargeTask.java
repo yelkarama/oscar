@@ -39,7 +39,7 @@ import org.oscarehr.managers.BedDemographicManager;
 import org.oscarehr.managers.BedManager;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.MiscUtilsOld;
+
 import org.oscarehr.util.ShutdownException;
 
 public class BedProgramDischargeTask extends TimerTask {

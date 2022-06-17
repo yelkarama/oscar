@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtilsOld;
+import org.oscarehr.util.MiscUtils;
 
 import oscar.oscarTickler.TicklerCreator;
 import oscar.util.SqlUtils;
