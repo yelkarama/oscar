@@ -46,8 +46,6 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import oscar.form.dao.FormBCAR2020Dao;
 import oscar.form.dao.FormBCAR2020DataDao;
 import oscar.form.dao.FormBCAR2020TextDao;
