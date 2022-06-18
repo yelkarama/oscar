@@ -68,7 +68,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class GDMLHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(GDMLHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ORU_R01 msg = null;
     ArrayList<String> headers = null;
     HashMap<OBR,ArrayList<OBX>> obrSegMap = null;

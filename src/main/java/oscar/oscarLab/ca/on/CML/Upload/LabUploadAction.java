@@ -60,7 +60,7 @@ import oscar.oscarLab.ca.on.CML.ABCDParser;
  */
 public class LabUploadAction extends Action {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	Logger _logger = Logger.getLogger(this.getClass());
+	Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
  	   if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {

@@ -47,7 +47,7 @@ import com.Ostermiller.util.CSVPrinter;
 
 public class RptDownloadCSVServlet extends HttpServlet {
 
-    private static final Logger _logger = Logger.getLogger(RptDownloadCSVServlet.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
     String reportName = "";
     String DELIMETER = "\t";
 

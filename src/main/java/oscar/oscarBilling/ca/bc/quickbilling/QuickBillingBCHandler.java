@@ -68,7 +68,7 @@ import oscar.oscarBilling.ca.bc.pageUtil.BillingSessionBean;
 public class QuickBillingBCHandler {
 	
 	// full logging to be added later. too pressed for time.
-	private static Logger log = Logger.getLogger(BillingSaveBillingAction.class);
+	private static Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
 	// default attributes for MSP billing. 
 	// create new attributes for dynamic form input.

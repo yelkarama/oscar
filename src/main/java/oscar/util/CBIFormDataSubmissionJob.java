@@ -33,7 +33,7 @@ import org.oscarehr.util.DbConnectionFilter;
 
 public class CBIFormDataSubmissionJob  extends TimerTask
 {
-	private static Logger logger = Logger.getLogger(CBIFormDataSubmissionJob.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static CBIUtil cbiUtil = new CBIUtil();
 
 	@Override

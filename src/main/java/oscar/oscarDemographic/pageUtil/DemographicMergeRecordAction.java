@@ -57,7 +57,7 @@ import oscar.oscarDemographic.data.DemographicMerged;
  */
 public class DemographicMergeRecordAction  extends Action {
 
-    Logger logger = Logger.getLogger(DemographicMergeRecordAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     public DemographicMergeRecordAction() {

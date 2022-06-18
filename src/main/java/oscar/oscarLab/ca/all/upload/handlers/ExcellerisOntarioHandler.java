@@ -42,7 +42,7 @@ import oscar.oscarLab.ca.all.upload.RouteReportResults;
 
 public class ExcellerisOntarioHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(ExcellerisOntarioHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 		Document doc = null;

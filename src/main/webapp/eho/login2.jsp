@@ -25,7 +25,7 @@
 --%>
 <%@page import="oscar.OscarProperties"%>
 <%@page import="org.oscarehr.util.PKCEUtils"%>
-<%@page import="org.apache.log4j.Logger"%>
+<%@page import="org.apache.logging.log4j.Logger" %>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.HashMap"%>

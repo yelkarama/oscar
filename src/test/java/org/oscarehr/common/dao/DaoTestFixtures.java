@@ -89,9 +89,6 @@ public abstract class DaoTestFixtures
 	public static void classSetUp() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException
 	{
 		
-		
-		Logger.getRootLogger().setLevel(Level.WARN);
-		
 		long start = System.currentTimeMillis();
 		if(!SchemaUtils.inited) {
 			logger.info("dropAndRecreateDatabase");

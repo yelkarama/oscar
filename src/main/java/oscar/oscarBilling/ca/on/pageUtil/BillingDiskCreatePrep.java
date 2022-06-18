@@ -35,7 +35,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingPageUtil;
 import oscar.util.UtilDateUtilities;
 
 public class BillingDiskCreatePrep {
-	private static final Logger _logger = Logger.getLogger(BillingDiskCreatePrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcBillingClaimImpl dbObj = new JdbcBillingClaimImpl();
 	Properties propProOHIP = null;
 

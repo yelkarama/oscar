@@ -61,7 +61,7 @@ public class MDSResultsData {
 	private PatientLabRoutingDao PLRDao = SpringUtils.getBean(PatientLabRoutingDao.class);
 	private EFormDocsDao eformDocsDao = SpringUtils.getBean(EFormDocsDao.class);
 	
-	static Logger logger = Logger.getLogger(MDSResultsData.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	public ArrayList<String> segmentID;
 	public ArrayList<String> acknowledgedStatus;

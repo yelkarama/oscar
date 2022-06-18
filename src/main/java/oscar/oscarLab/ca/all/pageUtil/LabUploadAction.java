@@ -78,7 +78,7 @@ import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
 import oscar.oscarLab.ca.all.util.Utilities;
 
 public class LabUploadAction extends Action {
-	protected static Logger logger = Logger.getLogger(LabUploadAction.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

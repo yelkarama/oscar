@@ -48,7 +48,7 @@ import oscar.log.LogConst;
  * @author mweston4
  */
 public class PDFHandler  implements MessageHandler{
-    protected static Logger logger = Logger.getLogger(PDFHandler.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     
     @Override
     public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {

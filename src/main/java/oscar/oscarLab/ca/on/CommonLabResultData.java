@@ -463,7 +463,7 @@ public class CommonLabResultData {
 			}
 			return true;
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in MDSResultsData.updateReportStatus()", e);
 			return false;
 		} finally {
@@ -542,7 +542,7 @@ public class CommonLabResultData {
 			return result;
 
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in CommonLabResultData.updateLabRouting()", e);
 			return false;
 		}

@@ -59,7 +59,7 @@ public class MDSHandler implements MessageHandler {
     Object terser;
     ArrayList obrGroups = null;
     HashMap<String,String> headerMaps = new HashMap<String,String>();
-    Logger logger = Logger.getLogger(MDSHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     /** Creates a new instance of CMLHandler */
     public MDSHandler(){

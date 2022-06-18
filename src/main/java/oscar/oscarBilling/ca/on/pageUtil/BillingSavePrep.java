@@ -37,7 +37,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingPageUtil;
 import oscar.util.UtilDateUtilities;
 
 public class BillingSavePrep {
-	private static final Logger _logger = Logger.getLogger(BillingReviewPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcBillingClaimImpl dbObj = new JdbcBillingClaimImpl();
 	int billingId = 0;
 

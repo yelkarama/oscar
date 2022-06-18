@@ -44,7 +44,7 @@ import oscar.OscarProperties;
 
 
 public abstract class OscarAction extends Action {
-    private static Logger logger=Logger.getLogger(OscarAction.class);
+	private static Logger logger=org.oscarehr.util.MiscUtils.getLogger();
     protected static int PAGE_LENGTH = 20;
 
     static {

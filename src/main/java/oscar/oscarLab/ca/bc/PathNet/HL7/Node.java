@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  * www.andromedia.ca
  */
 public abstract class Node {
-   Logger _logger = Logger.getLogger(this.getClass());
+	Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
    protected Hashtable data;
    
    protected abstract String[] getProperties();

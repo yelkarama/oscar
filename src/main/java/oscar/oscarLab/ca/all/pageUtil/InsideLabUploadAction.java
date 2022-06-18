@@ -59,7 +59,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
 
 public class InsideLabUploadAction extends Action {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-    Logger logger = Logger.getLogger(InsideLabUploadAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {

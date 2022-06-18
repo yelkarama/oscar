@@ -37,7 +37,7 @@
 
 <%@ include file="/casemgmt/taglibs.jsp"%>
 <%@page import="java.util.*" %>
-<%@page import="org.apache.log4j.Logger" %>
+<%@page import="org.apache.logging.log4j.Logger" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.model.Provider,org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%

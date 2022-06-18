@@ -172,6 +172,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.tool.PrettyPrinter;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
 import org.w3c.dom.Node;
 
 import oscar.OscarProperties;
@@ -184,8 +185,7 @@ import oscar.oscarProvider.data.ProviderData;
 
 public class XMLTransferUtil
 {
-	protected static Logger logger = Logger
-	.getLogger(XMLTransferUtil.class);
+	protected static Logger logger = MiscUtils.getLogger();
 
 	public SimpleDateFormat dformat1 = new SimpleDateFormat(
 	"yyyy-MM-dd'T'HH:mm:ss");

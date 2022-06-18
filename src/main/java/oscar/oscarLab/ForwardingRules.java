@@ -48,7 +48,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class ForwardingRules {
 
-	Logger logger = Logger.getLogger(ForwardingRules.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/** Creates a new instance of ForwardingRules */
 	public ForwardingRules() {

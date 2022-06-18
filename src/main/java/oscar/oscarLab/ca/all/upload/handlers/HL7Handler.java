@@ -49,7 +49,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class HL7Handler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(HL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public HL7Handler() {
 		logger.info("NEW HL7Handler UPLOAD HANDLER instance just instantiated. ");

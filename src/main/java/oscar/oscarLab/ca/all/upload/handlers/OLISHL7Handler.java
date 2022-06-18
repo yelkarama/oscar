@@ -35,7 +35,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class OLISHL7Handler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(OLISHL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
 	
 	private int lastSegmentId = 0;

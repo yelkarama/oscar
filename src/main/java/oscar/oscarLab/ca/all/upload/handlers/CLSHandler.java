@@ -47,7 +47,7 @@ import ca.uhn.hl7v2.model.v23.segment.ORC;
 public class CLSHandler implements MessageHandler {
 
 	String lineDelimiter = "\r";
-	Logger logger = Logger.getLogger(CLSHandler.class);	
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();		
 	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
 	
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {

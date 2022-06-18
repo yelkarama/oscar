@@ -44,7 +44,7 @@ import oscar.form.data.FrmVTData;
  * @author yilee18
  */
 public class FrmXml2VTData {
-    private static final Logger _logger = Logger.getLogger(FrmXml2VTData.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
     static String[] elementAttrName = new String[] { "value", "signed_when", "signed_who", "signed_how" };
 

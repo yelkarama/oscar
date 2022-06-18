@@ -50,7 +50,7 @@ import oscar.oscarLab.ca.all.upload.MessageUploader;
 import oscar.oscarLab.ca.all.util.Utilities;
 
 public class DefaultHandler implements MessageHandler {
-    Logger logger = Logger.getLogger(DefaultHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     String hl7Type = null;
 
     String getHl7Type(){

@@ -68,7 +68,7 @@
 <%@page import="java.util.Calendar"%>
 <%@page import="com.auth0.jwt.JWTCreator"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@page import="org.apache.log4j.Logger"%>
+<%@page import="org.apache.logging.log4j.Logger" %>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.oscarehr.integration.OneIdGatewayData"%>
 <%@page import="org.oscarehr.util.SessionConstants"%>

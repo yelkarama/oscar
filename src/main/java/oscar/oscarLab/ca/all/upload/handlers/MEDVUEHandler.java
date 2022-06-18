@@ -25,7 +25,7 @@ import oscar.oscarLab.ca.all.util.MEDVUEUtilities;
 
 public class MEDVUEHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(MEDVUEHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public MEDVUEHandler() {
 		logger.info("NEW MEDVUEHandler UPLOAD HANDLER instance just instantiated. ");

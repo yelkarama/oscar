@@ -30,7 +30,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.ConversionUtils;
 
 public class BillingStatusData {
-	private static final Logger _logger = Logger.getLogger(BillingStatusData.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public BillingStatusData() {
 	}

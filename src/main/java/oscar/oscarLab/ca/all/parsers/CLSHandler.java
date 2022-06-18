@@ -57,7 +57,7 @@ public class CLSHandler implements MessageHandler {
 		FIRST, MIDDLE, LAST;
 	}
 
-	private static Logger logger = Logger.getLogger(CLSHandler.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private ORU_R01 msg;
 

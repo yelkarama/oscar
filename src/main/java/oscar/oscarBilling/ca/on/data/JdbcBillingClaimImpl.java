@@ -58,7 +58,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.UtilDateUtilities;
 
 public class JdbcBillingClaimImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcBillingClaimImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
+	
 	private BillingONHeaderDao dao = SpringUtils.getBean(BillingONHeaderDao.class);
 	private BillingONCHeader1Dao cheaderDao = SpringUtils.getBean(BillingONCHeader1Dao.class);
 	private BillingONItemDao itemDao = SpringUtils.getBean(BillingONItemDao.class);

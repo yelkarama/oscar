@@ -52,7 +52,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class IHAHandler implements MessageHandler {
     
-    Logger logger = Logger.getLogger(IHAHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     protected Message msg = null;
     protected Terser terser;
     protected ArrayList<ArrayList<Segment>> obrGroups = null;

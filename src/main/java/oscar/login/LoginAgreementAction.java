@@ -49,8 +49,8 @@ import oscar.log.LogConst;
  * @author rjonasz
  */
 public class LoginAgreementAction extends DispatchAction {
-    private static final Logger _logger = Logger.getLogger(LoginAgreementAction.class);
-
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
+	
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException {

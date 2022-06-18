@@ -56,7 +56,7 @@ import oscar.util.ConversionUtils;
  */
 public class ProviderLabRouting {
 
-	Logger logger = Logger.getLogger(ProviderLabRouting.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
 
 	public ProviderLabRouting() {

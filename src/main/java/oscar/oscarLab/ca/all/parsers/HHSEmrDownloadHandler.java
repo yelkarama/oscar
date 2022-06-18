@@ -53,7 +53,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class HHSEmrDownloadHandler extends DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(HHSEmrDownloadHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ArrayList<String> headerList = null;
  //   Message msg = null;
  //   Terser terser;

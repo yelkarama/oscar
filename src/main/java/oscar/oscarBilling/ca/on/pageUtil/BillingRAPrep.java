@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import oscar.oscarBilling.ca.on.data.JdbcBillingRAImpl;
 
 public class BillingRAPrep {
-	private static final Logger _logger = Logger.getLogger(BillingRAPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcBillingRAImpl dbObj = new JdbcBillingRAImpl();
 
 	// ret - Vector = || ||

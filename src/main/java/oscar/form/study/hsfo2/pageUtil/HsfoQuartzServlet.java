@@ -47,7 +47,7 @@ public class HsfoQuartzServlet implements Servlet
 {
 	public static final String RESUBMIT_JOB = "hsfoResubmitJob";
 
-	protected static Logger logger = Logger.getLogger(HsfoQuartzServlet.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public static final String RESUBMIT_TRIGGER = "hsfoResubmitTrigger";
 

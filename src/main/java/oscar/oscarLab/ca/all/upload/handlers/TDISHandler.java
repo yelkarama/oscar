@@ -35,7 +35,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class TDISHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(TDISHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public TDISHandler() {
 		logger.info("NEW TDISHandler UPLOAD HANDLER instance just instantiated. ");

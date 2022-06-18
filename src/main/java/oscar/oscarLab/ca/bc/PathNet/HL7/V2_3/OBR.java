@@ -40,7 +40,7 @@ import oscar.oscarLab.ca.bc.PathNet.HL7.Node;
  * www.andromedia.ca
  */
 public class OBR extends oscar.oscarLab.ca.bc.PathNet.HL7.Node {
-   Logger _logger = Logger.getLogger(this.getClass());
+	Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
    private static Hl7ObrDao dao = SpringUtils.getBean(Hl7ObrDao.class);
  
    private ArrayList<OBX> obxs;

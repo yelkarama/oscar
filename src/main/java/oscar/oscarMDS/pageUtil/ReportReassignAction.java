@@ -49,7 +49,7 @@ import oscar.oscarLab.ca.on.CommonLabResultData;
 
 public class ReportReassignAction extends Action {
     
-    Logger logger = Logger.getLogger(ReportReassignAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     public ReportReassignAction() {

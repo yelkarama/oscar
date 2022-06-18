@@ -65,7 +65,7 @@ import oscar.oscarLab.ca.all.parsers.MEDITECHHandler.UNSTRUCTURED;
 @RunWith(Parameterized.class)
 public class MEDITECHHandlerTest {
 	
-	private static Logger logger = Logger.getLogger(MEDITECHHandlerTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static MEDITECHHandler handler;
 	private static ZipFile zipFile;
 	private static Document hl7XML;

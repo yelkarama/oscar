@@ -26,7 +26,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class CreateLabelTDISAction extends Action{
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	Logger logger = Logger.getLogger(CreateLabelTDISAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	public ActionForward execute (ActionMapping mapping,ActionForm form, HttpServletRequest request, HttpServletResponse response){
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {

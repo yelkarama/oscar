@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionMessages;
 * @author Eugene Katyukhin
 */
 public final class PatientEndYearStatementForm extends ActionForm {
-    private static Logger logger = Logger.getLogger(PatientEndYearStatementForm.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private String firstNameParam;
     private String lastNameParam;
     private String fromDateParam;

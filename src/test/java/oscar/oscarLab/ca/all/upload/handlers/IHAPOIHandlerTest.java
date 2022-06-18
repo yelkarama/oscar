@@ -47,7 +47,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class IHAPOIHandlerTest extends IHAPOIHandler {
 
-	private static Logger logger = Logger.getLogger(IHAPOIHandlerTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static String hl7Body;
 	private static ZipFile zipFile;
 	private static int TEST_COUNT = 0;

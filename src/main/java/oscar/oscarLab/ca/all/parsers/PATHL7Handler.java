@@ -66,7 +66,7 @@ import oscar.util.UtilDateUtilities;
  */
 public class PATHL7Handler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(PATHL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ORU_R01 msg = null;
 
 	private static List<String> labDocuments = Arrays.asList("BCCACSP","BCCASMP","BLOODBANKT",

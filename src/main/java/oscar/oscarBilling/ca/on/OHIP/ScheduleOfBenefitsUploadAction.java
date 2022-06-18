@@ -56,7 +56,7 @@ import oscar.oscarLab.ca.bc.PathNet.pageUtil.LabUploadForm;
  * @author Jay Gallagher
  */
 public class ScheduleOfBenefitsUploadAction extends Action {
-	Logger _logger = Logger.getLogger(this.getClass());
+	Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	boolean checkBox (String str){
 		boolean check = false;

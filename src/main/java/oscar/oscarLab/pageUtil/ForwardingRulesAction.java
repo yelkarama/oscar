@@ -60,7 +60,7 @@ import oscar.oscarLab.ForwardingRules;
  */
 public class ForwardingRulesAction extends Action{
 
-    Logger logger = Logger.getLogger(ForwardingRulesAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private IncomingLabRulesDao dao = SpringUtils.getBean(IncomingLabRulesDao.class);
     
 

@@ -26,7 +26,7 @@ import oscar.oscarLab.ca.all.util.PFHTUtilities;
 
 public class PFHTHandler implements MessageHandler {
 
-	 Logger logger = Logger.getLogger(PFHTHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	    public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName,int fileId, String ipAddr){
 

@@ -57,7 +57,7 @@ import oscar.util.ConversionUtils;
 
 public class MDSSegmentData {
 
-	static Logger logger = Logger.getLogger(MDSSegmentData.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public String segmentID;
 	public String reportDate;

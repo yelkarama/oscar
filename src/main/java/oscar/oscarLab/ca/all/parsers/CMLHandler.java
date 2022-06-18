@@ -63,7 +63,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class CMLHandler implements MessageHandler {
 
     ORU_R01 msg = null;
-    Logger logger = Logger.getLogger(CMLHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     /** Creates a new instance of CMLHandler */
     public CMLHandler(){

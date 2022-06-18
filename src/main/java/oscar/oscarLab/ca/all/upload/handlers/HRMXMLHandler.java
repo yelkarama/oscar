@@ -33,7 +33,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class HRMXMLHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(HL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public HRMXMLHandler() {
 		logger.info("NEW HRM XML UPLOAD HANDLER instance just instantiated. ");

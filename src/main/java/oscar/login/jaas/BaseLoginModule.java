@@ -53,7 +53,7 @@ public class BaseLoginModule implements LoginModule {
 	 */
 	public static final String OPTION_ATN_ENABLED = "authorizationEnabled";
 
-	protected static Logger logger = Logger.getLogger(BaseLoginModule.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private Subject subject;
 

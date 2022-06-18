@@ -79,7 +79,7 @@ import com.cbi.ws.CbiServiceResult;
 
 public class CBIUtil
 {
-	private static Logger logger = Logger.getLogger(CBIUtil.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static OscarProperties oscarProperties = OscarProperties.getInstance();
 	
 	// submit cbi data to cbi web service

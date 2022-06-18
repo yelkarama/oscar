@@ -58,7 +58,7 @@ import oscar.OscarDocumentCreator;
  */
 public class PatientEndYearStatementAction extends OscarAction {
 	
-	private static final Logger _logger = Logger.getLogger(BillingStatusPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static final String RES_SUCCESS = "success";
 	private static final String RES_FAILURE = "failure";
 	

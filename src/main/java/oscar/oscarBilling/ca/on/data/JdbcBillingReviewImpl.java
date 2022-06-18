@@ -61,7 +61,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.ConversionUtils;
 
 public class JdbcBillingReviewImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcBillingReviewImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean("clinicLocationDao");
 	private BillingONCHeader1Dao dao = SpringUtils.getBean(BillingONCHeader1Dao.class);

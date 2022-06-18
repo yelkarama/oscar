@@ -60,7 +60,7 @@ import oscar.oscarLab.ca.all.upload.MessageUploader;
  * 
  */
 public class IHAHandler extends DefaultGenericHandler implements MessageHandler {
-    Logger logger = Logger.getLogger(IHAHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     String hl7Type = null;
     String proNo,UserID, Password,Alias;
     ArrayList<String> headerList = null;

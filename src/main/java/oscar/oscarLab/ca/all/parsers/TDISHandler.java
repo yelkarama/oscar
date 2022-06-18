@@ -57,7 +57,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class TDISHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(TDISHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private ca.uhn.hl7v2.model.v25.message.ORU_R01 msg = null;
 	private ArrayList<String> headers = null;

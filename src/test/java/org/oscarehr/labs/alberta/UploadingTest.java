@@ -51,7 +51,7 @@ public class UploadingTest extends DaoTestFixtures {
 	 */
 	public static final String CLIENT_KEY = "";
 
-	private static Logger logger = Logger.getLogger(UploadingTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	@BeforeClass
 	public static void init() throws Exception {

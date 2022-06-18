@@ -53,7 +53,7 @@ import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
  * @author  root
  */
 public class ABCDParser {
-   Logger logger = Logger.getLogger("cmlFileManagement.ABCDLogger");
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
    Atype reportFile = null;
    ArrayList<Atype> atypes = new ArrayList<Atype>();

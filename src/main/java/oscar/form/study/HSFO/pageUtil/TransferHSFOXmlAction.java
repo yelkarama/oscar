@@ -43,8 +43,7 @@ import oscar.oscarDemographic.data.DemographicData;
 
 public class TransferHSFOXmlAction extends Action
 {
-	protected static Logger logger = Logger
-			.getLogger(TransferHSFOXmlAction.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/**
 	 * @param args

@@ -57,7 +57,7 @@ import oscar.util.UtilDateUtilities;
  */
 public class EctDisplayAction extends Action {
 
-	private static Logger logger = Logger.getLogger(EctDisplayAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private static HashMap<String, String> Actions = null;
 	protected static final String ELLIPSES = "...";

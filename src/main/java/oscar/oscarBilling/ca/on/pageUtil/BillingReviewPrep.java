@@ -36,8 +36,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingPageUtil;
 import oscar.oscarBilling.ca.on.data.JdbcBillingReviewImpl;
 
 public class BillingReviewPrep {
-	private static final Logger _logger = Logger
-			.getLogger(BillingReviewPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	JdbcBillingReviewImpl dbObj = new JdbcBillingReviewImpl();
 

@@ -51,7 +51,7 @@ import org.oscarehr.util.SpringUtils;
 //Ignored until we fix foreign keys with tests
 @Ignore
 public class DefaultNoteServiceTest extends DaoTestFixtures {
-	private static Logger logger = Logger.getLogger(DefaultNoteServiceTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private NoteService service = SpringUtils.getBean(DefaultNoteService.class);
 

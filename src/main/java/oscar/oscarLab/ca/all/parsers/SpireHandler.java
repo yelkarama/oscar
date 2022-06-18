@@ -260,7 +260,7 @@ class Lines {
 public class SpireHandler implements MessageHandler {
     
     ORU_R01 msg = null;
-    Logger logger = Logger.getLogger(SpireHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     
     /** Creates a new instance of SpireHandler */
     public SpireHandler(){

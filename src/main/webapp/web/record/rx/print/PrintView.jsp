@@ -31,7 +31,7 @@
 <%@ page import="oscar.oscarProvider.data.ProSignatureData, oscar.oscarProvider.data.ProviderData"%>
 <%@ page import="oscar.log.*,oscar.oscarRx.data.*"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.apache.log4j.Logger,java.util.List" %>
+<%@ page import="org.apache.logging.log4j.Logger,java.util.List" %>
 
 <%@ page import="oscar.*,java.lang.*,java.util.Date,java.text.SimpleDateFormat,oscar.oscarRx.util.RxUtil,org.springframework.web.context.WebApplicationContext,
          org.springframework.web.context.support.WebApplicationContextUtils,
@@ -47,6 +47,7 @@
 <%@page import="org.oscarehr.ui.servlet.ImageRenderingServlet"%>
 <!-- end -->
 <%
+	Logger logger=org.oscarehr.util.MiscUtils.getLogger();
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String providerNo=loggedInInfo.getLoggedInProviderNo();
 	String scriptId=request.getParameter("scriptId");
@@ -444,13 +445,13 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                             StringBuilder strRxNoNewLines = new StringBuilder();
                                             
                                             List<Drug> drugList = prescriptionManager.getDrugsByScriptNo(loggedInInfo, prescription.getId(), null);
-                                            Logger.getLogger("preview_jsp").error("DRUG LIST SIZE$$$ "+drugList.size()+ "for script ID "+ prescription.getId());
+                                            logger.error("DRUG LIST SIZE$$$ "+drugList.size()+ "for script ID "+ prescription.getId());
                                             for(Drug drug: drugList){
                                             
                                                  String fullOutLine=drug.getFullOutLine().replaceAll(";","<br />");
 
                                                  if (fullOutLine==null || fullOutLine.length()<=6){
-                                                         Logger.getLogger("preview_jsp").error("drug full outline was null");
+                                                         logger.error("drug full outline was null");
                                                          fullOutLine="<span style=\"color:red;font-size:16;font-weight:bold\">An error occurred, please write a new prescription.</span><br />"+fullOutLine;
                                                  }
                                             %>

@@ -43,7 +43,7 @@ import oscar.util.ConversionUtils;
 @Ignore
 public class EaapsIntegrationTest extends DaoTestFixtures {
 
-	private static Logger logger = Logger.getLogger(EaapsIntegrationTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	/* SYSTEM-SPECIFIC TEST VALUES */
 	

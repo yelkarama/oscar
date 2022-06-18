@@ -50,7 +50,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
 
 public class MDSHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(MDSHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
 	
 

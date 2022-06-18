@@ -64,7 +64,7 @@ import oscar.oscarLab.ca.all.parsers.MEDITECHHandler.ORDER_STATUS;
 
 @RunWith(Parameterized.class)
 public class IHAPOIHandlerTest {
-	private static Logger logger = Logger.getLogger(IHAPOIHandlerTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static IHAPOIHandler handler;
 	private static ZipFile zipFile;
 	private static Document hl7XML;

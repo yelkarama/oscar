@@ -57,7 +57,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class CDLHandler implements MessageHandler {
 
     ORU_R01 msg = null;
-    Logger logger = Logger.getLogger(CDLHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private OBR obrseg = null;
 	private OBX obxseg = null;

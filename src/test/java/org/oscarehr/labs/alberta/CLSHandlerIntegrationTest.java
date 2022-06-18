@@ -48,7 +48,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Ignore
 public class CLSHandlerIntegrationTest {
 
-	private static Logger logger = Logger.getLogger(EaapsIntegrationTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	/* SYSTEM-SPECIFIC TEST VALUES */
 	

@@ -59,7 +59,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class OLISHL7Handler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(DefaultGenericHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	protected boolean isFinal = true;
 	protected boolean isCorrected = false;
 	protected Message msg = null;

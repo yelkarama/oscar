@@ -45,7 +45,7 @@ import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
 public class JdbcBillingRAImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcBillingRAImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private RaDetailDao raDetailDao = SpringUtils.getBean(RaDetailDao.class);
 	private RaHeaderDao raHeaderDao = SpringUtils.getBean(RaHeaderDao.class);

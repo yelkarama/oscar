@@ -88,7 +88,6 @@ public class CDMReminderHlp {
   /**
    * Returns a String list of demographic numbers for patients that are associated with the
    * specified provider number and who have been diagnosed with a chronic disease
-   * @param provNo String
    * @return ArrayList
    */
   private List<String[]> getCDMPatients(String[] codes) {

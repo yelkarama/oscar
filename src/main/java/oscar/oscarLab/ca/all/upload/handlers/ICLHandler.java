@@ -34,7 +34,7 @@ import oscar.oscarLab.ca.all.util.ICLUtilities;
  */
 public class ICLHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(ICLHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	Hl7TextInfoDao hl7TextInfoDao = SpringUtils.getBean(Hl7TextInfoDao.class);
 
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {

@@ -58,7 +58,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(DefaultGenericHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     protected Message msg = null;
     protected Terser terser;

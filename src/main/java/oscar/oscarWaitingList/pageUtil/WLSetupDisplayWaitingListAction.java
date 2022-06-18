@@ -53,7 +53,7 @@ import oscar.util.UtilDateUtilities;
 
 public final class WLSetupDisplayWaitingListAction extends Action {
 
-	private Logger log = Logger.getLogger(WLSetupDisplayWaitingListAction.class);
+	private Logger log = org.oscarehr.util.MiscUtils.getLogger();
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
