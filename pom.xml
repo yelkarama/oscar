@@ -66,6 +66,20 @@
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
             <version>1.90.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
 				<!-- LOGGING -->
 		<dependency>
@@ -79,11 +93,11 @@
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j2.version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 			<version>${log4j2.version}</version>
-		</dependency> -->
+		</dependency>
 		<!--Enables log4j-2 binding from libraries that still use older Log4j-1 -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -996,6 +1010,16 @@
 			<groupId>org.oscarehr</groupId>
 			<artifactId>myoscar_client_utils</artifactId>
 			<version>2013.07.22.TLS</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.oscarehr</groupId>
+					<artifactId>util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -1040,6 +1064,10 @@
 				<exclusion>
 					<groupId>org.bouncycastle</groupId>
 					<artifactId>bcprov-jdk15</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1128,6 +1156,10 @@
 							<groupId>org.bouncycastle</groupId>
 							<artifactId>bcprov-jdk16</artifactId>
 						</exclusion>
+						<exclusion>
+							<groupId>log4j</groupId>
+							<artifactId>log4j</artifactId>
+						</exclusion>
                 </exclusions>
         </dependency>
         <dependency>
@@ -1183,6 +1215,12 @@
 	  <groupId>org.oscarehr.caisi_integrator</groupId>
 	  <artifactId>integrator-objects</artifactId>
 	  <version>0.0.4</version>
+		<exclusions>
+			<exclusion>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+			</exclusion>
+		</exclusions>
 	</dependency>
 	
 	<!-- This is a dependency for the Caisi Integrator Objects. Only required until

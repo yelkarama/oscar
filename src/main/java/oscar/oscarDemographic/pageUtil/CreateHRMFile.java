@@ -38,7 +38,7 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
+import org.oscarehr.util.MiscUtils;
 
 import cds.DemographicsDocument;
 import cds.DemographicsDocument.Demographics.Enrolment.EnrolmentHistory;
