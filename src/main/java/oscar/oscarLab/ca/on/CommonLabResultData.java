@@ -34,7 +34,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import org.oscarehr.billing.CA.BC.dao.Hl7MshDao;
@@ -463,7 +463,7 @@ public class CommonLabResultData {
 			}
 			return true;
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in MDSResultsData.updateReportStatus()", e);
 			return false;
 		} finally {
@@ -542,7 +542,7 @@ public class CommonLabResultData {
 			return result;
 
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in CommonLabResultData.updateLabRouting()", e);
 			return false;
 		}
@@ -584,7 +584,7 @@ public class CommonLabResultData {
 
 			return true;
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in CommonLabResultData.updateLabRouting()", e);
 			return false;
 		}

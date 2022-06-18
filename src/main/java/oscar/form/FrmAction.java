@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -55,7 +55,7 @@ import oscar.log.LogConst;
 
 public final class FrmAction extends Action {
     
-    Logger log = Logger.getLogger(FrmAction.class);
+	Logger log = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,

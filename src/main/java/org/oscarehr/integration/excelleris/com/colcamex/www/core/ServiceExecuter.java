@@ -26,7 +26,7 @@ package org.oscarehr.integration.excelleris.com.colcamex.www.core;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 /**
  * @author Dennis Warren Colcamex Resources
  * 
@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class ServiceExecuter implements Runnable {
 
-	private static Logger logger = Logger.getLogger("ServiceExecuter");
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private AbstractConnectionController service;
 	private static ServiceExecuter instance = null;

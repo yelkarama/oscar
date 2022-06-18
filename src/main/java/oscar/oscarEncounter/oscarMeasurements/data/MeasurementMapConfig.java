@@ -44,7 +44,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.MeasurementMapDao;
 import org.oscarehr.common.dao.RecycleBinDao;
 import org.oscarehr.common.model.MeasurementMap;
@@ -58,7 +58,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class MeasurementMapConfig {
 
-    Logger logger = Logger.getLogger(MeasurementMapConfig.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private MeasurementMapDao dao = SpringUtils.getBean(MeasurementMapDao.class);
 
 

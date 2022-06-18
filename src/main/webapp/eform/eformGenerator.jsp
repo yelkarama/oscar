@@ -46,7 +46,7 @@
 <%@ page import="oscar.eform.data.*"%>
 <%@ page import="oscar.eform.actions.DisplayImageAction"%>
 <%@ page import="oscar.OscarProperties"%>
-<%@ page import="org.apache.log4j.Logger"%>
+<%@ page import="org.apache.logging.log4j.Logger" %>
 <!--
 eForm Generator version 7.1
 		7.1 bug fixes

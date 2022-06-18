@@ -32,9 +32,10 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.ControllerHandler;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.PollTimer;
+
 
 import oscar.OscarProperties;
 
@@ -51,7 +52,7 @@ import oscar.OscarProperties;
  */
 public class StartupListener implements ServletContextListener {
 
-	public static Logger logger = Logger.getLogger("ExpediusStartupListener");
+	public static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static Properties properties;
 	private static final String keyFilePath = "./keys.txt";
 	

@@ -36,7 +36,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.cxf.annotations.GZIP;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.common.model.CtlDocument;
 import org.oscarehr.common.model.Document;

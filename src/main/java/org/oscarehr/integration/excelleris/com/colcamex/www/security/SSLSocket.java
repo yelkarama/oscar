@@ -44,7 +44,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 /**
  * @author Dennis Warren Colcamex Resources
  * 
@@ -58,7 +58,7 @@ import org.apache.log4j.Logger;
  */
 public class SSLSocket {
 	
-	private Logger logger = Logger.getLogger("SSLSocket");
+	private Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private final String DEFAULT_PROVIDER = "SunJSSE";
 	private static final String DEFAULT_FACTORY_TYPE = "SunX509";

@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import oscar.oscarLab.ca.on.LabResultData;
@@ -26,7 +26,7 @@ import oscar.oscarLab.ca.on.LabResultData;
 @Transactional
 public class InboxResultsDao {
 
-	Logger logger = Logger.getLogger(InboxResultsDao.class);
+	Logger logger= org.oscarehr.util.MiscUtils.getLogger();
 
 	@PersistenceContext
 	protected EntityManager entityManager = null;

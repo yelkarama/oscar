@@ -55,7 +55,7 @@ import oscar.oscarMessenger.data.MsgProviderData;
  */
 public class SFTPConnector {
 
-	private static org.apache.log4j.Logger logger=MiscUtils.getLogger();
+	private static org.apache.logging.log4j.Logger logger=MiscUtils.getLogger();
 	
 	private JSch jsch;
 	private ChannelSftp cmd;

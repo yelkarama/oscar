@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ca.uhn.hl7v2.model.Type;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.util.UtilDateUtilities;

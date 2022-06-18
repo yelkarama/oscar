@@ -24,7 +24,7 @@
 
 package org.oscarehr.ws.rest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.UserDSMessagePrefsDao;
 import org.oscarehr.common.model.UserDSMessagePrefs;
 import org.oscarehr.managers.DrugLookUp;

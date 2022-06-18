@@ -35,11 +35,9 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
 
 import cds.DemographicsDocument;
 import cds.DemographicsDocument.Demographics.Enrolment.EnrolmentHistory;
@@ -87,6 +85,7 @@ import oscar.OscarProperties;
  * @author ronnie
  */
 public class CreateHRMFile {
+	private static Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
     static public void create(DemographicsDocument.Demographics demographic, List<Reports> reports, String filepath) {
 
@@ -116,10 +115,10 @@ public class CreateHRMFile {
         try {
             omdCdsDoc.save(file, options);
         } catch (IOException ex) {
-            Logger.getLogger(CreateHRMFile.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("io error", ex);
         }
         
-        MiscUtils.getLogger().debug("saved HRM file: " + filepath);
+        log.debug("saved HRM file: " + filepath);
     }
 
     static private void writeDemographics(DemographicsDocument.Demographics demo, Demographics HRMdemo) {
@@ -151,7 +150,7 @@ public class CreateHRMFile {
 	            }	
         	}
         } else {
-        	Logger.getLogger(CreateHRMFile.class.getName()).log(Level.WARNING, null, "Error! No Legal Name or Other Name");
+        	log.info("Error! No Legal Name or Other Name");
         }
 
         PersonNameStandard HRMpersonName = HRMdemo.addNewNames();

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hl7.fhir.r4.model.Attachment;
 
 import org.hl7.fhir.r4.model.BaseResource;

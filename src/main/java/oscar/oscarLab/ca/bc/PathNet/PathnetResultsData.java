@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.Hl7MessageDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7MshDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7ObrDao;
@@ -71,7 +71,7 @@ public class PathnetResultsData {
 	private Hl7PidDao hl7PidDao = SpringUtils.getBean(Hl7PidDao.class);
 	private EFormDocsDao eformDocsDao = SpringUtils.getBean(EFormDocsDao.class);
 	
-	Logger logger = Logger.getLogger(PathnetResultsData.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/**
 	 * Populates ArrayList with labs attached to a consultation

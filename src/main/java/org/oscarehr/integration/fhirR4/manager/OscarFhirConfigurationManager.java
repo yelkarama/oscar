@@ -23,7 +23,7 @@ package org.oscarehr.integration.fhirR4.manager;
  * Ontario, Canada
  */
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.fhirR4.builder.DestinationFactory;
 import org.oscarehr.integration.fhirR4.builder.ResourceAttributeFilterFactory;
 import org.oscarehr.integration.fhirR4.builder.SenderFactory;

@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 import com.auth0.jwt.JWT;

@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.oscarehr.util.MiscUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class EReferAction extends Action {
 	private static Logger log = MiscUtils.getLogger();

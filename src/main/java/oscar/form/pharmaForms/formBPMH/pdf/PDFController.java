@@ -36,8 +36,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
@@ -151,7 +151,7 @@ public class PDFController {
 				this.pdfreader = reader;
 			}
 		} catch (IOException e) {
-			_Logger.log(Level.FATAL, null, e);
+			_Logger.log(Level.FATAL, e);
 		}
 
 	}
@@ -241,7 +241,6 @@ public class PDFController {
 	 * 
 	 * Assuming that the pdf input path has been preset.
 	 * 
-	 * @param data : data object that contains data.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addDataToPDF() {
@@ -318,8 +317,6 @@ public class PDFController {
 	 * 
 	 * See test class with same name for example.
 	 * 
-	 * @param Data : object or bean containing data to stamp.
-	 * @param Pages : page numbers to stamp data onto
 	 * @param fileId : An id, such as demographic number, to identify the file.
 	 */
 	public void writeDataToPDF( Object data, String[] pages, String fileId ) {
@@ -343,8 +340,6 @@ public class PDFController {
 	 * 
 	 * See test class with same name for example.
 	 * 
-	 * @param Data : object or bean containing data to stamp.
-	 * @param Pages : page numbers to stamp data onto
 	 * @param outPath : outPut path for completed PDF.
 	 * @param pdfPath : the absolute path to an editable pdf template. 
 	 */
@@ -400,19 +395,19 @@ public class PDFController {
 				getStamper().setFreeTextFlattening(true);
 
 			} catch (FileNotFoundException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL, e1);
 			} catch (DocumentException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL, e1);
 			} catch (IOException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL, e1);
 			} finally {	
 				if(getStamper() != null) {
 					try {
 						getStamper().close();
 					} catch (DocumentException e) {
-						_Logger.log(Level.FATAL, null, e);
+						_Logger.log(Level.FATAL, e);
 					} catch (IOException e) {
-						_Logger.log(Level.FATAL, null, e);
+						_Logger.log(Level.FATAL, e);
 					}
 				}
 			}
@@ -556,7 +551,6 @@ public class PDFController {
 	 * Method Map and POJO Object set in current Object state.  
 	 * ie: demographic.phoneNumber
 	 * 
-	 * @param key
 	 * @return
 	 */
 	public String invokeValue(String methodName) {
@@ -571,7 +565,6 @@ public class PDFController {
 
 	/**
 	 * String return values only.
-	 * @param <E>
 	 * @param methodName
 	 * @param methodMap
 	 * @param data
