@@ -28,10 +28,12 @@ import javax.mail.Session;
 
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.log4j.helpers.LogLog;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
 
 public class Log4JGmailExecutorTask implements Runnable
 {
+	private static Logger logger = MiscUtils.getLogger();
 	private String smtpServer = null;
 	private String smtpUser = null;
 	private String smtpPassword = null;
@@ -86,7 +88,7 @@ public class Log4JGmailExecutorTask implements Runnable
 		}
 		catch (Exception e)
 		{
-			LogLog.error("Error logging error to gmail.", e);
+			logger.error("Error logging error to gmail.", e);
 		}
 	}
 }
