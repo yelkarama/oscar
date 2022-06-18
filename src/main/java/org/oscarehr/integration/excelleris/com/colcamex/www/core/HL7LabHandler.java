@@ -40,7 +40,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.log4j.Level;
+
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.w3c.dom.Document;
@@ -61,7 +61,7 @@ import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
  */
 public class HL7LabHandler {
 
-	public static Logger logger = Logger.getLogger("ExpediusHL7LabHandler");
+	public static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private static final String DEFAULT_SAVE_PATH = "/var/lib/expedius/labs/";
 	private static final String DOCUMENT_FORMAT = "UTF-8";
@@ -240,7 +240,7 @@ public class HL7LabHandler {
 		if( newDirectory.mkdir() ) {
 			logger.info("New lab save directory created at " + newDirectory.getAbsolutePath());
 		} else {
-			logger.log(Level.ERROR, "Failed to create new save directory.");
+			logger.error("Failed to create new save directory.");
 		}
 	}
 
@@ -478,7 +478,7 @@ public class HL7LabHandler {
 			try {
 				byteArrayInputStream.close();
 			} catch (IOException e) {
-				logger.log(Level.ERROR,"Closing outputstream failed", e);
+				logger.error("Closing outputstream failed", e);
 			}
 		}
 		
@@ -486,7 +486,7 @@ public class HL7LabHandler {
 			try {
 				outputStream.close();
 			} catch (IOException e) {
-				logger.log(Level.ERROR, "Closing outputstream failed", e);
+				logger.error("Closing outputstream failed", e);
 			}
 		}
 		
@@ -494,7 +494,7 @@ public class HL7LabHandler {
 			try {
 				inputStream.close();
 			} catch (IOException e) {
-				logger.log(Level.ERROR, "Closing inputStream failed", e);
+				logger.error("Closing inputStream failed", e);
 			}
 		}
 	}

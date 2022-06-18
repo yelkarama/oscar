@@ -584,7 +584,7 @@ public class CommonLabResultData {
 
 			return true;
 		} catch (Exception e) {
-			Logger l = Logger.getLogger(CommonLabResultData.class);
+			Logger l = org.oscarehr.util.MiscUtils.getLogger();
 			l.error("exception in CommonLabResultData.updateLabRouting()", e);
 			return false;
 		}

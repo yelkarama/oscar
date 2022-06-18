@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ServiceExecuter implements Runnable {
 
-	private static Logger logger = Logger.getLogger("ServiceExecuter");
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private AbstractConnectionController service;
 	private static ServiceExecuter instance = null;

@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MessageHandler {
 	
-	public static Logger logger = Logger.getLogger(MessageHandler.class);
+	public static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private String statusMessage;
 	private ArrayList<String> errorMessages;
 	private Date lastDownload;
