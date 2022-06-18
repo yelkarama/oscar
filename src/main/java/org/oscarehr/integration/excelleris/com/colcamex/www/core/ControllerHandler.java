@@ -30,7 +30,7 @@ import java.util.concurrent.ScheduledFuture;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.main.*;
 import oscar.util.StringUtils;
-
+import org.oscarehr.util.MiscUtils;
 /**
  * @author Dennis Warren Colcamex Resources
  * 

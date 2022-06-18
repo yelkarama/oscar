@@ -30,7 +30,7 @@ import oscar.oscarLab.ca.all.upload.handlers.DefaultHandler;
 import oscar.oscarLab.ca.all.util.Utilities;
 
 public class HRMUploadKeyAction extends Action {
-    Logger logger = Logger.getLogger(HRMUploadKeyAction.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {

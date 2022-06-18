@@ -297,4 +297,107 @@ public final class MiscUtils {
 		MiscUtils.shutdownSignaled=shutdownSignaled;
 	}
 
+	/**
+	 * This menthod should only ever be called by a context startup listener. Other than that, the shutdown signal should be set by the shutdown hook.
+	 */
+	protected static void setShutdownSignaled(boolean shutdownSignaled) {
+		MiscUtilsOld.shutdownSignaled=shutdownSignaled;
+	}
+
+	public static byte[] propertiesToXmlByteArray(Properties p) throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		p.storeToXML(os, null);
+		return (os.toByteArray());
+	}
+
+	public static Properties xmlByteArrayToProperties(byte[] b) throws IOException {
+		Properties p = new Properties();
+
+		ByteArrayInputStream is = new ByteArrayInputStream(b);
+		p.loadFromXML(is);
+
+		return (p);
+	}
+
+	
+	/**
+	 * This method should only really be called once per context in the context startup listener.
+	 * 
+	 * The purpose of this is to allow customisations to the logging on a per-deployment basis with out
+	 * needing to commit the configuration to cvs while at the same time allowing you to keep your
+	 * configuration through multiple deployments. As an example, if you modified the WEB-INF/classes/log4j.xml
+	 * either you have to commit that and everyone gets your configuration, or you don't commit it,
+	 * every new deploy will over write changes you made locally to your log4j.xml. This helper method alleviates this problem.
+	 * 
+	 * The functionality of this is as follows :
+	 * 
+	 * The system configuration parameter "log4j.override.configuration" specifies the file to use
+	 * to override overlay on top of the default log4j.xml file. This can be a relative or absolute path.
+	 * An example maybe "/home/foo/my_override_log4j.xml"
+	 * 
+	 * The filename specified is allowed to have a special placeholder ${contextName}, this allows the
+	 * system variable to be used when multiple oscar contexts exist. As an example it maybe
+	 * "/home/foo/${contextName}_log4.xml". During runtime, when each context startup calls this method
+	 * the ${contextName} is replaced with the contextPath. So as an example of you had 2 contexts called
+	 * "asdf" and "zxcv" respectively, it will look for /home/foo/asdf_log4j.xml and /home/foo/zxcv_log4j.xml.
+	 */
+	protected static void addLoggingOverrideConfiguration(String contextPath)
+	{
+		String configLocation = System.getProperty("log4j.override.configuration");
+		if (configLocation != null)
+		{
+			if (configLocation.contains("${contextName}"))
+			{	
+				if (contextPath != null)
+				{
+					if (contextPath.length() > 0 && contextPath.charAt(0) == '/') contextPath = contextPath.substring(1);
+					if (contextPath.length() > 0 && contextPath.charAt(contextPath.length() - 1) == '/')
+						contextPath = contextPath.substring(0, contextPath.length() - 2);
+				}
+				
+				configLocation=configLocation.replace("${contextName}", contextPath);
+			}
+			
+			getLogger().info("loading additional override logging configuration from : "+configLocation);
+			DOMConfigurator.configureAndWatch(configLocation);
+		}
+	}
+
+
+	/*
+	 * Null safe getSize()
+	 */
+	public static Integer getSize(List list){
+		if (list == null) return null;
+		return list.size();
+	}
+
+
+   
+    /**
+     * You better have a good reason for using this. This ain't something you normally do.
+     */
+	public static final byte[] serialiseToByteArray(Serializable s) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(s);
+
+		return (baos.toByteArray());
+	}
+
+    /**
+     * You better have a good reason for using this. This ain't something you normally do.
+     */
+	public static final Serializable deserialiseFromByteArray(byte b[]) throws IOException, ClassNotFoundException {
+		return ((Serializable) (new ObjectInputStream(new ByteArrayInputStream(b))).readObject());
+	}
+	
+	public static String getUserNameNoDomain(String s)
+	{
+		if (s==null) return(null);
+		
+		int indexOfAt=s.indexOf('@');
+		if (indexOfAt!=-1) s = s.substring(0,indexOfAt);
+		return(s);
+	}
 }

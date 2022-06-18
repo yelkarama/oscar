@@ -83,7 +83,7 @@ public class HRMAction extends DispatchAction {
 
 	static int draw = 0;
 	
-	Logger logger = MiscUtils.getLogger();
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private HRMDocumentDao hrmDocumentDao = SpringUtils.getBean(HRMDocumentDao.class);
 	private UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");

@@ -51,7 +51,7 @@ public class PollTimer {
 	// polling frequencies
 	private static final Integer INITIAL_DELAY = (60*30); // download after 10 minutes of start.
 
-	private static Logger logger = Logger.getLogger("PollTimer");
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private static int pollFrequency;
 	private static boolean hostStatus;

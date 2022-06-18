@@ -40,7 +40,7 @@ import oscar.oscarLab.ca.all.parsers.OLISHL7Handler;
  */
 public class PrintOLISLabsAction extends Action{
     
-    Logger logger = Logger.getLogger(PrintLabsAction.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     /** Creates a new instance of PrintLabsAction */

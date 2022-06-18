@@ -71,7 +71,7 @@ public class PathnetResultsData {
 	private Hl7PidDao hl7PidDao = SpringUtils.getBean(Hl7PidDao.class);
 	private EFormDocsDao eformDocsDao = SpringUtils.getBean(EFormDocsDao.class);
 	
-	Logger logger = Logger.getLogger(PathnetResultsData.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/**
 	 * Populates ArrayList with labs attached to a consultation

@@ -35,6 +35,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.ControllerHandler;
 import org.oscarehr.integration.excelleris.com.colcamex.www.core.PollTimer;
+import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
 

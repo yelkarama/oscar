@@ -67,7 +67,7 @@ import com.lowagie.text.pdf.PdfWriter;
 public class FrmPDFServlet extends HttpServlet {
 
     public static final String HSFO_RX_DATA_KEY = "hsfo.rx.data";
-    Logger log = Logger.getLogger(FrmPDFServlet.class);
+    Logger log = org.oscarehr.util.MiscUtils.getLogger();
     /**
      *
      *

@@ -61,7 +61,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
 
 public class FHIRCommunicationRequestHandler  implements MessageHandler{
 
-	protected static Logger logger = Logger.getLogger(FHIRCommunicationRequestHandler.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static FhirContext fhirContext = FhirContext.forDstu3();
 	private ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean("providerInboxRoutingDAO");
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

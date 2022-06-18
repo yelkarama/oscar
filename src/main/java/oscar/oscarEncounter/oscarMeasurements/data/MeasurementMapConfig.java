@@ -58,7 +58,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class MeasurementMapConfig {
 
-    Logger logger = Logger.getLogger(MeasurementMapConfig.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private MeasurementMapDao dao = SpringUtils.getBean(MeasurementMapDao.class);
 
 
