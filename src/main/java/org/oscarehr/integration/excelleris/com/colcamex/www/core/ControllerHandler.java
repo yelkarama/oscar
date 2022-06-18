@@ -30,7 +30,7 @@ import java.util.concurrent.ScheduledFuture;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.excelleris.com.colcamex.www.main.*;
 import oscar.util.StringUtils;
-import org.oscarehr.util.MiscUtils;
+
 /**
  * @author Dennis Warren Colcamex Resources
  * 
@@ -44,7 +44,7 @@ import org.oscarehr.util.MiscUtils;
  */
 public class ControllerHandler {
 	
-	public static Logger logger = Logger.getLogger(ControllerHandler.class);
+	public static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private static final String DEFAULT_PROVIDER = "999999";
 	private static final String DEFAULT_SERVICE_NAME = "Excelleris";
