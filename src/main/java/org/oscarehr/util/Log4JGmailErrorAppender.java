@@ -27,9 +27,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Priority;
-import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
@@ -59,6 +59,7 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class Log4JGmailErrorAppender extends AppenderSkeleton implements ThreadFactory
 {
+	private static Logger logger = MiscUtils.getLogger();
 	private ExecutorService executorService=Executors.newSingleThreadExecutor(this);
 	
 	private String smtpServer="smtp.gmail.com";
@@ -94,7 +95,7 @@ public class Log4JGmailErrorAppender extends AppenderSkeleton implements ThreadF
 				catch (NullPointerException e)
 				{
 					// this is okay, no throableStrRep available
-					LogLog.debug("no throableStrRep available", e);
+					logger.debug("no throableStrRep available", e);
 				}
 
 				
@@ -104,7 +105,7 @@ public class Log4JGmailErrorAppender extends AppenderSkeleton implements ThreadF
 		}
 		catch (Exception e)
 		{
-			LogLog.error("Unexpected error.", e);
+			logger.error("Unexpected error.", e);
 		}		
 	}
 
