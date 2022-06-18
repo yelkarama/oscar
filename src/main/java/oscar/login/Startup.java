@@ -46,6 +46,7 @@ public class Startup implements ServletContextListener {
 	private oscar.OscarProperties p = oscar.OscarProperties.getInstance();
 
 	public void contextInitialized(ServletContextEvent sc) {
+		logger.info( "Starting OSCAR application " );
 		try {
 			logger.debug("contextInit");
 

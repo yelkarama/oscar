@@ -33,6 +33,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -77,7 +78,7 @@ public class FrmBCAR2020Action extends DispatchAction {
     private FormBCAR2020TextDao bcar2020TextDao = SpringUtils.getBean(FormBCAR2020TextDao.class);
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-    private final Logger logger = LoggerFactory.getLogger(FrmBCAR2020Record.class);
+    private final Logger logger = MiscUtils.getLogger();
     private final String RECORD_NAME = "BCAR2020";
     private SimpleDateFormat formDateFormat = new SimpleDateFormat( "yyyy/MM/dd");
 
