@@ -51,15 +51,6 @@
          <id>local_repo</id>
          <url>file://${basedir}/local_repo</url>
       </repository>
-      <repository>
-         <id>hapi-sf</id>
-         <name>HAPI Sourceforge Repository</name>
-         <url>http://hl7api.sourceforge.net/m2</url>
-      </repository>
-      <repository>
-         <id>oscar_repo</id>
-         <url>http://oscarmcmaster.sourceforge.net/m2</url>
-      </repository>
    </repositories>
    <pluginRepositories>
       <pluginRepository>
@@ -761,7 +752,7 @@
       <dependency>
          <groupId>net.sf.jtidy</groupId>
          <artifactId>jtidy</artifactId>
-         <version>1.0.2</version>
+         <version>r938</version>
       </dependency>
       <!-- xerces -->
       <dependency>
