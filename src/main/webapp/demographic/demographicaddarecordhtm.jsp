@@ -1267,7 +1267,7 @@ background-color:gainsboro;
                 <input type="text" id="postal" placeholder="<bean:message key="demographic.demographiceditdemographic.formPostal" /> " 
                     name="postal" value="<%=StringUtils.trimToEmpty(postal)%>" onBlur="upCaseCtrl(this)" maxlength=10
 <% if (checkP) { %>
-pattern="[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTVXY]\s\d[ABCEGHJ-NPRSTVXY]\d"
+pattern="[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTVXYWZ]\s\d[ABCEGHJ-NPRSTVXYWZ]\d"
 required
 data-validation-pattern-message="<bean:message key="demographic.demographiceditdemographic.alertpostal" />"
 <% } %>
@@ -1456,7 +1456,7 @@ function clearResidence(){
               <input type="text" id="rPostal" placeholder="<bean:message key="demographic.demographiceditdemographic.formResidentialPostal" />"
                     name="residentialPostal" 
 <% if (checkP) { %>
-pattern="[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTVXY]\s\d[ABCEGHJ-NPRSTVXY]\d"
+pattern="[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTVXYWZ]\s\d[ABCEGHJ-NPRSTVXYWZ]\d"
 data-validation-pattern-message="<bean:message key="demographic.demographiceditdemographic.alertpostal" />"
 <% } %>
 					onBlur="upCaseCtrl(this)" >
