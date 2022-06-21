@@ -49,6 +49,9 @@
 <%@page import="org.oscarehr.util.LocaleUtils"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
+
+<%@page import="org.apache.logging.log4j.Logger"%>
+
 <%@page import="org.oscarehr.managers.PreventionManager"%>
 <%@page import="org.owasp.encoder.Encode"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -59,8 +62,11 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-	// long startTime = System.nanoTime();
-    // long endTime = System.nanoTime();
+	long startTime = System.nanoTime();
+    long endTime = System.nanoTime();
+Logger logger = MiscUtils.getLogger();
+logger.info("starting loading preventions");
+
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	boolean authed=true;
 %>
@@ -75,6 +81,8 @@ if(!authed) {
 }
 %>
 <%
+
+
 	String demographic_no = request.getParameter("demographic_no");
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	
@@ -934,6 +942,8 @@ if(bShowAll){
 
 								<div class="preventionSection">
 									<!-- <%=prevName%> <%=i%> of <%=prevList.size()%> -->
+                                    <input type="hidden" id="preventionHeader<%=i%>"
+				name="preventionHeader<%=i%>" value="<%=h.get("name")%>"> 
 									<%
 									String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
 									boolean ispa = h.get("ispa") != null ? Boolean.valueOf(h.get("ispa")) : false;
@@ -994,6 +1004,13 @@ if(bShowAll){
 												+ hdata.get("integratorFacilityId") + "&remotePreventionId=" + hdata.get("integratorPreventionId")
 												+ "&amp;demographic_no=" + demographic_no + "')";
 										%>
+
+<input type="hidden" id="preventProcedureProvider<%=i%>-<%=k%>" name="preventProcedureProvider<%=i%>-<%=k%>" value="<%=hdata.get("provider_name")%>" /> 
+<input type="hidden" id="preventProcedureStatus<%=i%>-<%=k%>" name="preventProcedureStatus<%=i%>-<%=k%>" value="<%=hdata.get("refused")%>"> 
+<input type="hidden" id="preventProcedureAge<%=i%>-<%=k%>" name="preventProcedureAge<%=i%>-<%=k%>" value="<%=hdata.get("age")%>"> 
+<input type="hidden" id="preventProcedureDate<%=i%>-<%=k%>" name="preventProcedureDate<%=i%>-<%=k%>" value="<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>">
+<input type="hidden" id="preventProcedureComments<%=i%>-<%=k%>"	name="preventProcedureComments<%=i%>-<%=k%>" value="<%=StringEscapeUtils.escapeHtml(hExt.get("comments"))%>">
+
 
 										<div class="preventionProcedure" onclick="<%=onClickCode%>"
 											title="fade=[on] header=[<%=StringEscapeUtils.escapeHtml((String) hdata.get("age"))%> -- Date:<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>] body=[<%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%>&lt;br/&gt;Administered By: <%=StringEscapeUtils.escapeHtml((String) hdata.get("provider_name"))%>]">
@@ -1272,49 +1289,9 @@ if(bShowAll){
 				value="<%=demographic_no%>" />
 
 			<%
-if(bShowAll){
-            // endTime = System.nanoTime();
-            // .println("Starting Hidden Preventions after " + (endTime - startTime)/1000 + " milliseconds");
-			for (int i = 0; i < prevList.size(); i++) {
-				HashMap<String, String> h = prevList.get(i);
-				String prevName = h.get("name");
-				ArrayList<Map<String, Object>> alist = PreventionData.getPreventionData(loggedInInfo, prevName,
-				Integer.valueOf(demographic_no));
-				if (bIntegrator){PreventionData.addRemotePreventions(loggedInInfo, alist, demographicId, prevName, demographicDateOfBirth);}
-				if (alist.size() > 0) {
-			%>
-			<input type="hidden" id="preventionHeader<%=i%>"
-				name="preventionHeader<%=i%>" value="<%=h.get("name")%>"> <%
- for (int k = 0; k < alist.size(); k++) {
- 	Map<String, Object> hdata = alist.get(k);
- 	Map<String, String> hExt = PreventionData.getPreventionKeyValues((String) hdata.get("id"));
- %> <input type="hidden" id="preventProcedureProvider<%=i%>-<%=k%>"
-				name="preventProcedureProvider<%=i%>-<%=k%>"
-				value="<%=hdata.get("provider_name")%>" /> <input type="hidden"
-				id="preventProcedureStatus<%=i%>-<%=k%>"
-				name="preventProcedureStatus<%=i%>-<%=k%>"
-				value="<%=hdata.get("refused")%>"> <input type="hidden"
-					id="preventProcedureAge<%=i%>-<%=k%>"
-					name="preventProcedureAge<%=i%>-<%=k%>"
-					value="<%=hdata.get("age")%>"> <input type="hidden"
-						id="preventProcedureDate<%=i%>-<%=k%>"
-						name="preventProcedureDate<%=i%>-<%=k%>"
-						value="<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>">
-							<%
-							String comments = hExt.get("comments");
-							if (comments != null && !comments.isEmpty()
-									&& OscarProperties.getInstance().getBooleanProperty("prevention_show_comments", "true")) {
-							%>
-							<input type="hidden" id="preventProcedureComments<%=i%>-<%=k%>"
-							name="preventProcedureComments<%=i%>-<%=k%>"
-							value="<%=StringEscapeUtils.escapeHtml(comments)%>"> <%
- }
- }
- }
- } //for there are preventions
-}
-            // endTime = System.nanoTime();
-            // .println("Thats all folks after " + (endTime - startTime)/1000 + " milliseconds");
+
+            endTime = System.nanoTime();
+            logger.info("Thats all folks after " + ((endTime - startTime)/1000)/1000 + " seconds");
  %>
 								</form>
 		</tr>
