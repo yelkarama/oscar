@@ -1130,7 +1130,16 @@
                     providerList.appendChild(adoc);
                     
                 }
-
+var resultFormatter2 = function(oResultData, sQuery, sResultMatch) {
+	var output = '';
+	
+	if(oResultData[3]=="AC") {
+		output = '<b>' + oResultData[0]+" ("+oResultData[1]+") "+oResultData[3] + '</b>';
+	} else {
+		output = oResultData[0]+" ("+oResultData[1]+") "+oResultData[3];
+	}
+   	return output;
+}
                 YAHOO.example.BasicRemote = function() {
                     if($("autocompletedemo") && $("autocomplete_choices")){
                         
@@ -1154,9 +1163,10 @@
                         oAC.maxResultsDisplayed = 25;
                         oAC.formatResult = resultFormatter2;
                         oAC.queryMatchContains = true;
+
                         
                         oAC.itemSelectEvent.subscribe(function(type, args) {
-                            
+                           
                             var str = args[0].getInputEl().id.replace("autocompletedemo","demofind");
                             
                             
