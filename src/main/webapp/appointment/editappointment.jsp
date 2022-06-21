@@ -836,12 +836,19 @@ function parseSearch() {
         <% // multisites start ==================
         boolean isSiteSelected = false;
         if (bMultisites) { %>
+<style>
+	        <% for (Site s:sites) { %>
+.<%=s.getShortName()%> {
+    background-color:<%=s.getBgColor()%>;
+}
+	        <% } %>
+</style>
 				        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 				<%
 					StringBuilder sb = new StringBuilder();
 					for (Site s:sites) {
 						if (s.getName().equals(loc)) isSiteSelected = true; // added by vic
-						sb.append("<option value=\"").append(s.getName()).append("\" style=\"background-color: ").append(s.getBgColor()).append("\" ").append(s.getName().equals(loc)?"selected":"").append(">").append(s.getName()).append("</option>");
+						sb.append("<option value=\"").append(s.getName()).append("\" class=\"").append(s.getShortName()).append("\" style=\"background-color: ").append(s.getBgColor()).append("\" ").append(s.getName().equals(loc)?"selected":"").append(">").append(s.getName()).append("</option>");
 					}
 					if (isSiteSelected) {
 						out.println(sb.toString());
@@ -947,16 +954,26 @@ function parseSearch() {
                   importedStatus = appt.getImportedStatus();
               }
 
-
+              int curSelect =-1;
               String signOrVerify = "";
               if (statusCode.length() >= 2){
                   signOrVerify = statusCode.substring(1,2);
                   statusCode = statusCode.substring(0,1);
               }
               if (strEditable!=null && strEditable.equalsIgnoreCase("yes")) { %>
-                <select name="status" >
+<style>
+	        <% for (int i = 0; i < allStatus.size(); i++) {
+                if (((AppointmentStatus)allStatus.get(i)).getStatus().equals(statusCode)) { curSelect=i;}
+
+%>
+.<%=((AppointmentStatus)allStatus.get(i)).getStatus()%> {
+    background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>;
+}
+	        <% } %>
+</style>
+                <select name="status" style="background-color:<%=((AppointmentStatus)allStatus.get(curSelect)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
 					<% for (int i = 0; i < allStatus.size(); i++) { %>
-					<option
+					<option class="<%=((AppointmentStatus)allStatus.get(i)).getStatus()%>" style="background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>"
 						value="<%=((AppointmentStatus)allStatus.get(i)).getStatus()+signOrVerify%>"
 						<%=((AppointmentStatus)allStatus.get(i)).getStatus().equals(statusCode)?"SELECTED":""%>><%=((AppointmentStatus)allStatus.get(i)).getDescription()%></option>
 					<% } %>

@@ -1009,9 +1009,16 @@ function parseSearch() {
             <td>
 		<% // multisites start ==================
 		if (bMultisites) { %>
+<style>
+	        <% for (Site s:sites) { %>
+.<%=s.getShortName()%> {
+    background-color:<%=s.getBgColor()%>;
+}
+	        <% } %>
+</style>
 	        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 	        <% for (Site s:sites) { %>
-	                <option value="<%=s.getName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=s.getName()%></option>
+	                <option value="<%=s.getName()%>" class="<%=s.getShortName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=s.getName()%></option>
 	        <% } %>
 	        </select>
 		<% } else {
@@ -1076,9 +1083,17 @@ function parseSearch() {
             <td>              
 				<%
             if (strEditable!=null&&strEditable.equalsIgnoreCase("yes")){
-            %> <select name="status" >
+            %> 
+<style>
+	        <% for (int i = 0; i < allStatus.size(); i++) {%>
+.<%=(allStatus.get(i)).getStatus()%> {
+    background-color:<%=(allStatus.get(i)).getColor()%>;
+}
+	        <% } %>
+</style>
+<select name="status" style="background-color:<%=(allStatus.get(0)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
                     <% for (int i = 0; i < allStatus.size(); i++) { %>
-                    <option
+                    <option class="<%=(allStatus.get(i)).getStatus()%>" style="background-color:<%=(allStatus.get(i)).getColor()%>"
                             value="<%=(allStatus.get(i)).getStatus()%>"
                             <%=(allStatus.get(i)).getStatus().equals(request.getParameter("status"))?"SELECTED":""%>><%=(allStatus.get(i)).getDescription()%></option>
                     <% } %>
