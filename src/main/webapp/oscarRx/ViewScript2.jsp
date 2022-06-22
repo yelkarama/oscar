@@ -788,8 +788,8 @@ function toggleView(form) {
 					    
 					    %>
 					<tr>                            
-                            <td><span><input type=button value="Fax & Paste into EMR"
-                                    class="ControlPushButton" id="faxButton" style="width: 155px"
+                            <td><span><input type=button value="<bean:message key="ViewScript.msgFaxPasteEmr"/>"
+                                    class="ControlPushButton" id="faxButton" style="width: 155px" 
                                     onClick="sendFax();printPaste2Parent('fax');setTimeout(function() {self.parent.close()}, 2500);" disabled/></span> 
                                  <span>&nbsp;&nbsp;&nbsp;
                                             <select id="faxNumber" name="faxNumber" <% if (faxConfigs.size() == 1) {
