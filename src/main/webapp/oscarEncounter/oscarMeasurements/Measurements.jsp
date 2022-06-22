@@ -55,8 +55,37 @@
 <html:base />
 
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<link href="/oscar/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="/oscar/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
+
+<link rel="stylesheet" href="/oscar/css/font-awesome.min.css">
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<style>
+body {
+    line-height: 14px;
+}
+h3 {
+    line-height: 14px;
+}
+.note {
+    padding:0px;
+    font-size:12px;
+}
+.table td {
+    line-height:14px;
+    padding:3px;
+}
+.MainTableLeftColumn {
+vertical-align:top;
+padding:14px;
+}
+</style>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-2" />
 </head>
 
 <script type="text/javascript">
@@ -95,9 +124,11 @@ function check() {
       	 $.post('<%=request.getContextPath()%>/oscarEncounter/Measurements.do?ajax=true&skipCreateNote=true',$('#theForm').serialize(),function(data){
       		$("#errors_list").empty();
       		 if(data.errors) {
+                $("#errors_list").prepend("<div class='alert alert-error'>");
       			 for(var x=0;x<data.errors.length;x++) {
-      				 $("#errors_list").append(data.errors[x]);
+      				 $(".alert").append(data.errors[x]);
       			 }
+
       		 } else {
 				opener.postMessage(data,"*");
       			window.close();
@@ -113,25 +144,25 @@ function check() {
 		<link rel="stylesheet" type="text/css" href="<bean:write name="css" />">
 	</logic:present>
 	<logic:notPresent name="css">
-		<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">
+		<!--<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">-->
 	</logic:notPresent>
 		
 	<table class="MainTable" id="scrollNumber1" name="encounterTable">
 		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><logic:present
+			<td class="MainTableTopRowLeftColumn"><h4><logic:present
 				name="groupName">
-				<bean:write name="groupName" />
+				<bean:write name="groupName" /></h4>
 			</logic:present></td>
 			<td class="MainTableTopRowRightColumn" style="padding:0px">
 			<table class="TopStatusBar" style="width:100%; height:100%;">
 				<tr>
-					<td class="Header"><oscar:nameage demographicNo="<%=demo%>" /></td>
+					<td class="Header"><h3><oscar:nameage demographicNo="<%=demo%>" /></h3></td>
 				</tr>
 			</table>
 			</td>
 		</tr>
 		<tr>
-			<td class="MainTableLeftColumn">
+			<td class="MainTableLeftColumn"  >
 			<table>
 				<tr>
 					<td><a
@@ -142,44 +173,44 @@ function check() {
 			</table>
 			</td>
 			<td class="MainTableRightColumn">
+
 			<%=measurementManager.getDShtml(groupName)%>
 			<ul id="errors_list" style="color:red">
 			</ul>
-			<table border=0 cellspacing=0>
+
+			<table >
 				<tr>
 					<td>
 					<table>
 						<tr>
 							<td>
-							<table>
+							<table class="table table-striped" border=0 cellspacing=0>
 								<html:errors />
-								<tr>
-									<td>
 								<tr class="Header">
-									<td align="left" width="100"><bean:message
+									<th align="left" width="120"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
-									</td>
-									<td align="left" width="160"><bean:message
+									</th>
+									<th align="left" width="160"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
-									</td>
-									<td align="left" width="50"><bean:message
+									</th>
+									<th align="left" width="30"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingValue" />
-									</td>
-									<td align="left" width="130"><bean:message
+									</th>
+									<th align="left" style="width:40px;" ><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingObservationDate" />
-									</td>
-									<td align="left" width="300"><bean:message
+									</th>
+									<th align="left" width="180"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingComments" />
-									</td>
-									<td align="left" width="10"></td>
+									</th>
+									<th align="left" width="10"></th>
 								</tr>
 								<% int i = 0;%>
 								<logic:iterate id="measurementType" name="measurementTypes"
 									property="measurementTypeVector" indexId="ctr">
 									<tr class="data" id="row-<bean:write name="measurementType" property="type" />">
-										<td width="5"><a
-											title="<bean:write name="measurementType" property="typeDesc" />"><bean:write
-											name="measurementType" property="typeDisplayName" /></a></td>
+										<td width="5">
+											<span title="<bean:write name="measurementType" property="typeDesc" />"><bean:write
+											name="measurementType" property="typeDisplayName" /></span></td>
 										<td><logic:iterate id="mInstrc"
 											name="<%=\"mInstrcs\"+ ctr%>"
 											property="measuringInstructionList">
@@ -210,13 +241,12 @@ function check() {
 										<%}%>
 										</td>
 										<%}else { %>
-										<td><html:text property='<%= "value(inputValue-" + ctr + ")" %>' size="5" /></td>
+										
+										<td><input type="text" class="input-small" name='<%= "value(inputValue-" + ctr + ")" %>' id='<%= "inputValue-" + ctr  %>' /></td>
 										<%} %>
-										<td><html:text
-											property='<%= "value(date-" + ctr + ")" %>' size="20" /></td>
-										<td><html:text
-											property='<%= "value(comments-" + ctr + ")" %>' size="45" /></td>
-										<td width="10"></td>
+										<td><input type="text" class="input-medium" name='<%= "value(date-" + ctr + ")" %>' id='<%= "date-" + ctr  %>' /></td>
+										<td><input type="text" class="input-large" name='<%= "value(comments-" + ctr + ")" %>' id='<%= "comments-" + ctr  %>' /></td>
+										
 										<input type="hidden"
 											name='<%= "value(inputType-" + ctr + ")" %>'
 											value="<bean:write name="measurementType" property="type" />" />
@@ -232,17 +262,17 @@ function check() {
 										<tr class="note">
 											<td><bean:message
 												key="oscarEncoutner.oscarMeasurements.msgTheLastValue" />:</td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp;<bean:write name='measurementType'
 												property='lastMInstrc' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp<bean:write name='measurementType'
 												property='lastData' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp<bean:write name='measurementType'
 												property='lastDateEntered' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp<bean:write name='measurementType'
 												property='lastComments' /></td>
-											<td><img src="img/history.gif"
+											<td><i class="icon-time icon-large"
 												title='<bean:message key="oscarEncounter.Index.oldMeasurements"/>'
-												onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<bean:write name="measurementType" property="type" />'); return false;" /></td>
+												onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<bean:write name="measurementType" property="type" />'); return false;" /></i></td>
 										</tr>
 									</logic:present>
 								</logic:iterate>
@@ -261,15 +291,14 @@ function check() {
 								<logic:notPresent name="css">
 									<input type="hidden" name="value(css)" value="" />
 								</logic:notPresent>
-								</td>
-								</tr>
+								
 							</table>
 							<table>
 								<tr>
-									<td><input type="button" name="Button"
+									<td><input type="button" name="Button" class="btn"
 										value="<bean:message key="global.btnCancel"/>"
 										onClick="window.close()"></td>
-									<td><input type="button" name="Button"
+									<td><input type="button" name="Button" class="btn btn-primary"
 										value="<bean:message key="global.btnSubmit"/>"
 										onclick="check();" /></td>
 								</tr>
@@ -306,6 +335,8 @@ $('#row-HT td:eq(2) input').keyup(function(){
 
 });
 
+var utc = new Date().toJSON().slice(0,10);
+$("[id^=date-]").val(utc);
 
 function calcBMI(w,h) {
 b = '';
@@ -319,5 +350,15 @@ if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
  }
 }
 </script>
+
+    <script type="text/javascript">
+
+    // setup small calendars with the date from the passed values
+<logic:iterate id="measurementType" name="measurementTypes"	property="measurementTypeVector" indexId="ctr">
+	Calendar.setup( { inputField : "<%= "date-" + ctr %>", ifFormat : "%Y-%m-%d",  button : "<%= "date-" + ctr %>", date:"2012-01-01" });
+</logic:iterate>
+
+    </script>
+
 </body>
 </html:html>
