@@ -245,6 +245,7 @@ function check() {
 										<td><input type="text" class="input-small" name='<%= "value(inputValue-" + ctr + ")" %>' id='<%= "inputValue-" + ctr  %>' /></td>
 										<%} %>
 										<td><input type="text" class="input-medium" name='<%= "value(date-" + ctr + ")" %>' id='<%= "date-" + ctr  %>' /></td>
+										<script>Calendar.setup( { inputField : "<%= "date-" + ctr %>", ifFormat : "%Y-%m-%d",  button : "<%= "date-" + ctr %>" });</script>
 										<td><input type="text" class="input-large" name='<%= "value(comments-" + ctr + ")" %>' id='<%= "comments-" + ctr  %>' /></td>
 										
 										<input type="hidden"
@@ -351,14 +352,7 @@ if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
 }
 </script>
 
-    <script type="text/javascript">
 
-    // setup small calendars with the date from the passed values
-<logic:iterate id="measurementType" name="measurementTypes"	property="measurementTypeVector" indexId="ctr">
-	Calendar.setup( { inputField : "<%= "date-" + ctr %>", ifFormat : "%Y-%m-%d",  button : "<%= "date-" + ctr %>", date:"2012-01-01" });
-</logic:iterate>
-
-    </script>
 
 </body>
 </html:html>
