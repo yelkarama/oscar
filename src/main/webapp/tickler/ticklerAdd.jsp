@@ -264,7 +264,7 @@ function validate(form, writeToEncounter){
             	return false;
             }
     <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
-             else if (document.serviceform.site.value=="none"||document.serviceform.site.value=="0"){
+             else if (document.serviceform.site.value=="none"){
                 document.getElementById("error").insertAdjacentText("beforeend","Must assign task to a provider.");
                 document.getElementById("error").style.display='block';
 	            return false;
