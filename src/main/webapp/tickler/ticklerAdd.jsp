@@ -357,7 +357,7 @@ function refresh() {
     </tr>
 
     <tr> 
-      <td style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message key="tickler.ticklerAdd.formServiceDate"/></td>
+      <td><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerAdd.formServiceDate"/>:</strong></font></td>
       <td><input type="date" style="height:26px;" name="xml_appointment_date" value="<%=xml_appointment_date%>"> 
         <font color="#003366" size="1" face="Verdana, Arial, Helvetica, sans-serif">
         
