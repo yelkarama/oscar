@@ -1,3 +1,4 @@
+
 <%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
@@ -23,25 +24,35 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="java.util.Set, java.util.List,org.oscarehr.util.LocaleUtils, java.util.Calendar, java.util.GregorianCalendar"%>
+
+<%@page import="java.util.Set"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.GregorianCalendar"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.text.DateFormat" %>
+<%@page import="java.text.SimpleDateFormat" %>
+
+<%@page import="org.oscarehr.common.dao.TicklerTextSuggestDao"%>
+<%@page import="org.oscarehr.util.LocaleUtils"%>
 <%@page import="org.oscarehr.common.dao.TicklerTextSuggestDao"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"  %>
 <%@page import="org.oscarehr.common.model.Provider"  %>
 <%@page import="org.oscarehr.common.model.Demographic"  %>
 <%@page import="org.oscarehr.common.model.TicklerTextSuggest"  %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.common.model.TicklerComment" %>
-<%@ page import="org.oscarehr.common.model.TicklerUpdate" %>
-<%@ page import="org.oscarehr.common.model.TicklerLink" %>
-<%@ page import="org.oscarehr.common.dao.TicklerLinkDao" %>
-<%@ page import="oscar.util.UtilDateUtilities" %>
+<%@page import="org.oscarehr.common.model.Tickler" %>
+<%@page import="org.oscarehr.common.model.TicklerComment" %>
+<%@page import="org.oscarehr.common.model.TicklerUpdate" %>
+<%@page import="org.oscarehr.common.model.TicklerLink" %>
+<%@page import="org.oscarehr.common.dao.TicklerLinkDao" %>
+<%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="org.oscarehr.managers.TicklerManager" %>
 
-<%@ page import="java.text.DateFormat" %>
-<%@ page import="java.text.SimpleDateFormat" %>
+<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="oscar.OscarProperties"%>
+
+
 
 
 <%
@@ -69,6 +80,7 @@
 %>
 
 <%
+    Boolean caisiEnabled = OscarProperties.getInstance().isPropertyActive("caisi");
 	String ticklerNoStr = request.getParameter("tickler_no");    
     
     Integer ticklerNo = null;
@@ -101,6 +113,7 @@
     GregorianCalendar now=new GregorianCalendar();
     int curYear = now.get(Calendar.YEAR);
     int curMonth = (now.get(Calendar.MONTH)+1);
+	int curDay = now.get(Calendar.DAY_OF_MONTH); 
 %>
 
 <html:html locale="true">
@@ -170,7 +183,39 @@
   	  var newD = d.getFullYear() + "-" + mth + "-" + day;
       document.getElementById("xml_appointment_date").value = newD;
     }
-    
+ 
+	function validate(form){
+		validate(form, false);
+	}
+ 
+	function validate(form , writeToEncounter){
+               
+        if (validateDate(form) <%=caisiEnabled?"&& validateSelectedProgram()":""%>){
+            if(writeToEncounter) {
+                var windowFeatures = "height=700,width=960";
+                   // Open encounter window
+                    window.open('../oscarEncounter/IncomingEncounter.do?demographicNo=<%=d.getDemographicNo()%>&providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=&status=', '', windowFeatures);
+            }
+            form.submit();                
+            return true;
+        }
+                return false;
+	}
+
+    function IsDate(value) {
+      let dateWrapper=new Date(value);
+        return !isNaN(dateWrapper.getDate());
+    }	
+
+	function validateDate() {
+		if (document.serviceform.xml_appointment_date.value == "" || !IsDate(document.serviceform.xml_appointment_date.value)) {
+            document.getElementById("error").insertAdjacentText("beforeend","<bean:message key="tickler.ticklerAdd.msgMissingDate"/>");
+            document.getElementById("error").style.display='block';
+			return false;
+		} else {
+			return true;
+		}
+    }
         </script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
@@ -188,7 +233,7 @@
 <div class="container-fluid well" >
         <table width="100%">                       
             <thead>
-                
+<tr><td colspan="4"> <p><div id="error" class="alert alert-error" style="display:none;"></div> </td></tr>                 
                 <tr>
                     <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.demographicName"/></th>                           
                     <td><a href=# onClick="popupPage(600,800,'<%=request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=d.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=d.getLastName()%>,<%=d.getFirstName()%></a></td>
@@ -353,16 +398,17 @@ String strDate = dateformat.format(t.getServiceDate());
                     </td>
                 </tr>                 
                 <tr>
-                    <td colspan="2"></td>
+                    <td colspan="2"> </td>
                     <td colspan="2" style="vertical-align: bottom;text-align:right"><br/>
                          <oscar:oscarPropertiesCheck property="tickler_email_enabled" value="true">
                             <html:checkbox property="emailDemographic"><bean:message key="tickler.ticklerEdit.emailDemographic"/></html:checkbox>
                          </oscar:oscarPropertiesCheck>
                        
-                         <input type="submit" class="btn btn-primary" name="updateTickler" value="<bean:message key="tickler.ticklerEdit.update"/>"/>
+                         <input type="button" class="btn btn-primary" name="updateTickler" value="<bean:message key="tickler.ticklerEdit.update"/>" onClick="validate(this.form)"/>
                          <input type="button" class="btn" name="cancelChangeTickler" value="<bean:message key="tickler.ticklerEdit.cancel"/>" onClick="window.close()"/>
+
                     </td>         
-                </tr>               
+                </tr>              
             </tfoot>
         </table>
         </html:form>
