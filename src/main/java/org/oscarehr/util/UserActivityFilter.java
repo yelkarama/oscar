@@ -61,10 +61,10 @@ public final class UserActivityFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         boolean redirectToLogout = false;
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale()); 
         String inactivity = oscarRec.getString("org.oscarehr.util.useractivityfilter.inactivity");
         if (request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());           
+            HttpServletRequest httpRequest = (HttpServletRequest) request;          
             LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(httpRequest);
             Long now = (new Date()).getTime();
 
