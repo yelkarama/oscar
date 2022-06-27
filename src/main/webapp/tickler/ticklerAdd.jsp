@@ -238,29 +238,44 @@ function validate(form, writeToEncounter){
         form.submit();
     }
 }
+	function validateSelectedProgram() {
+		if (document.serviceform.program_assigned_to.value === "none") {
+            document.getElementById("error").insertAdjacentText("beforeend","<bean:message key="tickler.ticklerAdd.msgNoProgramSelected"/>");
+            document.getElementById("error").style.display='block';
+			return false;
+		}
+		return true;
+	}	
 
-function validateDemoNo() {
-  if (document.serviceform.demographic_no.value == "") {
-alert("<bean:message key="tickler.ticklerAdd.msgInvalidDemographic"/>");
-	return false;
- }
- else{  if (document.serviceform.xml_appointment_date.value == "") {
-alert("<bean:message key="tickler.ticklerAdd.msgMissingDate"/>");
-	return false;
- }
-<% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
- else if (document.serviceform.site.value=="none"){
-alert("Must assign task to a provider.");
-	return false;
- } 
-<% } %>
- else{
- return true;
-}
- }
+    function IsDate(value) {
+      let dateWrapper=new Date(value);
+        return !isNaN(dateWrapper.getDate());
+    }	
+	
+    function validateDemoNo() {
+        if (document.serviceform.demographic_no.value == "") {
+            document.getElementById("error").insertAdjacentText("beforeend","<bean:message key="tickler.ticklerAdd.msgInvalidDemographic"/>");
+            document.getElementById("error").style.display='block';
+    	    return false;
+        }
+            else{  if (document.serviceform.xml_appointment_date.value == "" || !IsDate(document.serviceform.xml_appointment_date.value)) {
+                document.getElementById("error").insertAdjacentText("beforeend","<bean:message key="tickler.ticklerAdd.msgMissingDate"/>");
+                document.getElementById("error").style.display='block';
+            	return false;
+            }
+    <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
+             else if (document.serviceform.site.value=="none"){
+                document.getElementById("error").insertAdjacentText("beforeend","Must assign task to a provider.");
+                document.getElementById("error").style.display='block';
+	            return false;
+             } 
+    <% } %>
+             else{
+                return true;
+            }
+        }
+    }
 
-
-}
 function refresh() {
   var u = self.location.href;
   if(u.lastIndexOf("view=1") > 0) {
@@ -286,6 +301,7 @@ function refresh() {
 <div class="container-fluid well" > 
 <table width="100%" border="0" cellspacing="0" cellpadding="0"bgcolor="#EEEEFF">
  <form name="ADDAPPT" method="post" action="../appointment/appointmentcontrol.jsp">
+<tr><td colspan="4"> <p><div id="error" class="alert alert-error" style="display:none;"></div> </td></tr>
 <tr> 
       <td width="35%"><font color="#003366"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><bean:message key="tickler.ticklerAdd.formDemoName"/>: </b></font></font></td>
       <td colspan="2" width="65%">
@@ -334,13 +350,14 @@ function refresh() {
   <form name="serviceform" method="post" >
       <input type="hidden" name="parentAjaxId" value="<%=parentAjaxId%>"/>
       <input type="hidden" name="updateParent" value="<%=updateParent%>"/>
+ 
      <tr> 
       <td width="35%"> <div align="left"><font color="#003366"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><strong><bean:message key="tickler.ticklerAdd.formChartNo"/>:</strong> </font></font></div></td>
       <td colspan="2"> <div align="left"><INPUT TYPE="hidden" NAME="demographic_no" VALUE="<%=bFirstDisp?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>"><%=ChartNo%></div></td>
     </tr>
 
     <tr> 
-      <td style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message key="tickler.ticklerAdd.formServiceDate"/></td>
+      <td><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerAdd.formServiceDate"/>:</strong></font></td>
       <td><input type="date" style="height:26px;" name="xml_appointment_date" value="<%=xml_appointment_date%>"> 
         <font color="#003366" size="1" face="Verdana, Arial, Helvetica, sans-serif">
         
@@ -518,14 +535,14 @@ changeSite(selSite);
     </tr>
     <tr> 
       <td height="21" valign="top"><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerAdd.formReminder"/>:</strong></font></td>
-          <td valign="top"> <textarea style="font-face:Verdana, Arial, Helvetica, sans-serif"name="textarea" cols="50" rows="10"></textarea></td>
+          <td valign="top"> <textarea style="font-face:Verdana, Arial, Helvetica, sans-serif"name="textarea" cols="50" rows="5"></textarea></td>
           <td>&nbsp;</td>
       </tr>
      <INPUT TYPE="hidden" NAME="user_no" VALUE="<%=user_no%>">
       <input type="hidden" name="writeToEncounter" value="<%=writeToEncounter%>"/>
     <tr>
       <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnCancel"/>" onClick="window.close()"></td>
-      <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnSubmit"/>" onClick="validate(this.form)">
+      <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnSubmit"/>" onClick="event.preventDefault();validate(this.form);">
           <input type="button" name="Button" class="btn btn-primary" value="<bean:message key="tickler.ticklerAdd.btnWriteSubmit"/>" onClick="validate(this.form, true)">
       </td>
       <td></td>
