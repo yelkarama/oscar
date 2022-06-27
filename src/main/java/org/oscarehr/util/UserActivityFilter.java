@@ -38,11 +38,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.util.Date;
-import java.util.ResourceBundle;
-import java.util.Locale;
 import org.owasp.encoder.Encode;
 
 /**
@@ -63,8 +60,8 @@ public final class UserActivityFilter implements Filter {
         boolean redirectToLogout = false;
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
-            java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
-            String inactivity = oscarRec.getString("org.oscarehr.util.useractivityfilter.inactivity");
+            
+            
             LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(httpRequest);
             Long now = (new Date()).getTime();
 
@@ -76,8 +73,8 @@ public final class UserActivityFilter implements Filter {
                     lastActivity = now; // set new last activity
                 }
                 if (now - lastActivity > session.getMaxInactiveInterval() * 1000L) {
-                    LogAction.addLog((String)session.getAttribute("user"), LogConst.LOGOUT, LogConst.CON_LOGIN, inactivity, request.getRemoteAddr());
-                    logger.warn("User providerNo=" + loggedInInfo.getLoggedInProviderNo() + " " + inactivity);
+                    LogAction.addLog((String)session.getAttribute("user"), LogConst.LOGOUT, LogConst.CON_LOGIN, "logged out due to inactivity", request.getRemoteAddr());
+                    logger.warn("User providerNo=" + loggedInInfo.getLoggedInProviderNo() + " logged out due to inactivity");
                     redirectToLogout = true;
                 } else if (isUserRequest(httpRequest) && httpRequest.getRequestURL().toString().contains(".jsp")) {
                     // Reset activity timer in session if user is opening a jsp
@@ -88,7 +85,7 @@ public final class UserActivityFilter implements Filter {
         }
         if (redirectToLogout) {
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() +"/logout.jsp?autoLogout=true&errorMessage=" + Encode.forUriComponent(inactivity));
+            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() +"/logout.jsp?autoLogout=true&errorMessage=" + Encode.forUriComponent("logged out due to inactivity"));
         } else {
             chain.doFilter(request, response);
         }
