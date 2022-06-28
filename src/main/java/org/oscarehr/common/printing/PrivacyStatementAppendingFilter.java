@@ -44,8 +44,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ResourceBundle;
 import java.util.Locale;
 
-org.apache.struts.Globals.LOCALE_KEY
-
 import oscar.OscarProperties;
 
 /**
