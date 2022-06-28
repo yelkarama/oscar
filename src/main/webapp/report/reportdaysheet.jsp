@@ -39,9 +39,17 @@ if(!authed) {
 }
 %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, oscar.login.*,java.net.*" errorPage="../appointment/errorpage.jsp"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="oscar.*" %>
+<%@ page import="oscar.util.DateUtils" %>
+<%@ page import="java.text.*" %>
+<%@ page import="oscar.login.*" %>
+<%@ page import="java.net.*" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
+<%@ page import="org.oscarehr.common.dao.AppointmentStatusDao" %>
 <%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%@ page import="org.oscarehr.common.model.Appointment" %>
 
@@ -50,6 +58,7 @@ if(!authed) {
 
 <%@ page import="org.oscarehr.common.model.ProviderData"%>
 <%@ page import="org.oscarehr.common.dao.ProviderDataDao"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -76,6 +85,7 @@ if(!authed) {
 
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
 	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
 	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 	ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
 
@@ -115,13 +125,16 @@ if (isSiteAccessPrivacy || isTeamAccessPrivacy) {
 		providerMap.put(providerData.getId(), "true");
 	}
 }
+//check if "Daysheet Printed" status exists
+String daysheetStatus = appointmentStatusDao.findByDescription("Daysheet Printed")!=null?appointmentStatusDao.findByDescription("Daysheet Printed").getStatus():null;
 %>
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="report.reportdaysheet.title" /></title>
+<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
 <link rel="stylesheet" href="../web.css">
-<style> td {font-size: 16px;}</style>
+
 
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
 <script language="JavaScript">
@@ -136,12 +149,32 @@ function hideOnSource(){
 	}
 }
 </script>
+
+
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<style> td {font-size: 16px;}
+
+.table th {
+    text-align:center;
+}
+</style>
+<style type="text/css" media="print">
+ .DoNotPrint {
+	display: none;
+ }
+ a {
+ text-decoration: none;
+}
+ a[href]:after {
+  content: none;
+ }
+</style>
 </head>
 <%
 	boolean bDob = oscarVariables.getProperty("daysheet_dob", "").equalsIgnoreCase("true") ? true : false;
 
     GregorianCalendar now=new GregorianCalendar();
-    String createtime = now.get(Calendar.YEAR) +"-" +(now.get(Calendar.MONTH)+1) +"-"+now.get(Calendar.DAY_OF_MONTH) +" "+now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE) ;
+    String createtime = oscar.util.DateUtils.formatDateTime(now, vLocale);
     now.add(now.DATE, 1);
     int curYear = now.get(Calendar.YEAR);
     int curMonth = (now.get(Calendar.MONTH)+1);
@@ -166,14 +199,14 @@ function hideOnSource(){
 <body bgproperties="fixed" onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="<%=deepColor%>">
-		<th><bean:message key="report.reportdaysheet.msgMainLabel" />
-			<input type="checkbox" onclick="hideOnSource();" id="onlySelfBooked"/><bean:message key="report.reportdaysheet.msgSelfBookedCheck"/>
+	<tr bgcolor="silver" >
+		<th ><bean:message key="report.reportdaysheet.msgMainLabel" />
+			<input type="checkbox" onclick="hideOnSource();" id="onlySelfBooked" class="DoNotPrint"/><span class="DoNotPrint"><bean:message key="report.reportdaysheet.msgSelfBookedCheck"/></span>
 		</th>
-		<th width="10%" nowrap><%=createtime%> <input type="button"
+		<th width="10%" nowrap><%=createtime%> <input type="button" class="DoNotPrint btn btn-primary"
 			name="Button"
 			value="<bean:message key="report.reportdaysheet.btnPrint"/>"
-			onClick="window.print()"><input type="button" name="Button"
+			onClick="window.print()"><input type="button" name="Button" class="DoNotPrint btn"
 			value="<bean:message key="global.btnExit"/>" onClick="window.close()"></th>
 	</tr>
 </table>
@@ -211,8 +244,9 @@ function hideOnSource(){
 			  org.oscarehr.util.MiscUtils.getLogger().error("Cannot archive appt",e);
 		  }
 	  for(Appointment a : appointmentDao.findByDayAndStatus(oscar.util.ConversionUtils.fromDateString(sdate), "t")) {
-		  if(a.getProviderNo().equals(provider_no)) {
-			  a.setStatus("T");
+
+		  if(a.getProviderNo().equals(provider_no) && daysheetStatus!=null) {
+			  a.setStatus(daysheetStatus);
 			  a.setLastUpdateUser((String) session.getAttribute("user"));
 			  a.setUpdateDateTime(new java.util.Date());
 			  appointmentDao.merge(a);
@@ -230,10 +264,12 @@ function hideOnSource(){
 			  org.oscarehr.util.MiscUtils.getLogger().error("Cannot archive appt",e);
 		  }
 	  for(Appointment a : appointmentDao.findByDayAndStatus(oscar.util.ConversionUtils.fromDateString(sdate), "t")) {
-		  a.setStatus("T");
-		  a.setLastUpdateUser((String) session.getAttribute("user"));
-		  a.setUpdateDateTime(new java.util.Date());
-		  appointmentDao.merge(a);
+	      if (daysheetStatus!=null){
+			  a.setStatus(daysheetStatus);
+			  a.setLastUpdateUser((String) session.getAttribute("user"));
+			  a.setUpdateDateTime(new java.util.Date());
+			  appointmentDao.merge(a);
+		  }
 	  }
     }
   }
@@ -266,43 +302,41 @@ function hideOnSource(){
 		<td align="right"></td>
 	</tr>
 </table>
-<table width="100%" border="1" bgcolor="#ffffff" cellspacing="0"
+<table width="100%" class="table table-striped table-bordered" border="1" bgcolor="#ffffff" cellspacing="0"
 	cellpadding="1">
 	<tr bgcolor="#CCCCFF" align="center">
-		<!--<TH width="14%"><b><a href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=appointment_date"><bean:message key="report.reportdaysheet.msgAppointmentDate"/></a></b></TH>-->
 		<TH width="6%"><b><a
 			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=start_time<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>"><bean:message
 			key="report.reportdaysheet.msgAppointmentTime" /></a></b></TH>
-		<TH width="15%"><b><a
+		<TH width="12%"><b><a
 			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=name<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>"><bean:message
-			key="report.reportdaysheet.msgPatientLastName" /></a> </b></TH>
+			key="demographic.demographicsearchresults.btnName" /></a> </b></TH>
 		<!--<TH width="20%"><b><a href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=p_first_name"><bean:message key="report.reportdaysheet.msgPatientFirstName"/></a> </b></TH>-->
 
- 		<TH width="10%"><b><a
+ 		<TH width="8%"><b><a
                         href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=phone<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>">
-                        Phone</a></b></TH>
+                        <bean:message key="demographic.demographicsearchresults.btnPhone"/></a></b></TH>
          <TH width="3%"><b><a
                         href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=sex<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>">
-                        Gender </a></b></TH>
-         <TH width="9%"><b><a
+                        <bean:message key="demographic.demographicsearchresults.btnSex"/></a></b></TH>
+         <TH width="8%"><b><a
                         href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=hin<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>">
-                        Health Card </a></b></TH>
-         <TH width="5%"><b><a
+                        <bean:message key="demographic.zdemographicfulltitlesearch.formHIN"/></a></b></TH>
+         <!--<TH width="5%"><b><a
                         href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=ver<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>">
-                        Version </a></b></TH>
+                        Version </a></b></TH> -->
 
-		<TH width="6%"><b><a
+		<TH width="5%"><b><a
 			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=chart_no<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>"><bean:message
 			key="report.reportdaysheet.msgChartNo" /></a></b></TH>
                 <!--<TH width="6%"><b><a
 			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=hin<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>"><bean:message
 			key="oscarEncounter.search.demographicSearch.msgHin" /></a></b></TH>-->
 		<% if(!bDob) {%>
-		<TH width="6%"><b><a
-			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=roster_status<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>"><bean:message
-			key="report.reportdaysheet.msgRosterStatus" /></a></b></TH>
+		<TH width="2%"><b><a
+			href="reportdaysheet.jsp?provider_no=<%=provider_no%>&sdate=<%=sdate%>&edate=<%=edate%>&orderby=roster_status<%=request.getParameter("dsmode")==null?"":"&dsmode="+request.getParameter("dsmode")%>">*</a></b></TH>
 		<% } else {%>
-		<TH width="10%"><b>DOB</b></TH>
+		<TH width="10%"><b>bean:message key="demographic.zdemographicfulltitlesearch.formDOB"/></b></TH>
 		<% }%>
 		
 		
@@ -316,22 +350,20 @@ function hideOnSource(){
 count++;
 %>
 <tr bgcolor="<%=bodd?"#EEEEFF":"white"%>"  class="<%=rsdemo.getString("bookingSource")==null?"oscar":"self"%>"    id="r<%=count %>" >
-      <!--<td align="center" nowrap><%=rsdemo.getString("appointment_date")%></td>-->
-      <td align="center" nowrap title="<%="End Time: "+rsdemo.getString("end_time")%>"><%=rsdemo.getString("start_time").substring(0,5)%></td>
-      <td align="left"><%=rsdemo.getString("name")==null?".":""%><%=Misc.toUpperLowerCase(rsdemo.getString("name"))%></td>
-      <td align="center">&nbsp;<%=rsdemo.getString("phone")==null?"":rsdemo.getString("phone")%>&nbsp;</td>
-      <td align="center">&nbsp;<%=rsdemo.getString("sex")==null?"":rsdemo.getString("sex")%>&nbsp;</td>
-      <td align="center">&nbsp;<%=rsdemo.getString("hin")==null?"":rsdemo.getString("hin")%>&nbsp;</td>
-      <td align="center">&nbsp;<%=rsdemo.getString("ver")==null?"":rsdemo.getString("ver")%>&nbsp;</td>
-      <td align="center">&nbsp;<%=rsdemo.getString("chart_no")==null?"":rsdemo.getString("chart_no")%>&nbsp;</td>
-      <!--<td align="center">&nbsp;<%=rsdemo.getString("family_doctor")==null?"":rsdemo.getString("family_doctor")%>&nbsp;</td>-->
+      <td align="center" nowrap title="<%="End Time: "+Encode.forHtmlAttribute(rsdemo.getString("end_time"))%>"><%=Encode.forHtml(rsdemo.getString("start_time").substring(0,5))%></td>
+      <td align="left"><%=rsdemo.getString("name")==null?".":""%><%=Misc.toUpperLowerCase(Encode.forHtml(rsdemo.getString("name")))%></td>
+      <td align="center">&nbsp;<%=rsdemo.getString("phone")==null?"":Encode.forHtml(rsdemo.getString("phone"))%>&nbsp;</td>
+      <td align="center">&nbsp;<%=rsdemo.getString("sex")==null?"":Encode.forHtml(rsdemo.getString("sex"))%>&nbsp;</td>
+      <td align="center">&nbsp;<%=rsdemo.getString("hin")==null?"":Encode.forHtml(rsdemo.getString("hin"))%>&nbsp;<%=rsdemo.getString("ver")==null?"":Encode.forHtml(rsdemo.getString("ver"))%>&nbsp;</td>
+      <td align="center">&nbsp;<%=rsdemo.getString("chart_no")==null?"":Encode.forHtml(rsdemo.getString("chart_no"))%>&nbsp;</td>
+      <!--<td align="center">&nbsp;<%=rsdemo.getString("family_doctor")==null?"":Encode.forHtml(rsdemo.getString("family_doctor"))%>&nbsp;</td>-->
 
 <% if(!bDob) {%>
-      <td align="center">&nbsp;<%=rsdemo.getString("roster_status")==null?"":rsdemo.getString("roster_status")%>&nbsp;</td>
+      <td align="center">&nbsp;<%=rsdemo.getString("roster_status")==null?"":Encode.forHtml(rsdemo.getString("roster_status"))%>&nbsp;</td>
 <% } else {
 		String dob = rsdemo.getString("dob");
 %>
-		<td align="center">&nbsp;<%=dob==null?"":dob%></td>
+		<td align="center">&nbsp;<%=dob==null?"":Encode.forHtml(dob)%></td>
 		<% }%>
 		
 		<td>
@@ -350,11 +382,11 @@ count++;
                         initial = doc_first_name.charAt(0);
                     }
 %>
-		[<%=daySheetBean.getString(rsdemo,"doc_last_name")%>, <%=initial%>]
+		[<%=Encode.forHtml(daySheetBean.getString(rsdemo,"doc_last_name")+", "+initial)%>]
 		&nbsp; <% } %> <% if ( bDob && daySheetBean.getString(rsdemo,"family_doctor") != null) {
               String rd = SxmlMisc.getXmlContent(daySheetBean.getString(rsdemo,"family_doctor"),"rd");
               rd = rd !=null ? rd : "" ;
-          %> [<%=rd%>]&nbsp; <% } %> <%=daySheetBean.getString(rsdemo,"reason")%>&nbsp;</td>
+          %> [<%=Encode.forHtml(rd)%>]&nbsp; <% } %> <%=Encode.forHtml(daySheetBean.getString(rsdemo,"reason"))%>&nbsp;</td>
 	</tr>
 	<%
   }
