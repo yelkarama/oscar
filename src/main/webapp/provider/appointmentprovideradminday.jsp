@@ -1307,7 +1307,7 @@ java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.stru
   
 <security:oscarSec roleName="<%=roleName$%>" objectName="_hrm,_admin.hrm,_hrm.administrator" rights="r">
    <li>
-       <a HREF="#" ONCLICK ="pop2('<%=request.getContextPath()%>/hospitalReportManager/inbox.jsp', 'HRM');return false;" TITLE='View HRM Reports'>
+       <a HREF="#" ONCLICK ="pop2('<%=request.getContextPath()%>/hospitalReportManager/inbox.jsp', 'HRM');return false;" TITLE='HRM'>
 	  	HRM
        </a>
    </li>
@@ -1466,7 +1466,7 @@ java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.stru
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.fax" rights="r">
 
 <li id="admin2">
- <a href="javascript:void(0)" id="admin-panel" TITLE='Administration Panel' onclick="pop2('<%=request.getContextPath()%>/administration/','admin')">Administration</a>
+ <a href="javascript:void(0)" id="admin-panel" TITLE="<bean:message key="provider.appointmentProviderAdminDay.adminTitle"/>" onclick="pop2('<%=request.getContextPath()%>/administration/','admin')"><bean:message key="provider.appointmentProviderAdminDay.admin"/></a>
 </li>
 
 </security:oscarSec>
@@ -1481,7 +1481,7 @@ java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.stru
 
 	<li id="dashboardList">
 		 <div class="dropdown">
-			<a href="#" class="dashboardBtn">Dashboard</a>
+			<a href="#" class="dashboardBtn"><bean:message key="provider.appointmentProviderAdminDay.dashboard"/></a>
 			<div class="dashboardDropdown">
 				<c:forEach items="${ dashboards }" var="dashboard" >			
 					<a href="javascript:void(0)" onclick="pop2('<%=request.getContextPath()%>/web/dashboard/display/DashboardDisplay.do?method=getDashboard&dashboardId=${ dashboard.id }','dashboard')"> 
@@ -1834,7 +1834,7 @@ class="noprint" title="Find a Provider" placeholder='<bean:message key="receptio
       </script>
 
     	<select id="site" name="site" onchange="changeSite(this)" style="background-color: <%=( selectedSite == null || siteBgColor.get(selectedSite) == null ? "#FFFFFF" : siteBgColor.get(selectedSite))%>" >
-    		<option value="none" style="background-color:white">---all clinic---</option>
+    		<option value="none" style="background-color:white">---<bean:message key="provider.appointmentProviderAdminDay.allclinic"/>---</option>
     	<%
     		for (int i=0; i<curUserSites.size(); i++) {
     	%>
