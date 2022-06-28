@@ -319,7 +319,7 @@ onkeyup="maskMe();" onchange="checkMe();">
         <%if (AcceptableUseAgreementManager.hasAUA()){ %>
             <bean:message key="global.aua" /> &nbsp; <a href="javascript:void(0);" onclick="showHideItem('auaText');"><bean:message key="global.showhide"/></a><br>
         <% } %>
-	build date: <%= OscarProperties.getBuildDate() %> build tag: <%=OscarProperties.getBuildTag()%></small>&nbsp;&nbsp;
+	OSCAR <%=OscarProperties.getBuildTag()%>:<%= OscarProperties.getBuildDate() %></small>&nbsp;&nbsp;
     </span>
 
 </div>     
