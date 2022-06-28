@@ -42,6 +42,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 import java.util.ResourceBundle;
+import java.util.Locale;
+
+org.apache.struts.Globals.LOCALE_KEY
 
 import oscar.OscarProperties;
 
@@ -75,8 +78,9 @@ public class PrivacyStatementAppendingFilter implements Filter {
 	public static final String ATTRIBUTE_NAME_CONFIDENTIALITY_NOTE_PRINTED = "CONFIDENTIALITY_NOTE_PRINTED";
 
 	private Set<String> exclusions = Collections.synchronizedSet(new HashSet<String>());
-	java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale()); 
-    private String printEnd = oscarRec.getString("org.oscarehr.common.printing.privacystatementappendingfilter.printend").indexOf("??")=-1 ? oscarRec.getString("org.oscarehr.common.printing.privacystatementappendingfilter.printend"):"END OF PRINTED DOCUMENT";
+	java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", Locale.getDefault());
+	private String notFound = "???" ;
+	private String printEnd = oscarRec.getString("org.oscarehr.common.printing.privacystatementappendingfilter.printend").indexOf(notFound) < 0 ? oscarRec.getString("org.oscarehr.common.printing.privacystatementappendingfilter.printend"):"END OF PRINTED DOCUMENT";
 	private String getPrivacyStatement() {
 		if (OscarProperties.getConfidentialityStatement() == null || OscarProperties.getConfidentialityStatement().trim().isEmpty()) {
 			return "";
