@@ -2270,7 +2270,7 @@ if( demographic!=null) {
 							</tr>
 							<%}%> 
 							<%
-							if (!demographic.getNewsletter().equals("Unknown")) {%>
+							if (demographic.getNewsletter()!=null && !demographic.getNewsletter().equals("Unknown")) {%>
 							<tr><td><span class="labels"><bean:message
 								      key="demographic.demographiceditdemographic.formNewsLetter" />:</span></td>
 								<td><span class="info"><%=demographic.getNewsletter()!=null? demographic.getNewsletter() : "Unknown"%></span></td></tr>
