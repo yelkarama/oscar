@@ -23,11 +23,22 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
 <%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="org.oscarehr.common.dao.SiteDao" %>
+<%@ page import="org.oscarehr.common.model.Site" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
+
 <%
       String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
       boolean authed2=true;
@@ -42,7 +53,7 @@ if(!authed2) {
 }
 %>
 
-<%@ page import="org.apache.commons.lang.StringUtils" %>
+
 <%
 String country = request.getLocale() .getCountry();
 UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
@@ -51,6 +62,8 @@ String curUser_no = (String) session.getAttribute("user");
 String mygroupno = providerPreference.getMyGroupNo();
 mygroupno = StringUtils.trimToEmpty(mygroupno);
 String billingRegion = (oscar.OscarProperties.getInstance()).getProperty("billregion");
+ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+
 %>
 <%@ page
 	import="java.util.*, oscar.*, java.sql.*, java.text.*, java.net.*"
@@ -61,11 +74,7 @@ String billingRegion = (oscar.OscarProperties.getInstance()).getProperty("billre
 <%@ include file="reportMainBeanConn.jspf"%>
 <% }  %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
+
 
 <%
     UserProperty tabViewProp = userPropertyDao.getProp(curUser_no, UserProperty.OPEN_IN_TABS);
@@ -80,6 +89,7 @@ String billingRegion = (oscar.OscarProperties.getInstance()).getProperty("billre
     boolean isTeamAccessPrivacy=false; 
     String provider_dboperation = "search_provider";
     String mygroup_dboperation = "search_group";
+    boolean enableMultipleSites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
 %>
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName2$%>" rights="r" reverse="false">
 	<%
@@ -187,6 +197,11 @@ function go(r) {
   var x = 'reportdaysheet.jsp?dsmode=' + r + '&provider_no=' + s +'&sdate='+ u + '&edate=' + v + '&sTime=' + y + '&eTime=' + z ;
   var x2 = 'reportdaysheet.jsp?dsmode=' + r + '&provider_no=' + s +'&sdate='+ u + '&edate=' + v + '&sTime=' + y + '&eTime=' + z + '&rosteredStatus=true';
   var y2 =  'tabulardaysheetreport.jsp?provider_no=' + s +'&sdate=' + td.replace('/', '-');
+<% if (enableMultipleSites) { %>
+  var selectedSiteName = document.getElementsByName("siteName")[0].value;
+  w += '&siteName=' + selectedSiteName;
+  x += '&siteName=' + selectedSiteName;
+<% } %>
 
 if (r=='tab')
 {
@@ -219,7 +234,11 @@ var w = 'reportdaysheet2.jsp?dsmode=' + r + '&provider_no=' + s +'&sdate='+ t;
 var x = 'reportdaysheet2.jsp?dsmode=' + r + '&provider_no=' + s +'&sdate='+ u + '&edate=' + v + '&sTime=' + y + '&eTime=' + z ;
 var x2 = 'reportdaysheet2.jsp?dsmode=' + r + '&provider_no=' + s +'&sdate='+ u + '&edate=' + v + '&sTime=' + y + '&eTime=' + z + '&rosteredStatus=true';
 var y2 =  'tabulardaysheetreport.jsp?provider_no=' + s +'&sdate=' + td.replace('/', '-');
-
+<% if (enableMultipleSites) { %>
+  var selectedSiteName = document.getElementsByName("siteName")[0].value;
+  w += '&siteName=' + selectedSiteName;
+  x += '&siteName=' + selectedSiteName;
+<% } %>
 if (r=='tab')
  {
 popupPage(900,1024, y2, <%=openInTabs%>);
@@ -268,10 +287,68 @@ function popUpWaitingList(vheight,vwidth,varpage) {
     var popup=window.open(page, "Waiting List", windowprops);
 }
 //-->
-</script>
+// multisite start ==========================================
 
+var siteProviders = [];
+var allProviders = "";
+<%
+String curSite = request.getParameter("site");
+List<Site> sites = new ArrayList<Site> ();
+if (enableMultipleSites) {
+  SiteDao siteDao = SpringUtils.getBean(SiteDao.class);	
+  sites = siteDao.getActiveSitesByProviderNo(curUser_no);
+  Set<String> providersNoFromAllSites = new HashSet<String>();
+  for (Site s: sites) {
+    List<Provider> siteProviders = providerDao.getProvidersBySiteLocation(s.getId().toString());
+    for (Provider p: siteProviders) {
+      providersNoFromAllSites.add(p.getProviderNo());
+    }	
+  } 
+  
+  List<Provider> siteAllProviders = new ArrayList<Provider>();
+  for (Site site : sites) {
+    Set<Provider> siteProviders = site.getProviders();
+    List<Provider>  siteProvidersList = new ArrayList<Provider> (siteProviders);
+    siteAllProviders.addAll(siteProvidersList);
+    Collections.sort(siteProvidersList,(new Provider()).ComparatorName());
+    String providersFromOneSite = "";
+    for (Provider p : siteProvidersList) {
+      if (providersNoFromAllSites.contains(p.getProviderNo())) {
+        providersFromOneSite += "<option value='" + p.getProviderNo() +"'>" + p.getLastName() +", " + p.getFirstName() + "</option>";
+      }
+    }
+%>
+    siteProviders["<%=site.getName() %>"] = "<%= providersFromOneSite %>"; 
+<%		
+  }
+  
+  String allProviders = "";
+  List<String> holdProvidersNo = new ArrayList<String>();
+  for (Provider p : siteAllProviders) {
+    if (providersNoFromAllSites.contains(p.getProviderNo()) && !holdProvidersNo.contains(p.getProviderNo())) {
+      holdProvidersNo.add(p.getProviderNo());      
+      allProviders += "<option value='" + p.getProviderNo() +"'>" + p.getLastName() +", " + p.getFirstName() + "</option>";
+    }
+  }
+%>
+  allProviders = "<%= allProviders %>";
+<%
+}
+%>
+function changeSite(sel) {
+  if (sel.value == "*") {
+    sel.form.provider_no.innerHTML = "<option value='*'><bean:message key="report.reportindex.formAllProviders" /></option>";
+    sel.form.provider_no.innerHTML += allProviders; 
+  } else {
+    sel.form.provider_no.innerHTML = "<option value='*'><bean:message key="report.reportindex.formAllProviders" /></option>"; 
+    sel.form.provider_no.innerHTML += siteProviders[sel.value];
+  }
+  sel.style.backgroundColor = sel.options[sel.selectedIndex].style.backgroundColor;
+}
+//multisite end ==========================================
+</script>
 </head>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
+<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus(); changeSite(document.getElementsByName('siteName')[0])"
 	topmargin="0" leftmargin="0" rightmargin="0">
 <%
 GregorianCalendar now = new GregorianCalendar();
@@ -345,9 +422,32 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 		<td width="1"></td>
 		<td width="300"><bean:message
 			key="report.reportindex.formDaySheet" /></td>
+        <%
+        ResultSet rsgroup = reportMainBean.queryResults(mygroup_dboperation);
+        if (enableMultipleSites) {
+        %>
+		<td colspan="4">
+			<bean:message key="provider.selectClinicSite"/>:
+			<select name="siteName" id="siteName" onchange="changeSite(this)">
+				<option value="*"><bean:message key="provider.appointmentProviderAdminDay.allclinic"/></option>
+        <%
+          for (Site st : sites) {
+        %>
+		    	<option value="<%= st.getName() %>" style="background-color:<%= st.getBgColor() %>"><%= st.getName() %></option>
+        <%
+          }
+        %>
+			</select>
+			<bean:message key="oscarReport.manageProvider.msgProviderName"/>:
+			<select name="provider_no">
+			</select>
+		</td>
+        <%
+        } else {
+        %>
 		<td><select name="provider_no" class="input-large">
 			<%
-               ResultSet rsgroup = reportMainBean.queryResults(mygroup_dboperation);
+               
                      while (rsgroup.next()) {
                     	 if (isTeamAccessPrivacy) 
                     		 continue;	//skip mygroup display if user have TeamAccessPrivacy 
@@ -372,6 +472,7 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 		<td></td>
 		<td></td>
 		<td></td>
+<% } %>	
 	</tr>
 	<tr>
 		<td width="2"></td>
@@ -435,12 +536,22 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
         <script type="text/javascript">
         function labgo(s) {
                 var t = document.getElementsByName("apptDate")[0].value;
-                var u = 'printLabDaySheetAction.do?xmlStyle=labDaySheet.xml&input_date=' + t;
+                var providerNo = document.getElementsByName("provider_no")[0].value;
+                var u = 'printLabDaySheetAction.do?xmlStyle=labDaySheet.xml&input_date=' + t + '&provider_no=' + providerNo;
+                <%if (enableMultipleSites) {%>
+                  var site = document.getElementsByName("siteName")[0].value;
+                  u += '&siteName=' + site + '&provider_no=' + providerNo
+                <%}%>
                 popupPage(900,1024,u, <%=openInTabs%>);
         }
         function labgo1(s) {
-        	var t = document.getElementsByName("apptDate1")[0].value;
-                var u = 'printLabDaySheetAction.do?xmlStyle=billDaySheet.xml&input_date=' + t;
+            var t = document.getElementsByName("apptDate1")[0].value;
+            var providerNo = document.getElementsByName("provider_no")[0].value;
+            var u = 'printLabDaySheetAction.do?xmlStyle=billDaySheet.xml&input_date=' + t + '&excludeCanceled=' + excludeCanceled + '&provider_no=' + providerNo;
+            <% if (enableMultipleSites) { %>
+              var site = document.getElementsByName("siteName")[0].value;
+              u += '&siteName=' + site;
+            <% } %>
                 popupPage(900,1024,u, <%=openInTabs%>);
         }
         </script>
@@ -490,9 +601,7 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
         <td></td>
         <td></td>
     </tr>
-
     <!-- add lab day sheet -->
-
 	<tr>
 		<td width="2"><%=j%>
 		<%j++;%>
@@ -655,7 +764,6 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
            
 
 
-
 		<!-- 
             <select name="nsdate" class="input-medium">
  <%
@@ -663,7 +771,6 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
               for(int i=0; i<31; i++) {
                 String dateString = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE) ;
             %>
-
               <option value="<%=dateString%>" <%=dateString.equals(today)?"selected":""%> ><%=dateString%></option>
             <%
                 cal.add(cal.DATE, 1) ;
@@ -738,7 +845,6 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 		<td></td>
 		<td></td>
 	</tr>
-
 
 
 	<tr>
@@ -816,7 +922,6 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 	<% //}
 %>
 
-
    <tr>
         <td width="2"><%=j%><%j++;%></td>
         <td width="1"></td>
@@ -849,12 +954,10 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 	<td width="2"><%=j%><%j++;%></td>
 	<td width="1"></td>
 	<td width="300"><a title="Report that is based off of a Hamilton Public Health eForm for One Time Consults" href="../oscarReport/CDSOneTimeConsultReport.jsp" target="_blank"><bean:message key="report.reportindex.btnCDSOneTimeConsultReport"/></a></td>
-
      </tr>   
      <tr></tr>  
      <tr></tr>
      
-
 
 
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_admin,_admin.reporting" rights="r" reverse="<%=false%>">
@@ -865,10 +968,8 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 
     </tr>      
 </security:oscarSec>
-
     <c:if
 	test="${sessionScope.userrole ne 'er_clerk' and sessionScope.userrole ne 'Vaccine Provider'}">
-
 
 	<caisi:isModuleLoad moduleName="caisi">
     <tr><td width="2"></td>
@@ -886,7 +987,6 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
     </tr>
     </c:if> 
 	
-
     <tr>
         <td colspan='3' align="left"><input type="button" class="btn" name="Button" value="<bean:message key="report.reportindex.btnCancel"/>" onClick="window.close()"></td>
         <td></td>
@@ -896,5 +996,4 @@ String today = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.ge
 </table>
 </body>
 </form>
-
 </html:html>
