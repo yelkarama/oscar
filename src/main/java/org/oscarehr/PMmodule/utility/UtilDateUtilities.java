@@ -112,15 +112,22 @@ public class UtilDateUtilities {
         int birthDay = birthDate.get(5);
                 
         int ageInYears = curYear - birthYear;
-        String result = ageInYears + " " + ResourceBundle.getBundle("oscarResources").getString("global.years");
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", Locale.getDefault());
+        String notFound = "???";
         
+        String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
+        String months = oscarRec.getString("global.months").indexOf(notFound) < 0 ? oscarRec.getString("global.months"):"m";
+        String weeks = oscarRec.getString("global.weeks").indexOf(notFound) < 0 ? oscarRec.getString("global.weeks"):"w";
+        String days = oscarRec.getString("global.days").indexOf(notFound) < 0 ? oscarRec.getString("global.days"):"d";
+        String result = ageInYears + " " + years;
+       
         
         if (curMonth > birthMonth || curMonth == birthMonth && curDay >= birthDay)        {
             ageInYears = curYear - birthYear;
-            result = ageInYears + " " + ResourceBundle.getBundle("oscarResources").getString("global.years");
+            result = ageInYears + " " + years;
         } else        {
             ageInYears = curYear - birthYear - 1;
-            result = ageInYears + " " + ResourceBundle.getBundle("oscarResources").getString("global.years");
+            result = ageInYears + " " + years;
         }
         if (ageInYears < 2)        {
             int yearDiff = curYear - birthYear;
@@ -133,11 +140,11 @@ public class UtilDateUtilities {
                 ageInDays = now.get(Calendar.DAY_OF_YEAR) - birthDate.get(Calendar.DAY_OF_YEAR);
             }
             if (ageInDays / 7 > 9) {
-                result = ageInDays / 30 +  " " + ResourceBundle.getBundle("oscarResources").getString("global.months");
+                result = ageInDays / 30 +  " " + months;
             } else if (ageInDays >= 14) {
-                result = ageInDays / 7  + " " + ResourceBundle.getBundle("oscarResources").getString("global.weeks");
+                result = ageInDays / 7  + " " + weeks;
             } else {
-                result = ageInDays  + " " + ResourceBundle.getBundle("oscarResources").getString("global.days");
+                result = ageInDays  + " " + days;
             }
         }
         return result;

@@ -128,6 +128,7 @@
     } 
 
     %>
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 
 <script>
 	function copySpanToClipboard(id) {
@@ -182,21 +183,21 @@
             if ( !StringUtils.endsWith(StringUtils.trimToEmpty(demoExt.get("demo_cell")),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR) &&  !StringUtils.endsWith(StringUtils.trimToEmpty(demographic.getPhone2()),STAR) ) {
                 //no patient preference noted so invoke logic for provider preference
                 if ( showCell && !StringUtils.isEmpty(StringUtils.trimToEmpty(demoExt.get("demo_cell"))) ) { %>
-                            <bean:message key="oscarencounter.header.cell"/>&nbsp;
+                            <i class="icon-mobile-phone" title="<bean:message key="oscarencounter.header.cell"/>"></i>&nbsp;
                             <span id="cell" title="<bean:message key="oscarencounter.header.phone"/>&nbsp;<%=bean.phone%>" onclick="copySpanToClipboard(this.id)"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span>
                         <% } else { %>
-                            <bean:message key="oscarencounter.header.phone"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
+                            <i class="icon-phone" title="<bean:message key="oscarencounter.header.phone"/>"></i>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
                 <% }
                 } else {
                     if ( StringUtils.endsWith(StringUtils.trimToEmpty(demoExt.get("demo_cell")),STAR) ) { %>
-                            <bean:message key="oscarencounter.header.cell"/>&nbsp;
+                            <i class="icon-mobile-phone" title="<bean:message key="oscarencounter.header.cell"/>"></i>
                             <span id="cell" title="<bean:message key="oscarencounter.header.phone"/>&nbsp;<%=bean.phone%>" onclick="copySpanToClipboard(this.id)"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span>
                  <% }
                     if ( StringUtils.endsWith(StringUtils.trimToEmpty(bean.phone),STAR)) { %>
-                            <bean:message key="oscarencounter.header.phone"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
+                            <i class="icon-phone" title="<bean:message key="oscarencounter.header.phone"/>"></i>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=bean.phone%></span>
                     <% }
                     if ( StringUtils.endsWith(StringUtils.trimToEmpty(demographic.getPhone2()),STAR)) { %>
-                            <bean:message key="demographic.demographicaddrecordhtm.formPhoneWork"/>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=demographic.getPhone2()%></span>
+                            <i class="icon-briefcase" title="<bean:message key="demographic.demographicaddrecordhtm.formPhoneWork"/>"></i>&nbsp;<span id="tel" title="<bean:message key="oscarencounter.header.cell"/>&nbsp;<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" onclick="copySpanToClipboard(this.id)"><%=demographic.getPhone2()%></span>
                     <% }              
                 }
         %>
