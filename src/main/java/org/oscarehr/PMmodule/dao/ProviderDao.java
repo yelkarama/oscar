@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -592,7 +593,67 @@ public class ProviderDao extends HibernateDaoSupport {
 					HQL_ORDER_BY_NAME;
 			return getHibernateTemplate().find(sql);
 		}
-
+		
+	public List<Provider> getProvidersBySiteLocation(String location) {
+		List<Provider> pList = new ArrayList<Provider>();
+		Session sess = getSession();
+		try {
+			SQLQuery  q = sess.createSQLQuery(
+					"select distinct p.provider_no	" +
+					" from provider p " +
+					" inner join providersite ps on ps.provider_no = p.provider_no " +
+					" inner join site s on s.site_id = ps.site_id " +
+					" where  s.site_id = :siteId " +
+					SQL_ORDER_BY_NAME ) ;
+			q.setParameter("siteId", location);
+			List providerNos = q.list();
+			for(Object no : providerNos) {
+				String provNo = (String)no;
+				Provider provider = getProvider(provNo);
+				pList.add(provider);				
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().error("Error", e);
+		} finally {
+			try {
+				sess.close();
+			} catch (HibernateException e) {
+				MiscUtils.getLogger().error("Error", e);
+			}
+		}		
+		return pList;
+	}
+	
+	public List<Provider> getProvidersBySiteLocation2(String location) {
+		List<Provider> pList = new ArrayList<Provider>();
+		Session sess = getSession();
+		try {
+			SQLQuery  q = sess.createSQLQuery(
+					"select distinct p.provider_no	" +
+					" from provider p " +
+					" inner join providersite ps on ps.provider_no = p.provider_no " +
+					" inner join site s on s.site_id = ps.site_id " +
+					" where  s.site_id = :siteId and p.ohip_no!='' "+
+					SQL_ORDER_BY_NAME ) ;
+			q.setParameter("siteId", Integer.valueOf(location));
+			List providerNos = q.list();
+			for(Object no : providerNos) {
+				String provNo = (String)no;
+				Provider provider = getProvider(provNo);
+				pList.add(provider);				
+			}
+		} catch (Exception e) {
+			MiscUtils.getLogger().error("Error", e);
+		} finally {
+			try {
+				sess.close();
+			} catch (HibernateException e) {
+				MiscUtils.getLogger().error("Error", e);
+			}
+		}		
+		return pList;
+	}
+	
 		public List<String> getProvidersInTeam(String teamName) {
 			List<String> providerList = getHibernateTemplate().find("select distinct p.ProviderNo from Provider p  where p.Team = ?",new Object[]{teamName});			
 			return providerList;
