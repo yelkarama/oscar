@@ -604,7 +604,7 @@ public class ProviderDao extends HibernateDaoSupport {
 					" inner join providersite ps on ps.provider_no = p.provider_no " +
 					" inner join site s on s.site_id = ps.site_id " +
 					" where  s.site_id = :siteId " +
-					HQL_ORDER_BY_NAME ) ;
+					SQL_ORDER_BY_NAME ) ;
 			q.setParameter("siteId", location);
 			List providerNos = q.list();
 			for(Object no : providerNos) {
@@ -634,7 +634,7 @@ public class ProviderDao extends HibernateDaoSupport {
 					" inner join providersite ps on ps.provider_no = p.provider_no " +
 					" inner join site s on s.site_id = ps.site_id " +
 					" where  s.site_id = :siteId and p.ohip_no!='' "+
-					HQL_ORDER_BY_NAME ) ;
+					SQL_ORDER_BY_NAME ) ;
 			q.setParameter("siteId", Integer.valueOf(location));
 			List providerNos = q.list();
 			for(Object no : providerNos) {
