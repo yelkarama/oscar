@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * @deprecated 2013-04-28 use org.oscarehr.util.DateUtils instead 
@@ -137,7 +137,7 @@ public class UtilDateUtilities {
                 
         int ageInYears = curYear - birthYear;
                
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", HttpServletRequest.getLocale());
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", httpServletRequest.getLocale());
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
