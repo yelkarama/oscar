@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import org.oscarehr.util.LoggedInInfo;
+
 
 /**
  * @deprecated 2013-04-28 use org.oscarehr.util.DateUtils instead 
@@ -136,8 +136,8 @@ public class UtilDateUtilities {
         int birthDay = birthDate.get(5);
                 
         int ageInYears = curYear - birthYear;
-        LoggedInInfo loggedInInfo=getLoggedInInfo();       
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", loggedInInfo.getLocale());
+        java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);      
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", vLocale);
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
