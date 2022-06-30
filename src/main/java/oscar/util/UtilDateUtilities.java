@@ -136,8 +136,8 @@ public class UtilDateUtilities {
         int birthDay = birthDate.get(5);
                 
         int ageInYears = curYear - birthYear;
-        java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);      
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", vLocale);
+     
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", Locale.getDefault());
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
