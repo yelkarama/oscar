@@ -120,7 +120,7 @@ public class UtilDateUtilities {
      * @param pointInTime The date you would like to calculate there age at.
      * @return age string ( ie 2 months, 4 years .etc )
      */    
-    public static String calcAgeAtDate(Date DOB,Date pointInTime)    {
+    public static String calcAgeAtDate(Date DOB,Date pointInTime, HttpServletRequest request)    {
     	if (DOB==null) return(null);
     	
         GregorianCalendar now = new GregorianCalendar();
@@ -137,7 +137,7 @@ public class UtilDateUtilities {
                 
         int ageInYears = curYear - birthYear;
                
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", httpServletRequest.getLocale());
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
