@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
+import org.oscarehr.util.LoggedInInfo;
 
 /**
  * @deprecated 2013-04-28 use org.oscarehr.util.DateUtils instead 
@@ -120,7 +120,7 @@ public class UtilDateUtilities {
      * @param pointInTime The date you would like to calculate there age at.
      * @return age string ( ie 2 months, 4 years .etc )
      */    
-    public static String calcAgeAtDate(Date DOB,Date pointInTime, HttpServletRequest request)    {
+    public static String calcAgeAtDate(Date DOB,Date pointInTime)    {
     	if (DOB==null) return(null);
     	
         GregorianCalendar now = new GregorianCalendar();
@@ -136,8 +136,8 @@ public class UtilDateUtilities {
         int birthDay = birthDate.get(5);
                 
         int ageInYears = curYear - birthYear;
-               
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+        LoggedInInfo loggedInInfo=getLoggedInInfo();       
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", loggedInInfo.getLocale());
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";
