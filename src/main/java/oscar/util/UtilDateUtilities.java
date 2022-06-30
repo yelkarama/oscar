@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @deprecated 2013-04-28 use org.oscarehr.util.DateUtils instead 
