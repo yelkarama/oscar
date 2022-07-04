@@ -112,10 +112,13 @@ public class UtilDateUtilities {
     public static String calcAge(Date DOB){
        return calcAgeAtDate(DOB,new GregorianCalendar().getTime());
     }
-    
+
+    public static String calcAge(Date DOB,Locale vlocale){
+       return calcAgeAtDate(DOB,new GregorianCalendar().getTime(),vlocale);
+    }
  
     public static String calcAgeAtDate(Date DOB,Date pointInTime)    {
-       return calcAgeAtDate(DOB, pointInTime, Locale.getDefault());
+       return calcAgeAtDate(DOB, pointInTime,Locale.getDefault());
     }     
     /**
      * This returns the Patients Age string at a point in time.  IE. How old the patient will be right now or how old will they be on march.31 of this year.
@@ -123,7 +126,7 @@ public class UtilDateUtilities {
      * @param pointInTime The date you would like to calculate there age at.
      * @return age string ( ie 2 months, 4 years .etc )
      */    
-    public static String calcAgeAtDate(Date DOB,Date pointInTime, Locale vlocale)    {
+    public static String calcAgeAtDate(Date DOB,Date pointInTime,Locale vlocale)    {
     	if (DOB==null) return(null);
     	
         GregorianCalendar now = new GregorianCalendar();
