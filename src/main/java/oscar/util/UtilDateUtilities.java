@@ -35,6 +35,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+
 /**
  * @deprecated 2013-04-28 use org.oscarehr.util.DateUtils instead 
  */
@@ -111,15 +112,21 @@ public class UtilDateUtilities {
     public static String calcAge(Date DOB){
        return calcAgeAtDate(DOB,new GregorianCalendar().getTime());
     }
-    
-    
+
+    public static String calcAge(Date DOB,Locale vlocale){
+       return calcAgeAtDate(DOB,new GregorianCalendar().getTime(),vlocale);
+    }
+ 
+    public static String calcAgeAtDate(Date DOB,Date pointInTime)    {
+       return calcAgeAtDate(DOB, pointInTime,Locale.getDefault());
+    }     
     /**
      * This returns the Patients Age string at a point in time.  IE. How old the patient will be right now or how old will they be on march.31 of this year.
      * @param DOB Demographics Date of birth
      * @param pointInTime The date you would like to calculate there age at.
      * @return age string ( ie 2 months, 4 years .etc )
      */    
-    public static String calcAgeAtDate(Date DOB,Date pointInTime)    {
+    public static String calcAgeAtDate(Date DOB,Date pointInTime,Locale vlocale)    {
     	if (DOB==null) return(null);
     	
         GregorianCalendar now = new GregorianCalendar();
@@ -135,7 +142,8 @@ public class UtilDateUtilities {
         int birthDay = birthDate.get(5);
                 
         int ageInYears = curYear - birthYear;
-        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", Locale.getDefault());
+     
+        java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", vlocale);
         String notFound = "???";
         
         String years = oscarRec.getString("global.years").indexOf(notFound) < 0 ? oscarRec.getString("global.years"):"";

@@ -1219,7 +1219,7 @@ patientName.append(" (").append(demographic.getAlias()).append(")");
 }
 } %>
 		<%=Encode.forHtml(patientName.toString())%> <%=demographic.getSex()%>
-		<%=age%> years &nbsp;
+		<%=age%> <bean:message key="global.years" /> &nbsp;
 		<oscar:phrverification demographicNo='<%=demographic.getDemographicNo().toString()%>' ><bean:message key="phr.verification.link"/></oscar:phrverification>
 
 		<span style="margin-left: 20px;font-style:italic">
@@ -1650,7 +1650,7 @@ if (iviewTag!=null && !"".equalsIgnoreCase(iviewTag.trim())){
 				    if( head.equals(demographic_no)) {
 				    %>
 					<a id="editBtn" href="javascript: showHideDetail();" class="btn btn-primary"><bean:message key="demographic.demographiceditdemographic.msgEdit"/></a>
-					<a id="closeBtn" href="javascript: showHideDetail();" style="display:none;" class="btn btn-primary">Close</a>
+					<a id="closeBtn" href="javascript: showHideDetail();" style="display:none;" class="btn btn-primary"><bean:message key="global.btnClose" /></a>
 				   <% } %>
 	      </security:oscarSec>
 				
@@ -2807,7 +2807,7 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
                     value="<%=birthMonth%>">
 				<input type="hidden" name="date_of_birth" id="date_of_birth" 
 				    value="<%=birthDate%>">			
-				(<%=age%> yo)
+				(<%=age%> <bean:message key="global.years" />)
             </div>
         </div>
         <div class="control-group span5">
@@ -4443,7 +4443,7 @@ if(oscarProps.getProperty("demographicExtJScript") != null) { out.println(oscarP
 									    <% } %>
 </td><td>								<input
 									type="button" name="Button" id="cancelButton" class="btn btn-link"
-									value="Exit Master Record"	onclick="self.close();">
+									value="<bean:message key="global.btnExit" />"	onclick="self.close();">
 
 								
 <%-- END BOTTOM TOOLBAR  --%>
