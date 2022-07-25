@@ -227,7 +227,9 @@ public class JdbcBillingRAImpl {
 					} else {
 						amountsubmit = amountsubmit.substring(0, amountsubmit.length() - 2) + "." + amountsubmit.substring(amountsubmit.length() - 2);
 					}
-					newhin = hin + ver;
+					
+					//left justified hin space padded to 12 characters
+					newhin = hin;
 
 					// if it needs to write a radt record for the rahd record
 					if (recFlag > 0) {
