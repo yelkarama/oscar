@@ -146,21 +146,22 @@ public class ABCDParser {
 
          int count =0 ;
          try{
-
+         // HIN is ALWAYS required for lab matching. Please do not revert this as significant clinical risk occurs with mismatch.
+         // relax need to match sex if patient is labeled non binary
             if( OscarProperties.getInstance().getBooleanProperty("LAB_NOMATCH_NAMES","yes") ){
             sql = "select demographic_no from demographic where hin='"+hinMod+"' and " +
-		  " year_of_birth like '"+dobYear+"' and " +
+                  " year_of_birth like '"+dobYear+"' and " +
                   " month_of_birth like '"+dobMonth+"' and "+
                   " date_of_birth like '"+dobDay+"' and " +
-                  " sex like '"+sex+"%' ";
+                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') ";
             }else{
             sql = "select demographic_no from demographic where hin='"+hinMod+"' and " +
                   " last_name like '"+lastName.substring(0,1)+"%' and " +
                   " first_name like '"+firstName.substring(0,1)+"%' and " +
-		  " year_of_birth like '"+dobYear+"' and " +
+                  " year_of_birth like '"+dobYear+"' and " +
                   " month_of_birth like '"+dobMonth+"' and "+
                   " date_of_birth like '"+dobDay+"' and " +
-                  " sex like '"+sex+"%' ";
+                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') ";
             }
 
 
