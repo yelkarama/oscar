@@ -153,7 +153,7 @@ public class ABCDParser {
                   " year_of_birth like '"+dobYear+"' and " +
                   " month_of_birth like '"+dobMonth+"' and "+
                   " date_of_birth like '"+dobDay+"' and " +
-                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') ";
+                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') )";
             }else{
             sql = "select demographic_no from demographic where hin='"+hinMod+"' and " +
                   " last_name like '"+lastName.substring(0,1)+"%' and " +
@@ -161,7 +161,7 @@ public class ABCDParser {
                   " year_of_birth like '"+dobYear+"' and " +
                   " month_of_birth like '"+dobMonth+"' and "+
                   " date_of_birth like '"+dobDay+"' and " +
-                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') ";
+                  " ( sex like '"+sex+"%' OR sex NOT IN ('F','M') )";
             }
 
 
