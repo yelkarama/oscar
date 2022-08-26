@@ -28,9 +28,11 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
+
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <html>
 <head>
@@ -94,13 +96,14 @@ function forwardDocLab(doclabid){
 	<% ArrayList providers = ProviderData.getProviderList();
                        for (int i=0; i < providers.size(); i++) { %>
 	<option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
-		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(request.getParameter("providerNo")) ? " selected" : "" ) %>><%= (String) ((ArrayList) providers.get(i)).get(2) %>,
-	<%= (String) ((ArrayList) providers.get(i)).get(1) %></option>
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(request.getParameter("providerNo")) ? " selected" : "" ) %>>
+    <%=Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1)) %></option>
+</option>
 	<% } %>
 </select>
-<p><input type="button" class="button"
+<p><input type="button" class="button btn btn-primary"
 	value="<bean:message key="oscarMDS.selectProvider.btnOk"/>"
-	onclick="doStuff()"> <input type="button" class="button"
+	onclick="doStuff()"> <input type="button" class="button btn"
 	value="<bean:message key="oscarMDS.selectProvider.btnCancel"/>"
 	onclick="window.close()"></p>
 </center>
