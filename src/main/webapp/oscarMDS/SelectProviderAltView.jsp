@@ -94,8 +94,8 @@ function forwardDocLab(doclabid){
 	<% ArrayList providers = ProviderData.getProviderList();
                        for (int i=0; i < providers.size(); i++) { %>
 	<option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
-		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(request.getParameter("providerNo")) ? " selected" : "" ) %>><%= (String) ((ArrayList) providers.get(i)).get(1) %>
-	<%= (String) ((ArrayList) providers.get(i)).get(2) %></option>
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(request.getParameter("providerNo")) ? " selected" : "" ) %>><%= (String) ((ArrayList) providers.get(i)).get(2) %>,
+	<%= (String) ((ArrayList) providers.get(i)).get(1) %></option>
 	<% } %>
 </select>
 <p><input type="button" class="button"
