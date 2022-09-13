@@ -197,7 +197,7 @@ public class Hl7TextInfoDao extends AbstractDao<Hl7TextInfo> {
 				"WHERE a.accessionNumber <> '' " +
 				"AND a.accessionNumber = b.accessionNumber " +
 				"AND b.labNumber = :labNo " +
-				"ORDER BY a.obrDate, a.labNumber";
+				"ORDER BY a.obrDate, a.finalResultCount, a.labNumber";
 	    Query q = entityManager.createQuery(sql);
 	    q.setParameter("labNo", labNo);
 	    return q.getResultList();
