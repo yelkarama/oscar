@@ -543,7 +543,7 @@ changeSite(selSite);
     <tr>
       <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnCancel"/>" onClick="window.close()"></td>
       <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnSubmit"/>" onClick="event.preventDefault();validate(this.form);">
-          <input type="button" name="Button" class="btn btn-primary" value="<bean:message key="tickler.ticklerAdd.btnWriteSubmit"/>" onClick="validate(this.form, true)">
+          <input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnWriteSubmit"/>" onClick="validate(this.form, true)">
       </td>
       <td></td>
           </tr>
