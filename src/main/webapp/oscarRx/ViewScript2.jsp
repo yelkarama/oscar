@@ -778,6 +778,12 @@ function toggleView(form) {
 					</tr>
 					<tr>
 						<td><span><input type=button
+							value="<bean:message key="ViewScript.msgPasteEmr"/>"
+							class="ControlPushButton" style="width: 155px"
+							onClick="printPaste2Parent('justPaste');setTimeout(function() {self.parent.close()}, 2500);" /></span></td>
+					</tr>
+					<tr>
+						<td><span><input type=button
 							value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
 							class="ControlPushButton" style="width: 155px"
 							onClick="printPaste2Parent('print');setTimeout(function() {self.parent.close()}, 2500);" /></span></td>
