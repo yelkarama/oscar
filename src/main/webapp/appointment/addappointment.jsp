@@ -419,9 +419,9 @@ function pasteAppt(multipleSameDayGroupAppt) {
         //document.forms[0].chart_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getChart_no())%>";
         document.forms[0].keyword.value = "<%=Encode.forJavaScriptBlock(apptObj.getName())%>";
         document.forms[0].demographic_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getDemographic_no())%>";
-        document.forms[0].reason.value = "<%= Encode.forHtml(apptObj.getReason()) %>";
-        document.forms[0].reasonCode.value = "<%= Encode.forHtml(apptObj.getReasonCode()) %>";
-        document.forms[0].notes.value = "<%= Encode.forHtml(apptObj.getNotes()) %>";       
+        document.forms[0].reason.value = "<%= Encode.forJavaScriptBlock(apptObj.getReason()) %>";
+        document.forms[0].reasonCode.value = "<%= Encode.forJavaScriptBlock(apptObj.getReasonCode()) %>";
+        document.forms[0].notes.value = "<%= Encode.forJavaScriptBlock(apptObj.getNotes()) %>";       
         document.forms[0].resources.value = "<%=Encode.forJavaScriptBlock(apptObj.getResources())%>";
         document.forms[0].type.value = "<%=Encode.forJavaScriptBlock(apptObj.getType())%>";
         document.forms[0].location.value = "<%=Encode.forJavaScriptBlock(apptObj.getLocation())%>";   
@@ -1018,7 +1018,7 @@ function parseSearch() {
 </style>
 	        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 	        <% for (Site s:sites) { %>
-	                <option value="<%=s.getName()%>" class="<%=s.getShortName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=s.getName()%></option>
+	                <option value="<%=Encode.forHtmlAttribute(s.getName())%>" class="<%=s.getShortName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=Encode.forHtmlContent(s.getName())%></option>
 	        <% } %>
 	        </select>
 		<% } else {
