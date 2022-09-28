@@ -47,16 +47,7 @@
 <%@page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
 <%
   if (session.getAttribute("user") == null)    response.sendRedirect("../logout.jsp");
-  String curProvider_no = request.getParameter("provider_no");
-  String appointment_no = request.getParameter("appointment_no");
-  String curUser_no = (String) session.getAttribute("user");
-  String userfirstname = (String) session.getAttribute("userfirstname");
-  String userlastname = (String) session.getAttribute("userlastname");
-  String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
-  String origDate = null;
 
-  boolean bFirstDisp = true; //this is the first time to display the window
-  if (request.getParameter("bFirstDisp")!=null) bFirstDisp = (request.getParameter("bFirstDisp")).equals("true");
 %>
 
 
@@ -117,6 +108,18 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 <%
+
+  String curProvider_no = Encode.forHtmlAttribute(request.getParameter("provider_no"));
+  String appointment_no = Encode.forHtmlAttribute(request.getParameter("appointment_no"));
+  String curUser_no = (String) session.getAttribute("user");
+  String userfirstname = (String) session.getAttribute("userfirstname");
+  String userlastname = (String) session.getAttribute("userlastname");
+  String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
+  String origDate = null;
+
+  boolean bFirstDisp = true; //this is the first time to display the window
+  if (request.getParameter("bFirstDisp")!=null) bFirstDisp = (request.getParameter("bFirstDisp")).equals("true");
+
     String mrpName = "";
 	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
 	EncounterFormDao encounterFormDao = SpringUtils.getBean(EncounterFormDao.class);
@@ -454,16 +457,16 @@ function pasteAppt(multipleSameDayGroupAppt) {
         //else {
         //   warnMsgId.style.display = "none";
         //}
-	document.EDITAPPT.status.value = "<%=Encode.forHtmlAttribute(apptObj.getStatus())%>";
-	document.EDITAPPT.duration.value = "<%=Encode.forHtmlAttribute(apptObj.getDuration())%>";
-	document.EDITAPPT.chart_no.value = "<%=Encode.forHtmlAttribute(apptObj.getChart_no())%>";
-	document.EDITAPPT.keyword.value = "<%=Encode.forHtmlAttribute(apptObj.getName())%>";
-	document.EDITAPPT.demographic_no.value = "<%=Encode.forHtmlAttribute(apptObj.getDemographic_no())%>";
-	document.forms[0].reason.value = "<%= Encode.forHtmlAttribute(apptObj.getReason()) %>"; 
-    document.forms[0].notes.value = "<%= Encode.forHtmlAttribute(apptObj.getNotes()) %>"; 
-	document.EDITAPPT.location.value = "<%=Encode.forHtmlAttribute(apptObj.getLocation())%>";
-	document.EDITAPPT.resources.value = "<%=Encode.forHtmlAttribute(apptObj.getResources())%>";
-	document.EDITAPPT.type.value = "<%=Encode.forHtmlAttribute(apptObj.getType())%>";
+	document.EDITAPPT.status.value = "<%=Encode.forJavaScriptBlocke(apptObj.getStatus())%>";
+	document.EDITAPPT.duration.value = "<%=Encode.forJavaScriptBlock(apptObj.getDuration())%>";
+	document.EDITAPPT.chart_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getChart_no())%>";
+	document.EDITAPPT.keyword.value = "<%=Encode.forJavaScriptBlock(apptObj.getName())%>";
+	document.EDITAPPT.demographic_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getDemographic_no())%>";
+	document.forms[0].reason.value = "<%= Encode.forJavaScriptBlock(apptObj.getReason()) %>"; 
+	document.forms[0].notes.value = "<%= Encode.forJavaScriptBlock(apptObj.getNotes()) %>"; 
+	document.EDITAPPT.location.value = "<%=Encode.forJavaScriptBlock(apptObj.getLocation())%>";
+	document.EDITAPPT.resources.value = "<%=Encode.forJavaScriptBlock(apptObj.getResources())%>";
+	document.EDITAPPT.type.value = "<%=Encode.forJavaScriptBlock(apptObj.getType())%>";
 	if('<%=apptObj.getUrgency()%>' == 'critical') {
 		document.EDITAPPT.urgency.checked = "checked";
 	}
@@ -775,7 +778,7 @@ function parseSearch() {
             </td>
             <td>
             	<INPUT TYPE="TEXT" NAME="keyword"
-                        VALUE="<%=bFirstDisp?nameSb.toString():request.getParameter("name")%>"
+                        VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?nameSb.toString():request.getParameter("name"))%>"
                         placeholder="<bean:message key="Appointment.formName" />">
             </td>
         </tr>
@@ -810,7 +813,7 @@ function parseSearch() {
         <tr>
             <td></td><td>
 				<textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" placeholder="<bean:message key="Appointment.formReason" />"
-					cols="18" maxlength="80"><%=Encode.forHtml(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
+					cols="18"><%=Encode.forHtmlContent(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
             </td>
         </tr>
         <tr>
@@ -876,7 +879,7 @@ function parseSearch() {
 		  	%>
                </select>
 	        <% } else { %>
-		        <INPUT TYPE="TEXT" NAME="location" tabindex="4" VALUE="<%=bFirstDisp?appt.getLocation():request.getParameter("location")%>" >
+		        <INPUT TYPE="TEXT" NAME="location" tabindex="4" VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
 	        <% } %>           
         <% } %>
             </td>
@@ -887,7 +890,7 @@ function parseSearch() {
             </td>
             <td>
                 <% String lastCreatorNo = bFirstDisp?(appt.getCreator()):request.getParameter("user_id"); %>
-                <INPUT TYPE="TEXT" NAME="user_id" VALUE="<%=lastCreatorNo%>" readonly >
+                <INPUT TYPE="TEXT" NAME="user_id" VALUE="<%=Encode.forHtmlAttribute(lastCreatorNo)%>" readonly >
             </td>
         </tr>
 				<%
@@ -995,7 +998,7 @@ function parseSearch() {
              </td>
              <td>                      
                 <INPUT TYPE="TEXT" NAME="type"
-                    VALUE="<%=bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type")%>" >
+                    VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type"))%>" >
             </td>
         </tr>
         <tr>
@@ -1079,8 +1082,8 @@ function parseSearch() {
                 <INPUT TYPE="hidden" NAME="createdatetime" VALUE="<%=strDateTime%>">
 				<INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
 				<INPUT TYPE="hidden" NAME="dboperation" VALUE="">
-                <INPUT TYPE="hidden" NAME="creator" VALUE="<%=userlastname+", "+userfirstname%>">
-                <INPUT TYPE="hidden" NAME="remarks" VALUE="<%=remarks%>">
+                <INPUT TYPE="hidden" NAME="creator" VALUE="<%=Encode.forHtmlAttribute(userlastname+", "+userfirstname)%>">
+                <INPUT TYPE="hidden" NAME="remarks" VALUE="<%=Encode.forHtmlAttribute(remarks)%>">
                 <INPUT TYPE="hidden" NAME="appointment_no" VALUE="<%=appointment_no%>">
             </td>
         </tr> 
@@ -1360,21 +1363,21 @@ Currently this is only used in the mobile version -->
                 to <%=bFirstDisp ? ConversionUtils.toTimeStringNoSeconds(appt.getEndTime()) : request.getParameter("end_time")%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formType" />: </div>
-                <div class="info"><%=bFirstDisp ? appt.getType() : request.getParameter("type")%></div>
+                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getType() : request.getParameter("type"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formReason" />: </div>
-                <div class="info"><%=bFirstDisp ? appt.getReason() : request.getParameter("reason")%></div>
+                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getReason() : request.getParameter("reason"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formLocation" />: </div>
-                <div class="info"><%=bFirstDisp ? appt.getLocation() : request.getParameter("location")%></div>
+                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getLocation() : request.getParameter("location"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formResources" />: </div>
-                <div class="info"><%=bFirstDisp ? appt.getResources() : request.getParameter("resources")%></div>
+                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getResources() : request.getParameter("resources"))%></div>
             </li>
             <li>&nbsp;</li>
             <li class="notes">
                 <div class="label"><bean:message key="Appointment.formNotes" />: </div>
-                <div class="info"><%=bFirstDisp ? appt.getNotes() : request.getParameter("notes")%></div>
+                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getNotes() : request.getParameter("notes"))%></div>
             </li>
         </ul>
     </div>

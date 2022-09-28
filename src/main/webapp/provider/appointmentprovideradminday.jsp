@@ -78,6 +78,7 @@
 <%@ page import="org.oscarehr.common.model.SystemPreferences" %>
 <%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <!-- add by caisi -->
 <%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
@@ -2558,11 +2559,11 @@ start_time += iSm + ":00";
 
 <a class="apptLink" href=# onClick ="popupPage(790,801,'<%=request.getContextPath()%>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search');return false;" 
 <oscar:oscarPropertiesCheck property="SHOW_APPT_REASON_TOOLTIP" value="yes" defaultVal="true"> 
-	title="<%=name%>
-	type: <%=type != null ? type : "" %>
-	reason: <%=reasonCodeName!=null? reasonCodeName:""%> <%if(reason!=null && !reason.isEmpty()){%>- <%=UtilMisc.htmlEscape(reason)%><%}%>
-	notes: <%=notes%>"
-</oscar:oscarPropertiesCheck> ><%=(view==0) ? (name.length()>len?name.substring(0,len) : name) :name%></a>
+	title="<%=Encode.forHtmlAttribute(name)%>
+	type: <%=type != null ? Encode.forHtmlAttribute(type) : "" %>
+	reason: <%=reasonCodeName!=null? Encode.forHtml(reasonCodeName):""%> <%if(reason!=null && !reason.isEmpty()){%>- <%=Encode.forHtmlAttribute(reason)%><%}%>
+	notes: <%=Encode.forHtmlAttribute(notes)%>"
+</oscar:oscarPropertiesCheck> ><%=Encode.forHtml((view==0) ? (name.length()>len?name.substring(0,len) : name) :name)%></a>
 
 <% if(len==lenLimitedL || view!=0 || numAvailProvider==1 ) {%>
 
@@ -2598,7 +2599,7 @@ start_time += iSm + ":00";
 	+"&curProviderNo="
 	+curProvider_no[nProvider]
 	+"&reason="
-	+URLEncoder.encode(reason)
+	+Encode.forUriComponent(reason)
 	+"&encType="
 	+URLEncoder.encode("face to face encounter with client","UTF-8")
 	+"&userName="
