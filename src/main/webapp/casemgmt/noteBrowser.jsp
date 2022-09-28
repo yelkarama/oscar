@@ -570,9 +570,9 @@
                                 Collections.sort(notesToDisplay, NoteDisplay.noteObservationDateComparator);
                                 int noteSize = notes.size();
                                 int idx=0;
-                             <%  
-                                <option value="0">-- all --</option>
-                             %>   
+                             %>  
+                                <option value="0">-- <bean:message key="oscarEncounter.noteBrowser.msgAll"/> --</option>
+                             <%   
                                 for (idx = 0; idx < noteSize; ++idx)
                                 { 
                                     NoteDisplay curNote = notesToDisplay.get(idx); 
