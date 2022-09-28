@@ -370,7 +370,15 @@
             
             function getEncounter()
             {
+            // allow for the first option with id=0 to be select all
+
                 var th = document.getElementById('encounterlist');
+                var length = th.options.length;
+                if(th.value == 0){
+                    for(var i = 1;i<length;i++)
+                    th.options[i].selected = "selected";
+                    th.options[0].selected = "";
+                    }
                 var selected = new Array();
                 selected=getSelected(th);
                 
@@ -562,6 +570,9 @@
                                 Collections.sort(notesToDisplay, NoteDisplay.noteObservationDateComparator);
                                 int noteSize = notes.size();
                                 int idx=0;
+                             %>  
+                                <option value="0">-- <bean:message key="oscarEncounter.noteBrowser.msgAll"/> --</option>
+                             <%   
                                 for (idx = 0; idx < noteSize; ++idx)
                                 { 
                                     NoteDisplay curNote = notesToDisplay.get(idx); 
