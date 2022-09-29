@@ -457,7 +457,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
         //else {
         //   warnMsgId.style.display = "none";
         //}
-	document.EDITAPPT.status.value = "<%=Encode.forJavaScriptBlocke(apptObj.getStatus())%>";
+	document.EDITAPPT.status.value = "<%=Encode.forJavaScriptBlock(apptObj.getStatus())%>";
 	document.EDITAPPT.duration.value = "<%=Encode.forJavaScriptBlock(apptObj.getDuration())%>";
 	document.EDITAPPT.chart_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getChart_no())%>";
 	document.EDITAPPT.keyword.value = "<%=Encode.forJavaScriptBlock(apptObj.getName())%>";
