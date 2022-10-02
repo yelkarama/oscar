@@ -317,7 +317,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			bgColour = CaseManagementViewAction.getNoteColour(note);
 			if (fulltxt)
 			{
-				noteStr = noteStr.replaceAll("\n", "\n\n"); // \n\n gets changed by commonmark to <br>
+				noteStr = noteStr.replaceAll("\n", "<br>"); 
 			}
 			else
 			{
@@ -331,6 +331,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			boolean hideEformNotes = OscarProperties.getInstance().isPropertyActive("encounter.hide_eform_notes");
 			//boolean hideMetaData = OscarProperties.getInstance().isPropertyActive("encounter.hide_metadata");
 			boolean hideInvoices = OscarProperties.getInstance().isPropertyActive("encounter.hide_invoices");
+			boolean hideMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.hide_markdown");
 			
 			String noteDisplay = "block";
 			if(note.isCpp() && hideCppNotes) {
@@ -479,7 +480,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr.replaceAll("\n\n","\n").replaceAll("\n","<br>")%>';<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
 
@@ -609,21 +610,20 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour+";color:white;font-size:10px"):""%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;margin-top:0px;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
+			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
-String noteHtml = noteStr;
-if (!isMagicNote){
-Parser parser = Parser.builder().build();
-Node document = parser.parse(noteStr);
-HtmlRenderer renderer = HtmlRenderer.builder().build();
-noteHtml = renderer.render(document);
-noteHtml = noteHtml.replaceAll("<h2>", "<b>");
-noteHtml = noteHtml.replaceAll("</h2>", "</b><br>");
-noteHtml = noteHtml.replaceAll("<p>", "");
-noteHtml = noteHtml.replaceAll("</p>", "<br>");
+if (!isMagicNote & !hideMarkdown){
+    noteStr = noteStr.replaceAll("<br>","\n\n");
+    Parser parser = Parser.builder().build();
+    Node document = parser.parse(noteStr);
+    HtmlRenderer renderer = HtmlRenderer.builder().build();
+    noteStr = renderer.render(document);
+
+    noteStr = noteStr.replaceAll("<p>", "");
+    noteStr = noteStr.replaceAll("</p>", "<br>");
 }
 %>
-	<%=noteHtml%>	  						
+	<%=noteStr%>	  						
 							</div> <!-- end of txt<%=globalNoteId%> -->
 		  						<%
 		  							if (note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())
