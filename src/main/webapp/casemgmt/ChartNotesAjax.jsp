@@ -63,7 +63,9 @@
 <%@page import="org.oscarehr.common.dao.EncounterTemplateDao"%>
 <%@page import="org.oscarehr.casemgmt.web.CheckBoxBean"%>
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock"%>
-
+<%@page import="org.commonmark.node.Node"%>
+<%@page import="org.commonmark.parser.Parser"%>
+<%@page import="org.commonmark.renderer.html.HtmlRenderer"%>
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed2=true;
@@ -315,7 +317,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			bgColour = CaseManagementViewAction.getNoteColour(note);
 			if (fulltxt)
 			{
-				noteStr = noteStr.replaceAll("\n", "<br>");
+				noteStr = noteStr.replaceAll("\n", "\n\n"); // \n\n gets changed by commonmark to <br>
 			}
 			else
 			{
@@ -477,9 +479,10 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr.replaceAll("\n\n","\n").replaceAll("\n","<br>")%>';<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
+
 								<%
 								}
 
@@ -606,9 +609,21 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour+";color:white;font-size:10px"):""%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
-
-		  						<%=noteStr%>
+			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;margin-top:0px;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
+<%
+String noteHtml = noteStr;
+if (!isMagicNote){
+Parser parser = Parser.builder().build();
+Node document = parser.parse(noteStr);
+HtmlRenderer renderer = HtmlRenderer.builder().build();
+noteHtml = renderer.render(document);
+noteHtml = noteHtml.replaceAll("<h2>", "<b>");
+noteHtml = noteHtml.replaceAll("</h2>", "</b><br>");
+noteHtml = noteHtml.replaceAll("<p>", "");
+noteHtml = noteHtml.replaceAll("</p>", "<br>");
+}
+%>
+	<%=noteHtml%>	  						
 							</div> <!-- end of txt<%=globalNoteId%> -->
 		  						<%
 		  							if (note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())
