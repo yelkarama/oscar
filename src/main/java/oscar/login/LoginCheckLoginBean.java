@@ -54,7 +54,8 @@ public final class LoginCheckLoginBean {
 	private String pin = "";
 	private String ip = "";
 	private String ssoKey = "";
-
+	private String code = "";
+	private	boolean valid = false;
 	private String userpassword = null; // your password in the table
 
 	private String firstname = null;
@@ -86,21 +87,43 @@ public final class LoginCheckLoginBean {
 
 		String sPin = pin;
 		if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
+			
 
 		// check for 2FA type pin
 		if (security.isTotpEnabled()) {
 			String base32Secret = security.getTotpSecret();
-			Integer numDigits = security.getTotpDigits();
+			int numDigits = security.getTotpDigits();
+			int authNumber = 0;
+			String sPin1 = pin;
+
+			try{
+			code = TimeBasedOneTimePasswordUtil.generateCurrentNumberString(base32Secret);
+			}
+			catch (Exception e) {
+			 logger.error(e.getMessage());
+			}
 			try {
-				boolean valid = TimeBasedOneTimePasswordUtil.validateCurrentNumber(base32Secret, Integer.parseInt(pin), 10000);
-				if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!valid || pin.length() < 3)) {
-					return cleanNullObj(LOG_PRE + "Pin-remote 2FA needed: " + username);
-				} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!valid || pin.length() < 3)) {
-					return cleanNullObj(LOG_PRE + "Pin-local 2FA needed: " + username);
-				}	
+			   authNumber = Integer.parseInt(sPin1);  //use Integer wrapper class to cast the String pin
+			}
+			catch (NumberFormatException e) {
+			   logger.error(e.getMessage() + sPin1);
+			   return cleanNullObj(LOG_PRE + "2FA Pin-poorly formed: " + pin + "|" + username);
+			}
+			long windowMillis = 10000;
+			try {
+				valid = TimeBasedOneTimePasswordUtil.validateCurrentNumber(base32Secret, authNumber, windowMillis);
+				//valid = (code == pin);
+				 logger.error("code: " + code + " pin: "+ pin +" valid: " + valid); //never expose this to logging TESTING ONLY!!
 			} catch (Exception e) {
 				logger.error(e.getMessage());
+				return cleanNullObj(LOG_PRE + "2FA error: " + username);
 			}
+				if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
+					return cleanNullObj(LOG_PRE + "Pin-remote 2FA needed: " + username);
+				} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
+					return cleanNullObj(LOG_PRE + "Pin-local 2FA needed: " + username);
+				}	
+
 		} else {
 			if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
 				return cleanNullObj(LOG_PRE + "Pin-remote needed: " + username);
@@ -175,7 +198,7 @@ public final class LoginCheckLoginBean {
 		LogAction.addLogSynchronous("", "failed", LogConst.CON_LOGIN, username, ip);
 		userpassword = null;
 		password = null;
-		return null;
+		return new String[] { "failed" };
 	}
 
 	private String[] cleanNullObjExpire(String errorMsg) {
