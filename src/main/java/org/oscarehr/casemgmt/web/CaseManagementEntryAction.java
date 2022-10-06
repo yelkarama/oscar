@@ -131,6 +131,9 @@ import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarEncounter.pageUtil.EctSessionBean;
 import oscar.oscarSurveillance.SurveillanceMaster;
 import oscar.util.UtilDateUtilities;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 /*
  * Updated by Eugene Petruhin on 12 and 13 jan 2009 while fixing #2482832 & #2494061
@@ -2866,22 +2869,33 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String ids = request.getParameter("notes2print");
 		String[] noteIds;
 		String textStr;
-
+		String sStyle = "";
+		boolean renderMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.render_markdown");
+		
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
-
-		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'></head><body>");
+		if ( renderMarkdown ){ sStyle = "<style>h1{font-size:120%}</style><style>h2{font-size:100%}</style><style>h3{font-size:90%}</style>"; }
+		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "</head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getObservation_date().toString() + " " + this.caseManagementMgr.getNote(noteIds[idx]).getProviderName() + " " + props.getString("oscarEncounter.noteBrowser.msgNoteLocked");
 			} else {
-
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getNote();
 			}
-			textStr = textStr.replaceAll("\n", "<br>");
+			if ( renderMarkdown ){	
+				Parser parser = Parser.builder().build();
+				Node document = parser.parse(textStr);
+				HtmlRenderer renderer = HtmlRenderer.builder().build();
+				textStr = renderer.render(document);
+
+				textStr = textStr.replaceAll("<p>", "");
+				textStr = textStr.replaceAll("</p>", "<br>");			
+			} else {
+				textStr = textStr.replaceAll("\n", "<br>");
+			}
 			out.println(textStr);
 			out.println("<br><br>");
 		}
