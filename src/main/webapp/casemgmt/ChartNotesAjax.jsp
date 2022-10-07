@@ -487,7 +487,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';setTimeout(<%=editWarn?"noPrivs(event)":"editNote(event)"%>,500) ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
 
