@@ -2870,7 +2870,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String[] noteIds;
 		String textStr;
 		String sStyle = "";
-		boolean renderMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.render_markdown");
+		boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
 		
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
@@ -2885,7 +2885,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			} else {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getNote();
 			}
-			if ( renderMarkdown ){	
+			if ( renderMarkdown ){	//mimic the treatment of ChartNoteseAjax.jsp for consistancy
+				textStr = textStr.replaceAll("\n", "\n\n");			
 				Parser parser = Parser.builder().build();
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -2897,7 +2898,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
 			out.println(textStr);
-			out.println("<br><br>");
+			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.7), rgba(0, 0, 0,0));'>");
+			out.println("<br>");
 		}
 
 		out.println("</body></html>");
