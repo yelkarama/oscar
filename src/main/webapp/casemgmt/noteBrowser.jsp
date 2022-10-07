@@ -219,13 +219,13 @@
                 if(curdocid!="0") {
                     var url2='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=display&doc_no='
                         +curdocid;
-                    document.getElementById('docdisp').innerHTML = '<iframe	src="' +url2 +'"  width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></iframe>';
+                    document.getElementById('docdisp').innerHTML = '<iframe	id="iframe1" src="' +url2 +'"  width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></iframe>';
                             
                     var url4='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewDocumentDescription&doc_no='+curdocid;
-                    document.getElementById('docextrainfo').innerHTML = '<object data="' +url4 +'"  height=250px width="100%" type="text/html" ></object>';
+                    document.getElementById('docextrainfo').innerHTML = '<object id="url4" data="' +url4 +'"  height=250px width="100%" type="text/html" ></object>';
                     
                     var url5='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewAnnotationAcknowledgementTickler&doc_no='+curdocid;
-                    document.getElementById('docinfo').innerHTML = '<object data="' +url5 +'"  height=100px width="100%" type="text/html" ></object>';                    
+                    document.getElementById('docinfo').innerHTML = '<object id="url5" data="' +url5 +'"  height=100px width="100%" type="text/html" ></object>';                    
                       
                     document.getElementById('printnotesbutton').style.visibility = 'hidden'; 
                 } else  
@@ -239,7 +239,7 @@
             showPageCombineImg=function(doclist){
                 
                 var url2='<%=request.getContextPath()%>'+'/dms/combinePDFs.do?ContentDisposition=inline'+doclist;
-                document.getElementById('docdisp').innerHTML = '<object	data="' +url2 +'" type="application/pdf" width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></object>';
+                document.getElementById('docdisp').innerHTML = '<object	id="url2" data="' +url2 +'" type="application/pdf" width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></object>';
                 document.getElementById('docinfo').innerHTML='';
                 document.getElementById('docextrainfo').innerHTML='';
                 document.getElementById('printnotesbutton').style.visibility = 'hidden'; 
@@ -247,7 +247,7 @@
             }
             function showEncounter(encList){
                  var url2='<%=request.getContextPath()%>'+'/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>'+encList+'&printCPP=false&printRx=false';
-                 document.getElementById('docdisp').innerHTML = '<object data="' +url2 +'"  width="' +(getWidth()-40) +'" height="' +(getHeight()-300) +'" type="text/html"></object>';
+                 document.getElementById('docdisp').innerHTML = '<object id="url22" data="' +url2 +'"  width="' +(getWidth()-40) +'" height="' +(getHeight()-300) +'" type="text/html"></object>';
                  document.getElementById('docinfo').innerHTML='';
                  document.getElementById('docextrainfo').innerHTML = '';
                  document.getElementById('printnotesbutton').style.visibility = 'visible'; 
@@ -469,15 +469,41 @@
                 }
                 setdefaultencounter();
            }
+
+
+            function htmlPrint(){
+                // load the note as rendered html into another window and print
+                var srcContents = document.getElementById("url22").getAttribute('data');
+                var a = window.open(srcContents,'print','height=500, width=500');
+                a.addEventListener('load', function(){a.print()});
+           }
         </script>
+
+        <style>
+
+        body {
+            font-family: arial,sans-serif;
+        }
+
+        </style>
+        <style type="text/css" media="print">
+
+         .DoNotPrint {
+	        display: none;
+         }
+        </style>
+
     </head>
     <body onload="OnLoad();" >
         <form name="DisplayDoc" method="post" action="noteBrowser.jsp">
 
             <table>
                 <%if (errorMessage.length() > 0) {%><tr><td><b><font color="red"><%=errorMessage%></font></b></td></tr><%}%>
-                <tr><td  align="left" valign="top" width="50%">
-                        <oscar:nameage demographicNo="<%=demographicID%>"/><br>                     
+                <tr><td  align="left" valign="top" >
+                        <oscar:nameage demographicNo="<%=demographicID%>"/><br> 
+                </td></tr>
+                <tr class="DoNotPrint"><td  align="left" valign="top" width="50%">
+                   
 
                         <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
                         <input type="hidden" name="sortorder" value="<%=sortorder%>">
@@ -541,7 +567,11 @@
                             
                             
                         <div id="docinfo"></div>
-                        <div id="printnotesbutton"><input type='image' src="../oscarEncounter/graphics/document-print.png" onclick="PrintEncounter();" title='<bean:message key="oscarEncounter.Index.btnPrint"/>' id="imgPrintEncounter"></div>  
+                        <div id="printnotesbutton" class="DoNotPrint">
+                            <input type="button" value='<bean:message key="global.btnPDF"/>' id="imgPrintEncounter" onclick="PrintEncounter();">
+                            <input type="button" value='<bean:message key="global.btnPrint"/>' id="htmlPrintEncounter" onclick="htmlPrint();">
+
+                        </div>  
                     </td><td valign="top">
                         <fieldset><legend><%
                         if(sortorder.equals("Content")) { %>

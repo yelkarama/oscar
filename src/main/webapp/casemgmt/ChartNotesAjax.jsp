@@ -331,7 +331,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			boolean hideEformNotes = OscarProperties.getInstance().isPropertyActive("encounter.hide_eform_notes");
 			//boolean hideMetaData = OscarProperties.getInstance().isPropertyActive("encounter.hide_metadata");
 			boolean hideInvoices = OscarProperties.getInstance().isPropertyActive("encounter.hide_invoices");
-			boolean hideMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.hide_markdown");
+			boolean renderMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.render_markdown");
 			
 			String noteDisplay = "block";
 			if(note.isCpp() && hideCppNotes) {
@@ -370,7 +370,14 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			boolean isMagicNote = note.isDocument() || note.isCpp() || note.isEformData() || note.isEncounterForm() || note.isInvoice();
 			String noteClassAttribute = new StringBuilder("note").append(isMagicNote ? "" : " noteRounded").toString(); 
 		%>
-		
+<style>
+    h1 {
+	    font-size: 120%;
+    }
+    h2 {
+	    font-size: 100%;
+    }
+</style>		
 		<div id="<%=noteIdAttribute%>" 
 			 style="display:<%=noteDisplay%>" 
 			 class="<%=noteClassAttribute%>">
@@ -480,7 +487,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';<%=editWarn?"noPrivs(event)":"editNote(event)"%> ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';setTimeout(<%=editWarn?"noPrivs(event)":"editNote(event)"%>,500) ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
 
@@ -612,7 +619,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<%-- render the note contents here --%>
 			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
-if (!isMagicNote & !hideMarkdown){
+if ( renderMarkdown & !isMagicNote ){
     noteStr = noteStr.replaceAll("<br>","\n\n");
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
