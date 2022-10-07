@@ -136,3 +136,7 @@ div.tabs th,div.tabs td,s,#rightcol div.help,.colbar,.tasknav,body.docs div#toc,
 .tabs td,.tabs th {
 	padding: 3px 9px;
 }
+
+h2 {
+	font-size: 100%;
+}
