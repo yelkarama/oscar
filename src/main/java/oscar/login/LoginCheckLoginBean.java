@@ -84,9 +84,7 @@ public final class LoginCheckLoginBean {
 		}
 		// check pin if needed
 
-		String sPin = pin;
-		if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
-			
+		String sPin = pin;	
 
 		// check for 2FA type pin
 		if (security.isTotpEnabled()) {
@@ -96,7 +94,7 @@ public final class LoginCheckLoginBean {
 			long windowMillis = 10000;
 			
 			if (pin.length() == numDigits){
-			   authNumber = Integer.parseInt(pin);  //use Integer wrapper class to cast the String pin
+			   authNumber = Integer.parseInt(sPin);  //use Integer wrapper class to cast the String pin
 				//try{
 				//String code = TimeBasedOneTimePasswordUtil.generateCurrentNumberString(base32Secret);
 				//}
@@ -119,6 +117,7 @@ public final class LoginCheckLoginBean {
 			}	
 
 		} else {
+			if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
 			if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
 				return cleanNullObj(LOG_PRE + "Pin-remote needed: " + username);
 			} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
