@@ -470,14 +470,32 @@
                 setdefaultencounter();
            }
         </script>
+
+        <style>
+
+        body {
+            font-family: arial,sans-serif;
+        }
+
+        </style>
+        <style type="text/css" media="print">
+
+         .DoNotPrint {
+	        display: none;
+         }
+        </style>
+
     </head>
     <body onload="OnLoad();" >
         <form name="DisplayDoc" method="post" action="noteBrowser.jsp">
 
             <table>
                 <%if (errorMessage.length() > 0) {%><tr><td><b><font color="red"><%=errorMessage%></font></b></td></tr><%}%>
-                <tr><td  align="left" valign="top" width="50%">
-                        <oscar:nameage demographicNo="<%=demographicID%>"/><br>                     
+                <tr><td  align="left" valign="top" >
+                        <oscar:nameage demographicNo="<%=demographicID%>"/><br> 
+                </td></tr>
+                <tr class="DoNotPrint"><td  align="left" valign="top" width="50%">
+                   
 
                         <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
                         <input type="hidden" name="sortorder" value="<%=sortorder%>">
@@ -541,7 +559,11 @@
                             
                             
                         <div id="docinfo"></div>
-                        <div id="printnotesbutton"><input type='image' src="../oscarEncounter/graphics/document-print.png" onclick="PrintEncounter();" title='<bean:message key="oscarEncounter.Index.btnPrint"/>' id="imgPrintEncounter"></div>  
+                        <div id="printnotesbutton" class="DoNotPrint">
+                            <input type="button" value='<bean:message key="global.btnPDF"/>' id="imgPrintEncounter" onclick="PrintEncounter();">
+                            <input type="button" value='<bean:message key="global.btnPrint"/>' id="htmlPrintEncounter" onclick="window.print();">
+
+                        </div>  
                     </td><td valign="top">
                         <fieldset><legend><%
                         if(sortorder.equals("Content")) { %>
