@@ -54,7 +54,6 @@ public final class LoginCheckLoginBean {
 	private String pin = "";
 	private String ip = "";
 	private String ssoKey = "";
-	private String code = "";
 	private	boolean valid = false;
 	private String userpassword = null; // your password in the table
 
@@ -85,46 +84,40 @@ public final class LoginCheckLoginBean {
 		}
 		// check pin if needed
 
-		String sPin = pin;
-		if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
-			
+		String sPin = pin;	
 
 		// check for 2FA type pin
 		if (security.isTotpEnabled()) {
 			String base32Secret = security.getTotpSecret();
 			int numDigits = security.getTotpDigits();
 			int authNumber = 0;
-			String sPin1 = pin;
-
-			try{
-			code = TimeBasedOneTimePasswordUtil.generateCurrentNumberString(base32Secret);
-			}
-			catch (Exception e) {
-			 logger.error(e.getMessage());
-			}
-			try {
-			   authNumber = Integer.parseInt(sPin1);  //use Integer wrapper class to cast the String pin
-			}
-			catch (NumberFormatException e) {
-			   logger.error(e.getMessage() + sPin1);
-			   return cleanNullObj(LOG_PRE + "2FA Pin-poorly formed: " + pin + "|" + username);
-			}
 			long windowMillis = 10000;
-			try {
-				valid = TimeBasedOneTimePasswordUtil.validateCurrentNumber(base32Secret, authNumber, windowMillis);
-				//valid = (code == pin);
-				 logger.error("code: " + code + " pin: "+ pin +" valid: " + valid); //never expose this to logging TESTING ONLY!!
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				return cleanNullObj(LOG_PRE + "2FA error: " + username);
+			
+			if (pin.length() == numDigits){
+			   authNumber = Integer.parseInt(sPin);  //use Integer wrapper class to cast the String pin
+				//try{
+				//String code = TimeBasedOneTimePasswordUtil.generateCurrentNumberString(base32Secret);
+				//}
+				//catch (Exception e) {
+				// logger.error(e.getMessage());
+				//}
+				try {
+					valid = TimeBasedOneTimePasswordUtil.validateCurrentNumber(base32Secret, authNumber, windowMillis);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+					valid = false;
+				}
 			}
-				if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
+			// if login is from the WAN and a pin is required check if the pin is invalid or otherwise too short
+			if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
+					// invalid so clear the password and set a error
 					return cleanNullObj(LOG_PRE + "Pin-remote 2FA needed: " + username);
-				} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
+			} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!valid || pin.length() < numDigits)) {
 					return cleanNullObj(LOG_PRE + "Pin-local 2FA needed: " + username);
-				}	
+			}	
 
 		} else {
+			if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
 			if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
 				return cleanNullObj(LOG_PRE + "Pin-remote needed: " + username);
 			} else if (!isWAN() && security.getBLocallockset() != null && security.getBLocallockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
