@@ -126,7 +126,7 @@ public final class LoginAction extends DispatchAction {
 			}
     	    password = (String) request.getSession().getAttribute("password");
     	    pin = (String) request.getSession().getAttribute("pin");
-            if(! Pattern.matches("[0-9]{4}", pin) ) {
+            if(! Pattern.matches("[0-9]{4,255}", pin) ) { // 4 is the minimal pin length, 255 is the maximal length of security.pin
         	    pin = "";
             }
     	    nextPage = (String) request.getSession().getAttribute("nextPage");
@@ -174,7 +174,7 @@ public final class LoginAction extends DispatchAction {
 			}
     	    password = ((LoginForm) form).getPassword();
     	    pin = ((LoginForm) form).getPin();
-            if(! Pattern.matches("[0-9]{4}", pin) ) {
+            if(! Pattern.matches("[0-9]{4,255}", pin) ) { // 4 is the minimal pin length, 255 is the maximal length of security.pin
         	    pin = "";
             }
     	    nextPage=request.getParameter("nextPage");
