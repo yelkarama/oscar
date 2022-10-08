@@ -378,6 +378,7 @@
                     for(var i = 1;i<length;i++)
                     th.options[i].selected = "selected";
                     th.options[0].selected = "";
+                    th.scrollTo(0,0);
                     }
                 var selected = new Array();
                 selected=getSelected(th);
@@ -479,19 +480,44 @@
            }
         </script>
 
-        <style>
+<style>
 
-        body {
-            font-family: arial,sans-serif;
-        }
+body {
+    font-family: arial,sans-serif;
+}
+.btn-primary  {
+	color: #ffffff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #006dcc;
 
-        </style>
-        <style type="text/css" media="print">
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	background-repeat: repeat-x;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
 
-         .DoNotPrint {
-	        display: none;
-         }
-        </style>
+.btn {
+	width: auto;
+	display: inline-block;
+	padding: 4px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	line-height: 20px;
+	vertical-align: middle;
+	cursor: pointer;
+	border-radius: 4px;
+
+}
+</style>
+
+<style type="text/css" media="print">
+.DoNotPrint {
+    display: none;
+}
+</style>
 
     </head>
     <body onload="OnLoad();" >
@@ -500,95 +526,10 @@
             <table>
                 <%if (errorMessage.length() > 0) {%><tr><td><b><font color="red"><%=errorMessage%></font></b></td></tr><%}%>
                 <tr><td  align="left" valign="top" >
-                        <oscar:nameage demographicNo="<%=demographicID%>"/><br> 
+                        <b><oscar:nameage demographicNo="<%=demographicID%>"/><br> </b>
                 </td></tr>
                 <tr class="DoNotPrint"><td  align="left" valign="top" width="50%">
-                   
-
-                        <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
-                        <input type="hidden" name="sortorder" value="<%=sortorder%>">
-
-                        <bean:message key="oscarEncounter.noteBrowser.msgViewStatus"/> <select id="selviewstatus" name="selviewstatus" onchange="ReLoadDoc()">
-                            <option value="all"
-                                    <%=viewstatus.equalsIgnoreCase("all") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgAll"/></option>
-                            <option value="deleted"
-                                    <%=viewstatus.equalsIgnoreCase("deleted") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgDeleted"/></option>
-                            <option value="active"
-                                    <%=viewstatus.equalsIgnoreCase("active") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgPublished"/></option>
-                        </select>
-
-                        <bean:message key="oscarEncounter.noteBrowser.msgSortDate"/>
-                        <select id="selsortorder" name="selsortorder" onchange="ReLoadDoc()">
-                            <option value="Content"
-                                    <%=sortorder.equalsIgnoreCase("Content") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgContent"/></option>
-                            <option value="Observation"
-                                    <%=sortorder.equalsIgnoreCase("Observation") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgObservation"/></option>
-                            <option value="Update"
-                                    <%=sortorder.equalsIgnoreCase("Update") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgUpdate"/></option>
-				
-			</select>
-                        <fieldset><legend><bean:message key="oscarEncounter.noteBrowser.msgView"/>:</legend>      
-                            <input type="hidden" name="view" value="<%=view%>">
-                            <input type="hidden" name="demographic_no" value="<%=demographicID%>">
-                            <input type="hidden" name="undelDocumentNo" value="">
-                            <input type="hidden" name="delDocumentNo" value="">
-                            <input type="hidden" name="refileDocumentNo" value="">
-                            <input type="hidden" name="queueId" value="<%=queueId%>">
-
-                            <a
-                                href="#" onclick="LoadView('all')" ><%=view.equals("all") ? "<b>":""%>All<%=view.equals("all") ? "</b>":""%></a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
-                            | <a
-                                href="#" onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals(doctypes.get(i3)) ? "<b>":""%><%=(String) doctypes.get(i3)%><%=view.equals(doctypes.get(i3)) ? "</b>":""%></a>
-                            <%}%> 
-                        </fieldset>
-                        <div id="docbuttons">
-                                <% if (viewstatus.equalsIgnoreCase("active")) {%>
-                                <% if (module.equalsIgnoreCase("demographic")) {%>
-                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgAddTickler"/>" onclick="AddTickler();" > <%}%>
-                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgAnnotate"/>" onclick="DocAnnotation()" >
-                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgEdit"/>" onclick="DocEdit();" >
-                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgDelete"/>" onclick="DeleteDoc();" >
-                                <div id="refilebutton">
-                                    <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="RefileDoc();" >
-                                    <select  id="queueList" name="queueList" onchange="setQueue();">
-                                        <%
-                                            for (Hashtable ht : queues) {
-                                                int id = (Integer) ht.get("id");
-                                                String qName = (String) ht.get("queue");
-                                        %>
-                                        <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%> </option>
-                                    <%}%>
-                                    </select>
-                                </div>
-                                <%} else if (viewstatus.equalsIgnoreCase("deleted")) {%>
-                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgUndelete"/>" onclick="UnDeleteDoc();" >   
-                                <%}%>
-                        </div>
-                            
-                            
-                        <div id="docinfo"></div>
-                        <div id="printnotesbutton" class="DoNotPrint">
-                            <input type="button" value='<bean:message key="global.btnPDF"/>' id="imgPrintEncounter" onclick="PrintEncounter();">
-                            <input type="button" value='<bean:message key="global.btnPrint"/>' id="htmlPrintEncounter" onclick="htmlPrint();">
-
-                        </div>  
-                    </td><td valign="top">
-                        <fieldset><legend><%
-                        if(sortorder.equals("Content")) { %>
-                        <bean:message key="oscarEncounter.noteBrowser.msgContent"/><%} else {%>
-                        <bean:message key="oscarEncounter.noteBrowser.msgUpdate"/> <%}%>
-                        <bean:message key="oscarEncounter.noteBrowser.ObservationTypeDescription"/></legend>
-                            <SELECT MULTIPLE SIZE=5 id="doclist" onchange="getDoc();">
-                                <%
-                                    for (int i2 = 0; i2 < docs.size(); i2++) {
-                                        EDoc cmicurdoc = docs.get(i2);
-                                %>
-                                <option VALUE="<%=cmicurdoc.getDocId()%>-<%=cmicurdoc.getContentType()%>" title="<%=cmicurdoc.getDescription()%>"><%=sortorder.equals("Content")?UtilDateUtilities.DateToString(cmicurdoc.getContentDateTime(),"yyyy-MM-dd"):cmicurdoc.getDateTimeStamp()%>&nbsp;&nbsp; <%=cmicurdoc.getObservationDate()%> [<%=cmicurdoc.getType()%>] <%=(cmicurdoc.getDescription().length()<30?cmicurdoc.getDescription():cmicurdoc.getDescription().substring(0,30)+"...")%>
-                                </option> <%}%>
-                            </SELECT>
-                        </fieldset>
-                            
-                        <fieldset><legend><bean:message key="oscarEncounter.noteBrowser.encounterNote"/> </legend>
+                    <fieldset><legend><bean:message key="oscarEncounter.noteBrowser.encounterNote"/> </legend>
                             <select MULTIPLE SIZE=5 id="encounterlist" onchange="getEncounter();">
                             <% 
                                 CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
@@ -614,7 +555,99 @@
                                 }  
                         %>                   
                             </select>
+                        </fieldset>                   
+
+                        <div id="docbuttons">
+                                <% if (viewstatus.equalsIgnoreCase("active")) {%>
+                                <% if (module.equalsIgnoreCase("demographic")) {%>
+                                <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgAddTickler"/>" onclick="AddTickler();" > <%}%>
+                                <input type="button" class="btn"  value="<bean:message key="oscarEncounter.noteBrowser.msgAnnotate"/>" onclick="DocAnnotation()" >
+                                <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgEdit"/>" onclick="DocEdit();" >
+                                <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgDelete"/>" onclick="DeleteDoc();" >
+                                <div id="refilebutton">
+                                    <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="RefileDoc();" >
+                                    <select  class="btn" id="queueList" name="queueList" onchange="setQueue();">
+                                        <%
+                                            for (Hashtable ht : queues) {
+                                                int id = (Integer) ht.get("id");
+                                                String qName = (String) ht.get("queue");
+                                        %>
+                                        <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%> </option>
+                                    <%}%>
+                                    </select>
+                                </div>
+                                <%} else if (viewstatus.equalsIgnoreCase("deleted")) {%>
+                                <input type="button" value="<bean:message key="oscarEncounter.noteBrowser.msgUndelete"/>" onclick="UnDeleteDoc();" >   
+                                <%}%>
+                        </div>
+                            
+                            
+                        <div id="docinfo"></div>
+                        <div id="printnotesbutton" class="DoNotPrint"><br><br>
+                            <input type="button" class="btn btn-primary" value='<bean:message key="global.btnPDF"/>' id="imgPrintEncounter" onclick="PrintEncounter();">
+                            <input type="button" class="btn" value='<bean:message key="global.btnPrint"/>' id="htmlPrintEncounter" onclick="htmlPrint();">
+
+                        </div> 
+ 
+                    </td><td valign="top">
+                        
+                         <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
+                        <input type="hidden" name="sortorder" value="<%=sortorder%>">
+
+                        
+                        
+                        <fieldset><legend><bean:message key="global.Document"/>
+</legend>      
+                            <input type="hidden" name="view" value="<%=view%>">
+                            <input type="hidden" name="demographic_no" value="<%=demographicID%>">
+                            <input type="hidden" name="undelDocumentNo" value="">
+                            <input type="hidden" name="delDocumentNo" value="">
+                            <input type="hidden" name="refileDocumentNo" value="">
+                            <input type="hidden" name="queueId" value="<%=queueId%>">
+
+                            <a
+                                href="#" onclick="LoadView('all')" ><%=view.equals("all") ? "<b>":""%>All<%=view.equals("all") ? "</b>":""%></a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
+                            | <a
+                                href="#" onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals(doctypes.get(i3)) ? "<b>":""%><%=(String) doctypes.get(i3)%><%=view.equals(doctypes.get(i3)) ? "</b>":""%></a>
+                            <%}%> 
                         </fieldset>
+<fieldset><legend>
+
+
+<select id="selsortorder" name="selsortorder" title="<bean:message key="oscarEncounter.noteBrowser.msgSortDate"/>" onchange="ReLoadDoc()">
+                            <option value="Content"
+                                    <%=sortorder.equalsIgnoreCase("Content") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgContent"/></option>
+                            <option value="Observation"
+                                    <%=sortorder.equalsIgnoreCase("Observation") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgObservation"/></option>
+                            <option value="Update"
+                                    <%=sortorder.equalsIgnoreCase("Update") ? "selected":""%>><bean:message key="oscarEncounter.noteBrowser.msgUpdate"/></option>
+				
+			            </select>&nbsp;
+                        <bean:message key="oscarEncounter.noteBrowser.ObservationTypeDescription"/>&nbsp;
+                        
+                        
+<select id="selviewstatus" name="selviewstatus" title="<bean:message key="oscarEncounter.noteBrowser.msgViewStatus"/>" onchange="ReLoadDoc()">
+                            <option value="all"
+                                    <%=viewstatus.equalsIgnoreCase("all") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgAll"/></option>
+                            <option value="deleted"
+                                    <%=viewstatus.equalsIgnoreCase("deleted") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgDeleted"/></option>
+                            <option value="active"
+                                    <%=viewstatus.equalsIgnoreCase("active") ? "selected" : ""%>><bean:message key="oscarEncounter.noteBrowser.msgPublished"/></option>
+                        </select>
+
+</legend>
+                            <SELECT MULTIPLE SIZE=5 id="doclist" onchange="getDoc();">
+                                <%
+                                    for (int i2 = 0; i2 < docs.size(); i2++) {
+                                        EDoc cmicurdoc = docs.get(i2);
+                                %>
+                                <option VALUE="<%=cmicurdoc.getDocId()%>-<%=cmicurdoc.getContentType()%>" title="<%=cmicurdoc.getDescription()%>"><%=sortorder.equals("Content")?UtilDateUtilities.DateToString(cmicurdoc.getContentDateTime(),"yyyy-MM-dd"):cmicurdoc.getDateTimeStamp()%>&nbsp;&nbsp; <%=cmicurdoc.getObservationDate()%> [<%=cmicurdoc.getType()%>] <%=(cmicurdoc.getDescription().length()<30?cmicurdoc.getDescription():cmicurdoc.getDescription().substring(0,30)+"...")%>
+                                </option> <%}%>
+                            </SELECT>
+                        </fieldset>
+
+                           
+                        
                     </td>
                 </tr>
             </table>
