@@ -331,7 +331,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			boolean hideEformNotes = OscarProperties.getInstance().isPropertyActive("encounter.hide_eform_notes");
 			//boolean hideMetaData = OscarProperties.getInstance().isPropertyActive("encounter.hide_metadata");
 			boolean hideInvoices = OscarProperties.getInstance().isPropertyActive("encounter.hide_invoices");
-			boolean renderMarkdown = OscarProperties.getInstance().isPropertyActive("encounter.render_markdown");
+			boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
 			
 			String noteDisplay = "block";
 			if(note.isCpp() && hideCppNotes) {
@@ -487,7 +487,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';setTimeout(<%=editWarn?"noPrivs(event)":"editNote(event)"%>,500) ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';setTimeout(<%=editWarn?"noPrivs(event)":"editNote(event)"%>,1000) ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
 

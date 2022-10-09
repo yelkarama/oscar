@@ -635,10 +635,6 @@ document.getElementById('assignIssueSection').scrollIntoView();
 
 	<div id='save' style="width: 99%; background-color: #CCCCFF; padding-top: 5px; margin-left: 2px; border-left: thin solid #000000; border-right: thin solid #000000; border-bottom: thin solid #000000;">
 		<span style="float: right; margin-right: 5px;">
-		<% if (echartPreferencesMap.getOrDefault("echart_show_timer", true)) { %>
-			<button type="button" onclick="pasteTimer()" id="aTimer" title="<bean:message key="oscarEncounter.Index.pasteTimer"/>">00:00</button>
-			<button type="button" id="toggleTimer" onclick="toggleATimer()"  title='<bean:message key="oscarEncounter.Index.toggleTimer"/>'>&#8741;</button>
-		<% } %>
 <style>
 .btn {
 color:#4a4a4a ;
@@ -647,6 +643,23 @@ font-size: 17px;
 padding: 2px;
 }
 </style>
+
+    <% boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+       if (renderMarkdown){ %>
+          <a class="btn" id="bold" href="#" onclick="addBold();return false;" title='bold'><i class="icon-bold icon-large"></i></a> 
+          <a class="btn" id="italic" href="#" onclick="addItalic();return false;" title='italic'><i class="icon-italic icon-large"></i></a>
+          <a class="btn" id="ul" href="#" onclick="addHandler();addUnorderedList();return false;" title='unordered list'><i class="icon-list-ul icon-large"></i></a>
+          <a class="btn" id="ol" href="#" onclick="addHandler();addOrderedList();return false;" title='ordered list'><i class="icon-list-ol icon-large"></i></a>
+          <a class="btn" id="h2" href="#" onclick="addHeading(2);return false;" title='ordered list'><i class="icon-h-sign icon-large"></i></a>
+          <a class="btn" id="link" href="#" onclick="addLink();return false;" title='link'><i class="icon-link icon-large"></i></a>
+
+    <% } %>
+
+		<% if (echartPreferencesMap.getOrDefault("echart_show_timer", true)) { %>
+			<button type="button" onclick="pasteTimer()" id="aTimer" title="<bean:message key="oscarEncounter.Index.pasteTimer"/>">00:00</button>
+			<button type="button" id="toggleTimer" onclick="toggleATimer()"  title='<bean:message key="oscarEncounter.Index.toggleTimer"/>'>&#8741;</button>
+		<% } %>
+
 
 
 
