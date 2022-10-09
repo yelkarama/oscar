@@ -155,5 +155,234 @@ function displayEaapsWindow(url, notificationId, message) {
                 return valString;
             }
         }
+
+// add Markdown functions for caseNote editing
+
+    function repeat(string, count) {
+        var result = '';
+        for (var i = 0; i < count; i++) {
+            result += string;
+        }
+        return result;
+    };
+
+    function addBold() {
+	    var textarea = $(caseNote);
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var bold = "****";
+        var offset = bold.length - 2;
+        if (textarea.selectionStart != textarea.selectionEnd) {
+            end = textarea.value.substr(textarea.selectionEnd);
+            var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+            bold = "**" + range + "**";
+            offset = 2;
+        }
+        if (start.length && start[start.length - 1] != '\n' && start[start.length - 1] != ' ') {
+            bold = " " + bold;
+        }
+        if (end.length && end[0] != '\n' && end[0] != ' ') {
+            bold = bold + " ";
+            offset += 1;
+        }
+        textarea.value = "" + start + bold + end;
+        textarea.selectionStart = start.length + bold.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+
+    }
+
+    function addItalic() {
+	    var textarea = $(caseNote);
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var bold = "**";
+        var offset = bold.length - 1;
+        if (textarea.selectionStart != textarea.selectionEnd) {
+            end = textarea.value.substr(textarea.selectionEnd);
+            var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+            bold = "*" + range + "*";
+            offset = 1;
+        }
+        if (start.length && start[start.length - 1] != '\n' && start[start.length - 1] != ' ') {
+            bold = " " + bold;
+        }
+        if (end.length && end[0] != '\n' && end[0] != ' ') {
+            bold = bold + " ";
+            offset += 1;
+        }
+        textarea.value = "" + start + bold + end;
+        textarea.selectionStart = start.length + bold.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+    };
+
 	
+	 function addLink(type) {
+	    var textarea = $(caseNote);
+        if (type === void 0) { type = 0; }
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var link = '';
+        var offset = 0;
+        if (type === 0) {
+            link = '[](http://)';
+            offset = link.length - 1;
+            if (textarea.selectionStart != textarea.selectionEnd) {
+                end = textarea.value.substr(textarea.selectionEnd);
+                var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+                var rangeIsURL = range.match(/https?:\/\/(.+)/);
+                link = rangeIsURL ? "[](" + range.trim() + ")" : "[" + range.trim() + "](http://)";
+                offset = rangeIsURL ? range.trim().length + 3 : 1;
+            }
+        }
+        else {
+            link = '<>';
+            offset = link.length - 1;
+            if (textarea.selectionStart != textarea.selectionEnd) {
+                end = textarea.value.substr(textarea.selectionEnd);
+                var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+                link = "<" + range + ">";
+                offset = 1;
+            }
+        }
+        if (start.length && start[start.length - 1] != '\n' && start[start.length - 1] != ' ') {
+            link = " " + link;
+        }
+        if (end.length && end[0] != '\n' && end[0] != ' ') {
+            link = link + " ";
+            offset += 1;
+        }
+        textarea.value = "" + start + link + end;
+        textarea.selectionStart = start.length + link.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+    };
+
+    function addHeading (level) {
+	    var textarea = $(caseNote);
+        if (level === void 0) { level = 1; }
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var heading = repeat('#', level) + " ";
+        var offset = 0;
+        if (textarea.selectionStart != textarea.selectionEnd) {
+            end = textarea.value.substr(textarea.selectionEnd);
+            var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+            heading = "" + heading + range.trim();
+            offset = 0;
+        }
+        if (start.length && start[start.length - 1] != '\n') {
+            heading = "\n" + heading;
+        }
+        if (end.length && end[0] != '\n') {
+            heading = heading + "\n";
+            offset = 1;
+        }
+        textarea.value = "" + start + heading + end;
+        textarea.selectionStart = start.length + heading.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+    };
+
+    var handlerOn = 0;
+    function addHandler() {
+        if (handlerOn == 1) { return;}
+        var textarea = $(caseNote);
+        textarea.addEventListener('keydown', function (e) {
+            if (e.key.toLowerCase() === 'enter' && onListing !== null) {
+                e.preventDefault();
+                var start = textarea.value.substr(0, textarea.selectionStart);
+                var end = textarea.value.substr(textarea.selectionStart);
+                var splittedStart = start.split(/\n/g);
+                var list = '';
+                var pattern = onListing.type === 'unordered' ? /-\s?/ : /\d+\.\s?/;
+                if (splittedStart.length) {
+                    var match = splittedStart[splittedStart.length - 1].trim().match(pattern);
+                    if (match && match[0] === match.input) {
+                        splittedStart.pop();
+                        textarea.value = splittedStart.join('\n') + "\n" + end;
+                        textarea.selectionStart = splittedStart.join('\n').length + '\n'.length;
+                        textarea.selectionEnd = textarea.selectionStart;
+                        return onListing = null;
+                    }
+                }
+                if (onListing.type === 'unordered') {
+                    list = "\n- ";
+                }
+                if (onListing.type === 'ordered') {
+                    list = "\n" + onListing.number + ". ";
+                    onListing.number++;
+                }
+                textarea.value = "" + start + list + end;
+                textarea.selectionStart = start.length + list.length;
+                textarea.selectionEnd = textarea.selectionStart;
+                textarea.focus();
+            }
+            if (e.key.toLowerCase() === 'tab') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    self.shiftTab(self);
+                }
+                else {
+                    self.addTab(self);
+                }
+            }
+        });
+        handlerOn = 1;
+
+    }
+    function addUnorderedList() {
+        var textarea = $(caseNote);
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var list = "- ";
+        var offset = 0;
+        if (textarea.selectionStart != textarea.selectionEnd) {
+            end = textarea.value.substr(textarea.selectionEnd);
+            var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+            list = "" + list + range.trim();
+        }
+        if (start.length && start[start.length - 1] != '\n') {
+            list = "\n" + list;
+        }
+        if (end.length && end[0] != '\n') {
+            list = list + "\n";
+            offset = 1;
+        }
+        textarea.value = "" + start + list + end;
+        textarea.selectionStart = start.length + list.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+        onListing = {
+            type: 'unordered'
+        };
+    };
+    function addOrderedList() {
+        var textarea = $(caseNote);
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var list = "1. ";
+        var offset = 0;
+        if (textarea.selectionStart != textarea.selectionEnd) {
+            end = textarea.value.substr(textarea.selectionEnd);
+            var range = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
+            list = "" + list + range.trim();
+        }
+        if (start.length && start[start.length - 1] != '\n') {
+            list = "\n" + list;
+        }
+        if (end.length && end[0] != '\n') {
+            list = list + "\n";
+            offset = 1;
+        }
+        textarea.value = "" + start + list + end;
+        textarea.selectionStart = start.length + list.length - offset;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+        onListing = {
+            type: 'ordered',
+            number: 2,
+        };
+    };
 	
