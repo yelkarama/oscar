@@ -2124,9 +2124,10 @@ function editNote(e) {
     var txtId = "txt" + nId;
 
     if( $F(isFull) == "true" ) {
-        payload = $(txtId).innerHTML;
+        payload = $(txtId).getAttribute('data'); // for markdown get the string to edit from the data attribute
+        if ( payload == "" ) {payload = $(txtId).innerHTML;}  // if not markdown the innerHTML will have the string
         payload = payload.replace(/^\s+|\s+$/g,"");
-        payload = payload.replace(/<br>/gi,"\n");
+        payload = payload.replace(/<br>/gi,"\n"); // important! restore line breaks for editing
         payload += "\n";
     }
     else
