@@ -487,7 +487,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					 			{
 						 		%>
 							 		<a title="<bean:message key="oscarEncounter.edit.msgEdit"/>" id="edit<%=globalNoteId%>"
-							 		href="#" onclick="getElementById('txt<%=globalNoteId%>').innerHTML='<%=noteStr%>';setTimeout(<%=editWarn?"noPrivs(event)":"editNote(event)"%>,1000) ;return false;" style="float: right; margin-right: 5px; font-size: 10px;">
+							 		href="#" onclick="<%=editWarn?"noPrivs(event)":"editNote(event)"%>; return false;" style="float: right; margin-right: 5px; font-size: 10px;">
 							 			<bean:message key="oscarEncounter.edit.msgEdit" />
 							 		</a>
 
@@ -617,7 +617,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour+";color:white;font-size:10px"):""%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
+			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?noteStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
 if ( renderMarkdown & !isMagicNote ){
     noteStr = noteStr.replaceAll("<br>","\n\n");
