@@ -646,12 +646,12 @@ padding: 2px;
 
     <% boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
        if (renderMarkdown){ %>
-          <a class="btn" id="bold" href="#" onclick="addBold();return false;" title='bold'><i class="icon-bold icon-large"></i></a> 
-          <a class="btn" id="italic" href="#" onclick="addItalic();return false;" title='italic'><i class="icon-italic icon-large"></i></a>
-          <a class="btn" id="ul" href="#" onclick="addHandler();addUnorderedList();return false;" title='unordered list'><i class="icon-list-ul icon-large"></i></a>
-          <a class="btn" id="ol" href="#" onclick="addHandler();addOrderedList();return false;" title='ordered list'><i class="icon-list-ol icon-large"></i></a>
-          <a class="btn" id="h2" href="#" onclick="addHeading(2);return false;" title='ordered list'><i class="icon-h-sign icon-large"></i></a>
-          <a class="btn" id="link" href="#" onclick="addLink();return false;" title='link'><i class="icon-link icon-large"></i></a>
+          <a class="btn" id="bold" href="#" onclick="addBold();return false;" title='<bean:message key="global.bold"/>'><i class="icon-bold icon-large"></i></a> 
+          <a class="btn" id="italic" href="#" onclick="addItalic();return false;" title='<bean:message key="global.italic"/>'><i class="icon-italic icon-large"></i></a>
+          <a class="btn" id="ul" href="#" onclick="addHandler();addUnorderedList();return false;" title='<bean:message key="global.ul"/>'><i class="icon-list-ul icon-large"></i></a>
+          <a class="btn" id="ol" href="#" onclick="addHandler();addOrderedList();return false;" title='<bean:message key="global.ol"/>'><i class="icon-list-ol icon-large"></i></a>
+          <a class="btn" id="h2" href="#" onclick="addHeading(2);return false;" title='<bean:message key="global.heading"/>'><i class="icon-h-sign icon-large"></i></a>
+          <a class="btn" id="link" href="#" onclick="addLink();return false;" title='<bean:message key="global.link"/>'><i class="icon-link icon-large"></i></a>
 
     <% } %>
 
