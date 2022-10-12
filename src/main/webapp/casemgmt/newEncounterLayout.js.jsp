@@ -166,6 +166,34 @@ function displayEaapsWindow(url, notificationId, message) {
         return result;
     };
 
+    function addTab() {
+        var textarea = $(caseNote);
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        var tab = "\t";
+        textarea.value = "" + start + tab + end;
+        textarea.selectionStart = start.length + tab.length;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+    };
+    
+    function shiftTab() {
+        var textarea = $(caseNote);
+        var _a;
+        var start = textarea.value.substr(0, textarea.selectionStart);
+        var end = textarea.value.substr(textarea.selectionStart);
+        if (start[start.length - 1] == '\t') {
+            start = (_a = start.substr(0, start.length - 1)) !== null && _a !== void 0 ? _a : '';
+        }
+        else if (end[0] == '\t') {
+            end = end.substr(1);
+        }
+        textarea.value = "" + start + end;
+        textarea.selectionStart = start.length;
+        textarea.selectionEnd = textarea.selectionStart;
+        textarea.focus();
+    };
+
     function addBold() {
 	    var textarea = $(caseNote);
         var start = textarea.value.substr(0, textarea.selectionStart);
