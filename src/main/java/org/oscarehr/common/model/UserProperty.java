@@ -187,6 +187,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
 	public static final String TICKLER_TASK_ASSIGNEE = "tickler_task_assignee";
 
     public static final String OPEN_IN_TABS = "tab_view";
+    public static final String MARKDOWN = "markdown";
     
 	public static final String CONSULTS_DEFAULT_FILTER = "consults_default_filter";
 	
