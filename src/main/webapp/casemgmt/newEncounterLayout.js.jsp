@@ -508,6 +508,7 @@ var smartTmpl = (function () {
             if (event.keyCode === 9 || event.keyCode === 13 ) {
                 let selectionStart = el.selectionStart;
                 let selectionEnd = el.selectionEnd;
+                if ( selectionEnd == selectionStart && event.keyCode === 13) { return; }
                 const highlighted = value
                     .substring(selectionStart, selectionEnd)
                     .trim();
