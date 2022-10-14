@@ -134,6 +134,7 @@ import oscar.util.UtilDateUtilities;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.oscarehr.common.dao.UserPropertyDAO;
 
 /*
  * Updated by Eugene Petruhin on 12 and 13 jan 2009 while fixing #2482832 & #2494061
@@ -2870,7 +2871,14 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String[] noteIds;
 		String textStr;
 		String sStyle = "";
-		boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+		boolean renderMarkdown = false;
+		if ( markdownProp == null ) {
+			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+		} else {
+			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
+		}
 		
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
