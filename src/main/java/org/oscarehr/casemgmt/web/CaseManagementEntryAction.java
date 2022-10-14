@@ -2873,7 +2873,6 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String textStr;
 		String sStyle = "";
 		
-		HttpServletRequest request = this.getHttpServletRequest();
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
