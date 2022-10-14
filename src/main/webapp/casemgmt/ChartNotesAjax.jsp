@@ -332,6 +332,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			//boolean hideMetaData = OscarProperties.getInstance().isPropertyActive("encounter.hide_metadata");
 			boolean hideInvoices = OscarProperties.getInstance().isPropertyActive("encounter.hide_invoices");
 
+			String curUser_no=loggedInInfo.getLoggedInProviderNo();
 			UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 			UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
 			boolean renderMarkdown = false;
