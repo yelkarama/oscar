@@ -2872,7 +2872,10 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String[] noteIds;
 		String textStr;
 		String sStyle = "";
-		String curUser_no=loggedInInfo.getLoggedInProviderNo();
+		
+		HttpServletRequest request = this.getHttpServletRequest();
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
 		boolean renderMarkdown = false;
