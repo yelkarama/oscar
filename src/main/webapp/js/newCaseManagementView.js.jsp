@@ -1416,6 +1416,10 @@ function loadDiv(div,url,limit) {
         var name = document.getElementById('enTemplate').value;
         var func = autoCompleted[name];
         eval(func);
+        smartTmpl.init($(caseNote));
+        $(caseNote).blur();
+        $(caseNote).focus();
+        $("autosaveTime").update(name);
     }
 
 function grabEnterGetTemplate(event){
