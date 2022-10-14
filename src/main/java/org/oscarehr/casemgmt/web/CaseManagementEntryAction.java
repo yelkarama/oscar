@@ -135,6 +135,7 @@ import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.oscarehr.common.dao.UserPropertyDAO;
+import org.oscarehr.common.model.UserProperty;
 
 /*
  * Updated by Eugene Petruhin on 12 and 13 jan 2009 while fixing #2482832 & #2494061
@@ -2871,6 +2872,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String[] noteIds;
 		String textStr;
 		String sStyle = "";
+		String curUser_no=loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
 		boolean renderMarkdown = false;
