@@ -617,6 +617,12 @@ alert(value);
             <th><bean:message key="provider.providerpreference.description" /></th>
         </tr>
     </thead>
+  <!-- individual option for OSCAR markdown rendering -->
+  <oscar:oscarPropertiesCheck property="encounter.render_markdown" value="true">
+	  <tr>
+		  <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=markdown');return false;"><bean:message key="provider.providerpreference.markdown" /></a></td>
+	  </tr>
+  </oscar:oscarPropertiesCheck>
   <!-- individual option for OSCAR in Tabs setting, if not set globally in oscar.proterties -->
   <oscar:oscarPropertiesCheck property="open_in_tabs" value="optional">
 	  <tr>

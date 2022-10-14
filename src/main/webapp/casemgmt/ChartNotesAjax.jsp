@@ -57,7 +57,7 @@
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.oscarehr.PMmodule.model.Program"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProgramDao"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="oscar.util.UtilDateUtilities"%>
 <%@page import="org.oscarehr.casemgmt.web.NoteDisplayNonNote"%>
 <%@page import="org.oscarehr.common.dao.EncounterTemplateDao"%>
@@ -331,7 +331,16 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			boolean hideEformNotes = OscarProperties.getInstance().isPropertyActive("encounter.hide_eform_notes");
 			//boolean hideMetaData = OscarProperties.getInstance().isPropertyActive("encounter.hide_metadata");
 			boolean hideInvoices = OscarProperties.getInstance().isPropertyActive("encounter.hide_invoices");
-			boolean renderMarkdown = OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+
+			String curUser_no=loggedInInfo.getLoggedInProviderNo();
+			UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+			UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+			boolean renderMarkdown = false;
+			if ( markdownProp == null ) {
+				renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+			} else {
+				renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
+			}
 			
 			String noteDisplay = "block";
 			if(note.isCpp() && hideCppNotes) {

@@ -281,6 +281,7 @@ public class ProviderPropertyAction extends DispatchAction {
 
 		return  actionmapping.findForward("gen");
 	}
+    
 	public ActionForward saveviewInTabs(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 		String providerNo=loggedInInfo.getLoggedInProviderNo();
@@ -312,6 +313,63 @@ public class ProviderPropertyAction extends DispatchAction {
 		return actionmapping.findForward("gen");
 	}
     
+    public ActionForward markdown(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		String providerNo = loggedInInfo.getLoggedInProviderNo();
+		DynaActionForm frm = (DynaActionForm)actionform;
+		UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.MARKDOWN);
+
+		if (prop == null){ prop = new UserProperty(); }
+
+		ArrayList<LabelValueBean> optionList = new ArrayList<LabelValueBean>();
+		
+		optionList.add(new LabelValueBean("Yes", "true"));
+		optionList.add(new LabelValueBean("No", "false"));
+		request.setAttribute("dropOpts",optionList);
+
+		request.setAttribute("dateProperty",prop);
+		request.setAttribute("providertitle","provider.providerpreference.markdown");
+		request.setAttribute("providermsgPrefs","provider.providerpreference.description"); //=PREFERENCES
+		request.setAttribute("providermsgProvider","provider.providerpreference.markdown");
+		request.setAttribute("providermsgEdit","provider.providerpreference.markdown");
+		request.setAttribute("providerbtnSubmit","global.btnSubmit");
+		request.setAttribute("providermsgSuccess","admin.preferenceupdate.msgUpdateSuccess");
+		request.setAttribute("method","saveMarkdown");
+
+		frm.set("dateProperty", prop);
+
+		return  actionmapping.findForward("gen");
+	}
+	public ActionForward saveMarkdown(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+		String providerNo=loggedInInfo.getLoggedInProviderNo();
+
+ 
+		DynaActionForm frm = (DynaActionForm)actionform;
+		UserProperty prop = (UserProperty)frm.get("dateProperty");
+		String fmt = prop != null ? prop.getValue() : "";
+		UserProperty saveProperty = this.userPropertyDAO.getProp(providerNo,UserProperty.MARKDOWN);
+
+		if( saveProperty == null ) {
+			saveProperty = new UserProperty();
+			saveProperty.setProviderNo(providerNo);
+			saveProperty.setName(UserProperty.MARKDOWN);
+		}
+
+		saveProperty.setValue(fmt);
+		this.userPropertyDAO.saveProp(saveProperty);
+
+		request.setAttribute("status", "success");
+		request.setAttribute("providertitle","provider.providerpreference.markdown");
+		request.setAttribute("providermsgPrefs","provider.providerpreference.description"); //=PREFERENCES
+		request.setAttribute("providermsgProvider","provider.providerpreference.markdown");
+		request.setAttribute("providermsgEdit","provider.providerpreference.markdown");
+		request.setAttribute("providerbtnSubmit","global.btnSubmit");
+		request.setAttribute("providermsgSuccess","admin.preferenceupdate.msgUpdateSuccess");
+		request.setAttribute("method","saveMarkdown");
+
+		return actionmapping.findForward("gen");
+	}   
     
     public ActionForward viewHCType(ActionMapping actionmapping,
                                ActionForm actionform,
