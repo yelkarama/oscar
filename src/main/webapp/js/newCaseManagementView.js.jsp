@@ -1751,11 +1751,14 @@ function minView(e) {
     //$(txt).style.height = divHeight;
 
     var txtId = "txt" + nId;
-    var line = $(txtId).innerHTML.substr(0,90);
+
+    var line = $(txtId).getAttribute('data').substr(0,90); // for markdown get the string to edit from the data attribute
+    if ( line == "" ) {line = $(txtId).innerHTML.substr(0,90);}  // if not markdown the innerHTML will have the string
+    
     line = line.replace(/<br>/g," ");
     var dateValue = $(dateId) != null ? $(dateId).innerHTML : "";
     dateValue = dateValue.substring(0,dateValue.indexOf(" "));
-    line = "<div id='" + date + "' style='font-size:1.0em; width:10%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; font-size:1.0em; width:70%;'>" + line + "<\/div>";
+    line = "<div id='" + date + "' style='font-size:1.0em; width:16%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; font-size:1.0em; width:70%;'>" + line + "<\/div>";
     $("txt"+nId).hide();
     $("sig"+nId).hide();
     new Insertion.Top(txt,line);
