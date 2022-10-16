@@ -321,7 +321,8 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			}
 			else
 			{
-				length = noteStr.length() > 50?50:noteStr.length();
+				length = noteStr.length() > 100?100:noteStr.length();
+				noteStr = noteStr.replaceAll("\n", " "); // put maximal information on one line without formatting
 				noteStr = noteStr.substring(0, length);
 			}
 
@@ -628,7 +629,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<%-- render the note contents here --%>
 			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?noteStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
-if ( renderMarkdown & !isMagicNote ){
+if ( renderMarkdown && !isMagicNote && fulltxt ){
     noteStr = noteStr.replaceAll("<br>","\n\n");
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
