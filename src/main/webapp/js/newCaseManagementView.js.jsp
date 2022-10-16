@@ -1846,7 +1846,7 @@ function fetchNote(nId) {
                         postBody: params,
                         evalScripts: true,
                         onSuccess: function(response) {
-                            $(noteTxtArea).update(response.responseText);
+                            $(noteTxtArea).update(response.responseText.trim());
                             adjustCaseNote();
                                 $(noteTxtArea).focus();
                             setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
@@ -1898,7 +1898,7 @@ function fullViewById(id) {
                         postBody: params,
                         evalScripts: true,
                         onSuccess: function(response) {
-                        	$(noteTxtId).update(response.responseText);
+                        	$(noteTxtId).update(response.responseText.trim());
                             if( largeNote(response.responseText) ) {
                                 new Insertion.After(noteTxtId,btnHtml);
                             }
