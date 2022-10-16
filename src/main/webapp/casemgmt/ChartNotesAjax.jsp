@@ -315,14 +315,15 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			fulltxt = fullTxtFormat.get(pos) || note.getRemoteFacilityId()!=null;
 			--pos;
 			bgColour = CaseManagementViewAction.getNoteColour(note);
+            String dataStr = noteStr.replaceAll("\n", "<br>");
 			if (fulltxt)
 			{
-				noteStr = noteStr.replaceAll("\n", "<br>"); 
+				noteStr = dataStr; 
 			}
 			else
 			{
-				length = noteStr.length() > 90?90:noteStr.length();
-				noteStr = noteStr.replaceAll("\n", " "); // put maximal information on one line without formatting
+                noteStr = noteStr.replaceAll("\n", " ");
+				length = noteStr.length() > 90?90:noteStr.length(); 
 				noteStr = noteStr.substring(0, length);
 			}
 
@@ -627,9 +628,9 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour+";color:white;font-size:10px"):""%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?noteStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
+			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?dataStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
-if ( renderMarkdown && !isMagicNote && fulltxt ){
+if ( renderMarkdown && !isMagicNote && fulltxt){
     noteStr = noteStr.replaceAll("<br>","\n\n");
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
