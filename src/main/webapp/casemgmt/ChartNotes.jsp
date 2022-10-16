@@ -589,9 +589,6 @@ try
 	<input type="hidden" name="pEndDate" id="pEndDate" value="">
 	<input type="hidden" id="annotation_attribname" name="annotation_attribname" value="">
 	
-<script>
-document.getElementById('assignIssueSection').scrollIntoView();
-</script>
 	
 	<%
  	if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {

@@ -426,6 +426,7 @@ public class CanadianVaccineCatalogueManager2 {
 	private void processMedicationBundle(LoggedInInfo loggedInInfo, Bundle bundle) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date curdate = new Date();
 		for (BundleEntryComponent entry : bundle.getEntry()) {
 			CVCMedication cMed = new CVCMedication();
 
@@ -494,7 +495,11 @@ public class CanadianVaccineCatalogueManager2 {
 								}
 							}
 							try {
-								cMed.getLotNumberList().add(new CVCMedicationLotNumber(cMed, lotNumber, formatter.parse(expiry)));
+								Date edate = formatter.parse(expiry);
+								// add only future lot numbers to the picklist
+								if(edate.after(curdate)) {  
+									cMed.getLotNumberList().add(new CVCMedicationLotNumber(cMed, lotNumber, formatter.parse(expiry)));
+								}
 							}catch(ParseException e) {
 								logger.warn("Error",e);
 							}
