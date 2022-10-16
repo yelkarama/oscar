@@ -321,7 +321,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			}
 			else
 			{
-				length = noteStr.length() > 100?100:noteStr.length();
+				length = noteStr.length() > 90?90:noteStr.length();
 				noteStr = noteStr.replaceAll("\n", " "); // put maximal information on one line without formatting
 				noteStr = noteStr.substring(0, length);
 			}
