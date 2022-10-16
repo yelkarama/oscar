@@ -1726,7 +1726,6 @@ function completeChangeToView(note,newId) {
 function minView(e) {
     var divHeight = "1.1em";
     var txt = Event.element(e).parentNode.id;
-   //alert(txt);
     var nId = txt.substr(1);
     var img = Event.element(e).id;
     var dateId = "obs" + nId;
@@ -1751,11 +1750,15 @@ function minView(e) {
     //$(txt).style.height = divHeight;
 
     var txtId = "txt" + nId;
-
-    var line = $(txtId).getAttribute('data').substr(0,90); // for markdown get the string to edit from the data attribute
-    if ( line == "" ) {line = $(txtId).innerHTML.substr(0,90);}  // if not markdown the innerHTML will have the string
-    
+    var line = "";
+    var data = "";
+    if ($(txtId).hasAttribute('data')) { 
+        line = $(txtId).getAttribute('data'); // if markdown the ascii will be in the data attribute
+    }
+    if ( line == "" ) {line = $(txtId).innerHTML;}  // if it fails lets hope the innerHTML will have it
     line = line.replace(/<br>/g," ");
+    line=line.substr(0,90); 
+    
     var dateValue = $(dateId) != null ? $(dateId).innerHTML : "";
     dateValue = dateValue.substring(0,dateValue.indexOf(" "));
     line = "<div id='" + date + "' style='font-size:1.0em; width:16%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; font-size:1.0em; width:70%;'>" + line + "<\/div>";
@@ -2037,7 +2040,7 @@ function editNote(e) {
     var largeFont = 16;
     var quit = "quitImg";
     var el = Event.element(e);
-    var payload;
+    var payload = "";
     var regEx = /\d+/;
     var nId = regEx.exec(el.id);
     var txt = "n" + nId;
@@ -2108,7 +2111,6 @@ function editNote(e) {
     var content = "c" + nId;
 
     //remove edit anchor
-    //remove edit anchor
     if ($(editAnchor) != null)
     	Element.remove(editAnchor);
 
@@ -2127,7 +2129,9 @@ function editNote(e) {
     var txtId = "txt" + nId;
 
     if( $F(isFull) == "true" ) {
-        payload = $(txtId).getAttribute('data'); // for markdown get the string to edit from the data attribute
+        if ($(txtId).hasAttribute('data')) { 
+            payload = $(txtId).getAttribute('data'); // for markdown get the string to edit from the data attribute
+        }
         if ( payload == "" ) {payload = $(txtId).innerHTML;}  // if not markdown the innerHTML will have the string
         payload = payload.replace(/^\s+|\s+$/g,"");
         payload = payload.replace(/<br>/gi,"\n"); // important! restore line breaks for editing
