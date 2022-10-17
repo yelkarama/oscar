@@ -507,6 +507,7 @@ function notesLoader(offset, numToReturn, demoNo) {
 				},
 				onComplete: function() {
 					$("notesLoading").style.display = "none";
+                    $("encMainDiv").scrollTop=8;
 					if (notesCurrentTop != null) $(notesCurrentTop).scrollIntoView();
 				}
 			});
