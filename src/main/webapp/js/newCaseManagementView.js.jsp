@@ -507,6 +507,7 @@ function notesLoader(offset, numToReturn, demoNo) {
 				},
 				onComplete: function() {
 					$("notesLoading").style.display = "none";
+                    $("encMainDiv").scrollTop=8;
 					if (notesCurrentTop != null) $(notesCurrentTop).scrollIntoView();
 				}
 			});
@@ -1730,7 +1731,6 @@ function completeChangeToView(note,newId) {
 function minView(e) {
     var divHeight = "1.1em";
     var txt = Event.element(e).parentNode.id;
-   //alert(txt);
     var nId = txt.substr(1);
     var img = Event.element(e).id;
     var dateId = "obs" + nId;
@@ -1755,11 +1755,18 @@ function minView(e) {
     //$(txt).style.height = divHeight;
 
     var txtId = "txt" + nId;
-    var line = $(txtId).innerHTML.substr(0,90);
+    var line = "";
+    var data = "";
+    if ($(txtId).hasAttribute('data')) { 
+        line = $(txtId).getAttribute('data'); // if markdown the ascii will be in the data attribute
+    }
+    if ( line == "" ) {line = $(txtId).innerHTML;}  // if it fails lets hope the innerHTML will have it
     line = line.replace(/<br>/g," ");
+    line=line.substr(0,90); 
+    
     var dateValue = $(dateId) != null ? $(dateId).innerHTML : "";
     dateValue = dateValue.substring(0,dateValue.indexOf(" "));
-    line = "<div id='" + date + "' style='font-size:1.0em; width:10%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; font-size:1.0em; width:70%;'>" + line + "<\/div>";
+    line = "<div id='" + date + "' style='font-size:1.0em; width:16%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; font-size:1.0em; width:70%;'>" + line + "<\/div>";
     $("txt"+nId).hide();
     $("sig"+nId).hide();
     new Insertion.Top(txt,line);
@@ -1840,7 +1847,7 @@ function fetchNote(nId) {
                         postBody: params,
                         evalScripts: true,
                         onSuccess: function(response) {
-                            $(noteTxtArea).update(response.responseText);
+                            $(noteTxtArea).update(response.responseText.trim());
                             adjustCaseNote();
                                 $(noteTxtArea).focus();
                             setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
@@ -1892,7 +1899,7 @@ function fullViewById(id) {
                         postBody: params,
                         evalScripts: true,
                         onSuccess: function(response) {
-                        	$(noteTxtId).update(response.responseText);
+                        	$(noteTxtId).update(response.responseText.trim());
                             if( largeNote(response.responseText) ) {
                                 new Insertion.After(noteTxtId,btnHtml);
                             }
@@ -2038,7 +2045,7 @@ function editNote(e) {
     var largeFont = 16;
     var quit = "quitImg";
     var el = Event.element(e);
-    var payload;
+    var payload = "";
     var regEx = /\d+/;
     var nId = regEx.exec(el.id);
     var txt = "n" + nId;
@@ -2109,7 +2116,6 @@ function editNote(e) {
     var content = "c" + nId;
 
     //remove edit anchor
-    //remove edit anchor
     if ($(editAnchor) != null)
     	Element.remove(editAnchor);
 
@@ -2128,7 +2134,9 @@ function editNote(e) {
     var txtId = "txt" + nId;
 
     if( $F(isFull) == "true" ) {
-        payload = $(txtId).getAttribute('data'); // for markdown get the string to edit from the data attribute
+        if ($(txtId).hasAttribute('data')) { 
+            payload = $(txtId).getAttribute('data'); // for markdown get the string to edit from the data attribute
+        }
         if ( payload == "" ) {payload = $(txtId).innerHTML;}  // if not markdown the innerHTML will have the string
         payload = payload.replace(/^\s+|\s+$/g,"");
         payload = payload.replace(/<br>/gi,"\n"); // important! restore line breaks for editing

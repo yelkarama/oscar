@@ -23,6 +23,14 @@
     Ontario, Canada
 
 --%>
+<%@page import="oscar.OscarProperties"%>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="org.oscarehr.common.model.UserProperty"%>
+<%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
+<%@page import="org.commonmark.node.Node"%>
+<%@page import="org.commonmark.parser.Parser"%>
+<%@page import="org.commonmark.renderer.html.HtmlRenderer"%>
 
 <%
     String noteStr = (String)request.getAttribute("noteStr");
@@ -30,6 +38,28 @@
     if( raw ) {
  %>
         <%=noteStr%>
-    <% } else { %>
-        <%=noteStr.replaceAll("\n","<br>")%>
+    <% } else { 
+        noteStr.replaceAll("\n","<br>");
+        LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+		String curUser_no=loggedInInfo.getLoggedInProviderNo();
+		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+		boolean renderMarkdown = false;
+		if ( markdownProp == null ) {
+			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+		} else {
+			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
+		}
+        if ( renderMarkdown ){  //follow pattern from ChartNotesAjax.jsp
+            noteStr = noteStr.replaceAll("<br>","\n\n");
+            Parser parser = Parser.builder().build();
+            Node document = parser.parse(noteStr);
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            noteStr = renderer.render(document);
+
+            noteStr = noteStr.replaceAll("<p>", "");
+            noteStr = noteStr.replaceAll("</p>", "<br>");
+        }
+%>
+        <%=noteStr%>
     <%}%>
