@@ -267,6 +267,22 @@
                 }
                 return selected;
             }
+
+            function getReverseSelected(opt) {
+                var selected = new Array();
+                var index = 0;
+                for (var intLoop=opt.length -1; intLoop >0; intLoop--) {
+                    if (opt[intLoop].selected) {
+                        index = selected.length;
+                        selected[index] = new Object;
+                        selected[index].value = opt[intLoop].value;
+                        selected[index].title = opt[intLoop].title;
+                        selected[index].index = intLoop;
+                    }
+                }
+                return selected;
+            }
+
             
             function getDoc()
             {
@@ -367,7 +383,16 @@
                 }
 
             }
-            
+
+
+            var reverseEncounters=false; 
+            function toggleReverse() 
+            {
+                reverseEncounters = !reverseEncounters;
+                    getEncounter();
+
+            }  
+
             function getEncounter()
             {
             // allow for the first option with id=0 to be select all
@@ -382,6 +407,11 @@
                     }
                 var selected = new Array();
                 selected=getSelected(th);
+                if (reverseEncounters) { 
+                    selected=getReverseSelected(th); 
+                } else {
+                    selected=getSelected(th);                
+                }
                 
                 var encList='';
                 if(selected.length>=1) {
