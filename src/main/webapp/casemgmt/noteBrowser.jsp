@@ -406,7 +406,10 @@
             }         
             function getEncounter()
             {
-            // allow for the first option with id=0 to be select all
+                var div_ref = document.all("refilebutton");
+                div_ref.style.visibility = "hidden";
+            
+                // allow for the first option with id=0 to be select all
 
                 var th = document.getElementById('encounterlist');
                 var length = th.options.length;
@@ -607,10 +610,12 @@ body {
                                 <input type="button" class="btn"  value="<bean:message key="oscarEncounter.noteBrowser.msgAnnotate"/>" onclick="DocAnnotation()" >
                                 <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgEdit"/>" onclick="DocEdit();" >
                                 <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgDelete"/>" onclick="DeleteDoc();" >
+                                
                                 <div id="refilebutton">
+                                    <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.reverse"/>" id="reverseOrderToggle" onclick="toggleReverseDoc();">
                                     <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="RefileDoc();" >
                                     <select  class="btn" id="queueList" name="queueList" onchange="setQueue();">
-                                    <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.reverse"/>" id="reverseOrderToggle" onclick="toggleReverseDoc();">
+                                    
                                         <%
                                             for (Hashtable ht : queues) {
                                                 int id = (Integer) ht.get("id");
