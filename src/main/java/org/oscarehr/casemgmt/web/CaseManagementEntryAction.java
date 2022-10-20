@@ -2891,6 +2891,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
+		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+		Demographic demographic = demographicDao.getDemographic(demographic_no);
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
 		patientName.append(demographic.getLastName()).append(", ");
 		patientName.append(demographic.getFirstName());
