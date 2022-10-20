@@ -2904,7 +2904,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			patientName.append(" ").append(demographic.getSex()).append(" ");
 		}
 		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth);
-		String sPatient = Encode.forHtml(patientName.toString());		
+		String sPatient = org.owasp.encoder.Encode.forHtml((String) patientName.toString());		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
@@ -2925,7 +2925,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
-			out.println(Encode.forHtml(textStr));
+			out.println(org.owasp.encoder.Encode.forHtml((String) textStr));
 			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.6), rgba(0, 0, 0,0));'>");
 			out.println("<br>");
 		}
