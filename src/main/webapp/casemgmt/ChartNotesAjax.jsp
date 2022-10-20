@@ -631,14 +631,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?dataStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
 if ( renderMarkdown && !isMagicNote && fulltxt){
-    noteStr = noteStr.replaceAll("<br>","\n\n");
+    noteStr = noteStr.replaceAll("<br>","\n");
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     noteStr = renderer.render(document);
-
-    noteStr = noteStr.replaceAll("<p>", "");
-    noteStr = noteStr.replaceAll("</p>", "<br>");
 }
 %>
 	<%=noteStr%>	  						
