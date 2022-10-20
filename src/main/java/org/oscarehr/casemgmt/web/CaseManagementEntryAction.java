@@ -2901,7 +2901,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			patientName.append(" (").append(demographic.getAlias()).append(")");
 		}
 		if (StringUtils.isNotEmpty(demographic.getSex())) {
-			patientName.append(" ").append(demographic.getSex).append(" ");
+			patientName.append(" ").append(demographic.getSex()).append(" ");
 		}
 		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth);
 		String sPatient = Encode.forHtml(patientName.toString());		
