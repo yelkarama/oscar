@@ -137,6 +137,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.UserProperty;
 
+import org.owasp.encoder.Encode;
+
 /*
  * Updated by Eugene Petruhin on 12 and 13 jan 2009 while fixing #2482832 & #2494061
  * Updated by Eugene Petruhin on 21 jan 2009 while fixing missing "New Note" link
@@ -2888,8 +2890,22 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
-		if ( renderMarkdown ){ sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>"; }
-		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "</head><body>");
+		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
+		String demographic_no = request.getParameter("demographic_no") ;
+		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+		Demographic demographic = demographicDao.getDemographic(demographic_no);
+		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
+		patientName.append(demographic.getLastName()).append(", ");
+		patientName.append(demographic.getFirstName());
+		if (StringUtils.isNotEmpty(demographic.getAlias())) {
+			patientName.append(" (").append(demographic.getAlias()).append(")");
+		}
+		if (StringUtils.isNotEmpty(demographic.getSex())) {
+			patientName.append(" ").append(demographic.getSex()).append(" ");
+		}
+		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth());
+		String sPatient = Encode.forHtml(patientName.toString());		
+		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
@@ -2909,8 +2925,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
-			out.println(textStr);
-			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.7), rgba(0, 0, 0,0));'>");
+			out.println(Encode.forHtml(textStr));
+			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.6), rgba(0, 0, 0,0));'>");
 			out.println("<br>");
 		}
 

@@ -267,6 +267,21 @@
                 }
                 return selected;
             }
+
+            function getReverseSelected(opt) {
+                var selected = new Array();
+                var index = 0;
+                for (var intLoop=opt.length -1; intLoop >0; intLoop--) {
+                    if (opt[intLoop].selected) {
+                        index = selected.length;
+                        selected[index] = new Object;
+                        selected[index].value = opt[intLoop].value;
+                        selected[index].title = opt[intLoop].title;
+                        selected[index].index = intLoop;
+                    }
+                }
+                return selected;
+            }
             
             function getDoc()
             {
@@ -293,16 +308,24 @@
                         
                     var docList='';
                     var combinePdf=true;
-                    for(k=0;k<selected.length;k++) {
-                        var docnoindexend=selected[k].value.indexOf('-');
-                    
-              
-                        var docno=selected[k].value.substring(0,docnoindexend);
-                        var doctype=selected[k].value.substring(docnoindexend+1,selected[k].value.length);
-                        if(doctype=="text/html") combinePdf=false;
-                        docList=docList+'&docNo='+docno;
+
+                    if (reverse) { 
+                        for(k=selected.length -1; k>-1;k--) {
+                            var docnoindexend=selected[k].value.indexOf('-');                                        
+                            var docno=selected[k].value.substring(0,docnoindexend);
+                            var doctype=selected[k].value.substring(docnoindexend+1,selected[k].value.length);
+                            if(doctype=="text/html") combinePdf=false;
+                            docList=docList+'&docNo='+docno;
+                        } 
+                    } else {                  
+                        for(k=0;k<selected.length;k++) {
+                            var docnoindexend=selected[k].value.indexOf('-');
+                            var docno=selected[k].value.substring(0,docnoindexend);
+                            var doctype=selected[k].value.substring(docnoindexend+1,selected[k].value.length);
+                            if(doctype=="text/html") combinePdf=false;
+                            docList=docList+'&docNo='+docno;
+                        }
                     }
-                    
                     if(combinePdf==true) {
                         showPageCombineImg(docList);
                     }
@@ -367,10 +390,26 @@
                 }
 
             }
-            
+
+            var reverse=false; 
+            function toggleReverseEncounter() 
+            {
+                reverse = !reverse;
+                    getEncounter();
+
+            }  
+            function toggleReverseDoc() 
+            {
+                reverse = !reverse;
+                    getDoc();
+
+            }         
             function getEncounter()
             {
-            // allow for the first option with id=0 to be select all
+                var div_ref = document.all("refilebutton");
+                div_ref.style.visibility = "hidden";
+            
+                // allow for the first option with id=0 to be select all
 
                 var th = document.getElementById('encounterlist');
                 var length = th.options.length;
@@ -381,7 +420,12 @@
                     th.scrollTo(0,0);
                     }
                 var selected = new Array();
-                selected=getSelected(th);
+
+                if (reverse) { 
+                    selected=getReverseSelected(th); 
+                } else {
+                    selected=getSelected(th);
+                }
                 
                 var encList='';
                 if(selected.length>=1) {
@@ -397,7 +441,8 @@
                 }
                 showEncounter(encList);
             }
-            
+ 
+           
             function PrintEncounter()
             {
     
@@ -557,6 +602,7 @@ body {
                             </select>
                         </fieldset>                   
 
+
                         <div id="docbuttons">
                                 <% if (viewstatus.equalsIgnoreCase("active")) {%>
                                 <% if (module.equalsIgnoreCase("demographic")) {%>
@@ -564,9 +610,12 @@ body {
                                 <input type="button" class="btn"  value="<bean:message key="oscarEncounter.noteBrowser.msgAnnotate"/>" onclick="DocAnnotation()" >
                                 <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgEdit"/>" onclick="DocEdit();" >
                                 <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgDelete"/>" onclick="DeleteDoc();" >
+                                
                                 <div id="refilebutton">
+                                    <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.reverse"/>" id="reverseOrderToggle" onclick="toggleReverseDoc();">
                                     <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="RefileDoc();" >
                                     <select  class="btn" id="queueList" name="queueList" onchange="setQueue();">
+                                    
                                         <%
                                             for (Hashtable ht : queues) {
                                                 int id = (Integer) ht.get("id");
@@ -586,7 +635,7 @@ body {
                         <div id="printnotesbutton" class="DoNotPrint"><br><br>
                             <input type="button" class="btn btn-primary" value='<bean:message key="global.btnPDF"/>' id="imgPrintEncounter" onclick="PrintEncounter();">
                             <input type="button" class="btn" value='<bean:message key="global.btnPrint"/>' id="htmlPrintEncounter" onclick="htmlPrint();">
-
+                            <input type="button" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.reverse"/>" id="reverseOrderToggle2" onclick="toggleReverseEncounter();">
                         </div> 
  
                     </td><td valign="top">
