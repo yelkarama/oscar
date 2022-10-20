@@ -2914,14 +2914,12 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getNote();
 			}
 			if ( renderMarkdown ){	//mimic the treatment of ChartNoteseAjax.jsp for consistancy
-				textStr = textStr.replaceAll("\n", "\n\n");			
+		
 				Parser parser = Parser.builder().build();
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				textStr = renderer.render(document);
-
-				textStr = textStr.replaceAll("<p>", "");
-				textStr = textStr.replaceAll("</p>", "<br>");			
+			
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
