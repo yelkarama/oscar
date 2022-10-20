@@ -51,14 +51,11 @@
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
         if ( renderMarkdown ){  //follow pattern from ChartNotesAjax.jsp
-            noteStr = noteStr.replaceAll("<br>","\n\n");
+            noteStr = noteStr.replaceAll("<br>","\n");
             Parser parser = Parser.builder().build();
             Node document = parser.parse(noteStr);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             noteStr = renderer.render(document);
-
-            noteStr = noteStr.replaceAll("<p>", "");
-            noteStr = noteStr.replaceAll("</p>", "<br>");
         }
 %>
         <%=noteStr%>
