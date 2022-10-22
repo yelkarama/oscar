@@ -2879,14 +2879,16 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String demoNo = "";
 		String signedon = "Signed on";
 		String sStyle = "<style>body{font-family: arial,sans-serif;}\nh1{font-size:120%;}\nh2{font-size:100%;}\nh3{font-size:90%;}</style>";
+		String sPatient = "";
 		boolean renderMarkdown = false;
+		StringBuilder patientName = new StringBuilder();
 		
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");			 
-		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(request.getParameter("demographic_no"));
+		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);		 
+		Demographic demographic = demographicDao.getDemographic(request.getParameter("demographic_no"));
 		ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 		if ( markdownProp == null ) {
@@ -2898,20 +2900,16 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		
-		sPatient = Encode.forHtmlContent(
-			demo.getLastName() 
-			+ ", " 
-			+ demo.getFirstName()
-			+ (demo.getAlias()?" ("+demo.getAlias()+")":"")
-			+ demo.getSex()
-			+ " " 
-			+ demo.getYearOfBirth()
-			+ "-"
-			+ demo.getMonthOfBirth()
-			+ "-"
-			+ demo.getDateOfBirth()
-			);	
-		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
+		patientName.append(demographic.getLastName())
+		.append(", ");
+		patientName.append(demographic.getFirstName());
+		if (StringUtils.isNotEmpty(demographic.getAlias())) {
+			patientName.append(" (").append(demographic.getAlias()).append(")");
+		}
+		patientName.append(" ")
+		.append(demographic.getSex());
+		sPatient = Encode.forHtmlContent(patientName.toString())
+		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
