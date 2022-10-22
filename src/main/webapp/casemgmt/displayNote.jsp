@@ -31,6 +31,8 @@
 <%@page import="org.commonmark.node.Node"%>
 <%@page import="org.commonmark.parser.Parser"%>
 <%@page import="org.commonmark.renderer.html.HtmlRenderer"%>
+<%@page import="java.util.regex.Pattern"%>
+<%@page import="java.util.ResourceBundle"%>
 
 <%
     String noteStr = (String)request.getAttribute("noteStr");
@@ -51,11 +53,15 @@
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
         if ( renderMarkdown ){  //follow pattern from ChartNotesAjax.jsp
-            noteStr = noteStr.replaceAll("<br>","\n");
+            noteStr = noteStr.replaceAll("<br>","\n");  //just to return to the origional note prior to encoding
             Parser parser = Parser.builder().build();
             Node document = parser.parse(noteStr);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             noteStr = renderer.render(document);
+            //there are some formatting differences that this will produce, and we will let them be except for the signature line
+            java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+            String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
+            noteStr = noteStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
         }
 %>
         <%=noteStr%>
