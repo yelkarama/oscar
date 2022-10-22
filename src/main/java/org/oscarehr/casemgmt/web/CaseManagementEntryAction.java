@@ -2894,13 +2894,10 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
 		String demoNo = request.getParameter("demographic_no") ;
-		CaseManagementManager caseManagementMgr = SpringUtils.getBean(CaseManagementManager.class);
+		
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
-		patientName.append(caseManagementMgr.getDemoName(demoNo));
-		if (StringUtils.isNotEmpty(caseManagementMgr.getDemoGender(demoNo))) {
-			patientName.append(" ").append(caseManagementMgr.getDemoGender(demoNo));
-		}
-		patientName.append(" ").append(caseManagementMgr.getDemoDOB(demoNo));
+		patientName.append(getDemoName(demoNo));
+		patientName.append(" ").append(getDemoDOB(demoNo));
 		String sPatient = Encode.forHtml(patientName.toString());		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
