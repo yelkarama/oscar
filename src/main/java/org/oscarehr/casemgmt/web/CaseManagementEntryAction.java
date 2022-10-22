@@ -2876,7 +2876,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String ids = request.getParameter("notes2print");
 		String[] noteIds;
 		String textStr;
-		String demoNo = "";
+		String demoNo = getDemographicNo(request);
 		String signedon = "Signed on";
 		String sStyle = "<style>body{font-family: arial,sans-serif;}\nh1{font-size:120%;}\nh2{font-size:100%;}\nh3{font-size:90%;}</style>";
 		String sPatient = "";
@@ -2888,7 +2888,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
 		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);		 
-		Demographic demographic = demographicDao.getDemographic(request.getParameter("demographic_no"));
+		Demographic demographic = demographicDao.getDemographic(demoNo);
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 		if ( markdownProp == null ) {
@@ -2897,8 +2897,17 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
 
-		patientName.append(request.getParameter("demographic_no"));
-		
+		if (StringUtils.isNotEmpty(demographic.getLastName())) {
+			patientName.append(" ")
+			.append(demographic.getLastName())
+			.append(", ");
+			patientName.append(demographic.getFirstName());
+			if (StringUtils.isNotEmpty(demographic.getAlias())) {
+				patientName.append(" (").append(demographic.getAlias()).append(")");
+			}
+			patientName.append(" ")
+			.append(demographic.getSex());
+		}		
 
 		sPatient = Encode.forHtmlContent(patientName.toString());
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
