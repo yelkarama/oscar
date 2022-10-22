@@ -2876,8 +2876,10 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String ids = request.getParameter("notes2print");
 		String[] noteIds;
 		String textStr;
-		String sStyle = "";
 		String demoNo = "";
+		String signedon = "Signed on";
+		String sStyle = "<style>body{font-family: arial,sans-serif;}\nh1{font-size:120%;}\nh2{font-size:100%;}\nh3{font-size:90%;}</style>";
+		boolean renderMarkdown = false;
 		
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
@@ -2887,9 +2889,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");			 
 		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(request.getParameter("demographic_no"));
 		java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
-		String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
-		
-		boolean renderMarkdown = false;
+
 		if ( markdownProp == null ) {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
 		} else {
@@ -2898,7 +2898,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
-		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
+		
 		sPatient = Encode.forHtmlContent(
 			demo.getLastName() 
 			+ ", " 
@@ -2927,7 +2927,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				textStr = renderer.render(document);
 				// basically allow rendering as is with the exception of the signature line(s)
-
+				signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
 				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 			
 			} else {
