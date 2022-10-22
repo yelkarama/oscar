@@ -38,11 +38,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,6 +77,7 @@ import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.model.Issue;
 import org.oscarehr.casemgmt.service.CaseManagementPrint;
+
 import org.oscarehr.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean;
 import org.oscarehr.common.dao.BillingServiceDao;
@@ -109,6 +111,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SessionConstants;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.WebUtils;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -710,9 +713,9 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			note.setSigning_provider_no(providerNo);
 			note.setSigned(true);
 			if (request.getParameter("appendSignText") != null && request.getParameter("appendSignText").equalsIgnoreCase("true")) {
-				SimpleDateFormat dt = new SimpleDateFormat("dd-MMM-yyyy H:mm", Locale.ENGLISH);
+				SimpleDateFormat dt = new SimpleDateFormat("dd-MMM-yyyy H:mm", request.getLocale());
 				Date now = new Date();
-				ResourceBundle props = ResourceBundle.getBundle("oscarResources", Locale.ENGLISH);
+				ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 				ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 				String providerName = providerDao.getProviderName(providerNo);
@@ -2873,45 +2876,56 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String ids = request.getParameter("notes2print");
 		String[] noteIds;
 		String textStr;
-		String sStyle = "";
+		String demoNo = getDemographicNo(request);
+		String signedon = "Signed on";
+		String sStyle = "<style>body{font-family: arial,sans-serif;}\nh1{font-size:120%;}\nh2{font-size:100%;}\nh3{font-size:90%;}</style>";
+		String sPatient = "";
+		boolean renderMarkdown = false;
+		StringBuilder patientName = new StringBuilder();
 		
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
-		boolean renderMarkdown = false;
+		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);		 
+		Demographic demographic = demographicDao.getDemographic(demoNo);
+		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
+
 		if ( markdownProp == null ) {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
 		} else {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
-		
-		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
+
+		if (StringUtils.isNotEmpty(demographic.getLastName())) {
+			patientName.append(" ")
+				.append(demographic.getLastName())
+				.append(", ");
+			patientName.append(demographic.getFirstName());
+			if (StringUtils.isNotEmpty(demographic.getAlias())) {
+				patientName.append(" (").append(demographic.getAlias()).append(")");
+			}
+			patientName.append(" ")
+				.append(demographic.getSex());
+			patientName.append(" ")
+				.append(demographic.getYearOfBirth())
+				.append("-")
+				.append(demographic.getMonthOfBirth())
+				.append("-")
+				.append(demographic.getDateOfBirth());
+		}		
+
+		sPatient = Encode.forHtmlContent(patientName.toString());
+		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
 
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
-		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
-		String demographic_no = request.getParameter("demographic_no") ;
-		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
-		Demographic demographic = demographicDao.getDemographic(demographic_no);
-		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
-		patientName.append(demographic.getLastName()).append(", ");
-		patientName.append(demographic.getFirstName());
-		if (StringUtils.isNotEmpty(demographic.getAlias())) {
-			patientName.append(" (").append(demographic.getAlias()).append(")");
-		}
-		if (StringUtils.isNotEmpty(demographic.getSex())) {
-			patientName.append(" ").append(demographic.getSex()).append(" ");
-		}
-		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth());
-		String sPatient = Encode.forHtml(patientName.toString());		
-		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
-
+		
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getObservation_date().toString() + " " + this.caseManagementMgr.getNote(noteIds[idx]).getProviderName() + " " + props.getString("oscarEncounter.noteBrowser.msgNoteLocked");
 			} else {
-				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getNote();
+				textStr = Encode.forHtmlContent(this.caseManagementMgr.getNote(noteIds[idx]).getNote());
 			}
 			if ( renderMarkdown ){	//mimic the treatment of ChartNoteseAjax.jsp for consistancy
 		
@@ -2919,11 +2933,14 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				textStr = renderer.render(document);
+				// basically allow rendering as is with the exception of the signature line(s)
+				signedon = props.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
+				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 			
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
-			out.println(Encode.forHtml(textStr));
+			out.println(textStr);
 			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.6), rgba(0, 0, 0,0));'>");
 			out.println("<br>");
 		}

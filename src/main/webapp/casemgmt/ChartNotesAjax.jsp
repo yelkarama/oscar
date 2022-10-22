@@ -29,43 +29,61 @@
 <%@page import="oscar.util.UtilMisc"%>
 <%@include file="/casemgmt/taglibs.jsp"%>
 <%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
-<%@page import="java.util.Enumeration"%>
-<%@page import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO"%>
-<%@page	import="java.util.Arrays,java.util.Properties,java.util.List,java.util.Set,java.util.ArrayList,java.util.Enumeration,java.util.HashSet,java.util.Iterator,java.text.SimpleDateFormat,java.util.Calendar,java.util.Date,java.text.ParseException"%>
+<%@page	import="java.util.Arrays"%>
+<%@page	import="java.util.Properties"%>
+<%@page	import="java.util.List"%>
+<%@page	import="java.util.Set"%>
+<%@page	import="java.util.ArrayList"%>
+<%@page	import="java.util.Enumeration"%>
+<%@page	import="java.util.HashSet"%>
+<%@page	import="java.util.Iterator"%>
+<%@page	import="java.text.SimpleDateFormat"%>
+<%@page	import="java.util.Calendar"%>
+<%@page	import="java.util.Date"%>
+<%@page	import="java.text.ParseException"%>
+<%@page import="java.util.regex.Pattern"%>
+<%@page import="java.util.ResourceBundle"%>
+
+<%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole"%>
+<%@page import="org.apache.cxf.common.i18n.UncheckedException"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.oscarehr.common.model.UserProperty,org.oscarehr.casemgmt.model.*,org.oscarehr.casemgmt.service.* "%>
+<%@page import="org.commonmark.node.Node"%>
+<%@page import="org.commonmark.parser.Parser"%>
+<%@page import="org.commonmark.renderer.html.HtmlRenderer"%>
+<%@page import="org.springframework.web.context.WebApplicationContext"%>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+
+<%@page import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO"%>
+<%@page import="oscar.util.DateUtils"%>
+<%@page import="oscar.util.UtilDateUtilities"%>
+<%@page import="oscar.dms.EDocUtil"%>
+<%@page import="oscar.dms.EDoc"%>
+<%@page import="oscar.OscarProperties"%>
+<%@page import="oscar.oscarRx.data.RxPrescriptionData"%>
+
+<%@page import="org.oscarehr.common.model.UserProperty"%>
+<%@page import="org.oscarehr.casemgmt.model.*"%>
+<%@page import="org.oscarehr.casemgmt.service.*"%>
 <%@page import="org.oscarehr.casemgmt.web.formbeans.*"%>
 <%@page import="org.oscarehr.PMmodule.model.*"%>
 <%@page import="org.oscarehr.common.model.*"%>
-<%@page import="oscar.util.DateUtils"%>
-<%@page import="oscar.dms.EDocUtil"%>
-<%@page import="org.springframework.web.context.WebApplicationContext"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.oscarehr.casemgmt.common.Colour"%>
-<%@page import="oscar.dms.EDoc"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole"%>
 <%@page import="org.oscarehr.util.EncounterUtil"%>
-<%@page import="org.apache.cxf.common.i18n.UncheckedException"%>
 <%@page import="org.oscarehr.casemgmt.web.NoteDisplay"%>
 <%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData"%>
 <%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO"%>
 <%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao"%>
-<%@page import="oscar.OscarProperties"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.oscarehr.PMmodule.model.Program"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProgramDao"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@page import="oscar.util.UtilDateUtilities"%>
 <%@page import="org.oscarehr.casemgmt.web.NoteDisplayNonNote"%>
 <%@page import="org.oscarehr.common.dao.EncounterTemplateDao"%>
 <%@page import="org.oscarehr.casemgmt.web.CheckBoxBean"%>
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock"%>
-<%@page import="org.commonmark.node.Node"%>
-<%@page import="org.commonmark.parser.Parser"%>
-<%@page import="org.commonmark.renderer.html.HtmlRenderer"%>
+
+
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed2=true;
@@ -630,12 +648,16 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<%-- render the note contents here --%>
 			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?dataStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
-if ( renderMarkdown && !isMagicNote && fulltxt){
-    noteStr = noteStr.replaceAll("<br>","\n");
+if ( renderMarkdown && !isMagicNote && fulltxt){ // note this code is repliclated in displayNote.jsp and CaseManagementEntryAction.java
+    noteStr = noteStr.replaceAll("<br>","\n"); //restore the origional note
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     noteStr = renderer.render(document);
+	//basically allow the displayed note as rendered with the exception of the signature line which should be separate
+	java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+	String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
+	noteStr = noteStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 }
 %>
 	<%=noteStr%>	  						
