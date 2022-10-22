@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -2881,23 +2882,32 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		
 		boolean renderMarkdown = false;
 		if ( markdownProp == null ) {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
 		} else {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
-		
-		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
 		String demoNo = request.getParameter("demographic_no") ;
-		
+		Demographic demographic = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
+		String sPatient = Encode.forHtml(patientName.toString());	
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
-		patientName.append(getDemoName(demoNo));
-		patientName.append(" ").append(getDemoDOB(demoNo));
+		patientName.append(demographic.getLastName()).append(", ");
+		patientName.append(demographic.getFirstName());
+		if (StringUtils.isNotEmpty(demographic.getAlias())) {
+			patientName.append(" (").append(demographic.getAlias()).append(")");
+		}
+		if (StringUtils.isNotEmpty(demographic.getSex())) {
+			patientName.append(" ").append(demographic.getSex()).append(" ");
+		}
+		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth());
 		String sPatient = Encode.forHtmlContent(patientName.toString());		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
@@ -2913,6 +2923,10 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				textStr = renderer.render(document);
+				// basically allow rendering as is with the exception of the signature line(s)
+				java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+				String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
+				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 			
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
