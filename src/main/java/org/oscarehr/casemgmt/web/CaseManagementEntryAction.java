@@ -76,7 +76,7 @@ import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.model.Issue;
 import org.oscarehr.casemgmt.service.CaseManagementPrint;
-import org.oscarehr.casemgmt.service.CaseManagementManager;
+
 import org.oscarehr.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean;
 import org.oscarehr.common.dao.BillingServiceDao;
