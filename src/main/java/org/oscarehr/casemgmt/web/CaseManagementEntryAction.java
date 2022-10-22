@@ -2877,13 +2877,15 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String[] noteIds;
 		String textStr;
 		String sStyle = "";
+		String demoNo = "";
 		
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");			 
+		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(request.getParameter("demographic_no"));
 		
 		boolean renderMarkdown = false;
 		if ( markdownProp == null ) {
@@ -2895,9 +2897,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
-		String demoNo = request.getParameter("demographic_no") ;
-		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
-		String sPatient = Encode.forHtmlContent(
+		sPatient = Encode.forHtmlContent(
 			demo.getLastName() 
 			+ ", " 
 			+ demo.getFirstName()
