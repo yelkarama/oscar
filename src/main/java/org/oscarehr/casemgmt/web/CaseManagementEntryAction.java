@@ -2899,17 +2899,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		patientName.append(request.getParameter("demographic_no"));
 		
-		if (StringUtils.isNotEmpty(demographic.getLastName())) {
-			patientName.append(" ")
-			.append(demographic.getLastName())
-			.append(", ");
-			patientName.append(demographic.getFirstName());
-			if (StringUtils.isNotEmpty(demographic.getAlias())) {
-				patientName.append(" (").append(demographic.getAlias()).append(")");
-			}
-			patientName.append(" ")
-			.append(demographic.getSex());
-		}
+
 		sPatient = Encode.forHtmlContent(patientName.toString());
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
 
