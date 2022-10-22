@@ -2899,7 +2899,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		patientName.append(request.getParameter("demographic_no"));
 		
-		if (StringUtils.isNotEmpty(demographic.LastName())) {
+		if (StringUtils.isNotEmpty(demographic.getLastName())) {
 			patientName.append(" ")
 			.append(demographic.getLastName())
 			.append(", ");
