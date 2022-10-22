@@ -2897,7 +2897,6 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
 		String demoNo = request.getParameter("demographic_no") ;
 		Demographic demographic = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
-		String sPatient = Encode.forHtml(patientName.toString());	
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
 		patientName.append(demographic.getLastName()).append(", ");
 		patientName.append(demographic.getFirstName());
