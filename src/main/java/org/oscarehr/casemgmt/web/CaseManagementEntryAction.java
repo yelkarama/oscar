@@ -2886,6 +2886,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");			 
 		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(request.getParameter("demographic_no"));
+		java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+		String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
 		
 		boolean renderMarkdown = false;
 		if ( markdownProp == null ) {
@@ -2925,8 +2927,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				textStr = renderer.render(document);
 				// basically allow rendering as is with the exception of the signature line(s)
-				java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
-				String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
+
 				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 			
 			} else {
