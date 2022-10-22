@@ -2898,14 +2898,14 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
 		patientName.append(getDemoName(demoNo));
 		patientName.append(" ").append(getDemoDOB(demoNo));
-		String sPatient = Encode.forHtml(patientName.toString());		
+		String sPatient = Encode.forHtmlContent(patientName.toString());		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getObservation_date().toString() + " " + this.caseManagementMgr.getNote(noteIds[idx]).getProviderName() + " " + props.getString("oscarEncounter.noteBrowser.msgNoteLocked");
 			} else {
-				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getNote();
+				textStr = Encode.forHtmlContent(this.caseManagementMgr.getNote(noteIds[idx]).getNote());
 			}
 			if ( renderMarkdown ){	//mimic the treatment of ChartNoteseAjax.jsp for consistancy
 		
@@ -2917,7 +2917,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
-			out.println(Encode.forHtml(textStr));
+			out.println(textStr);
 			out.println("<br><hr style='border:0; height: 1px;background-image: linear-gradient(to right,rgba(0, 0, 0), rgba(0, 0, 0, 0.6), rgba(0, 0, 0,0));'>");
 			out.println("<br>");
 		}
