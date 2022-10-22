@@ -2897,20 +2897,25 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
 
-		if (ids.length() > 0) noteIds = ids.split(",");
-		else noteIds = (String[]) Array.newInstance(String.class, 0);
+		patientName.append(request.getParameter("demographic_no"));
 		
-		patientName.append(demographic.getLastName())
-		.append(", ");
-		patientName.append(demographic.getFirstName());
-		if (StringUtils.isNotEmpty(demographic.getAlias())) {
-			patientName.append(" (").append(demographic.getAlias()).append(")");
+		if (StringUtils.isNotEmpty(demographic.LastName())) {
+			patientName.append(" ")
+			.append(demographic.getLastName())
+			.append(", ");
+			patientName.append(demographic.getFirstName());
+			if (StringUtils.isNotEmpty(demographic.getAlias())) {
+				patientName.append(" (").append(demographic.getAlias()).append(")");
+			}
+			patientName.append(" ")
+			.append(demographic.getSex());
 		}
-		patientName.append(" ")
-		.append(demographic.getSex());
 		sPatient = Encode.forHtmlContent(patientName.toString());
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
 
+		if (ids.length() > 0) noteIds = ids.split(",");
+		else noteIds = (String[]) Array.newInstance(String.class, 0);
+		
 		for (int idx = 0; idx < noteIds.length; ++idx) {
 			if (this.caseManagementMgr.getNote(noteIds[idx]).isLocked()) {
 				textStr = this.caseManagementMgr.getNote(noteIds[idx]).getObservation_date().toString() + " " + this.caseManagementMgr.getNote(noteIds[idx]).getProviderName() + " " + props.getString("oscarEncounter.noteBrowser.msgNoteLocked");
