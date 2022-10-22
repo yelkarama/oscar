@@ -76,6 +76,7 @@ import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.model.Issue;
 import org.oscarehr.casemgmt.service.CaseManagementPrint;
+import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean;
 import org.oscarehr.common.dao.BillingServiceDao;
@@ -109,6 +110,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SessionConstants;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.WebUtils;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -2891,19 +2893,14 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (ids.length() > 0) noteIds = ids.split(",");
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
-		String demographic_no = request.getParameter("demographic_no") ;
-		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
-		Demographic demographic = demographicDao.getDemographic(demographic_no);
+		String demoNo = request.getParameter("demographic_no") ;
+		CaseManagementManager caseManagementMgr;
 		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
-		patientName.append(demographic.getLastName()).append(", ");
-		patientName.append(demographic.getFirstName());
-		if (StringUtils.isNotEmpty(demographic.getAlias())) {
-			patientName.append(" (").append(demographic.getAlias()).append(")");
+		patientName.append(caseManagementMgr.getDemoName(demoNo));
+		if (StringUtils.isNotEmpty(caseManagementMgr.getDemoGender(demoNo))) {
+			patientName.append(" ").append(caseManagementMgr.getDemoGender(demoNo));
 		}
-		if (StringUtils.isNotEmpty(demographic.getSex())) {
-			patientName.append(" ").append(demographic.getSex()).append(" ");
-		}
-		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth());
+		patientName.append(" ").append(caseManagementMgr.getDemoDOB(demoNo));
 		String sPatient = Encode.forHtml(patientName.toString());		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
