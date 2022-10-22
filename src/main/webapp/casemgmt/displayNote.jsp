@@ -53,7 +53,7 @@
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 		}
         if ( renderMarkdown ){  //follow pattern from ChartNotesAjax.jsp
-            noteStr = noteStr.replaceAll("<br>","\n");  //just to return to the origional note prior to encoding
+            noteStr = noteStr.replaceAll("<br>","  \n");  //force Markdown to introduce a <br> for a linebreak
             Parser parser = Parser.builder().build();
             Node document = parser.parse(noteStr);
             HtmlRenderer renderer = HtmlRenderer.builder().build();

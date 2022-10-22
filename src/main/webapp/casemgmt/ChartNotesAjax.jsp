@@ -649,15 +649,15 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			  				<div id="txt<%=globalNoteId%>" data="<%=renderMarkdown?dataStr:""%>" style="display:inline-block;<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?("max-width:60%;"):""%>">
 <%
 if ( renderMarkdown && !isMagicNote && fulltxt){ // note this code is repliclated in displayNote.jsp and CaseManagementEntryAction.java
-    noteStr = noteStr.replaceAll("<br>","\n"); //restore the origional note
+    noteStr = noteStr.replaceAll("<br>","  \n"); //restore the origional note and add two spaces to force the parser to add a <br>
     Parser parser = Parser.builder().build();
     Node document = parser.parse(noteStr);
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     noteStr = renderer.render(document);
 	//basically allow the displayed note as rendered with the exception of the signature line which should be separate
-	java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
-	String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
-	noteStr = noteStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
+	//java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+	//String signedon = oscarRec.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");
+	//noteStr = noteStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
 }
 %>
 	<%=noteStr%>	  						

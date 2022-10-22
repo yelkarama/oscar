@@ -2928,7 +2928,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				textStr = Encode.forHtmlContent(this.caseManagementMgr.getNote(noteIds[idx]).getNote());
 			}
 			if ( renderMarkdown ){	//mimic the treatment of ChartNoteseAjax.jsp for consistancy
-		
+				textStr = textStr.replaceAll("\n","  \n");		//force a <br> by adding two spaces before the linefeed
 				Parser parser = Parser.builder().build();
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
