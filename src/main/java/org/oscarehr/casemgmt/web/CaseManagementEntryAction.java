@@ -2932,11 +2932,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				Parser parser = Parser.builder().build();
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
-				textStr = renderer.render(document);
-				// basically allow rendering as is with the exception of the signature line(s)
-				signedon = props.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
-				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
-			
+				textStr = renderer.render(document);		
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
