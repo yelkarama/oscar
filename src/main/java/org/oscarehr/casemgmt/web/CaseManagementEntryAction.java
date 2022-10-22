@@ -2896,18 +2896,17 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		else noteIds = (String[]) Array.newInstance(String.class, 0);
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
 		String demoNo = request.getParameter("demographic_no") ;
-		Demographic demographic = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
-		StringBuilder patientName = new StringBuilder();  //using StringBuilder as it will convert to String
-		patientName.append(demographic.getLastName()).append(", ");
-		patientName.append(demographic.getFirstName());
-		if (StringUtils.isNotEmpty(demographic.getAlias())) {
-			patientName.append(" (").append(demographic.getAlias()).append(")");
+		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
+		String sPatient = "";
+		sPatient = demo.getLastName() + ", " + demo.getFirstName();
+		if (StringUtils.isNotEmpty(demo.getAlias())) {
+			sPatient = sPatient + " ("+demo.getAlias()+")";
 		}
-		if (StringUtils.isNotEmpty(demographic.getSex())) {
-			patientName.append(" ").append(demographic.getSex()).append(" ");
+		if (StringUtils.isNotEmpty(demo.getSex())) {
+			sPatient = sPatient + " "+ demo.getSex();
 		}
-		patientName.append(demographic.getYearOfBirth()).append("-").append(demographic.getMonthOfBirth()).append("-").append(demographic.getDateOfBirth());
-		String sPatient = Encode.forHtmlContent(patientName.toString());		
+		sPatient = sPatient + " " + demo.getYearOfBirth()+"-"+demo.getMonthOfBirth()+"-"+demo.getDateOfBirth();
+		sPatient = Encode.forHtmlContent(sPatient);		
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
