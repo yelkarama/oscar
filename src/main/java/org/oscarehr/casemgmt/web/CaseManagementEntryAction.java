@@ -713,9 +713,9 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			note.setSigning_provider_no(providerNo);
 			note.setSigned(true);
 			if (request.getParameter("appendSignText") != null && request.getParameter("appendSignText").equalsIgnoreCase("true")) {
-				SimpleDateFormat dt = new SimpleDateFormat("dd-MMM-yyyy H:mm", Locale.ENGLISH);
+				SimpleDateFormat dt = new SimpleDateFormat("dd-MMM-yyyy H:mm", request.getLocale());
 				Date now = new Date();
-				ResourceBundle props = ResourceBundle.getBundle("oscarResources", Locale.ENGLISH);
+				ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 				ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 				String providerName = providerDao.getProviderName(providerNo);
@@ -2899,14 +2899,20 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		if (StringUtils.isNotEmpty(demographic.getLastName())) {
 			patientName.append(" ")
-			.append(demographic.getLastName())
-			.append(", ");
+				.append(demographic.getLastName())
+				.append(", ");
 			patientName.append(demographic.getFirstName());
 			if (StringUtils.isNotEmpty(demographic.getAlias())) {
 				patientName.append(" (").append(demographic.getAlias()).append(")");
 			}
 			patientName.append(" ")
-			.append(demographic.getSex());
+				.append(demographic.getSex());
+			patientName.append(" ")
+				.append(demographic.getYearOfBirth())
+				.append("-")
+				.append(demographic.getMonthOfBirth())
+				.append("-")
+				.append(demographic.getDateOfBirth());
 		}		
 
 		sPatient = Encode.forHtmlContent(patientName.toString());
