@@ -2897,16 +2897,19 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		sStyle = "<style>body{font-family: arial,sans-serif;}</style><style>h1{font-size:120%;}</style><style>h2{font-size:100%;}</style><style>h3{font-size:90%;}</style>";
 		String demoNo = request.getParameter("demographic_no") ;
 		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(demoNo);
-		String sPatient = "";
-		sPatient = demo.getLastName() + ", " + demo.getFirstName();
-		if (StringUtils.isNotEmpty(demo.getAlias())) {
-			sPatient = sPatient + " ("+demo.getAlias()+")";
-		}
-		if (StringUtils.isNotEmpty(demo.getSex())) {
-			sPatient = sPatient + " "+ demo.getSex();
-		}
-		sPatient = sPatient + " " + demo.getYearOfBirth()+"-"+demo.getMonthOfBirth()+"-"+demo.getDateOfBirth();
-		sPatient = Encode.forHtmlContent(sPatient);		
+		String sPatient = Encode.forHtmlContent(
+			demo.getLastName() 
+			+ ", " 
+			+ demo.getFirstName()
+			+ (demo.getAlias()?" ("+demo.getAlias()+")":"")
+			+ demo.getSex()
+			+ " " 
+			+ demo.getYearOfBirth()
+			+ "-"
+			+ demo.getMonthOfBirth()
+			+ "-"
+			+ demo.getDateOfBirth()
+			);	
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>"+sPatient+"</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
