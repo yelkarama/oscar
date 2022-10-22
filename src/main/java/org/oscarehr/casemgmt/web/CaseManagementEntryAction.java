@@ -2908,7 +2908,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		}
 		patientName.append(" ")
 		.append(demographic.getSex());
-		sPatient = Encode.forHtmlContent(patientName.toString())
+		sPatient = Encode.forHtmlContent(patientName.toString());
 		out.println("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>" + sStyle + "<title>" + sPatient + "</title></head><body>");
 
 		for (int idx = 0; idx < noteIds.length; ++idx) {
