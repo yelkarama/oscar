@@ -464,6 +464,26 @@ jQuery(function(){
     });
 });
 
+function copyHIN2Clipboard(id) {
+    var range = document.createRange();
+    var rNode = document.getElementById(id).childNodes[0];
+    range.selectNode(rNode);
+    window.getSelection().removeAllRanges(); // clear current selection
+    var blank=document.getElementById(id).innerHTML.indexOf("&nbsp;");
+    range.setStart(rNode, 0);
+    range.setEnd(rNode, blank);
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+	    //window.getSelection().removeAllRanges();// to deselect
+}
+
+function copyHINver2Clipboard(id) {
+    var range = document.createRange();
+    range.selectNode(document.getElementById(id));
+    window.getSelection().removeAllRanges(); // clear current selection
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+}
 </script>
 <oscar:customInterface section="master"/>
 
@@ -2284,8 +2304,7 @@ if( demographic!=null) {
 							<% if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
 								      key="demographic.demographiceditdemographic.formHin" />:</span></td>
-							<td width="100%"><span class="info"><%=StringUtils.trimToEmpty(demographic.getHin())%>
-										&nbsp; <%=StringUtils.trimToEmpty(demographic.getVer())%></span></td>
+							<td width="100%"><span class="info" id="hinver" onclick="copyHIN2Clipboard(this.id)" ondblclick="copyHINver2Clipboard(this.id)"><%=StringUtils.trimToEmpty(demographic.getHin())%>&nbsp;<%=StringUtils.trimToEmpty(demographic.getVer())%></span></td>
 							</tr>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
 								      key="demographic.demographiceditdemographic.formHCType" />:</span></td>
