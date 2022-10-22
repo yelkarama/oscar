@@ -38,12 +38,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -2932,11 +2930,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				Parser parser = Parser.builder().build();
 				Node document = parser.parse(textStr);
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
-				textStr = renderer.render(document);
-				// basically allow rendering as is with the exception of the signature line(s)
-				signedon = props.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned");	
-				textStr = textStr.replaceAll(Pattern.quote("["+signedon),"<br>["+signedon);
-			
+				textStr = renderer.render(document);		
 			} else {
 				textStr = textStr.replaceAll("\n", "<br>");
 			}
