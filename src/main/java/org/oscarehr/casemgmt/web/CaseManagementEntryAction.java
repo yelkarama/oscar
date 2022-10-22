@@ -2885,10 +2885,9 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String curUser_no = loggedInInfo.getLoggedInProviderNo();
 		UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
 		UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
-		ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");			 
 		Demographic demo = demographicDao.getClientByDemographicNo(Integer.parseInt(request.getParameter("demographic_no"));
-		java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+		ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
 		if ( markdownProp == null ) {
 			renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
