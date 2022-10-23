@@ -90,6 +90,9 @@
 <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger.css"> </link>
 <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger-theme-future.css"> </link>
 
+<!-- to render markdown to html -->
+<script type="text/javascript" src="<c:out value="${ctx}"/>/library/showdown.js"> </script>
+
 <script type="text/javascript" src="newEncounterLayout.js.jsp"> </script>
 	
 <%-- for popup menu of forms --%>
