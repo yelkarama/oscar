@@ -2139,7 +2139,7 @@ function editNote(e) {
         }
         if ( payload == "" ) {payload = $(txtId).innerHTML;}  // if not markdown the innerHTML will have the string
         payload = payload.replace(/^\s+|\s+$/g,"");
-        payload = payload.replace(/<br>/gi,"  \n"); // important! restore line breaks for editing adding spaces for parsing
+        payload = payload.replace(/<br>/gi,"\n"); // important! restore line breaks for editing but don't add spaces for parsing here
         payload += "\n";
     }
     else
