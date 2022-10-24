@@ -386,7 +386,7 @@ if(recall){
 										<div id="remote-locations">
 										<details>
 											<summary>
-												<strong>All Integrated Clinics</strong>
+												<strong><bean:message key="oscarMessenger.CreateMessage.remoteMembers" /></strong>
 											</summary>
 											<c:forEach items="${ remoteMembers }" var="location" >
 												<details>										
@@ -425,7 +425,7 @@ if(recall){
 										
 										<details open="true">
 											<summary>
-												<strong>All Local Members</strong>
+												<strong><bean:message key="oscarMessenger.CreateMessage.localMembers" /></strong>
 											</summary>
 
 											<!-- Display all local members -->
