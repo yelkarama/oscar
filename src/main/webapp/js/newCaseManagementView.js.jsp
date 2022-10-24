@@ -1613,7 +1613,10 @@ function changeToView(id) {
         tmp = "&nbsp;";
 
     tmp = tmp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    tmp = tmp.replace(/\n/g,"<br>");
+    var converter = new showdown.Converter({simpleLineBreaks: 'true'});  // set the simpleLineBreaks to be true so that line breaks are interpreted as <br>
+    var html = converter.makeHtml(tmp);
+    tmp = tmp.replace(/"/g,"&quot;"); // need to escape quotes as they will interupt the data atribute
+    tmp = tmp.replace(/\n/g,"<br>");  // escape line endings as data needs to be in one line
 
     if( !saving ) {
         if( largeNote(tmp) ) {
@@ -1621,18 +1624,10 @@ function changeToView(id) {
             new Insertion.Before(sig, btmImg);
         }
 
-        //$(txt).style.fontSize = normalFont;
-
-        //if we're not restoring a new note display print img
-        //if( nId.substr(0,1) != "0" ) {
-        //    img = "<img title='Print' id='print" + nId + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
-        //     new Insertion.Top(parent, img);
-       // }
-
         var printImg = "print" + nId;
         var img = "<img title='Minimize' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
         var printimg = "<img title='Print' id='" + printImg + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
-        var input = "<div id='txt" + nId + "'>" + tmp + "<\/div>";
+        var input = "<div id='txt" + nId + "' data=\"" + tmp + "\">" + html + "<\/div>";
 
         var func;
         var editWarn = "editWarn" + nId;
