@@ -33,6 +33,7 @@
 <%@page import="org.oscarehr.common.dao.ResidentOscarMsgDao"%>
 <%@page import="org.oscarehr.common.model.OscarMsgType"%>
 <%@ page import="oscar.OscarProperties"%>
+<%@ page import="java.util.ResourceBundle"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
 	  String providerNo = (String) request.getAttribute("providerNo");
@@ -73,47 +74,19 @@ if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter(
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%  String bodyTextAsHTML = Encode.forHtml((String) request.getAttribute("viewMessageMessage"));
+    //bodyTextAsHTML = bodyTextAsHTML.replaceAll("\n|\r\n?","<br/>"); %>
+
 
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<!--<link rel="stylesheet" type="text/css" href="printable.css"
-	media="print">-->
-<style type="text/css">
-    .subheader {
-	    background-color:silver;
-	}
-    .modal {
-      font-size: 11px;
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1; /* Sit on top */
-      left: 0;
-      top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgb(0,0,0); /* Fallback color */
-      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-#print_helper {
-  display: none;
-}
-</style>
-<style type="text/css" media="print">
- .DoNotPrint {
-	display: none;
-}
-#print_helper { 
-    display: block;
-    overflow: visible;
-    font-family: Menlo, "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", Monaco, monospace;
-    white-space: pre;
-    white-space: pre-wrap;
-}
-</style>
+
+<!-- normally a reference to the tui css, but we will go vanilla here to minimise change in the user experience -->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script> 
+
 <%
 String boxType = request.getParameter("boxType");
 %>
@@ -247,7 +220,7 @@ function fmtOscarMsg() {
     tmp = document.getElementById("msgSubject").innerHTML;
     tmp = tmp.replace(/^\s+|\s+$/g,"");
     txt += tmp;        
-    txt += "\n";
+    txt += "\n\n";
     tmp = document.getElementById("msgBody").innerHTML;
     tmp = tmp.replace(/^\s+|\s+$/g,"");
     txt += tmp;
@@ -257,6 +230,46 @@ function fmtOscarMsg() {
 }
 
 </script>
+<style type="text/css">
+    .subheader {
+	    background-color:silver;
+	}
+blockquote p {
+font-size:14px;
+}
+p.toastui-editor-contents {
+font-size:17px;
+}
+    .modal {
+      font-size: 11px;
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+#print_helper {
+  display: none;
+}
+</style>
+<style type="text/css" media="print">
+
+ .DoNotPrint {
+	display: none;
+}
+#print_helper { 
+    display: block;
+    overflow: visible;
+    font-family: Menlo, "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", Monaco, monospace;
+    white-space: pre;
+    white-space: pre-wrap;
+}
+</style>
 
 </head>
 
@@ -417,9 +430,10 @@ function fmtOscarMsg() {
 
 						<tr>
 							<td></td>
-							<td colspan="2" class="Printable">
-								<textarea id="msgBody" name="Message" wrap="hard" readonly="true" rows="18" class="DoNotPrint" style="min-width: 100%"><c:out value="${ viewMessageMessage }"/></textarea>
-                            <div id="print_helper"><c:out value="${ viewMessageMessage }"/></div>
+							<td colspan="2" class="Printable"><p>&nbsp;</p>
+<div id="viewer" class="DoNotPrint"></div>
+								<textarea id="msgBody" name="Message" wrap="hard" readonly="true" rows="18" class="DoNotPrint" style="display:none; min-width: 100%"><%=bodyTextAsHTML%></textarea>
+                            <div id="print_helper"><%=bodyTextAsHTML%></div>
 							</td>
 						</tr>
 						
@@ -428,11 +442,11 @@ function fmtOscarMsg() {
 						<c:choose>
 						<%-- If view request is from the encounter, display the following: --%>
 						<c:when test="${ from eq 'encounter' }">
-							<tr>
+							<tr class="DoNotPrint">
 								<td></td>
-								<td>
-								<strong>
-									Demographic(s) linked to this message
+								<td class="DoNotPrint">
+								<strong class="DoNotPrint">
+									<bean:message key="oscarMessenger.ViewMessage.demoLinked" />
 								</strong>
 								</td>
 							</tr>
@@ -450,11 +464,12 @@ function fmtOscarMsg() {
 											<c:if test="${ demoattached.key eq demographic_no }">
 												<input
 													onclick="javascript:popup('${ demographic_no }', '${ messageID }', '${ providerNo }');"
-													class="btn" type="button" name="writeToEncounter"
-													value="Write To Encounter"> <input
+													class="btn DoNotPrint" type="button"  name="writeToEncounter"
+													value="<bean:message key="oscarMessenger.ViewMessage.writeToE" />"> 
+                                                <!-- refers to non existant function <input
 													onclick="return paste2Encounter('${ demographic_no }');"
-													class="btn" type="button" name="pasteToEncounter"
-													value="Paste To Encounter"> 												
+													class="btn DoNotPrint" type="button" name="pasteToEncounter"
+													value="<bean:message key="oscarMessenger.ViewMessage.pasteToE" />"> --> 												
 											 </c:if>
 										</td>
 										</tr>
@@ -466,7 +481,7 @@ function fmtOscarMsg() {
 									<tr>
 									<td ></td>
 									<td>
-										No demographic is linked to this message
+										<bean:message key="oscarMessenger.ViewMessage.demoNotLinked" />
 									</td>
 								</tr>
 								</c:otherwise>
@@ -490,11 +505,11 @@ function fmtOscarMsg() {
 								<html:hidden property="messageNo" value="${ viewMessageNo }" />
 							</td>
 						</tr>
-						<tr class="subheader" class="DoNotPrint">
+						<tr class="subheader DoNotPrint">
 							<td></td>
 							<td colspan="2">
 							<strong>
-								Link this message to ...
+								<bean:message key="oscarMessenger.ViewMessage.linkTo" />
 							</strong>
 							</td>
 						</tr>
@@ -508,14 +523,14 @@ function fmtOscarMsg() {
 							<input type="hidden" class="btn"
 								name="demographic_no" /> <input type="button"
 								class="btn" name="searchDemo"
-								value="Search Demographic"
+								value="<bean:message key="oscarMessenger.ViewMessage.searchDemo" />"
 								onclick="popupSearchDemo(document.forms[0].keyword.value)" />
 							</td>
 
 						</tr>
-						<tr>
+						<tr class="DoNotPrint">
 							<td></td>
-							<td colspan="2"><strong>Selected Demographic</strong></td>
+							<td colspan="2"><strong><bean:message key="oscarMessenger.ViewMessage.selectedDemo" /></strong></td>
 						</tr>
 
 						<%
@@ -547,11 +562,11 @@ function fmtOscarMsg() {
                                 <td>        
                                         <input type="button"
 								class="btn" name="linkDemo"
-								value="Link to demographic"
+								value="<bean:message key="oscarMessenger.ViewMessage.linkToDemo" />"
 								onclick="popup(document.forms[0].demographic_no.value,'<%=request.getAttribute("viewMessageId")%>','<%=request.getAttribute("providerNo")%>','linkToDemographic')" />
 
 							<input type="button" class="btn"
-								name="clearDemographic" value="Clear selected demographic"
+								name="clearDemographic" value="<bean:message key="oscarMessenger.ViewMessage.clearDemo" />"
 								onclick='document.forms[0].demographic_no.value = ""; document.forms[0].selectedDemo.value = "none"' />
 							</td>
 
@@ -562,7 +577,7 @@ function fmtOscarMsg() {
 							<td></td>
 							<td colspan="2">
 								<strong>
-									Demographic(s) linked to this message
+									<bean:message key="oscarMessenger.ViewMessage.demoLinked" />
 								</strong>
 							</td>
 						</tr>
@@ -573,14 +588,14 @@ function fmtOscarMsg() {
 									<td> 
 										<input type="hidden" name="unlinkedIntegratorDemographicName" value="${ unlinkedDemographic.lastName }, ${ unlinkedDemographic.firstName }" />
 										<c:out value="${ unlinkedDemographic.lastName }" />, <c:out value="${ unlinkedDemographic.firstName }" /> <br />
-										<strong>Gender:</strong> <c:out value="${ unlinkedDemographic.gender }" /><br />
-										<strong>HIN:</strong> <c:out value="${ unlinkedDemographic.hin }" /><br />
-										<strong>File Location:</strong> <c:out value="${ demographicLocation }" />							
+										<strong><bean:message key="global.gender" />:</strong> <c:out value="${ unlinkedDemographic.gender }" /><br />
+										<strong><bean:message key="global.hin" />:</strong> <c:out value="${ unlinkedDemographic.hin }" /><br />
+										<strong><bean:message key="oscarMessenger.ViewMessage.fileLocation" />:</strong> <c:out value="${ demographicLocation }" />							
 									</td>
 									<td>
-										<a title="Import" 
+										<a title="<bean:message key="global.import" />" 
 											href="<%= request.getContextPath() %>/oscarMessenger/ImportDemographic.do?remoteFacilityId=${ unlinkedDemographic.integratorFacilityId }&remoteDemographicNo=${ unlinkedDemographic.caisiDemographicId }&messageID=${ viewMessageNo }" >
-										Import
+										<bean:message key="global.import" />
 										</a>
 									</td>
 								</tr>
@@ -596,8 +611,8 @@ function fmtOscarMsg() {
 									style=" border: none"
 									value="${ demographic.value }" /> 
 								</td>
-								<td>	
-								<a href="javascript:popupViewAttach(700,960,'../demographic/demographiccontrol.jsp?demographic_no=${ demographic.key }&displaymode=edit&dboperation=search_detail')">M</a>
+								<td class="DoNotPrint">	
+								<a href="javascript:popupViewAttach(700,960,'../demographic/demographiccontrol.jsp?demographic_no=${ demographic.key }&displaymode=edit&dboperation=search_detail')"><bean:message key="global.M" /></a>
 									
 								<!--<a href="javascript:void(0)" onclick="window.opener.location.href='../web/#/record/${ demographic.key }/summary'">E2</a> -->
 								<%
@@ -645,14 +660,14 @@ function fmtOscarMsg() {
 	                                                            
 	                                                        
 	                                                        %>
-	                                                         <a href="javascript:void(0)" onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=request.getAttribute("providerNo")%><%=params%>');return false;">E</a>
+	                                                         <a href="javascript:void(0)" onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=request.getAttribute("providerNo")%><%=params%>');return false;"><bean:message key="global.E" /></a>
 								<%} %>
 									
-								<a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=request.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
+								<a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=request.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')"><bean:message key="global.Rx" /></a>
 									
 								<phr:indivoRegistered provider="<%=providerNo%>" demographic="${ demographic.key }">
 									<%
-										String onclickString="alert('Please login to MyOscar first.')";
+										String onclickString="alert('"+ResourceBundle.getBundle("oscarResources", request.getLocale()).getString("oscarMessenger.ViewMessage.msgLoginPHR")+"')";
 		
 										MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
 										if (myOscarLoggedInInfo!=null && myOscarLoggedInInfo.isLoggedIn()) onclickString="msg4phr = encodeURIComponent(document.getElementById('msgBody').innerHTML); sub4phr =  encodeURIComponent(document.getElementById('msgSubject').innerHTML); popupViewAttach(600,900,'../phr/PhrMessage.do?method=createMessage&providerNo="+request.getAttribute("providerNo")+"&demographicNo="+ (String) pageContext.getAttribute("demographicNumber") +"&message='+msg4phr+'&subject='+sub4phr)";
@@ -664,8 +679,8 @@ function fmtOscarMsg() {
 								
 									
 									
-								<input type="button" class="btn"
-									name="writeEncounter" value="Write to encounter"
+								<input type="button" class="btn DoNotPrint"
+									name="writeEncounter" value="<bean:message key="oscarMessenger.ViewMessage.writeToE" />"
 									onclick="popup( '${ demographic.key }','<%=request.getAttribute("viewMessageId")%>','<%=request.getAttribute("providerNo")%>','writeToEncounter')" />
 								</td>
 							</tr>
@@ -673,7 +688,7 @@ function fmtOscarMsg() {
 								<td></td>
 								<td><a
 									href="javascript:popupStart(400,850,'../demographic/demographiccontrol.jsp?demographic_no=${ demographic.key }&last_name=<%=demoLastName%>&first_name=<%=demoFirstName%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25','ApptHist')"
-									title="Click to see appointment history">Next Appt: <oscar:nextAppt
+									title="<bean:message key="oscarMessenger.ViewMessage.clickApptHx" />">Next Appt: <oscar:nextAppt
 									demographicNo="${ demographic.key }" /></a></td>
 								<td></td>
 							</tr>						
@@ -695,10 +710,8 @@ function fmtOscarMsg() {
 		</tr>
 	</table>
 </html:form>
-<%  String bodyTextAsHTML = (String) request.getAttribute("viewMessageMessage");
-    bodyTextAsHTML = bodyTextAsHTML.replaceAll("\n|\r\n?","<br/>"); %>
-<p style="display:none;"><%= bodyTextAsHTML %></p>
 
+<!-- <p ><%= bodyTextAsHTML %></p>-->
 
 	<!-- Select demographic modal window for the import demographic process -->
 	<div id="selectDemographic" class="modal">
@@ -706,7 +719,7 @@ function fmtOscarMsg() {
 	  		<form id="selectDemographicForm" action="<%= request.getContextPath() %>/oscarMessenger/ImportDemographic.do">
 			<div class="modal-header">
 			  <span id="closeSelectDemographic" class="close">&times;</span>
-			  <h2>Local Demographic Matches Found</h2>
+			  <h2><bean:message key="oscarMessenger.ViewMessage.localMatches" /></h2>
 			</div>
 			<div class="modal-body">
 			  <c:if test="${ not empty demographicUserSelect }">
@@ -714,32 +727,32 @@ function fmtOscarMsg() {
 				  	<c:if test="${ unlinkedDemographic.caisiDemographicId eq remoteDemographicNo }">
 					  	<div>
 							<c:out value="${ unlinkedDemographic.lastName }" />, <c:out value="${ unlinkedDemographic.firstName }" /> <br />
-							<strong>Gender:</strong> <c:out value="${ unlinkedDemographic.gender }" /><br />
-							<strong>HIN:</strong> <c:out value="${ unlinkedDemographic.hin }" /><br />
-							<strong>File Location:</strong> <c:out value="${ demographicLocation }" />							
+							<strong><bean:message key="global.gender" />:</strong> <c:out value="${ unlinkedDemographic.gender }" /><br />
+							<strong><bean:message key="global.hin" />:</strong> <c:out value="${ unlinkedDemographic.hin }" /><br />
+							<strong><bean:message key="oscarMessenger.ViewMessage.fileLocation" />:</strong> <c:out value="${ demographicLocation }" />							
 							<input type="hidden" id="remoteDemographicNo" name="remoteDemographicNo" value="${ unlinkedDemographic.caisiDemographicId }" />
 							<input type="hidden" id="remoteFacilityId" name="remoteFacilityId" value="${ unlinkedDemographic.integratorFacilityId }" />
 					  	</div>
 					</c:if>
 				 </c:forEach>
 				 <p>
-				  		Select a local demographic file to link with this remote demographic. Or select "No Match" to import the remote demographic.
+				  		<bean:message key="oscarMessenger.ViewMessage.msgSynchDemo" />
 				 </p>
 			  	<c:forEach items="${ demographicUserSelect }" var="demographicSelect" >
 			  		<div class="demographicOption">
 			  			<input type="radio" name="selectedDemographicNo" id="demographic_${ demographicSelect.demographicNo }" value="${ demographicSelect.demographicNo }" />
 			  			<label for="demographic_${ demographicSelect.demographicNo }">
 			  				<c:out value="${ demographicSelect.lastName }" />, <c:out value="${ demographicSelect.firstName }" /> <br />
-							<strong>Gender:</strong> <c:out value="${ demographicSelect.sex }" /><br />
-							<strong>HIN:</strong> <c:out value="${ demographicSelect.hin }" /><br />
-							<strong>DOB:</strong> <c:out value="${ demographicSelect.birthDayAsString }" />
+							<strong><bean:message key="global.gender" />:</strong> <c:out value="${ demographicSelect.sex }" /><br />
+							<strong><bean:message key="global.hin" />:</strong> <c:out value="${ demographicSelect.hin }" /><br />
+							<strong><bean:message key="dob" />:</strong> <c:out value="${ demographicSelect.birthDayAsString }" />
 			  			</label>		  		
 			  		</div>
 			  	</c:forEach>
 			  	<div class="demographicOption">
 			  		<input type="radio" name="selectedDemographicNo" id="no_selection" value="0" />
 			  		<label for="no_selection">
-			  			No Match
+			  			<bean:message key="global.msgNoMatch" />
 			  		</label>
 			  	</div>
 	  		
@@ -749,8 +762,8 @@ function fmtOscarMsg() {
 		</form>
 			<div class="modal-footer">			
 			  <div>
-			  	<button class="modal_button" id="cancelbtn" value="cancel" >cancel</button>
-			  	<button class="modal_button" id="linkbtn" value="link" >link</button>
+			  	<button class="modal_button" id="cancelbtn" value="cancel" ><bean:message key="global.btnCancel" /></button>
+			  	<button class="modal_button" id="linkbtn" value="link" ><bean:message key="global.link" /></button>
 			  </div>
 			</div>
 		</div>
@@ -817,4 +830,18 @@ function fmtOscarMsg() {
 	</script>
 
 </body>
+<script>
+    var content=document.getElementById("msgBody").value; 
+    content = content.replace(/\r\n/g, "\n");
+
+    const viewer = new toastui.Editor.factory({
+        el: document.getElementById('viewer'),
+        usageStatistics: false,
+        viewer:true,
+        initialEditType:'wysiwyg',
+        initialValue:content,
+        height: '500px'
+	    });
+
+</script>
 </html:html>
