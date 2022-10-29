@@ -41,6 +41,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@ page import="oscar.OscarProperties"%>
+<%@page import="org.owasp.encoder.Encode" %>
+
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
@@ -140,6 +142,16 @@ if(recall){
  
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/toastui/toastui-editor.min.css" />
+<script src="<%=request.getContextPath() %>/library/toastui/toastui-editor-all.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/toastui/i18n/<bean:message key="global.i18nLanguagecode" />.js"></script>
+
+<style type="text/css">
+    .toastui-editor-contents{
+        font-size: 17px;
+    }
+ </style>
 
 <script type="text/javascript">
 
@@ -272,6 +284,9 @@ if(recall){
 		{
 			alert(submissionerror);
 		}
+        document.getElementsByName("message")[0].setAttribute("style", "display:none;");
+        editor.setMarkdown("<br>" + document.getElementsByName("message")[0].value);
+        editor.moveCursorToStart();
 	})
 	 	 
 </script>
@@ -458,13 +473,14 @@ if(recall){
 					<bean:message key="oscarMessenger.CreateMessage.formSubject" /> :
 					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xlarge" value="${messageSubject}"/> <br>
 					<br>
+                    <div id="messagediv"></div>
 					<html:textarea name="msgCreateMessageForm" property="message" rows="15" style="min-width: 100%" value="${messageBody}"/> 
 							<table>
 								<tr>
-									<td><input type="submit" class="btn btn-primary"
+									<td><input type="submit" class="btn btn-primary" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendMessage"/>">
 									</td>
-									<td><input type="button" class="btn"
+									<td><input type="button" class="btn" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" onClick="XMLHttpRequestSendnArch()">
 									</td>
 								</tr>
@@ -558,4 +574,21 @@ if(recall){
 	</tr>
 </table>
 </body>
+<script>
+
+    // note that global.language.code != global.i18nLanguagecode
+    const Editor = toastui.Editor;
+    const editor = new Editor({
+      el: document.getElementById('messagediv'),
+        initialEditType:'wysiwyg',
+        usageStatistics: false,
+        height: '500px',
+        language:'<bean:message key="global.language.code" />'
+	    })
+
+    function writeToMessage() {
+        document.getElementsByName("message")[0].value = editor.getMarkdown();
+    }
+
+</script>
 </html:html>
