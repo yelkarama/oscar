@@ -32,8 +32,7 @@
 <%@page import="org.oscarehr.common.model.ResidentOscarMsg"%>
 <%@page import="org.oscarehr.common.dao.ResidentOscarMsgDao"%>
 <%@page import="org.oscarehr.common.model.OscarMsgType"%>
-<%@ page import="oscar.OscarProperties"%>
-<%@ page import="java.util.ResourceBundle"%>
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
 	  String providerNo = (String) request.getAttribute("providerNo");
@@ -51,20 +50,17 @@ if(!authed) {
 	return;
 }
 %>
+<%@page import="oscar.OscarProperties"%>
+<%@page import="oscar.oscarDemographic.data.*"%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="org.oscarehr.common.model.UserProperty"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.owasp.encoder.Encode" %>
 
-<%
-String providerview = request.getParameter("providerview")==null?"all":request.getParameter("providerview") ;
-boolean bFirstDisp=true; //this is the first time to display the window
-if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter("bFirstDisp")).equals("true");
-%>
-<%@ page 
-	import="oscar.oscarDemographic.data.*, java.util.Enumeration"%>
+<%@page import="java.util.ResourceBundle"%>
+<%@page import="java.util.Enumeration"%>
+<%@page import="org.owasp.encoder.Encode"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -74,8 +70,22 @@ if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter(
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%  String bodyTextAsHTML = Encode.forHtml((String) request.getAttribute("viewMessageMessage"));
-    //bodyTextAsHTML = bodyTextAsHTML.replaceAll("\n|\r\n?","<br/>"); %>
+<%
+    String providerview = request.getParameter("providerview")==null?"all":request.getParameter("providerview") ;
+    boolean bFirstDisp=true; //this is the first time to display the window
+    if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter("bFirstDisp")).equals("true");
+    String bodyTextAsHTML = Encode.forHtml((String) request.getAttribute("viewMessageMessage"));
+    //bodyTextAsHTML = bodyTextAsHTML.replaceAll("\n|\r\n?","<br/>"); 
+
+    UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+    UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+    boolean renderMarkdown = false;
+    if ( markdownProp == null ) {
+        renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+    } else {
+        renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
+    }
+%>
 
 
 <html:html locale="true">
@@ -84,8 +94,10 @@ if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter(
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 
+<% if(renderMarkdown) { %>
 <!-- normally a reference to the tui css, but we will go vanilla here to minimise change in the user experience -->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script> 
+<script src="<%=request.getContextPath() %>/library/toastui/toastui-editor-all.min.js"></script>
+<% } %>
 
 <%
 String boxType = request.getParameter("boxType");
@@ -431,8 +443,12 @@ font-size:17px;
 						<tr>
 							<td></td>
 							<td colspan="2" class="Printable"><p>&nbsp;</p>
-<div id="viewer" class="DoNotPrint"></div>
+                        <% if (renderMarkdown) { %>
+                            <div id="viewer" class="DoNotPrint"></div>
 								<textarea id="msgBody" name="Message" wrap="hard" readonly="true" rows="18" class="DoNotPrint" style="display:none; min-width: 100%"><%=bodyTextAsHTML%></textarea>
+                        <% } else { %>
+                                <textarea id="msgBody" name="Message" wrap="hard" readonly="true" rows="18" class="DoNotPrint" style="min-width: 100%"><%=bodyTextAsHTML%></textarea>
+                        <% } %>
                             <div id="print_helper"><%=bodyTextAsHTML%></div>
 							</td>
 						</tr>
@@ -442,10 +458,10 @@ font-size:17px;
 						<c:choose>
 						<%-- If view request is from the encounter, display the following: --%>
 						<c:when test="${ from eq 'encounter' }">
-							<tr class="DoNotPrint">
+							<tr>
 								<td></td>
-								<td class="DoNotPrint">
-								<strong class="DoNotPrint">
+								<td>
+								<strong>
 									<bean:message key="oscarMessenger.ViewMessage.demoLinked" />
 								</strong>
 								</td>
@@ -618,9 +634,9 @@ font-size:17px;
 								<%
 									//Hide old echart link
 									boolean showOldEchartLink = true;
-								    UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
-									UserProperty oldEchartLink = propDao.getProp(curUser_no, UserProperty.HIDE_OLD_ECHART_LINK_IN_APPT);
-									if (oldEchartLink!=null && "Y".equals(oldEchartLink.getValue())) showOldEchartLink = false;
+								    //UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+									//UserProperty oldEchartLink = propDao.getProp(curUser_no, UserProperty.HIDE_OLD_ECHART_LINK_IN_APPT);
+									//if (oldEchartLink!=null && "Y".equals(oldEchartLink.getValue())) showOldEchartLink = false;
 									CaseManagementNoteDAO caseManagementNoteDAO = SpringUtils.getBean(CaseManagementNoteDAO.class);
 								if (showOldEchartLink) {
 	                                                            String params = "";
@@ -663,7 +679,7 @@ font-size:17px;
 	                                                         <a href="javascript:void(0)" onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=request.getAttribute("providerNo")%><%=params%>');return false;"><bean:message key="global.E" /></a>
 								<%} %>
 									
-								<a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=request.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')"><bean:message key="global.Rx" /></a>
+								<a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=request.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
 									
 								<phr:indivoRegistered provider="<%=providerNo%>" demographic="${ demographic.key }">
 									<%
@@ -688,8 +704,7 @@ font-size:17px;
 								<td></td>
 								<td><a
 									href="javascript:popupStart(400,850,'../demographic/demographiccontrol.jsp?demographic_no=${ demographic.key }&last_name=<%=demoLastName%>&first_name=<%=demoFirstName%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25','ApptHist')"
-									title="<bean:message key="oscarMessenger.ViewMessage.clickApptHx" />">Next Appt: <oscar:nextAppt
-									demographicNo="${ demographic.key }" /></a></td>
+									title="<bean:message key="oscarMessenger.ViewMessage.clickApptHx" />"><bean:message key="caseload.msgNextAppt" />:    <oscar:nextAppt demographicNo="${ demographic.key }" /></a></td>
 								<td></td>
 							</tr>						
 						<% ++demoCount; %>						
@@ -830,6 +845,7 @@ font-size:17px;
 	</script>
 
 </body>
+<% if (renderMarkdown){ %>
 <script>
     var content=document.getElementById("msgBody").value; 
     content = content.replace(/\r\n/g, "\n");
@@ -844,4 +860,5 @@ font-size:17px;
 	    });
 
 </script>
+<% } %>
 </html:html>
