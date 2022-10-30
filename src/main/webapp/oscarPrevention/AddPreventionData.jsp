@@ -27,31 +27,42 @@
 <%@page import="org.oscarehr.common.model.LookupListItem"%>
 <%@page import="org.oscarehr.common.model.LookupList"%>
 <%@page import="org.oscarehr.common.dao.LookupListDao"%>
-<%@page import="java.text.ParseException"%>
-<%@page import="org.oscarehr.common.model.PartialDate"%>
-<%@page import="org.oscarehr.common.dao.PartialDateDao"%>
-<%@page import="oscar.OscarProperties"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.Consent"%>
 <%@page import="org.oscarehr.common.dao.ConsentDao"%>
 <%@page import="org.oscarehr.common.model.CVCMapping"%>
 <%@page import="org.oscarehr.common.dao.CVCImmunizationDao"%>
 <%@page import="org.oscarehr.common.dao.CVCMappingDao"%>
 <%@page import="org.oscarehr.common.model.CVCMedicationLotNumber"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.oscarehr.common.model.PartialDate"%>
+<%@page import="org.oscarehr.common.dao.PartialDateDao"%>
 <%@page import="org.oscarehr.common.model.CVCImmunization"%>
-<%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager"%>
-<%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager2"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="oscar.oscarProvider.data.ProviderData"%>
-<%@ page import="oscar.oscarDemographic.data.DemographicData,java.text.SimpleDateFormat, java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*"%>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
 <%@page import="org.oscarehr.common.dao.PreventionsLotNrsDao" %>
 <%@page import="org.oscarehr.common.model.PreventionsLotNrs" %>
 <%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager"%>
+<%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager2"%>
+<%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
+<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+
+<%@page import="oscar.oscarMDS.data.ProviderData"%>
+<%@page import="oscar.oscarDemographic.data.DemographicData"%>
+<%@page import="oscar.OscarProperties"%>
+<%@page import="oscar.oscarPrevention.*"%>
+<%@page import="oscar.oscarProvider.data.*"%>
+
+<%@page import="oscar.util.*"%>
+<%@page import="java.util.*"%>
+<%@page import="java.text.ParseException"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.ArrayList"%>
+
+<%@page import="org.owasp.encoder.Encode" %>
+
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -217,18 +228,19 @@ if(!authed) {
 	  }
   }
 
-  List<Map<String, String>>  providers = ProviderData.getProviderList();
+
   if (creatorProviderNo == "")
   { 
 	  creatorProviderNo = provider;
   }
-  for (int i=0; i < providers.size(); i++) {
-       Map<String,String> h = providers.get(i);
-	   if (h.get("providerNo").equals(creatorProviderNo))
+
+  ArrayList providers = ProviderData.getProviderList();
+        for (int i=0; i < providers.size(); i++) {
+            if ((((ArrayList) providers.get(i)).get(0)).equals(creatorProviderNo))
 	   {
-	   		creatorName = h.get("lastName") + " " +  h.get("firstName");
+	   		creatorName = Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1));
 	   }
-  }
+  } 
   
   //calc age at time of prevention
   Date dob = PreventionData.getDemographicDateOfBirth(LoggedInInfo.getLoggedInInfoFromSession(request), Integer.valueOf(demographic_no));
@@ -779,10 +791,12 @@ function changeSite(el) {
                             <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
-                                      <%for (int i=0; i < providers.size(); i++) {
-                                           Map<String,String> h = providers.get(i);%>
-                                        <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
-                                      <%}%>
+                                      <% for (int i=0; i < providers.size(); i++) { %>
+                                           <option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(provider) ? " selected" : "" ) %>>
+    <%=Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1)) %></option>
+                                            </option>
+                                      <% } %>
                                       <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
                                   </select>
                                   <span id="providerNameFormat"><small>External Provider Name Format: FirstName, LastName </small>
@@ -1006,9 +1020,11 @@ function changeSite(el) {
                             <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
-                                      <%for (int i=0; i < providers.size(); i++) {
-                                           Map<String,String> h = providers.get(i);%>
-                                        <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
+                                      <%for (int i=0; i < providers.size(); i++) { %>
+                                           <option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(provider) ? " selected" : "" ) %>>
+    <%=Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1)) %></option>
+                                            </option>
                                       <%}%>
                                       <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
                                   </select>
@@ -1104,9 +1120,11 @@ function changeSite(el) {
                             <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
-                                      <%for (int i=0; i < providers.size(); i++) {
-                                           Map<String,String> h = providers.get(i);%>
-                                        <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
+                                      <%for (int i=0; i < providers.size(); i++) { %>
+                                           <option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(provider) ? " selected" : "" ) %>>
+    <%=Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1)) %></option>
+                                            </option>
                                       <%}%>
                                       <option value="-1" >Other</option>
                                   </select>
@@ -1144,9 +1162,11 @@ function changeSite(el) {
                             <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
                             <label for="provider" class="fields">Provider:</label> <input type="hidden" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
-                                      <%for (int i=0; i < providers.size(); i++) {
-                                           Map<String,String> h = providers.get(i);%>
-                                        <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
+                                      <%for (int i=0; i < providers.size(); i++) { %>
+                                           <option value="<%= (String) ((ArrayList) providers.get(i)).get(0) %>"
+		<%= ( ((String) ((ArrayList) providers.get(i)).get(0)).equals(provider) ? " selected" : "" ) %>>
+    <%=Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1)) %></option>
+                                            </option>
                                       <%}%>
                                       <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
                                   </select>
