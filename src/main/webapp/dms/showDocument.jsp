@@ -409,6 +409,7 @@ if (openInTabs){
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {
 									%>
 											<div class="dropdown">
 											  <button class="dropbtn">Macros</button>
@@ -432,7 +433,7 @@ if (openInTabs){
 											    
 											  </div>
 											</div>
-									<% } %>
+									<% }} %>
 									
                                                     
                                                     
