@@ -24,6 +24,13 @@
 
 --%>
 
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@page import="net.sf.json.JSONException"%>
+<%@page import="net.sf.json.JSONSerializer"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="net.sf.json.JSONObject"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -213,6 +220,51 @@ if (openInTabs){
         	        	
         </style>
 
+<style>
+/* Dropdown Button */
+.dropbtn {
+/*  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;*/
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+
+
         <script type="text/javascript">
 
 
@@ -282,12 +334,36 @@ if (openInTabs){
         var _in_window = <%=( "true".equals(request.getParameter("inWindow")) ? "true" : "false" )%>;
         var contextpath = "<%=request.getContextPath()%>";
         
+        </script>
+        <script type="text/javascript" src="showDocument.js"></script>
+        
+        		<script>
+			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
+			function runMacro(name,formid, closeOnSuccess) {
+				var num=formid.split("_");
+				var doclabid=num[1];
+				if(doclabid){
+					var demoId=$('demofind'+doclabid).value;
+					var saved=$('saved'+doclabid).value;
+					if(demoId=='-1'|| saved=='false'){
+						alert('Document is not assigned and saved to a patient,please file it');
+					}else{
+						runMacroInternal(name,formid,closeOnSuccess,demoId);
+					}
+				}
+			}
+			
+			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
+				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
+	            var data=$(formid).serialize(true);
 
-</script>
-<script type="text/javascript" src="showDocument.js"></script>
-
-
-
+	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
+	            	if(closeOnSuccess) {
+	            		window.close();
+	            	}
+	        	}});
+			}
+		</script>
 </head>
 <body>
 <% } %>
@@ -327,6 +403,39 @@ if (openInTabs){
                                                         <input type="hidden" name="ajaxcall" value="yes"/>
                                                         <input type="hidden" name="comment" id="comment_<%=docId%>" value="<%=docCommentTxt%>">                                                        
                                                     <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !ackedOrFiled ) {%>
+                                                    
+                                                    
+                                                    									<%
+										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
+										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
+										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+									%>
+											<div class="dropdown">
+											  <button class="dropbtn">Macros</button>
+											  <div class="dropdown-content">
+											  <%
+											    try {
+												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
+												  	if(macros != null) {
+													  	for(int x=0;x<macros.size();x++) {
+													  		JSONObject macro = macros.getJSONObject(x);
+													  		String name = macro.getString("name");
+													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
+													  		
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=docId%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  	}
+												  	}
+											    }catch(JSONException e ) {
+											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
+											    }
+											  %>
+											    
+											  </div>
+											</div>
+									<% } %>
+									
+                                                    
+                                                    
                                                         <input type="submit" id="ackBtn_<%=docId%>" class="btn  btn-primary" style="font-size:12px;padding: 0px;"value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
                                                         <input type="button" value="Comment" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
