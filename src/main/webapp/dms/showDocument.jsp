@@ -358,8 +358,10 @@ if (openInTabs){
 	            var data=$(formid).serialize(true);
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-	            	if(closeOnSuccess) {
-	            		window.close();
+                   	            	
+                    if(closeOnSuccess) {
+	            		//window.close();
+                            updateStatus(formid); //oscarMDSIndex.js 
 	            	}
 	        	}});
 			}
