@@ -798,6 +798,8 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
 	            	if(closeOnSuccess) {
+                        window.opener.Effect.BlindUp('labdoc_'+<%= segmentID %>);
+                        window.opener.refreshCategoryList(); 
 	            		window.close();
 	            	}
 	        	}});
