@@ -45,7 +45,14 @@
 <%@ page import="org.oscarehr.common.model.Tickler" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
 <%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>	
+<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@ page import="org.oscarehr.util.MiscUtils"%>
+
+<%@page import="net.sf.json.JSONException"%>
+<%@page import="net.sf.json.JSONSerializer"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="net.sf.json.JSONObject"%>
+<%@page import="net.sf.json.JSONArray"%>	
 <%@ page import="org.owasp.encoder.Encode" %>
 
 	
@@ -393,6 +400,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
         };
         </script>
+
     <div id="labdoc_<%=segmentID%>">
         <!-- form forwarding of the lab -->
         <form name="reassignForm_<%=segmentID%>" >
@@ -424,7 +432,32 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     <input type="hidden" name="ajaxcall" value="yes"/>
                                     <input type="hidden" id="demoName<%=segmentID%>" value="<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>"/>
                                     <% if ( !ackFlag ) { %>
-                                    <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
+
+
+
+											  <div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
+
+											  <%
+		
+												  	
+												  	if(macros != null) {
+													  	for(int x=0;x<macros.size();x++) {
+													  		JSONObject macro = macros.getJSONObject(x);
+													  		String name = macro.getString("name");
+													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
+													  		
+													  		%><a href="javascript:void(0);" onClick="runHL7Macro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  	}
+												  	}
+
+											  %>
+											    
+											  </ul>
+											</div>
+									
+                                    <input type="button" class="btn btn-xprimary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '../oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
