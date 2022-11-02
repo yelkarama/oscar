@@ -839,12 +839,14 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=$(formid).serialize(true);
                 var num=formid.split("_");
-	            var doclabid=num[1]
+	            var doclabid=num[1];
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
 
 	            	if(closeOnSuccess) {
-                	    window.opener.Effect.BlindUp('labdoc_'+doclabid);
-                        window.opener.refreshCategoryList();  
+                        if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {  
+                	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
+                            window.opener.refreshCategoryList();  
+                        } 
                         window.close(); 
 	            	}
 	        	}});
