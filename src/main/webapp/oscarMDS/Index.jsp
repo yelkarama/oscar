@@ -198,13 +198,11 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         		<script>
 
 			function runhl7Macro(name,formid, closeOnSuccess) {
-	          		 var url='<%=request.getContextPath()%>/dms/inboxManage.do';
+	          	var url='<%=request.getContextPath()%>/dms/inboxManage.do';
 				var num=formid.split("_");
 				var doclabid=num[1];
-
-	                 var data='method=isLabLinkedToDemographic&labid='+doclabid;
-//alert("doclabid"+data);
-	                 new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
+	            var data='method=isLabLinkedToDemographic&labid='+doclabid;
+	            new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 	                 var json=transport.responseText.evalJSON();
 	                 if(json!=null){
 	                     var success=json.isLinkedToDemographic;
@@ -252,10 +250,9 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
                    	            	
                     if(closeOnSuccess) {
-	            		//window.close();
+	            		refreshCategoryList();
                         updateStatus(formid); //oscarMDSIndex.js 
                         //Effect.BlindUp(formid);
-                        //refreshCategoryList();
 	            	}
 	        	}});
 			}
