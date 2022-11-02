@@ -23,36 +23,47 @@
     Ontario, Canada
 
 --%>
-
-<%@ page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="org.oscarehr.common.model.PatientLabRouting"%>
-<%@ page import="oscar.util.ConversionUtils"%>
-<%@ page import="org.oscarehr.common.dao.PatientLabRoutingDao"%>
 <%@ page errorPage="../provider/errorpage.jsp" %>
-<%@ page import="java.util.*,
-		 java.sql.*,
-		 oscar.oscarDB.*,
-		 oscar.oscarLab.ca.all.*,
-		 oscar.oscarLab.ca.all.util.*,org.oscarehr.util.SpringUtils,
-		 oscar.oscarLab.ca.all.parsers.*,
-		 oscar.oscarLab.LabRequestReportLink,
-		 oscar.oscarMDS.data.ReportStatus,oscar.log.*,
-         oscar.OscarProperties,
-		 org.apache.commons.codec.binary.Base64,org.oscarehr.common.dao.Hl7TextInfoDao,org.oscarehr.common.model.Hl7TextInfo,
-		 org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty,
-		javax.swing.text.rtf.RTFEditorKit,
-		java.io.ByteArrayInputStream"%>
+
+
+<%@ page import="oscar.oscarDB.*"%>
+<%@ page import="oscar.oscarLab.ca.all.*"%>
+<%@ page import="oscar.oscarLab.ca.all.util.*"%>
+<%@ page import="oscar.util.ConversionUtils"%>
+
+<%@ page import="oscar.oscarLab.ca.all.parsers.*"%>
+<%@ page import="oscar.oscarLab.LabRequestReportLink"%>
+<%@ page import="oscar.oscarMDS.data.ReportStatus,oscar.log.*"%>
+<%@ page import="oscar.OscarProperties"%>
+
+<%@ page import="org.oscarehr.common.dao.Hl7TextInfoDao"%>
+<%@ page import="org.oscarehr.common.model.Hl7TextInfo"%>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%> 
+<%@ page import="org.oscarehr.common.model.UserProperty"%>
+<%@ page import="org.oscarehr.common.model.PatientLabRouting"%>
+<%@ page import="org.oscarehr.common.dao.PatientLabRoutingDao"%>
 <%@ page import="org.oscarehr.common.model.Tickler" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
 <%@ page import="org.oscarehr.common.model.Demographic" %>
 <%@ page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="org.oscarehr.util.MiscUtils"%>
 
-<%@page import="net.sf.json.JSONException"%>
-<%@page import="net.sf.json.JSONSerializer"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="net.sf.json.JSONObject"%>
-<%@page import="net.sf.json.JSONArray"%>	
+<%@ page import="javax.swing.text.rtf.RTFEditorKit"%>
+<%@ page import="java.util.*"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="java.io.ByteArrayInputStream"%>
+
+<%@ page import="org.apache.commons.codec.binary.Base64"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+
+<%@ page import="net.sf.json.JSONException"%>
+<%@ page import="net.sf.json.JSONSerializer"%>
+<%@ page import="net.sf.json.JSONObject"%>
+<%@ page import="net.sf.json.JSONArray"%>	
+
 <%@ page import="org.owasp.encoder.Encode" %>
 
 	
@@ -431,33 +442,41 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     <input type="hidden" name="labType" value="HL7"/>
                                     <input type="hidden" name="ajaxcall" value="yes"/>
                                     <input type="hidden" id="demoName<%=segmentID%>" value="<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>"/>
+ 
+                                            
+
                                     <% if ( !ackFlag ) { %>
-
-
-
+<%
+										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
+										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
+										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+									%>
 											  <div class="dropdowns">
 											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
 											  <div class="dropdowns-content">
 
+											  
 											  <%
-		
-												  	
+											    try {
+												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
 												  	if(macros != null) {
 													  	for(int x=0;x<macros.size();x++) {
 													  		JSONObject macro = macros.getJSONObject(x);
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
 													  		
-													  		%><a href="javascript:void(0);" onClick="runHL7Macro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  		%><a href="javascript:void(0);" onClick="runhl7Macro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
-
+											    }catch(JSONException e ) {
+											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
+											    }
 											  %>
 											    
-											  </ul>
+											  </div>
 											</div>
-									
-                                    <input type="button" class="btn btn-xprimary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
+									<% } %>
+                                    <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '../oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
