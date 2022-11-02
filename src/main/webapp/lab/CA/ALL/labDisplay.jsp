@@ -774,10 +774,11 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 		</script>
 		
+<% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {		%>
 		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
-	          		 var url='../../../dms/inboxManage.do';
+	          		 var url='<%=request.getContextPath()%>/dms/inboxManage.do';
 	                 var data='method=isLabLinkedToDemographic&labid=<%= segmentID %>';
 	                 new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 	                 var json=transport.responseText.evalJSON();
@@ -795,17 +796,19 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=$(formid).serialize(true);
-
+                var num=formid.split("_");
+	            var doclabid=num[1]
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
+
 	            	if(closeOnSuccess) {
-                        window.opener.Effect.BlindUp('labdoc_'+<%= segmentID %>);
-                        window.opener.refreshCategoryList(); 
-	            		window.close();
+                	    window.opener.Effect.BlindUp('labdoc_'+doclabid);
+                        window.opener.refreshCategoryList();  
+                        window.close(); 
 	            	}
 	        	}});
 			}
 		</script>
-
+<% } %>
 		<div id="lab_<%=segmentID%>">
         <form name="reassignForm_<%=segmentID%>" method="post" action="Forward.do">
             <input type="hidden" name="flaggedLabs" value="<%=segmentID%>" />
@@ -843,9 +846,11 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
 									%>
-											<div class="btn-group">
-											  <button class=""btn dropdown-toggle" data-toggle="dropdown">Macros <span class="caret" style="vertical-align: middle;"></span></button>
-											  <ul class="dropdown-menu">
+											  <div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
+
+											  
 											  <%
 											    try {
 												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
@@ -855,7 +860,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
 													  		
-													  		%><li><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a></li><%
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
 											    }catch(JSONException e ) {
@@ -863,7 +868,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 											    }
 											  %>
 											    
-											  </ul>
+											  </div>
 											</div>
 									<% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
