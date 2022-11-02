@@ -816,7 +816,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 		</script>
 		
-<% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {		%>
+
 		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
@@ -850,7 +850,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 	        	}});
 			}
 		</script>
-<% } %>
+
 		<div id="lab_<%=segmentID%>">
         <form name="reassignForm_<%=segmentID%>" method="post" action="Forward.do">
             <input type="hidden" name="flaggedLabs" value="<%=segmentID%>" />
