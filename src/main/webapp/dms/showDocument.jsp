@@ -200,7 +200,7 @@ if (openInTabs){
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
-
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"  />
@@ -216,13 +216,15 @@ if (openInTabs){
         	.singlePage {
 
         	}
-
+            input[type=button], button, input[id^='acklabel_'] { 
+                font-size:12px !important;padding:0px;
+            } 
         	        	
         </style>
 
 <style>
 /* Dropdown Button */
-.dropbtn {
+.dropbtns {
 /*  background-color: #4CAF50;
   color: white;
   padding: 16px;
@@ -231,13 +233,13 @@ if (openInTabs){
 }
 
 /* The container <div> - needed to position the dropdown content */
-.dropdown {
+.dropdowns {
   position: relative;
   display: inline-block;
 }
 
 /* Dropdown Content (Hidden by Default) */
-.dropdown-content {
+.dropdowns-content {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
@@ -247,7 +249,7 @@ if (openInTabs){
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.dropdowns-content a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
@@ -255,13 +257,13 @@ if (openInTabs){
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdowns-content a:hover {background-color: #ddd;}
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display: block;}
+.dropdowns:hover .dropdowns-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
+.dropdowns:hover .dropbtns {background-color: #3e8e41;}
 </style>
 
 
@@ -358,8 +360,10 @@ if (openInTabs){
 	            var data=$(formid).serialize(true);
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-	            	if(closeOnSuccess) {
-	            		window.close();
+                   	            	
+                    if(closeOnSuccess) {
+	            		//window.close();
+                        updateStatus(formid); //oscarMDSIndex.js 
 	            	}
 	        	}});
 			}
@@ -409,10 +413,11 @@ if (openInTabs){
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+
 									%>
-											<div class="dropdown">
-											  <button class="dropbtn">Macros</button>
-											  <div class="dropdown-content">
+											<div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
 											  <%
 											    try {
 												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());

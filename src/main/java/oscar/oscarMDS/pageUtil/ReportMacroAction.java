@@ -119,7 +119,7 @@ public class ReportMacroAction extends DispatchAction {
     		logger.info("Acknowledging lab " + labType + ":" + segmentID);
     		JSONObject jAck = macro.getJSONObject("acknowledge");
     		String comment = jAck.getString("comment");
-    		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,skipComment(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo()));	
+    		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,false);	
     	}
     	if(macro.has("tickler") && !StringUtils.isEmpty(demographicNo)) {
     		JSONObject jTickler = macro.getJSONObject("tickler");
