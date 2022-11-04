@@ -1,37 +1,26 @@
 <%--
 
-    Copyright (c) 2008-2012 Indivica Inc.
+    Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+    This software is published under the GPL GNU General Public License.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
 
-    This software is made available under the terms of the
-    GNU General Public License, Version 2, 1991 (GPLv2).
-    License details are available via "indivica.ca/gplv2"
-    and "gnu.org/licenses/gpl-2.0.html".
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
---%>
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-<%--
-
-	Copyright (c) 2013-2015. Department of Computer Science, University of Victoria. All Rights Reserved.
-	This software is published under the GPL GNU General Public License.
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-	GNU General Public License for more details.
-	
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-	
-	This software was written for the
-	Department of Computer Science
-	LeadLab
-	University of Victoria
-	Victoria, Canada
+    This software was written for the
+    Department of Family Medicine
+    McMaster University
+    Hamilton
+    Ontario, Canada
 
 --%>
 
@@ -228,14 +217,18 @@ if (method.equals("saveLabMacroPrefs")) {
     <div class="col-sm-5 col-sm-offset-1">
         <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSave" />" onclick="assembleJSON();"/>
 <input type="button" class="btn" value="<bean:message key="global.btnClose" />" onclick="window.close();"/>
+<br> <a href="javascript:void(0);" onclick="$('#raw').toggle(); " style="color:white">Toggle</a>
     </div>
     <div class="col-sm-5 ">
-        
+       
     </div>
   </div>
 <div>
 </div>
-<input type="hidden" name="labMacroJSON.value" id="macroJSON">
+  <div class="form-group row" style="display:none;" id="raw">
+  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=up.getValue()%></textarea>
+  <input type="submit" class="btn" value="<bean:message key="global.btnSave" />" />
+  </div>
 </form>
 </body>
 </html:html>
