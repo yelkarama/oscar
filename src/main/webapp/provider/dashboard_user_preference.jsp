@@ -65,79 +65,87 @@ providerList = providerDao.getBillableProviders();
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
 <html:html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <html:base />
 <title><bean:message key="provider.dashboardUserPrefs" /></title>
 
-<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
-<link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css" title="win2k-cold-1">
-<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/js/jquery.js"></script>
+<!-- Bootstrap -->
+<link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/library/bootstrap/3.0.0/css/bootstrap.min.css">
+<script src="<c:out value="${ctx}"/>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below) -->
+<script src="<c:out value="${ctx}"/>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
 <script>
 	jQuery.noConflict();
 </script>
-
+<style>
+.MainTableTopRow {
+background-color: gainsboro;
+}
+</style>
 
 </head>
 
 <body class="BodyStyle" vlink="#0000FF">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+<table class="MainTable" width="100%" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message key="provider.setNoteStaleDate.msgPrefs" /></td>
-		<td style="color: white" class="MainTableTopRowRightColumn"><bean:message key="provider.dashboardUserPrefs" /></td>
+		<td class="MainTableTopRowLeftColumn"><H4>&nbsp;<bean:message key="provider.setNoteStaleDate.msgPrefs" /></H4></td>
+		<td style="text-align:center;" class="MainTableTopRowRightColumn"><bean:message key="provider.dashboardUserPrefs" /></td>
 	</tr>
 	<tr>
 		<td class="MainTableLeftColumn">&nbsp;</td>
 		<td class="MainTableRightColumn">
 			<!-- form starts here -->
-			<form action="<c:out value="${ctx}"/>/provider/DashboardUserPreference.do?method=save" method="post">
-			<table width="100%" border="1">
-			<tr>
-				<th width="20%">Default Dashboard User</th>
-				<td colspan="3">
-					<%
+			<form action="<c:out value="${ctx}"/>/provider/DashboardUserPreference.do?method=save" method="post" class="form-horizontal">
+
+<div class="container"><br>
+
+<%
+String method = request.getParameter("method");
+if (method != null) {
+%>
+<div class="alert alert-success">Success!</div>
+<% } %>
+
+ <div class="form-group">
+    <label for="dashboardUser" class="col-md-4 control-label">Default Dashboard User</label>
+    <div class="col-md-3">
+      <%
 						String val1 = (String)request.getAttribute("dashboardUser");
 						if(val1 == null) val1 = curProviderNo;
 					%>
-					<select id="dashboardUser" name="dashboardUser">
+					<select id="dashboardUser" name="dashboardUser" class="form-control">
 					<option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %>></option>
 					<%for(Provider p: providerList) {%>
 						<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=p.getFullName()%></option>
 						<%}%>
 					</select>
-				</td>
-			</tr>
-			<oscar:oscarPropertiesCheck property="billregion" value="ON">
-			<tr>
-				<th width="20%">Share With Ontario Common Dashboard</th>
-				<td width="30%">
+    </div>
+  </div>
+    <oscar:oscarPropertiesCheck property="billregion" value="ON">
+        <div class="form-group">
+            <label for="shareDashboard" class="col-md-4 control-label">Share With Ontario Common Dashboard</label>
+            <div class="col-md-3">
 					<%
 						val1 = (String)request.getAttribute("shareDashboard");
 						if(val1 == null) val1 = "false";
 					%>
-					<select id="shareDashboard" name="shareDashboard">
+					<select id="shareDashboard" name="shareDashboard" class="form-control">
 						<option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %>></option>
 						<option value="true" <%=(val1.equals("true")?"selected=\"selected\"":"") %>>YES</option>
 						<option value="false" <%=(val1.equals("false")?"selected=\"selected\"":"") %>>NO</option>
 					</select>
-			</td>
-			</tr>
-			</oscar:oscarPropertiesCheck>
-								
-			
-		</table>
-			<input type="submit" value="Save Changes"/>
-			<input type="button" value="Close" onclick="window.close();"/>
-			</form>
-			<!-- end of form -->
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
+            </div>
+        </div>
+    </oscar:oscarPropertiesCheck>
+  <div class="form-group">
+    <div class="col-md-offset-4 col-md-4"><br>
+        <input type="submit" class="btn btn-primary" value="Save Changes"/>&nbsp;
+        <input type="button" class="btn" value="Close" onclick="window.close();"/>
+    </div>
+  </div>
+
 </body>
 </html:html>

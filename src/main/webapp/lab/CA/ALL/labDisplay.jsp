@@ -709,7 +709,49 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
     }
 
 </style>
+<style>
+/* Dropdown Button */
+.dropbtns {
+/*  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;*/
+}
 
+/* The container <div> - needed to position the dropdown content */
+.dropdowns {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdowns-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdowns-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdowns-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdowns:hover .dropdowns-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdowns:hover .dropbtns {background-color: #3e8e41;}
+</style>
     </head>
 
     <body onLoad="javascript:matchMe();">
@@ -774,10 +816,11 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 		</script>
 		
+
 		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
-	          		 var url='../../../dms/inboxManage.do';
+	          		 var url='<%=request.getContextPath()%>/dms/inboxManage.do';
 	                 var data='method=isLabLinkedToDemographic&labid=<%= segmentID %>';
 	                 new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 	                 var json=transport.responseText.evalJSON();
@@ -795,10 +838,16 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=$(formid).serialize(true);
-
+                var num=formid.split("_");
+	            var doclabid=num[1];
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
+
 	            	if(closeOnSuccess) {
-	            		window.close();
+                        if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {  
+                	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
+                            window.opener.refreshCategoryList();  
+                        } 
+                        window.close(); 
 	            	}
 	        	}});
 			}
@@ -841,9 +890,11 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
 									%>
-											<div class="btn-group">
-											  <button class=""btn dropdown-toggle" data-toggle="dropdown">Macros <span class="caret" style="vertical-align: middle;"></span></button>
-											  <ul class="dropdown-menu">
+											  <div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
+
+											  
 											  <%
 											    try {
 												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
@@ -853,7 +904,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
 													  		
-													  		%><li><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a></li><%
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
 											    }catch(JSONException e ) {
@@ -861,7 +912,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 											    }
 											  %>
 											    
-											  </ul>
+											  </div>
 											</div>
 									<% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
