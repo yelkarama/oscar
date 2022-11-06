@@ -135,7 +135,7 @@ public class ReportMacroAction extends DispatchAction {
         		
         		TicklerLink tl = new TicklerLink();
         		tl.setTableId(Long.valueOf(segmentID));
-        		tl.setTableName(LabResultData.HL7TEXT);
+        		tl.setTableName(labType);
         		tl.setTicklerNo(t.getId());
         		ticklerLinkDao.persist(tl);
     		} else {
