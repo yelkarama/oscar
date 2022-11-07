@@ -1371,16 +1371,16 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
 							   	<table width="100%">
 							   	<tr>
-							   	<td><b>Priority:</b> <%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b> <%=tickler.getServiceDate()%></td>   	
-							   	<td><b>Assigned To:</b> <%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b> <%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
+							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
+							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
 							   	</tr>
 							   	<tr>
 							   	<td colspan="4"><%=tickler.getMessage()%></td>
 							   	</tr>
 							   	</table>
-							   </div>	
+							   </div>
 							   <br>
 							   <%
 							   }
