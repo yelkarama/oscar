@@ -46,28 +46,38 @@
 	}
 %>
 
-<%@page import="java.text.SimpleDateFormat"%>
-<%@ page import="org.oscarehr.phr.util.MyOscarUtils,org.oscarehr.myoscar.utils.MyOscarLoggedInInfo,org.oscarehr.util.WebUtils"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="oscar.dms.*,java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ page import="oscar.log.*"%>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="oscar.dms.*" %>
 <%@ page import="oscar.util.ConversionUtils" %>
 <%@ page import="oscar.OscarProperties" %>
+<%@ page import="oscar.oscarLab.ca.all.*"%>
+<%@ page import="oscar.oscarMDS.data.*"%>
+<%@ page import="oscar.oscarLab.ca.all.util.*"%>
+<%@ page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
+<%@ page import="org.oscarehr.phr.util.MyOscarUtils"%>
+<%@ page import="org.oscarehr.util.WebUtils"%>
 <%@ page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
 <%@ page import="org.oscarehr.common.model.UserProperty" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
-
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.oscarLab.ca.all.*,oscar.oscarMDS.data.*,oscar.oscarLab.ca.all.util.*"%>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%><%
-
+<%@ page import="org.oscarehr.common.model.Tickler" %>
+<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="org.oscarehr.common.dao.*"%>
+<%@ page import="org.oscarehr.common.model.*"%>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="org.springframework.web.context.WebApplicationContext"%>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.util.*" %>
+<%
+    LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String curUser_no = (String) session.getAttribute("user"); 
 	UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 	UserProperty tabViewProp = userPropertyDao.getProp(curUser_no, UserProperty.OPEN_IN_TABS);
@@ -213,13 +223,21 @@ if (openInTabs){
 				padding: 0px 5px;
 				font-size: medium;
         	}
+
         	.singlePage {
 
         	}
+
             input[type=button], button, input[id^='acklabel_'] { 
                 font-size:12px !important;padding:0px;
             } 
-        	        	
+
+            #ticklerWrap {
+                position:relative;
+                top:0px;
+                background-color:#FF6600;
+                width:100%;
+            }         	        	
         </style>
 
 <style>
@@ -661,7 +679,60 @@ if (openInTabs){
                             </form>
                         </fieldset>
 
+<% if(demographicID!=null && !demographicID.equals("")){
 
+							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(documentNo), Integer.valueOf(demographicID),"DOC");
+							    
+							    if(LabTicklers!=null && LabTicklers.size()>0){
+							    %>
+							    <div id="ticklerWrap" class="DoNotPrint">
+							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
+							    
+							           <div id="ticklerDisplay" style="display:none">
+							   <%
+							   String flag;
+							   String ticklerClass;
+							   String ticklerStatus;
+							   for(Tickler tickler:LabTicklers){
+							   
+							   ticklerStatus = tickler.getStatus().toString();
+							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){ 
+							   	flag="<span style='color:red'>&#9873;</span>";
+							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
+							   	flag="<span>&#9873;</span>";
+							   }else{	
+							   	flag="";
+							   }
+							   
+							   if(ticklerStatus.equals("C")){
+							  	 ticklerClass = "completedTickler";
+							   }else{
+							  	 ticklerClass="";
+							   }
+							   %>	
+							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
+							   	<table width="100%">
+							   	<tr>
+							   	<td><b>Priority:</b> <%=flag%> <%=tickler.getPriority()%></td>
+							   	<td><b>Service Date:</b> <%=tickler.getServiceDate()%></td>   	
+							   	<td><b>Assigned To:</b> <%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							   	<td width="90px"><b>Status:</b> <%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	</tr>
+							   	<tr>
+							   	<td colspan="4"><%=tickler.getMessage()%></td>
+							   	</tr>
+							   	</table>
+							   </div>	
+							   <br>
+							   <%
+							   }
+							   %>
+							   		</div><!-- end ticklerDisplay -->
+							   </div>   
+							   <%}//no ticklers to display 
+
+}%> 
                             <%                           
 
                                             if (ackList.size() > 0){%>
