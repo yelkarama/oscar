@@ -50,7 +50,11 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.oscarLab.ca.all.*,oscar.oscarMDS.data.*,oscar.oscarLab.ca.all.util.*"%>
 <%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*, org.oscarehr.PMmodule.dao.ProviderDao"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.oscarehr.common.model.Tickler" %>
+<%@ page import="org.oscarehr.managers.TicklerManager" %>
 <%
+            LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
             WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
             ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean("providerInboxRoutingDAO");
             ProviderDao providerDao = (ProviderDao) ctx.getBean("providerDao");
@@ -147,6 +151,7 @@
         	.singlePage {
 
         	}
+ 
         </style>               
         
         <script>
@@ -717,7 +722,59 @@ function sendMRP(ele){
 
                             </form>
                         </fieldset>
+<% if(demographicID!=null && !demographicID.equals("")){
 
+							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(documentNo), Integer.valueOf(demographicID),"DOC");
+							    
+							    if(LabTicklers!=null && LabTicklers.size()>0){
+							    %>
+                                <fieldset>
+							    <div id="ticklerWrap" class="DoNotPrint">
+							    <div id="ticklerDisplay" >
+							   <%
+							   String flag;
+							   String ticklerClass;
+							   String ticklerStatus;
+							   for(Tickler tickler:LabTicklers){
+							   
+							   ticklerStatus = tickler.getStatus().toString();
+							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){ 
+							   	flag="<span style='color:red'>&#9873;</span>";
+							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
+							   	flag="<span>&#9873;</span>";
+							   }else{	
+							   	flag="";
+							   }
+							   
+							   if(ticklerStatus.equals("C")){
+							  	 ticklerClass = "completedTickler";
+							   }else{
+							  	 ticklerClass="";
+							   }
+							   %>	
+							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
+							   	<table width="100%">
+							   	<tr>
+							   	<td><b>Tickler Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
+							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
+							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	</tr>
+							   	<tr>
+							   	<td colspan="4"><%=tickler.getMessage()%></td>
+							   	</tr>
+							   	</table>
+							   </div>	
+							   <%
+							   }
+							   %>
+							   		</div><!-- end ticklerDisplay -->
+							   </div>  
+                                </fieldset> 
+							   <%}//no ticklers to display 
+
+}%> 
 
                             <%
                             ArrayList ackList = AcknowledgementData.getAcknowledgements("DOC",docId);
