@@ -250,7 +250,8 @@ public class TicklerManager {
     }
 
     public List<Tickler> getTicklerByLabId(LoggedInInfo loggedInInfo, int labId, Integer demoNo){
-    	getTicklerByLabId(loggedInInfo, labId, demoNo, "HL7");
+    	ArrayList<Tickler> results = new ArrayList<Tickler>();
+        results = getTicklerByLabId(loggedInInfo, labId, demoNo, "HL7");
     	return results;
     }   
 
