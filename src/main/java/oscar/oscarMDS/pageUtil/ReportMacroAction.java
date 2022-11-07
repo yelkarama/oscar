@@ -50,7 +50,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import oscar.oscarLab.ca.on.CommonLabResultData;
-import oscar.oscarLab.ca.on.LabResultData;
 
 
 public class ReportMacroAction extends DispatchAction {
@@ -135,7 +134,7 @@ public class ReportMacroAction extends DispatchAction {
         		
         		TicklerLink tl = new TicklerLink();
         		tl.setTableId(Long.valueOf(segmentID));
-        		tl.setTableName(LabResultData.HL7TEXT);
+        		tl.setTableName(labType);
         		tl.setTicklerNo(t.getId());
         		ticklerLinkDao.persist(tl);
     		} else {
