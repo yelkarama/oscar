@@ -24,7 +24,7 @@
 package oscar.oscarMDS.pageUtil;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.util.Calendar; 
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -121,6 +121,7 @@ public class ReportMacroAction extends DispatchAction {
     		String comment = jAck.getString("comment");
     		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,false);	
     	}
+
     	if(macro.has("tickler") && !StringUtils.isEmpty(demographicNo)) {
     		JSONObject jTickler = macro.getJSONObject("tickler");
     	
@@ -128,25 +129,24 @@ public class ReportMacroAction extends DispatchAction {
                 logger.info("Sending Tickler");
                 Tickler t = new Tickler();
                 if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
-                    LocalDate curDate = LocalDate.now();
-                    LocalDate dueDate = LocalDate.now();
+                    Calendar cal = (Calendar) Calendar.getInstance();
                     Long qty = Long.parseLong(jTickler.getString("quantity"));
                     Integer code = Integer.parseInt(jTickler.getString("timeUnits"));
                     switch(code) {
                         case 1:
-                            dueDate = curDate.plusDays(qty);
+                            cal.add((Calendar.DAY),qty);
                             break;
                         case 7:
-                            dueDate = curDate.plusWeeks(qty);
+                            cal.add((Calendar.WEEK),qty);
                             break;
                         case 30:
-                            dueDate = curDate.plusMonths(qty);
+                            cal.add((Calendar.MONTH),qty);
                             break;
                         case 365:
-                            dueDate = curDate.plusYears(qty);
+                            cal.add((Calendar.YEAR),qty);
                             break;
                     }
-                    t.setServiceDate(dueDate);
+                    t.setServiceDate(cal.getTime());
                 }
         		t.setTaskAssignedTo(jTickler.getString("taskAssignedTo"));
         		t.setDemographicNo(Integer.parseInt(demographicNo));
