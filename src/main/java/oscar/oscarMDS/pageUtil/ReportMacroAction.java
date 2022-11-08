@@ -128,16 +128,16 @@ public class ReportMacroAction extends DispatchAction {
                     LocalDate date = LocalDate.now();
                     Long qty = Long.parseLong(jTickler.getString("quantity"));
                     switch(Integer.parseInt(jTickler.getString("timeUnits")) {
-                        case 1: //days
+                        case 1:
                             date.plusDays(qty);
                             break;
-                        case 7: //weeks
+                        case 7:
                             date.plusWeeks(qty);
                             break;
-                        case 30: //months
+                        case 30:
                             date.plusMonths(qty);
                             break;
-                        case 365: //years
+                        case 365:
                             date.plusYears(qty);
                             break;
                     }
