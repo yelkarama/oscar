@@ -130,7 +130,7 @@ public class ReportMacroAction extends DispatchAction {
                 Tickler t = new Tickler();
                 if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
                     Calendar cal = (Calendar) Calendar.getInstance();
-                    Long qty = Long.parseLong(jTickler.getString("quantity"));
+                    Integer qty = Integer.parseInt(jTickler.getString("quantity"));
                     Integer code = Integer.parseInt(jTickler.getString("timeUnits"));
                     switch(code) {
                         case 1:
