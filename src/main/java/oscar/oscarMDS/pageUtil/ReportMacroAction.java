@@ -124,10 +124,10 @@ public class ReportMacroAction extends DispatchAction {
     		if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
     			logger.info("Sending Tickler");
         		Tickler t = new Tickler();
-                if(jTickler.has("quantity") && jTickler.has("timeunits")) {
-                    LocalDate date=LocalDate.now();
-                    Long qty = long.parseLong(jTickler.getString("quantity"));
-                    switch(Integer.parseInt(jTickler.getString("units")) {
+                if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
+                    LocalDate date = LocalDate.now();
+                    Long qty = Long.parseLong(jTickler.getString("quantity"));
+                    switch(Integer.parseInt(jTickler.getString("timeUnits")) {
                         case 1: //days
                             date.plusDays(qty);
                             break;
