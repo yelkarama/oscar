@@ -121,16 +121,13 @@ public class ReportMacroAction extends DispatchAction {
     		String comment = jAck.getString("comment");
     		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,false);	
     	}
-    	if(macro.has("tickler") && !StringUtils.isEmpty(demographicNo)) {
-    		JSONObject jTickler = macro.getJSONObject("tickler");
-    		
     		if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
     			logger.info("Sending Tickler");
         		Tickler t = new Tickler();
-                if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
+                if(jTickler.has("quantity") && jTickler.has("timeunits")) {
                     LocalDate date=LocalDate.now();
-                    Long qty = long.parseLong((jTickler.getString("quantity"long));
-                    switch(Integer.valueOf(jTickler.getString("timeUnits")) {
+                    Long qty = long.parseLong(jTickler.getString("quantity"));
+                    switch(Integer.parseInt(jTickler.getString("units")) {
                         case 1: //days
                             date.plusDays(qty);
                             break;
