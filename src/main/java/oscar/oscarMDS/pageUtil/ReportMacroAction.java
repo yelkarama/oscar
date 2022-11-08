@@ -121,9 +121,12 @@ public class ReportMacroAction extends DispatchAction {
     		String comment = jAck.getString("comment");
     		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,false);	
     	}
-    		if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
-    			logger.info("Sending Tickler");
-        		Tickler t = new Tickler();
+    	if(macro.has("tickler") && !StringUtils.isEmpty(demographicNo)) {
+    		JSONObject jTickler = macro.getJSONObject("tickler");
+    	
+            if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
+                logger.info("Sending Tickler");
+                Tickler t = new Tickler();
                 if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
                     LocalDate curDate = LocalDate.now();
                     LocalDate dueDate = LocalDate.now();
@@ -156,12 +159,10 @@ public class ReportMacroAction extends DispatchAction {
         		tl.setTableName(labType);
         		tl.setTicklerNo(t.getId());
         		ticklerLinkDao.persist(tl);
-    		} else {
+            } else {
     			logger.info("Cannot sent tickler. Not enough information in macro definition. provider taskAssignedTo and message");
-    		}
-    		
-    	}
-    	
+            }    		
+    	}  	
     	return true;
     }
     
