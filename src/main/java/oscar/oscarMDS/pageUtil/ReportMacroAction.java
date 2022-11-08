@@ -24,6 +24,7 @@
 package oscar.oscarMDS.pageUtil;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -126,6 +127,25 @@ public class ReportMacroAction extends DispatchAction {
     		if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
     			logger.info("Sending Tickler");
         		Tickler t = new Tickler();
+                if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
+                    LocalDate date=LocalDate.now();
+                    Long qty = long.parseLong((jTickler.getString("quantity"long));
+                    switch(Integer.valueOf(jTickler.getString("timeUnits")) {
+                        case 1: //days
+                            date.plusDays(qty);
+                            break;
+                        case 7: //weeks
+                            date.plusWeeks(qty);
+                            break;
+                        case 30: //months
+                            date.plusMonths(qty);
+                            break;
+                        case 365: //years
+                            date.plusYears(qty);
+                            break;
+                    }
+                    t.setServiceDate(date);
+                }
         		t.setTaskAssignedTo(jTickler.getString("taskAssignedTo"));
         		t.setDemographicNo(Integer.parseInt(demographicNo));
         		t.setMessage(jTickler.getString("message"));
