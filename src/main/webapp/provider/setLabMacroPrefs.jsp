@@ -47,7 +47,7 @@ Provider provider = providerDao.getProvider(curProviderNo);
 
 logger.info("user: " + curProviderNo);
 List<Provider> providerList = null;
-providerList = providerDao.getBillableProviders();
+providerList = providerDao.getActiveProviders();
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
