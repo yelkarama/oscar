@@ -134,10 +134,10 @@ public class ReportMacroAction extends DispatchAction {
                     Integer code = Integer.parseInt(jTickler.getString("timeUnits"));
                     switch(code) {
                         case 1:
-                            cal.add((Calendar.DAY),qty);
+                            cal.add((Calendar.DATE),qty);
                             break;
                         case 7:
-                            cal.add((Calendar.WEEK),qty);
+                            cal.add((Calendar.WEEK_OF_YEAR),qty);
                             break;
                         case 30:
                             cal.add((Calendar.MONTH),qty);
