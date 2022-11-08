@@ -128,7 +128,7 @@ public class ReportMacroAction extends DispatchAction {
                     LocalDate curDate = LocalDate.now();
                     LocalDate dueDate = LocalDate.now();
                     Long qty = Long.parseLong(jTickler.getString("quantity"));
-                    switch(Integer.parseInt(jTickler.getString("timeUnits")) {
+                    switch(Integer.parseInt(jTickler.getString("timeUnits"))) {
                         case 1:
                             dueDate = curDate.plusDays(qty);
                             break;
