@@ -262,7 +262,7 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
 <div>
 </div>
   <div class="form-group row" style="display:none;" id="raw">
-  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=Encode.forHtmlAttribute(up.getValue())%></textarea>
+  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=Encode.forHtmlAttribute((up != null && !StringUtils.isEmpty(up.getValue()))?up.getValue():"")%></textarea>
   <input type="submit" class="btn" value="<bean:message key="global.btnSave" />" />
   </div>
 </form>
