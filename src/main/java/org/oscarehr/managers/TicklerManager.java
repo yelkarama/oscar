@@ -250,10 +250,15 @@ public class TicklerManager {
     }
 
     public List<Tickler> getTicklerByLabId(LoggedInInfo loggedInInfo, int labId, Integer demoNo){
+        List<Tickler> results = getTicklerByLabId(loggedInInfo, labId, demoNo, "HL7");
+    	return results;
+    }   
+
+    public List<Tickler> getTicklerByLabId(LoggedInInfo loggedInInfo, int labId, Integer demoNo, String labType){
     	checkPrivilege(loggedInInfo, PRIVILEGE_READ);
     	String providerNo = loggedInInfo.getLoggedInProviderNo();
     	
-    	List<TicklerLink> links = ticklerLinkDao.getLinkByTableId("HL7", Long.valueOf(labId));
+    	List<TicklerLink> links = ticklerLinkDao.getLinkByTableId(labType, Long.valueOf(labId));
     	
     	ArrayList<Tickler> results = new ArrayList<Tickler>();
     	
