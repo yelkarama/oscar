@@ -24,6 +24,7 @@
 package oscar.oscarMDS.pageUtil;
 
 import java.io.IOException;
+import java.util.Calendar; 
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -120,12 +121,33 @@ public class ReportMacroAction extends DispatchAction {
     		String comment = jAck.getString("comment");
     		CommonLabResultData.updateReportStatus(Integer.parseInt(segmentID), providerNo, 'A', comment,labType,false);	
     	}
+
     	if(macro.has("tickler") && !StringUtils.isEmpty(demographicNo)) {
     		JSONObject jTickler = macro.getJSONObject("tickler");
-    		
-    		if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
-    			logger.info("Sending Tickler");
-        		Tickler t = new Tickler();
+    	
+            if(jTickler.has("taskAssignedTo") && jTickler.has("message")) {
+                logger.info("Sending Tickler");
+                Tickler t = new Tickler();
+                if(jTickler.has("quantity") && jTickler.has("timeUnits")) {
+                    Calendar cal = (Calendar) Calendar.getInstance();
+                    Integer qty = Integer.parseInt(jTickler.getString("quantity"));
+                    Integer code = Integer.parseInt(jTickler.getString("timeUnits"));
+                    switch(code) {
+                        case 1:
+                            cal.add((Calendar.DATE),qty);
+                            break;
+                        case 7:
+                            cal.add((Calendar.WEEK_OF_YEAR),qty);
+                            break;
+                        case 30:
+                            cal.add((Calendar.MONTH),qty);
+                            break;
+                        case 365:
+                            cal.add((Calendar.YEAR),qty);
+                            break;
+                    }
+                    t.setServiceDate(cal.getTime());
+                }
         		t.setTaskAssignedTo(jTickler.getString("taskAssignedTo"));
         		t.setDemographicNo(Integer.parseInt(demographicNo));
         		t.setMessage(jTickler.getString("message"));
@@ -137,12 +159,10 @@ public class ReportMacroAction extends DispatchAction {
         		tl.setTableName(labType);
         		tl.setTicklerNo(t.getId());
         		ticklerLinkDao.persist(tl);
-    		} else {
+            } else {
     			logger.info("Cannot sent tickler. Not enough information in macro definition. provider taskAssignedTo and message");
-    		}
-    		
-    	}
-    	
+            }    		
+    	}  	
     	return true;
     }
     

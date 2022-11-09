@@ -38,6 +38,7 @@
 <%@page import="net.sf.json.JSONSerializer"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="net.sf.json.JSONObject"%>
+<%@page import="org.owasp.encoder.Encode" %>
 <%
 Logger logger = org.oscarehr.util.MiscUtils.getLogger();
            
@@ -75,13 +76,22 @@ providerList = providerDao.getActiveProviders();
                 let text = this.id;
                 const myArray = text.split("_");
                 let suffix = myArray[1];
-                // check to see if there is a name attribute
+                // check to see if there is a name attribute for the macro
                 if ( $("#name_"+suffix).val().length > 1 ){ 
-                    //console.log(this.id +" is not hidden and has non zero name length");
+                    //this.id +" is not hidden and has non zero name length"
                     jsonStr = jsonStr +"{\"name\":\"" + $("#name_"+suffix).val() + "\",\"acknowledge\":{\"comment\":\"" + $("#comment_"+suffix).val() + "\"},";
                     if ( $("#ticklerTo_"+suffix).val().length > 0 ) {
-                        jsonStr = jsonStr + "\"tickler\":{\"taskAssignedTo\":\"" + $("#ticklerTo_"+suffix).val()  + "\",\"message\":\"" + $("#message_"+suffix).val() +"\"},";
+                        // there is a tickler
+                        let tStart = "\"tickler\":{\"taskAssignedTo\":\"" + $("#ticklerTo_" + suffix).val()  + "\",\"message\":\"" + $("#message_"+suffix).val()+"\"";
+                        let tSchedule = "";
+                        if ( $("#quantity_"+suffix).val() > 0 ) {
+                            //tickler set for future date
+                            tSchedule = ",\"quantity\":\"" + $("#quantity_" + suffix).val() +"\",\"timeUnits\":\"" + $("#timeUnits_"+suffix).val()+"\"";
+                        }
+                        jsonStr = jsonStr + tStart + tSchedule + "},";
+                    
                     }
+
                 jsonStr = jsonStr + "\"closeOnSuccess\":true},\n";
                 }   
             }
@@ -135,40 +145,57 @@ if (method.equals("saveLabMacroPrefs")) {
                 String comment = "";
                 String ticklerTo = "";
                 String message = "";
+                String quantity = "0";
+                String timeUnits = "1";
                 if(macro.has("acknowledge")){
-                    comment = macro.getJSONObject("acknowledge").getString("comment");
+                    comment = Encode.forHtmlAttribute(macro.getJSONObject("acknowledge").getString("comment"));
                 }
                 if(macro.has("tickler")){
-                    ticklerTo = macro.getJSONObject("tickler").getString("taskAssignedTo");
-                    message = macro.getJSONObject("tickler").getString("message");
+                    ticklerTo = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("taskAssignedTo"));
+                    message = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("message"));
+                    if(macro.getJSONObject("tickler").has("quantity") && macro.getJSONObject("tickler").has("timeUnits")){
+                        quantity = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("quantity"));
+                        timeUnits = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("timeUnits"));
+                    }
                 }
                 boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
                 												  		
 %>
+<!--<script>
+console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" + " and perhaps a tickler for " + "<%=ticklerTo%>" + " message " + "<%=message%>" + " in " + "<%=quantity%>" + " " + "<%=timeUnits%>" + "/1");
+</script> -->
  <div class="form-group row" id="macro_<%=x%>">
 
-    <div class="col-sm-3">
-     <label for="name_<%=x%>">Macro Name</label><input type="text" id="name_<%=x%>" class="" placeholder="Short Name" value="<%=name%>">
+    <div class="col-sm-2">
+     <label for="name_<%=x%>"><bean:message key="global.macro" /></label><br><input type="text" id="name_<%=x%>" class="" placeholder="<bean:message key="name" />" style="width:90px;" value="<%=name%>">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_<%=x%>">Lab Comment</label><input type="text" id="comment_<%=x%>" class="" placeholder="Lab Comment" value="<%=comment%>">
+     <label for="comment_<%=x%>"><bean:message key="caseload.msgLab" />&nbsp;<bean:message key="oscarMDS.segmentDisplay.btnComment" /></label><br><input type="text" id="comment_<%=x%>" class="" style="width:95%;" value="<%=comment%>" placeholder="<bean:message key="oscarMDS.segmentDisplay.btnComment" />">
     </div>
 
-    <div class="col-sm-4">
+    <div class="col-sm-2">
       <%
         String val1 = ticklerTo;
         if(val1 == null) val1 = "";
         %> 
-		    <label for="ticklerTo_<%=x%>">TicklerTo</label><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm">
-            <option value="<%=ticklerTo%>" <%=(val1.equals("")?"selected=\"selected\"":"") %>></option>
+		    <label for="ticklerTo_<%=x%>"><bean:message key="tickler.ticklerMain.msgAssignedTo" /></label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm" style="width:95%;">
+            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %> ></option>
 			<%for(Provider p: providerList) {%>
-				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=p.getFullName()%></option>
+				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 			</select>
     </div>
     <div class="col-sm-2 ">
-     <label for="message_<%=x%>">Message</label><input type="text" id="message_<%=x%>" class="" placeholder="Tickler Message" value="<%=message%>">
+     <label for="message_<%=x%>"><bean:message key="global.tickler" /></label><br><input type="text" id="message_<%=x%>" class="" style="width:95%;" placeholder="<bean:message key="tickler.ticklerMain.msgMessage" />" value="<%=message%>">
+    </div>
+    <div class="col-sm-3 ">
+     <label for="schedule_<%=x%>"><bean:message key="tickler.ticklerMain.msgDate" /></label><br><input type="number" id="quantity_<%=x%>" class="" style="width:50px;" value="<%=quantity%>"><select id="timeUnits_<%=x%>"  style="width:80px;"> 
+            <option value="1" <%=(timeUnits.equals("1")?"selected=\"selected\"":"") %>><bean:message key="global.days" /></option>
+            <option value="7" <%=(timeUnits.equals("7")?"selected=\"selected\"":"") %>><bean:message key="global.weeks" /></option>
+            <option value="30" <%=(timeUnits.equals("30")?"selected=\"selected\"":"") %>><bean:message key="global.months" /></option>
+            <option value="365" <%=(timeUnits.equals("365")?"selected=\"selected\"":"") %>><bean:message key="global.years" /></option>
+        </select>
     </div>
     <div class="col-sm-2">
      &nbsp;<input type="button" id="delete_<%=x%>" class="btn btn-link" value="<bean:message key="global.btnDelete" />" onclick="$('#macro_<%=x%>').hide();">
@@ -186,25 +213,33 @@ if (method.equals("saveLabMacroPrefs")) {
 
  <div class="form-group row" id="macro_new">
 
-    <div class="col-sm-3">
-     <label for="name_new">Macro Name</label><input type="text" id="name_new" class="" placeholder="Short Name" value="">
+    <div class="col-sm-2">
+     <label for="name_new"><bean:message key="global.macro" /></label><br><input type="text" id="name_new" class="" style="width:90px;" placeholder="<bean:message key="name" />" value="">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_new">Lab Comment</label><input type="text" id="comment_new" class="" placeholder="Lab Comment" value="">
+     <label for="comment_new"><bean:message key="caseload.msgLab" />&nbsp;<bean:message key="oscarMDS.segmentDisplay.btnComment" /></label><br><input type="text" id="comment_new" class="" style="width:95%;" value="" placeholder="<bean:message key="oscarMDS.segmentDisplay.btnComment" />">
     </div>
 
-    <div class="col-sm-4">
+    <div class="col-sm-2">
 
-					<label for="ticklerTo_new">Tickler To</label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm">
+					<label for="ticklerTo_new"><bean:message key="tickler.ticklerMain.msgAssignedTo" /></label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm" style="width:95%;">
 					<option value="" selected="selected"></option>
 					<%for(Provider p: providerList) {%>
-						<option value="<%=p.getProviderNo()%>"><%=p.getFullName()%></option>
+						<option value="<%=p.getProviderNo()%>"><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 					</select>
     </div>
     <div class="col-sm-2">
-     <label for="message_new">Message</label><input type="text" id="message_new" class="" placeholder="Tickler Message" value="">
+     <label for="message_new"><bean:message key="global.tickler" /></label><br><input type="text" id="message_new" class="" placeholder="<bean:message key="tickler.ticklerMain.msgMessage" />" style="width:95%;" value="">
+    </div>
+    <div class="col-sm-3 ">
+     <label for="schedule_new"><bean:message key="tickler.ticklerMain.msgDate" /></label><br><input type="number" id="timeUnits_new" class="" style="width:50px;" value="0"><select id="schedule_new"> 
+            <option value="1"><bean:message key="global.days" /></option>
+            <option value="7"><bean:message key="global.weeks" /></option>
+            <option value="30"><bean:message key="global.months" /></option>
+            <option value="365"><bean:message key="global.years" /></option>
+        </select>
     </div>
     <div class="col-sm-2">
         &nbsp;<input type="button" id="add_new" class="btn btn-link" value="Add" style="visibility:hidden;">
@@ -217,7 +252,8 @@ if (method.equals("saveLabMacroPrefs")) {
     <div class="col-sm-5 col-sm-offset-1">
         <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSave" />" onclick="assembleJSON();"/>
 <input type="button" class="btn" value="<bean:message key="global.btnClose" />" onclick="window.close();"/>
-<br> <a href="javascript:void(0);" onclick="$('#raw').toggle(); " style="color:white">Toggle</a>
+<!--<input type="button" class="btn " value="assembleJSON"  onclick="assembleJSON();"/>-->
+<br> <a href="javascript:void(0);" onclick="$('#raw').toggle(); " style="color:white">Show</a>
     </div>
     <div class="col-sm-5 ">
        
@@ -226,7 +262,7 @@ if (method.equals("saveLabMacroPrefs")) {
 <div>
 </div>
   <div class="form-group row" style="display:none;" id="raw">
-  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=up.getValue()%></textarea>
+  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=Encode.forHtmlAttribute(up.getValue())%></textarea>
   <input type="submit" class="btn" value="<bean:message key="global.btnSave" />" />
   </div>
 </form>
