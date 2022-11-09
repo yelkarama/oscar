@@ -38,6 +38,7 @@
 <%@page import="net.sf.json.JSONSerializer"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="net.sf.json.JSONObject"%>
+<%@page import="org.owasp.encoder.Encode" %>
 <%
 Logger logger = org.oscarehr.util.MiscUtils.getLogger();
            
@@ -147,14 +148,14 @@ if (method.equals("saveLabMacroPrefs")) {
                 String quantity = "0";
                 String timeUnits = "1";
                 if(macro.has("acknowledge")){
-                    comment = macro.getJSONObject("acknowledge").getString("comment");
+                    comment = Encode.forHtmlAttribute(macro.getJSONObject("acknowledge").getString("comment"));
                 }
                 if(macro.has("tickler")){
-                    ticklerTo = macro.getJSONObject("tickler").getString("taskAssignedTo");
-                    message = macro.getJSONObject("tickler").getString("message");
+                    ticklerTo = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("taskAssignedTo"));
+                    message = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("message"));
                     if(macro.getJSONObject("tickler").has("quantity") && macro.getJSONObject("tickler").has("timeUnits")){
-                        quantity = macro.getJSONObject("tickler").getString("quantity");
-                        timeUnits = macro.getJSONObject("tickler").getString("timeUnits");
+                        quantity = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("quantity"));
+                        timeUnits = Encode.forHtmlAttribute(macro.getJSONObject("tickler").getString("timeUnits"));
                     }
                 }
                 boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
@@ -169,24 +170,24 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
      <label for="name_<%=x%>">Macro Name</label><br><input type="text" id="name_<%=x%>" class="" placeholder="Short Name" style="width:90px;" value="<%=name%>">
     </div>
 
-    <div class="col-sm-2">
-     <label for="comment_<%=x%>">Lab Comment</label><br><input type="text" id="comment_<%=x%>" class="" placeholder="Lab Comment" value="<%=comment%>">
+    <div class="col-sm-3">
+     <label for="comment_<%=x%>">Lab Comment</label><br><input type="text" id="comment_<%=x%>" class="" style="width:95%;" placeholder="Lab Comment" value="<%=comment%>">
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
       <%
         String val1 = ticklerTo;
         if(val1 == null) val1 = "";
         %> 
-		    <label for="ticklerTo_<%=x%>">TicklerTo</label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm">
-            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %>>-none-</option>
+		    <label for="ticklerTo_<%=x%>">TicklerTo</label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm" style="width:95%;">
+            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %> >-none-</option>
 			<%for(Provider p: providerList) {%>
-				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=p.getFullName()%></option>
+				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 			</select>
     </div>
     <div class="col-sm-2 ">
-     <label for="message_<%=x%>">Message</label><br><input type="text" id="message_<%=x%>" class="" placeholder="Tickler Message" value="<%=message%>">
+     <label for="message_<%=x%>">Message</label><br><input type="text" id="message_<%=x%>" class="" style="width:95%;" placeholder="Tickler Message" value="<%=message%>">
     </div>
     <div class="col-sm-3 ">
      <label for="schedule_<%=x%>">Schedule in</label><br><input type="number" id="quantity_<%=x%>" class="" style="width:50px;" value="<%=quantity%>"><select id="timeUnits_<%=x%>"  style="width:80px;"> 
@@ -216,21 +217,21 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
      <label for="name_new">Macro Name</label><br><input type="text" id="name_new" class="" style="width:90px;" placeholder="Short Name" value="">
     </div>
 
-    <div class="col-sm-2">
-     <label for="comment_new">Lab Comment</label><br><input type="text" id="comment_new" class="" placeholder="Lab Comment" value="">
+    <div class="col-sm-3">
+     <label for="comment_new">Lab Comment</label><br><input type="text" id="comment_new" class="" style="width:95%;" placeholder="Lab Comment" value="">
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
 
-					<label for="ticklerTo_new">Tickler To</label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm">
+					<label for="ticklerTo_new">Tickler To</label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm" style="width:95%;">
 					<option value="" selected="selected">-none-</option>
 					<%for(Provider p: providerList) {%>
-						<option value="<%=p.getProviderNo()%>"><%=p.getFullName()%></option>
+						<option value="<%=p.getProviderNo()%>"><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 					</select>
     </div>
     <div class="col-sm-2">
-     <label for="message_new">Message</label><br><input type="text" id="message_new" class="" placeholder="Tickler Message" value="">
+     <label for="message_new">Message</label><br><input type="text" id="message_new" class="" placeholder="Tickler Message" style="width:95%;" value="">
     </div>
     <div class="col-sm-3 ">
      <label for="schedule_new">Schedule in</label><br><input type="number" id="timeUnits_new" class="" style="width:50px;" value="0"><select id="schedule_new"> 
@@ -261,7 +262,7 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
 <div>
 </div>
   <div class="form-group row" style="display:none;" id="raw">
-  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=up.getValue()%></textarea>
+  <textarea name="labMacroJSON.value" id="macroJSON" style="width:80%;height:80%" rows="25"><%=Encode.forHtmlAttribute(up.getValue())%></textarea>
   <input type="submit" class="btn" value="<bean:message key="global.btnSave" />" />
   </div>
 </form>
