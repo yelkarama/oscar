@@ -97,6 +97,7 @@ providerList = providerDao.getActiveProviders();
             }
         })  
             jsonStr = jsonStr.substring(0,jsonStr.length-2) + "] ";
+            if (jsonStr.length < 3) { jsonStr = ""; }
             $('#macroJSON').val(jsonStr);
     }
 </script>
