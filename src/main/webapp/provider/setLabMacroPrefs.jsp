@@ -47,7 +47,7 @@ Provider provider = providerDao.getProvider(curProviderNo);
 
 logger.info("user: " + curProviderNo);
 List<Provider> providerList = null;
-providerList = providerDao.getActiveProviders();
+providerList = providerDao.getBillableProviders();
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -75,13 +75,22 @@ providerList = providerDao.getActiveProviders();
                 let text = this.id;
                 const myArray = text.split("_");
                 let suffix = myArray[1];
-                // check to see if there is a name attribute
+                // check to see if there is a name attribute for the macro
                 if ( $("#name_"+suffix).val().length > 1 ){ 
-                    //console.log(this.id +" is not hidden and has non zero name length");
+                    //this.id +" is not hidden and has non zero name length"
                     jsonStr = jsonStr +"{\"name\":\"" + $("#name_"+suffix).val() + "\",\"acknowledge\":{\"comment\":\"" + $("#comment_"+suffix).val() + "\"},";
                     if ( $("#ticklerTo_"+suffix).val().length > 0 ) {
-                        jsonStr = jsonStr + "\"tickler\":{\"taskAssignedTo\":\"" + $("#ticklerTo_"+suffix).val()  + "\",\"message\":\"" + $("#message_"+suffix).val() +"\"},";
+                        // there is a tickler
+                        let tStart = "\"tickler\":{\"taskAssignedTo\":\"" + $("#ticklerTo_" + suffix).val()  + "\",\"message\":\"" + $("#message_"+suffix).val()+"\"";
+                        let tSchedule = "";
+                        if ( $("#quantity_"+suffix).val() > 0 ) {
+                            //tickler set for future date
+                            tSchedule = ",\"quantity\":\"" + $("#quantity_" + suffix).val() +"\",\"timeUnits\":\"" + $("#timeUnits_"+suffix).val()+"\"";
+                        }
+                        jsonStr = jsonStr + tStart + tSchedule + "},";
+                    
                     }
+
                 jsonStr = jsonStr + "\"closeOnSuccess\":true},\n";
                 }   
             }
@@ -135,40 +144,57 @@ if (method.equals("saveLabMacroPrefs")) {
                 String comment = "";
                 String ticklerTo = "";
                 String message = "";
+                String quantity = "0";
+                String timeUnits = "1";
                 if(macro.has("acknowledge")){
                     comment = macro.getJSONObject("acknowledge").getString("comment");
                 }
                 if(macro.has("tickler")){
                     ticklerTo = macro.getJSONObject("tickler").getString("taskAssignedTo");
                     message = macro.getJSONObject("tickler").getString("message");
+                    if(macro.getJSONObject("tickler").has("quantity") && macro.getJSONObject("tickler").has("timeUnits")){
+                        quantity = macro.getJSONObject("tickler").getString("quantity");
+                        timeUnits = macro.getJSONObject("tickler").getString("timeUnits");
+                    }
                 }
                 boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
                 												  		
 %>
+<!--<script>
+console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" + " and perhaps a tickler for " + "<%=ticklerTo%>" + " message " + "<%=message%>" + " in " + "<%=quantity%>" + " " + "<%=timeUnits%>" + "/1");
+</script> -->
  <div class="form-group row" id="macro_<%=x%>">
 
-    <div class="col-sm-3">
-     <label for="name_<%=x%>">Macro Name</label><input type="text" id="name_<%=x%>" class="" placeholder="Short Name" value="<%=name%>">
+    <div class="col-sm-2">
+     <label for="name_<%=x%>">Macro Name</label><br><input type="text" id="name_<%=x%>" class="" placeholder="Short Name" style="width:90px;" value="<%=name%>">
+    </div>
+
+    <div class="col-sm-2">
+     <label for="comment_<%=x%>">Lab Comment</label><br><input type="text" id="comment_<%=x%>" class="" placeholder="Lab Comment" value="<%=comment%>">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_<%=x%>">Lab Comment</label><input type="text" id="comment_<%=x%>" class="" placeholder="Lab Comment" value="<%=comment%>">
-    </div>
-
-    <div class="col-sm-4">
       <%
         String val1 = ticklerTo;
         if(val1 == null) val1 = "";
         %> 
-		    <label for="ticklerTo_<%=x%>">TicklerTo</label><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm">
-            <option value="<%=ticklerTo%>" <%=(val1.equals("")?"selected=\"selected\"":"") %>></option>
+		    <label for="ticklerTo_<%=x%>">TicklerTo</label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm">
+            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %>>-none-</option>
 			<%for(Provider p: providerList) {%>
 				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=p.getFullName()%></option>
 						<%}%>
 			</select>
     </div>
     <div class="col-sm-2 ">
-     <label for="message_<%=x%>">Message</label><input type="text" id="message_<%=x%>" class="" placeholder="Tickler Message" value="<%=message%>">
+     <label for="message_<%=x%>">Message</label><br><input type="text" id="message_<%=x%>" class="" placeholder="Tickler Message" value="<%=message%>">
+    </div>
+    <div class="col-sm-3 ">
+     <label for="schedule_<%=x%>">Schedule in</label><br><input type="number" id="quantity_<%=x%>" class="" style="width:50px;" value="<%=quantity%>"><select id="timeUnits_<%=x%>"  style="width:80px;"> 
+            <option value="1" <%=(timeUnits.equals("1")?"selected=\"selected\"":"") %>>days</option>
+            <option value="7" <%=(timeUnits.equals("7")?"selected=\"selected\"":"") %>>weeks</option>
+            <option value="30" <%=(timeUnits.equals("30")?"selected=\"selected\"":"") %>>months</option>
+            <option value="365" <%=(timeUnits.equals("365")?"selected=\"selected\"":"") %>>years</option>
+        </select>
     </div>
     <div class="col-sm-2">
      &nbsp;<input type="button" id="delete_<%=x%>" class="btn btn-link" value="<bean:message key="global.btnDelete" />" onclick="$('#macro_<%=x%>').hide();">
@@ -186,25 +212,33 @@ if (method.equals("saveLabMacroPrefs")) {
 
  <div class="form-group row" id="macro_new">
 
-    <div class="col-sm-3">
-     <label for="name_new">Macro Name</label><input type="text" id="name_new" class="" placeholder="Short Name" value="">
+    <div class="col-sm-2">
+     <label for="name_new">Macro Name</label><br><input type="text" id="name_new" class="" style="width:90px;" placeholder="Short Name" value="">
+    </div>
+
+    <div class="col-sm-2">
+     <label for="comment_new">Lab Comment</label><br><input type="text" id="comment_new" class="" placeholder="Lab Comment" value="">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_new">Lab Comment</label><input type="text" id="comment_new" class="" placeholder="Lab Comment" value="">
-    </div>
-
-    <div class="col-sm-4">
 
 					<label for="ticklerTo_new">Tickler To</label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm">
-					<option value="" selected="selected"></option>
+					<option value="" selected="selected">-none-</option>
 					<%for(Provider p: providerList) {%>
 						<option value="<%=p.getProviderNo()%>"><%=p.getFullName()%></option>
 						<%}%>
 					</select>
     </div>
     <div class="col-sm-2">
-     <label for="message_new">Message</label><input type="text" id="message_new" class="" placeholder="Tickler Message" value="">
+     <label for="message_new">Message</label><br><input type="text" id="message_new" class="" placeholder="Tickler Message" value="">
+    </div>
+    <div class="col-sm-3 ">
+     <label for="schedule_new">Schedule in</label><br><input type="number" id="timeUnits_new" class="" style="width:50px;" value="0"><select id="schedule_new"> 
+            <option value="1">days</option>
+            <option value="7">weeks</option>
+            <option value="30">months</option>
+            <option value="365">years</option>
+        </select>
     </div>
     <div class="col-sm-2">
         &nbsp;<input type="button" id="add_new" class="btn btn-link" value="Add" style="visibility:hidden;">
@@ -217,7 +251,8 @@ if (method.equals("saveLabMacroPrefs")) {
     <div class="col-sm-5 col-sm-offset-1">
         <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSave" />" onclick="assembleJSON();"/>
 <input type="button" class="btn" value="<bean:message key="global.btnClose" />" onclick="window.close();"/>
-<br> <a href="javascript:void(0);" onclick="$('#raw').toggle(); " style="color:white">Toggle</a>
+<!--<input type="button" class="btn " value="assembleJSON"  onclick="assembleJSON();"/>-->
+<br> <a href="javascript:void(0);" onclick="$('#raw').toggle(); " style="color:white">Show</a>
     </div>
     <div class="col-sm-5 ">
        
