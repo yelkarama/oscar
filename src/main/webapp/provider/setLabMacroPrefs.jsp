@@ -48,7 +48,7 @@ Provider provider = providerDao.getProvider(curProviderNo);
 
 logger.info("user: " + curProviderNo);
 List<Provider> providerList = null;
-providerList = providerDao.getBillableProviders();
+providerList = providerDao.getActiveProviders();
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -167,11 +167,11 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
  <div class="form-group row" id="macro_<%=x%>">
 
     <div class="col-sm-2">
-     <label for="name_<%=x%>">Macro Name</label><br><input type="text" id="name_<%=x%>" class="" placeholder="Short Name" style="width:90px;" value="<%=name%>">
+     <label for="name_<%=x%>"><bean:message key="global.macro" /></label><br><input type="text" id="name_<%=x%>" class="" placeholder="<bean:message key="name" />" style="width:90px;" value="<%=name%>">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_<%=x%>">Lab Comment</label><br><input type="text" id="comment_<%=x%>" class="" style="width:95%;" placeholder="Lab Comment" value="<%=comment%>">
+     <label for="comment_<%=x%>"><bean:message key="caseload.msgLab" />&nbsp;<bean:message key="oscarMDS.segmentDisplay.btnComment" /></label><br><input type="text" id="comment_<%=x%>" class="" style="width:95%;" value="<%=comment%>" placeholder="<bean:message key="oscarMDS.segmentDisplay.btnComment" />">
     </div>
 
     <div class="col-sm-2">
@@ -179,22 +179,22 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
         String val1 = ticklerTo;
         if(val1 == null) val1 = "";
         %> 
-		    <label for="ticklerTo_<%=x%>">TicklerTo</label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm" style="width:95%;">
-            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %> >-none-</option>
+		    <label for="ticklerTo_<%=x%>"><bean:message key="tickler.ticklerMain.msgAssignedTo" /></label><br><select id="ticklerTo_<%=x%>" name="ticklerTo_<%=x%>" class="form-control input-sm" style="width:95%;">
+            <option value="" <%=(val1.equals("")?"selected=\"selected\"":"") %> ></option>
 			<%for(Provider p: providerList) {%>
 				<option value="<%=p.getProviderNo()%>"<%=(val1.equals(p.getProviderNo())?"selected=\"selected\"":"") %>><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 			</select>
     </div>
     <div class="col-sm-2 ">
-     <label for="message_<%=x%>">Message</label><br><input type="text" id="message_<%=x%>" class="" style="width:95%;" placeholder="Tickler Message" value="<%=message%>">
+     <label for="message_<%=x%>"><bean:message key="global.tickler" /></label><br><input type="text" id="message_<%=x%>" class="" style="width:95%;" placeholder="<bean:message key="tickler.ticklerMain.msgMessage" />" value="<%=message%>">
     </div>
     <div class="col-sm-3 ">
-     <label for="schedule_<%=x%>">Schedule in</label><br><input type="number" id="quantity_<%=x%>" class="" style="width:50px;" value="<%=quantity%>"><select id="timeUnits_<%=x%>"  style="width:80px;"> 
-            <option value="1" <%=(timeUnits.equals("1")?"selected=\"selected\"":"") %>>days</option>
-            <option value="7" <%=(timeUnits.equals("7")?"selected=\"selected\"":"") %>>weeks</option>
-            <option value="30" <%=(timeUnits.equals("30")?"selected=\"selected\"":"") %>>months</option>
-            <option value="365" <%=(timeUnits.equals("365")?"selected=\"selected\"":"") %>>years</option>
+     <label for="schedule_<%=x%>"><bean:message key="tickler.ticklerMain.msgDate" /></label><br><input type="number" id="quantity_<%=x%>" class="" style="width:50px;" value="<%=quantity%>"><select id="timeUnits_<%=x%>"  style="width:80px;"> 
+            <option value="1" <%=(timeUnits.equals("1")?"selected=\"selected\"":"") %>><bean:message key="global.days" /></option>
+            <option value="7" <%=(timeUnits.equals("7")?"selected=\"selected\"":"") %>><bean:message key="global.weeks" /></option>
+            <option value="30" <%=(timeUnits.equals("30")?"selected=\"selected\"":"") %>><bean:message key="global.months" /></option>
+            <option value="365" <%=(timeUnits.equals("365")?"selected=\"selected\"":"") %>><bean:message key="global.years" /></option>
         </select>
     </div>
     <div class="col-sm-2">
@@ -214,31 +214,31 @@ console.log("macro named " + "<%=name%>" + " with comment of " + "<%=comment%>" 
  <div class="form-group row" id="macro_new">
 
     <div class="col-sm-2">
-     <label for="name_new">Macro Name</label><br><input type="text" id="name_new" class="" style="width:90px;" placeholder="Short Name" value="">
+     <label for="name_new"><bean:message key="global.macro" /></label><br><input type="text" id="name_new" class="" style="width:90px;" placeholder="<bean:message key="name" />" value="">
     </div>
 
     <div class="col-sm-3">
-     <label for="comment_new">Lab Comment</label><br><input type="text" id="comment_new" class="" style="width:95%;" placeholder="Lab Comment" value="">
+     <label for="comment_new"><bean:message key="caseload.msgLab" />&nbsp;<bean:message key="oscarMDS.segmentDisplay.btnComment" /></label><br><input type="text" id="comment_new" class="" style="width:95%;" value="" placeholder="<bean:message key="oscarMDS.segmentDisplay.btnComment" />">
     </div>
 
     <div class="col-sm-2">
 
-					<label for="ticklerTo_new">Tickler To</label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm" style="width:95%;">
-					<option value="" selected="selected">-none-</option>
+					<label for="ticklerTo_new"><bean:message key="tickler.ticklerMain.msgAssignedTo" /></label><select id="ticklerTo_new" name="ticklerTo_new" class="form-control input-sm" style="width:95%;">
+					<option value="" selected="selected"></option>
 					<%for(Provider p: providerList) {%>
 						<option value="<%=p.getProviderNo()%>"><%=Encode.forHtmlAttribute(p.getFullName())%></option>
 						<%}%>
 					</select>
     </div>
     <div class="col-sm-2">
-     <label for="message_new">Message</label><br><input type="text" id="message_new" class="" placeholder="Tickler Message" style="width:95%;" value="">
+     <label for="message_new"><bean:message key="global.tickler" /></label><br><input type="text" id="message_new" class="" placeholder="<bean:message key="tickler.ticklerMain.msgMessage" />" style="width:95%;" value="">
     </div>
     <div class="col-sm-3 ">
-     <label for="schedule_new">Schedule in</label><br><input type="number" id="timeUnits_new" class="" style="width:50px;" value="0"><select id="schedule_new"> 
-            <option value="1">days</option>
-            <option value="7">weeks</option>
-            <option value="30">months</option>
-            <option value="365">years</option>
+     <label for="schedule_new"><bean:message key="tickler.ticklerMain.msgDate" /></label><br><input type="number" id="timeUnits_new" class="" style="width:50px;" value="0"><select id="schedule_new"> 
+            <option value="1"><bean:message key="global.days" /></option>
+            <option value="7"><bean:message key="global.weeks" /></option>
+            <option value="30"><bean:message key="global.months" /></option>
+            <option value="365"><bean:message key="global.years" /></option>
         </select>
     </div>
     <div class="col-sm-2">
