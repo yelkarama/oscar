@@ -131,6 +131,7 @@ if ( markdownProp == null ) {
 } else {
     renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 }
+renderMarkdown = false;  //disabled until feature complete
 %>
 
 <html:html locale="true">
