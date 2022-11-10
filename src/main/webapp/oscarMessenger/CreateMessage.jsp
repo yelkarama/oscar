@@ -25,27 +25,42 @@
 --%>
 
 <%@ page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="org.oscarehr.managers.MessagingManager" %>
+<%@ page import="org.oscarehr.common.model.Groups" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
+<%@ page import="org.oscarehr.common.model.UserProperty"%>
+
+<%@ page import="oscar.OscarProperties"%>
+<%@ page import="oscar.oscarMessenger.util.Msgxml"%>
+<%@ page import="oscar.oscarDemographic.data.*"%>
+<%@ page import="oscar.oscarMessenger.data.MsgProviderData" %>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
+<%@ page import="org.oscarehr.common.model.UserProperty"%>
+
+<%@ page import="org.w3c.dom.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="org.w3c.dom.*"%>
-<%@ page import="oscar.oscarMessenger.util.Msgxml"%>
-<%@ page import="oscar.oscarDemographic.data.*"%>
-<%@ page import="org.oscarehr.managers.MessagingManager" %>
-<%@ page import="org.oscarehr.common.model.Groups" %>
-<%@ page import="oscar.oscarMessenger.data.MsgProviderData" %>
-<%@ page import="java.util.Map, java.util.List" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="org.oscarehr.util.MiscUtils"%>
-<%@ page import="oscar.OscarProperties"%>
+
+
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+	  String providerNo = (String) request.getAttribute("providerNo");
+      String curUser_no = (String) session.getAttribute("user");
+      String roleName$ = (String)session.getAttribute("userrole") + "," + curUser_no;
+		
 	  boolean authed=true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="w" reverse="<%=true%>">
+<security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
 	<%response.sendRedirect("../securityError.jsp?type=_msg");%>
 </security:oscarSec>
@@ -91,7 +106,7 @@ DemographicData demoData = new DemographicData();
 org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
 String demoName = "";
 if (demo != null) {
-	demoName = demo.getLastName() + ", " + demo.getFirstName();
+	demoName = Encode.forJavaScript(demo.getLastName()+", "+demo.getFirstName());
 }
 
 String delegate = "";
@@ -99,15 +114,24 @@ String delegateName = "";
 boolean recall = (request.getParameter("recall") != null);
 
 if(recall){
-	String subjectText = messagingManager.getLabRecallMsgSubjectPref(LoggedInInfo.getLoggedInInfoFromSession(request));
+	String subjectText = Encode.forJavaScript(messagingManager.getLabRecallMsgSubjectPref(LoggedInInfo.getLoggedInInfoFromSession(request)));
 	delegate = messagingManager.getLabRecallDelegatePref(LoggedInInfo.getLoggedInInfoFromSession(request));
 	if(delegate!=null || delegate != ""){
-		delegateName = messagingManager.getDelegateName(delegate);
+		delegateName = Encode.forHtml(messagingManager.getDelegateName(delegate));
 	}
 	pageContext.setAttribute("delegateName", delegateName);
 	pageContext.setAttribute("messageSubject", subjectText);
 }
 
+UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+UserProperty markdownProp = userPropertyDao.getProp(curUser_no, UserProperty.MARKDOWN);
+boolean renderMarkdown = false;
+if ( markdownProp == null ) {
+    renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true");
+} else {
+    renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
+}
+renderMarkdown = false;  //disabled until feature complete
 %>
 
 <html:html locale="true">
@@ -140,6 +164,18 @@ if(recall){
  
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
+<% if (renderMarkdown) { %>
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/toastui/toastui-editor.min.css" />
+<script src="<%=request.getContextPath() %>/library/toastui/toastui-editor-all.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/toastui/i18n/<bean:message key="global.i18nLanguagecode" />.js"></script>
+<% } %>
+
+<style type="text/css">
+    .toastui-editor-contents{
+        font-size: 17px;
+    }
+ </style>
 
 <script type="text/javascript">
 
@@ -272,6 +308,11 @@ if(recall){
 		{
 			alert(submissionerror);
 		}
+ <% if (renderMarkdown) { %>
+        document.getElementsByName("message")[0].setAttribute("style", "display:none;");
+        editor.setMarkdown("<br>" + document.getElementsByName("message")[0].value);
+        editor.moveCursorToStart();
+ <% } %>
 	})
 	 	 
 </script>
@@ -458,13 +499,14 @@ if(recall){
 					<bean:message key="oscarMessenger.CreateMessage.formSubject" /> :
 					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xlarge" value="${messageSubject}"/> <br>
 					<br>
+                    <div id="messagediv"></div>
 					<html:textarea name="msgCreateMessageForm" property="message" rows="15" style="min-width: 100%" value="${messageBody}"/> 
 							<table>
 								<tr>
-									<td><input type="submit" class="btn btn-primary"
+									<td><input type="submit" class="btn btn-primary" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendMessage"/>">
 									</td>
-									<td><input type="button" class="btn"
+									<td><input type="button" class="btn" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" onClick="XMLHttpRequestSendnArch()">
 									</td>
 								</tr>
@@ -558,4 +600,27 @@ if(recall){
 	</tr>
 </table>
 </body>
+<script>
+ <% if (renderMarkdown) { %>
+    // note that global.language.code != global.i18nLanguagecode
+    const Editor = toastui.Editor;
+    const editor = new Editor({
+      el: document.getElementById('messagediv'),
+        initialEditType:'wysiwyg',
+        usageStatistics: false,
+        height: '500px',
+        language:'<bean:message key="global.language.code" />'
+	    })
+
+    function writeToMessage() {
+        document.getElementsByName("message")[0].value = editor.getMarkdown();
+    }
+<% } else { %>
+
+    function writeToMessage() {
+        console.log("saving");
+    }
+
+<% } %>
+</script>
 </html:html>
