@@ -229,7 +229,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 		<td class="MainTableTopRowRightColumn">
 		<table class="TopStatusBar" width=100%>
 			<tr>
-				<td>Attach document for: <%=demoName%></td>
+				<td><bean:message key="oscarMessenger.CreateMessage.AttachFile" />: <%=demoName%></td>
 				<td>&nbsp;</td>
 				        <td align="right" >
             <i class=" icon-question-sign"></i> 
@@ -255,7 +255,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 							<tr>
 								<td class="messengerButtonsA"><a href="#"
 									onclick="javascript:top.window.close()"
-									class="btn btn-link"> Close Attachment </a></td>
+									class="btn btn-link"><bean:message key="Close" /></a></td>
 							</tr>
 						</table>
 						</td>
@@ -274,8 +274,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 
 					<table border="0" cellpadding="0" cellspacing="1" width="400" class="table table-striped">
 						<tr>
-							<th align="left"  colspan="3">Demographic
-							information</th>
+							<th align="left"  colspan="3"><bean:message key="billing.billingCorrection.msgPatientInformation" /> :</th>
 						</tr>
 						<tr>
 							<td>
@@ -284,18 +283,18 @@ request.getSession().setAttribute("EctSessionBean",bean);
 								style="display:none" /> <html:multibox property="indexArray"
 								value="<%= Integer.toString(indexCount++) %>" /> <input
 								type=checkbox name="titleArray"
-								value="<%=demoName%> information" style="display: none" /></td>
-							<td><%=demoName%> Information</td>
+								value="<%=demoName%> <bean:message key="ChooseDrug.msgInfo" />" style="display: none" /></td>
+							<td><%=demoName%> <bean:message key="ChooseDrug.msgInfo" /></td>
 							<td>
 							<% if ( request.getParameter("isAttaching") == null ) { %> <input
-								type="button" class="btn" value=Preview onclick="PreviewPDF( '<%=currentURI%>')" />
+								type="button" class="btn" value=<bean:message key="inboxmanager.document.readerView" /> onclick="PreviewPDF( '<%=currentURI%>')" />
 							<% } %> &nbsp;</td>
 						</tr>
 
 
 						<tr>
 
-							<th align="left"  colspan="3">Encounters:</th>
+							<th align="left"  colspan="3"><bean:message key="provider.pref.section.encounter" /> :</th>
 
 						</tr>
 						<%
@@ -314,12 +313,12 @@ request.getSession().setAttribute("EctSessionBean",bean);
 								style="display:none" /> <html:multibox property="indexArray"
 								value="<%= Integer.toString(indexCount++) %>" /> <input
 								type=checkbox name="titleArray"
-								value='Encounter: <%=ec.getTimestamp().toString()%>'
+								value='<bean:message key="provider.pref.section.encounter" />: <%=ec.getTimestamp().toString()%>'
 								style="display: none" /></td>
 							<td><%=ec.getTimestamp().toString()%></td>
 							<td>
 							<% if ( request.getParameter("isAttaching") == null ) { %> <input
-								type=button class="btn" value="Preview" onclick="PreviewPDF( '<%=currentURI%>')" />
+								type=button class="btn" value=<bean:message key="inboxmanager.document.readerView" /> onclick="PreviewPDF( '<%=currentURI%>')" />
 							<% } %> &nbsp;</td>
 						</tr>
 
@@ -331,7 +330,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 						<tr>
 
 							<th align="left" colspan="3">
-							Prescriptions</th>
+							<bean:message key="provider.pref.section.rx" /> :</th>
 
 
 						</tr>
@@ -364,12 +363,12 @@ request.getSession().setAttribute("EctSessionBean",bean);
 							<html:checkbox property="uriArray" value="<%=currentURI%>"
 								style="display:none" /> <html:multibox property="indexArray"
 								value="<%= Integer.toString(indexCount++) %>" /> <input
-								type=checkbox name="titleArray" value='Current prescriptions'
+								type=checkbox name="titleArray" value='<bean:message key="SearchDrug.msgShowCurrent" /> <bean:message key="provider.pref.section.rx" />'
 								style="display: none" /></td>
-							<td>Current prescriptions</td>
+							<td><bean:message key="SearchDrug.msgShowCurrent" /> <bean:message key="provider.pref.section.rx" /></td>
 							<td>
 							<% if ( request.getParameter("isAttaching") == null ) { %> <input
-								type="button" class="btn" value=Preview onclick="PreviewPDF( '<%=currentURI%>')" />
+								type="button" class="btn" value=<bean:message key="inboxmanager.document.readerView" /> onclick="PreviewPDF( '<%=currentURI%>')" />
 							<% } %> &nbsp;</td>
 						</tr>
 
@@ -392,7 +391,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 							<td colspan="3" align="center">
 							<% if ( request.getParameter("isAttaching") != null ) { %> <input
 								type=text name=status value='' /> <% } else { %> <input
-								type="button" class="btn btn-primary" name="Attach" value="Attach Document"
+								type="button" class="btn btn-primary" name="Attach" value="<bean:message key="oscarEncounter.Index.btnAttachNote" />"
 								onclick="AttachingPDF(-1)" /> <% } %> <br />
 							</td>
 						</tr>
