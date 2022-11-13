@@ -360,6 +360,8 @@ if (openInTabs){
         		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
+alert("name="+name);
+return false;
 				var num=formid.split("_");
 				var doclabid=num[1];
 				if(doclabid){
@@ -460,7 +462,7 @@ if (openInTabs){
                                                     
                                                     
                                                         <input type="submit" id="ackBtn_<%=docId%>" class="btn  btn-primary" style="font-size:12px;padding: 0px;"value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-                                                        <input type="button" value="Comment" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
+                                                        <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
 															boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
@@ -468,12 +470,8 @@ if (openInTabs){
 														<input type="button" class="btn" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> value="<bean:message key="global.btnSendToPHR"/>" onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
                                                         <%}%>
                                                     <%}%>
-                                                        <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');">
-                                                    <%if( !ackedOrFiled ) { %>
-                                                        <input type="button" id="fileBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnFile"/>" onclick="fileDoc('<%=docId%>');">
-                                                    <%} %>
-                                                        <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">                                                        
-                                                        <input type="button" id="printBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnPrint"/> " onClick="popup(700,960,'<%=url2%>','file download')">
+                                                        <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');">                                                      
+                                                        <input type="button" id="printBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnPDF"/> " onClick="popup(700,960,'<%=url2%>','file download')">
                                                         <% 
                                                         String btnDisabled = "disabled";
                                                         if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !demographicID.equals("-1") ) {
@@ -482,9 +480,7 @@ if (openInTabs){
                                                         
                                                         %>
                                                         <input type="button" id="msgBtn_<%=docId%>" class="btn" value="Msg" onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=docId%>')" <%=btnDisabled %>/>
-                                                        <input type="button" id="RxBtn_<%=docId%>" class="btn" value="&nbsp;Rx&nbsp;" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', false)" <%=btnDisabled %>/>
-
-
+                                                        
                                                         <!--input type="button" id="ticklerBtn_<%=docId%>" class="btn" value="Tickler" onclick="handleDocSave('<%=docId%>','addTickler')"/-->
                                                        <%
                                                        if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
@@ -496,6 +492,11 @@ if (openInTabs){
                                                         
                                                         <input type="button" id="mainEchart_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>)" <%=btnDisabled %>>
                                                         <input type="button" id="mainMaster_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>')" <%=btnDisabled %>>
+                                                        <input type="button" id="RxBtn_<%=docId%>" class="btn" value="&nbsp;Rx&nbsp;" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', false)" <%=btnDisabled %>/>
+                                                        <%if( !ackedOrFiled ) { %>
+                                                        <input type="button" id="fileBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnFile"/>" onclick="fileDoc('<%=docId%>');">
+                                                    <%} %>
+                                                        <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> 
                                                         <input type="button" id="mainApptHistory_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=docId%>')" <%=btnDisabled %>>
 
                                                         <input type="button" id="refileDoc_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
@@ -568,7 +569,7 @@ if (openInTabs){
                                 </tr>
 
                             </table>
-
+                                                 
                             <form id="forms_<%=docId%>" onsubmit="return updateDocument('forms_<%=docId%>');">
                                 <input type="hidden" name="method" value="documentUpdateAjax" />
                                 <input type="hidden" name="documentId" value="<%=docId%>" />
@@ -843,8 +844,81 @@ if (openInTabs){
                     </td>
                 	<td>&nbsp;</td>
                 </tr> 
-                <tr><td colspan="9" ><hr width="100%" color="red"></td></tr>
+
+                <tr><td colspan="9" >
+   <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !ackedOrFiled ) {%>
+                                                    
+                                                    
+                                                    									<%
+										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
+										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
+										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+
+									%>
+											<div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
+											  <%
+											    try {
+												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
+												  	if(macros != null) {
+													  	for(int x=0;x<macros.size();x++) {
+													  		JSONObject macro = macros.getJSONObject(x);
+													  		String name = macro.getString("name");
+													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
+													  		
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=docId%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  	}
+												  	}
+											    }catch(JSONException e ) {
+											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
+											    }
+											  %>
+											    
+											  </div>
+											</div>
+									<% } %>
+									
+                                                    
+                                                    
+                                                        <input type="submit" id="ackBtn2_<%=docId%>" class="btn  btn-primary" style="font-size:12px;padding: 0px;"value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
+                                                        <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
+                                                        <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
+															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
+															boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
+														%>
+														<input type="button" class="btn" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> value="<bean:message key="global.btnSendToPHR"/>" onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
+                                                        <%}%>
+                                                    <%}%>
+                                                        <input type="button" id="fwdBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');">                                                      
+                                                        <input type="button" id="printBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnPDF"/> " onClick="popup(700,960,'<%=url2%>','file download')">
+                                                        <input type="button" id="msgBtn2_<%=docId%>" class="btn" value="Msg" onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=docId%>')" <%=btnDisabled %>/>
+                                                        
+                                                        <!--input type="button" id="ticklerBtn2_<%=docId%>" class="btn" value="Tickler" onclick="handleDocSave('<%=docId%>','addTickler')"/-->
+                                                       <%
+                                                       if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
+                                                       %>
+                                                        <input type="button" id="mainTickler2_<%=docId%>" class="btn" value="Tickler" onClick="popupPatientTicklerPlus(710, 1024,'<%= request.getContextPath() %>/Tickler.do?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
+                                                        <% } else { %>
+                                                        <input type="button" id="mainTickler2_<%=docId%>" class="btn" value="Tickler" onClick="popupPatientTickler(710, 1024,'<%= request.getContextPath() %>/tickler/ticklerAdd.jsp?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
+                                                        <% } %>
+                                                        
+                                                        <input type="button" id="mainEchart2_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>)" <%=btnDisabled %>>
+                                                        <input type="button" id="mainMaster2_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>')" <%=btnDisabled %>>
+                                                        <input type="button" id="RxBtn2_<%=docId%>" class="btn" value="&nbsp;Rx&nbsp;" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', false)" <%=btnDisabled %>/>
+                                                        <%if( !ackedOrFiled ) { %>
+                                                        <input type="button" id="fileBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnFile"/>" onclick="fileDoc('<%=docId%>');">
+                                                    <%} %>
+                                                        <input type="button" id="closeBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> 
+                                                        <input type="button" id="mainApptHistory2_<%=docId%>" class="btn" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=docId%>')" <%=btnDisabled %>>
+
+                                                        <input type="button" id="refileDoc2_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
+
+
+
+            <hr width="100%" color="red"></td></tr>
             </table>
+
         </div>        
 <!--
 
