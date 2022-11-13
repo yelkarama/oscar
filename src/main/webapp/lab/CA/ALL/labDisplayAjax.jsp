@@ -1238,7 +1238,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
                         <table width="100%" border="0" cellspacing="0" cellpadding="3" class="MainTableBottomRowRightColumn" bgcolor="#003399">
                             <tr>
-                                <td align="left" width="50%">
+                                <td align="left" width="100%">
                                     <% if ( !ackFlag ) { %>
 <%
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
@@ -1290,9 +1290,6 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
              
                                     <input type="button" class="btn" id="createLabel2" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
-                                </td>
-                                <td width="50%" valign="center" align="left">
-                                    <span class="Field2"><i><bean:message key="oscarMDS.segmentDisplay.msgReportEnd"/></i></span>
                                 </td>
                             </tr>
                         </table>
