@@ -921,11 +921,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 675, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
                                     <input type="button" class="btn" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
                                     <input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
-
-                                    <input type="button" class="btn" value="Msg" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
-                                    <input type="button" class="btn" value="Tickler" onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="caseload.msgMsg"/>" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/>" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/>
-
                                     <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnEChart"/>" onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
                                     <% } %>
@@ -933,19 +931,16 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                         String mRecordWinName = "Master" + demographicID;
                                         String mRecordUrl = "../../../demographic/demographiccontrol.jsp?demographic_no=" + demographicID + "&displaymode=edit&dboperation=search_detail";
                                     %>
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMRecord"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
-				    <input type="button" class="btn" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
-
-
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
+                                    <input type="button" class="btn" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
                                    	<% if (bShortcutForm) { %>
 									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
 									<% } %>
 									<% if (bShortcutForm2) { %>
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
-
 <% if(recall){%>
-<input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+									<input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
 <%}%>
 									<%
 										if(remoteLabKey == null || "".equals(remoteLabKey.length())) {
@@ -2121,23 +2116,65 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 <%-- FOOTER --%>
                         <table width="100%" border="0" cellspacing="0" cellpadding="3" class="MainTableBottomRowRightColumn" bgcolor="#003399">
                             <tr>
-                                <td align="left" width="50%">
-                                    <% if ( !ackFlag ) { %>
-                                    <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge" />" onclick="<%=ackLabFunc%>" >
+                                <td align="left" width="100%">
+                                                                        <%
+                                    if ( !ackFlag ) {
+                                    %>
+									<%
+										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
+										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
+										if(up != null && !StringUtils.isEmpty(up.getValue())) {
+									%>
+											  <div class="dropdowns">
+											  <button class="dropbtns">Macros<span class="caret" style="vertical-align: middle;"></span></button>
+											  <div class="dropdowns-content">
+
+											  
+											  <%
+											    try {
+												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
+												  	if(macros != null) {
+													  	for(int x=0;x<macros.size();x++) {
+													  		JSONObject macro = macros.getJSONObject(x);
+													  		String name = macro.getString("name");
+													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
+													  		
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  	}
+												  	}
+											    }catch(JSONException e ) {
+											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
+											    }
+											  %>
+											    
+											  </div>
+											</div>
+									<% } %>
+                                    <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
                                     <% } %>
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(397, 700, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 675, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
                                     <input type="button" class="btn" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
                                     <input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
-                                        <indivo:indivoRegistered demographic="<%=demographicID%>" provider="<%=providerNo%>">
-                                        <input type="button" class="btn" value="<bean:message key="global.btnSendToPHR"/>" onClick="sendToPHR('<%=segmentID%>', '<%=demographicID%>')">
-                                        </indivo:indivoRegistered>
-                                    <% if ( searchProviderNo != null ) { // we were called from e-chart %>
+                                    <input type="button" class="btn" value="<bean:message key="caseload.msgMsg"/>" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/>" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/>
+                         <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnEChart"/>" onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
-
-                                    <% } %>
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMRecord"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
+                         <% } %><input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
+                                    <input type="button" class="btn" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
+                                   	<% if (bShortcutForm) { %>
+									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
+									<% } %>
+									<% if (bShortcutForm2) { %>
+									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
+									<% } %>
+<% if(recall){%>
+									<input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+<%}%>
+									<input type="button" class="btn" id="createLabel2_<%=segmentID%>" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">
                                 </td>
+                            </tr><tr><td align="left" width="50%"></td>
                                 <td width="50%" valign="center" align="left">
                                 <% if ("CLS".equals(handler.getMsgType())) { %>
 									<span class="Field2"><i><bean:message key="oscarMDS.segmentDisplay.msgReportEndCLS"/></i></span>
