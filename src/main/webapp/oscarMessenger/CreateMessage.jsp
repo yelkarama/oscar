@@ -178,6 +178,13 @@ if ( markdownProp == null ) {
 
 <script type="text/javascript">
 
+    function disableArchive(){
+        var theLink=document.referrer;
+        if (theLink.indexOf('messageID') == -1 ) {
+            $('#sendArchive').hide();
+        }
+    }
+
     function checkGroup(group)
     {
     	$.each($("input." + group.id), function(){
@@ -240,7 +247,6 @@ if ( markdownProp == null ) {
 				var theArchiveLink=theLinkComponents[0].substring(0,theLinkComponents[0].lastIndexOf('/'))+'/DisplayMessages.do?btnDelete=archive&messageNo='+theKeyValue[1];
 			}
 		}
-	
 		oRequest.open('GET', theArchiveLink, false);
 		oRequest.send();
 		document.forms[0].submit();
@@ -312,6 +318,7 @@ if ( markdownProp == null ) {
         editor.setMarkdown("<br>" + document.getElementsByName("message")[0].value);
         editor.moveCursorToStart();
  <% } %>
+        disableArchive();
 	})
 	 	 
 </script>
@@ -505,7 +512,7 @@ if ( markdownProp == null ) {
 									<td><input type="submit" class="btn btn-primary" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendMessage"/>">
 									</td>
-									<td><input type="button" class="btn" onclick="writeToMessage();XMLHttpRequestSendnArch();"
+									<td><input type="button" class="btn" id="sendArchive" onclick="writeToMessage();XMLHttpRequestSendnArch();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" >
 									</td>
 								</tr>
