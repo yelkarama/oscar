@@ -505,8 +505,8 @@ if ( markdownProp == null ) {
 									<td><input type="submit" class="btn btn-primary" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendMessage"/>">
 									</td>
-									<td><input type="button" class="btn" onclick="writeToMessage();"
-										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" onClick="XMLHttpRequestSendnArch()">
+									<td><input type="button" class="btn" onclick="writeToMessage();XMLHttpRequestSendnArch();"
+										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" >
 									</td>
 								</tr>
 							</table>
