@@ -251,6 +251,10 @@ public class CaseManagementPrint {
 		CaseManagementPrintPdf printer = new CaseManagementPrintPdf(request, out);
 		printer.printDocHeaderFooter();
 		printer.printCPP(cpp);
+		if (cpp != null){
+			// Only print allergies when printing CPP
+			printer.printAllergies(demographicNo);
+		}
 		printer.printRx(demoNo, othermeds);
 		printer.printPreventions(preventions);
 		printer.printNotes(notes);
