@@ -383,10 +383,10 @@ if ( markdownProp == null ) {
 						
 						<td valign=top><br>
 
-							<div class="ChooseRecipientsBox" style="max-height: 450px; overflow-y: scroll;">
+							<div class="ChooseRecipientsBox" style="max-height: <%=renderMarkdown?"576px;":"420px;"%> overflow-y: scroll;">
 							<table>                                                     
                                 <tr>
-								<td style="padding: 10px 5px;"  class="form-inline"><!--list of the providers cell Start-->												
+								<td style="padding: 10px 5px; min-width:fit-content;"  class="form-inline"><!--list of the providers cell Start-->												
 									<%if(recall){ %>
 										<div>
 											<input name="provider" value="<%=delegate%>" type="checkbox" checked> 
@@ -408,15 +408,13 @@ if ( markdownProp == null ) {
 												</summary>
 																																			
 												<c:forEach items="${ group.value }" var="member">
-													<div class="group_member_contact">										
-														
+													<div class="group_member_contact" style="white-space: nowrap;">
 														<input type="checkbox" name="provider" class="member_group_${ group.key.id }" 
 															id="${ group.key.id }-${ member.id.compositeId }" value="${ member.id.compositeId }" />
 														
 														<label for="${ group.key.id }-${ member.id.compositeId }" >
 															<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />															
 														</label>
-														
 													</div>
 												</c:forEach>
 												
@@ -485,14 +483,15 @@ if ( markdownProp == null ) {
 														<c:set var="providerChecked" value="true" />
 													</c:if>
 												</c:forEach>
-	
-												<div class="member_contact">								
+	                                            
+												<div class="member_contact" style="white-space: nowrap;">								
 													<input type="checkbox" name="provider" id="0-${ member.id.compositeId }" 
 														value="${ member.id.compositeId }"  ${ providerChecked ? 'checked' : '' }/>
 													<label for="0-${ member.id.compositeId }" >
 														<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />															
 													</label>												
 												</div>
+                                                   
 											</c:forEach>
 										</details>
 									</td><!--list of the providers cell end-->
@@ -503,7 +502,7 @@ if ( markdownProp == null ) {
 					<td valign=top colspan="2"><!--Message and Subject Cell-->
                     <br>
 					<bean:message key="oscarMessenger.CreateMessage.formSubject" /> :
-					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xlarge" value="${messageSubject}"/> <br>
+					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xxlarge" value="${messageSubject}"/> <br>
 					<br>
                     <div id="messagediv"></div>
 					<html:textarea name="msgCreateMessageForm" property="message" rows="15" style="min-width: 100%" value="${messageBody}"/> 
