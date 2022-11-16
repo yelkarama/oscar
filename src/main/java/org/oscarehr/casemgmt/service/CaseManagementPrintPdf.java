@@ -330,6 +330,62 @@ public class CaseManagementPrintPdf {
 
         }
     }
+    public void printRx(String demoNo, List<CaseManagementNote> cpp, Calendar startDate, Calendar endDate) throws DocumentException {
+        if( demoNo == null )
+            return;
+
+        if( newPage )
+            document.newPage();
+        else
+            newPage = true;
+
+        Paragraph p = new Paragraph();
+        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
+        Phrase phrase = new Phrase(LEADING, "", obsfont);
+        p.setAlignment(Paragraph.ALIGN_CENTER);
+        phrase.add("Patient Rx History");
+        p.add(phrase);
+        document.add(p);
+
+        Font normal = new Font(bf, FONTSIZE, Font.NORMAL);
+
+        RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
+        List<RxPrescriptionData.Prescription> list = new ArrayList<RxPrescriptionData.Prescription>();
+        for (RxPrescriptionData.Prescription prescription :  prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo))){
+            if(startDate.getTime().before(prescription.getRxDate()) && endDate.getTime().after(prescription.getRxDate())){
+                // add the prescription to the list if it is within the date range
+                list.add(prescription);
+            }
+        }
+
+        Font curFont;
+        for(int idx = 0; idx < list.size(); ++idx ) {
+            RxPrescriptionData.Prescription drug = list.get(idx);
+            p = new Paragraph();
+            p.setAlignment(Paragraph.ALIGN_LEFT);
+            if(drug.isCurrent() && !drug.isArchived()){
+                curFont = normal;
+                phrase = new Phrase(LEADING, "", curFont);
+                phrase.add(formatter.format(drug.getRxDate()) + " - ");
+                phrase.add(drug.getFullOutLine().replaceAll(";", " "));
+                p.add(phrase);
+                document.add(p);
+            }
+        }
+
+        if (cpp != null ){
+            List<CaseManagementNote>notes = cpp;
+            if (notes != null && notes.size() > 0){
+                p = new Paragraph();
+                p.setAlignment(Paragraph.ALIGN_LEFT);
+                phrase = new Phrase(LEADING, "\nOther Meds\n", obsfont);
+                p.add(phrase);
+                document.add(p);
+                newPage = false;
+                this.printNotes(notes);
+            }
+        }
+    }
 
     public void printCPP(HashMap<String,List<CaseManagementNote> >cpp) throws DocumentException {
         if( cpp == null )
