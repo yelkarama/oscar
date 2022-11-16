@@ -131,7 +131,6 @@ if ( markdownProp == null ) {
 } else {
     renderMarkdown = oscar.OscarProperties.getInstance().getBooleanProperty("encounter.render_markdown", "true") && Boolean.parseBoolean(markdownProp.getValue());
 }
-renderMarkdown = false;  //disabled until feature complete
 %>
 
 <html:html locale="true">
@@ -178,6 +177,13 @@ renderMarkdown = false;  //disabled until feature complete
  </style>
 
 <script type="text/javascript">
+
+    function disableArchive(){
+        var theLink=document.referrer;
+        if (theLink.indexOf('messageID') == -1 ) {
+            $('#sendArchive').hide();
+        }
+    }
 
     function checkGroup(group)
     {
@@ -241,7 +247,6 @@ renderMarkdown = false;  //disabled until feature complete
 				var theArchiveLink=theLinkComponents[0].substring(0,theLinkComponents[0].lastIndexOf('/'))+'/DisplayMessages.do?btnDelete=archive&messageNo='+theKeyValue[1];
 			}
 		}
-	
 		oRequest.open('GET', theArchiveLink, false);
 		oRequest.send();
 		document.forms[0].submit();
@@ -273,7 +278,7 @@ renderMarkdown = false;  //disabled until feature complete
 	    		console.log(data);
 	    	},
 	    	error: function (jqXHR, textStatus, errorThrown){
-	 			alert("Error: " + textStatus);
+	 			console.log("Error: " + textStatus);
 	    	}
 		});
 	
@@ -313,6 +318,7 @@ renderMarkdown = false;  //disabled until feature complete
         editor.setMarkdown("<br>" + document.getElementsByName("message")[0].value);
         editor.moveCursorToStart();
  <% } %>
+        disableArchive();
 	})
 	 	 
 </script>
@@ -377,10 +383,10 @@ renderMarkdown = false;  //disabled until feature complete
 						
 						<td valign=top><br>
 
-							<div class="ChooseRecipientsBox" style="max-height: 450px; overflow-y: scroll;">
+							<div class="ChooseRecipientsBox" style="max-height: <%=renderMarkdown?"576px;":"420px;"%> overflow-y: scroll;">
 							<table>                                                     
                                 <tr>
-								<td style="padding: 10px 5px;"  class="form-inline"><!--list of the providers cell Start-->												
+								<td style="padding: 10px 5px; min-width:fit-content;"  class="form-inline"><!--list of the providers cell Start-->												
 									<%if(recall){ %>
 										<div>
 											<input name="provider" value="<%=delegate%>" type="checkbox" checked> 
@@ -402,15 +408,13 @@ renderMarkdown = false;  //disabled until feature complete
 												</summary>
 																																			
 												<c:forEach items="${ group.value }" var="member">
-													<div class="group_member_contact">										
-														
+													<div class="group_member_contact" style="white-space: nowrap;">
 														<input type="checkbox" name="provider" class="member_group_${ group.key.id }" 
 															id="${ group.key.id }-${ member.id.compositeId }" value="${ member.id.compositeId }" />
 														
 														<label for="${ group.key.id }-${ member.id.compositeId }" >
 															<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />															
 														</label>
-														
 													</div>
 												</c:forEach>
 												
@@ -479,14 +483,15 @@ renderMarkdown = false;  //disabled until feature complete
 														<c:set var="providerChecked" value="true" />
 													</c:if>
 												</c:forEach>
-	
-												<div class="member_contact">								
+	                                            
+												<div class="member_contact" style="white-space: nowrap;">								
 													<input type="checkbox" name="provider" id="0-${ member.id.compositeId }" 
 														value="${ member.id.compositeId }"  ${ providerChecked ? 'checked' : '' }/>
 													<label for="0-${ member.id.compositeId }" >
 														<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />															
 													</label>												
 												</div>
+                                                   
 											</c:forEach>
 										</details>
 									</td><!--list of the providers cell end-->
@@ -497,7 +502,7 @@ renderMarkdown = false;  //disabled until feature complete
 					<td valign=top colspan="2"><!--Message and Subject Cell-->
                     <br>
 					<bean:message key="oscarMessenger.CreateMessage.formSubject" /> :
-					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xlarge" value="${messageSubject}"/> <br>
+					<html:text name="msgCreateMessageForm" property="subject" styleClass="input-xxlarge" value="${messageSubject}"/> <br>
 					<br>
                     <div id="messagediv"></div>
 					<html:textarea name="msgCreateMessageForm" property="message" rows="15" style="min-width: 100%" value="${messageBody}"/> 
@@ -506,7 +511,7 @@ renderMarkdown = false;  //disabled until feature complete
 									<td><input type="submit" class="btn btn-primary" onclick="writeToMessage();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendMessage"/>">
 									</td>
-									<td><input type="button" class="btn" onclick="writeToMessage();XMLHttpRequestSendnArch();"
+									<td><input type="button" class="btn" id="sendArchive" onclick="writeToMessage();XMLHttpRequestSendnArch();"
 										value="<bean:message key="oscarMessenger.CreateMessage.btnSendnArchiveMessage"/>" >
 									</td>
 								</tr>
