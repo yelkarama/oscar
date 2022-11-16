@@ -1,7 +1,7 @@
 -- PHC per Ian Pun, patch up the errorcodes
 CREATE TABLE IF NOT EXISTS `billing_on_errorCode` (
   `code` varchar(5) NOT NULL,
-  `description` varchar(255) NOT NULL DEFAULT ''
+  `description` varchar(255) NOT NULL
 );
 
 INSERT INTO `billing_on_errorCode` (`code`, `description`) VALUES
