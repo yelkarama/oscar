@@ -255,7 +255,12 @@ public class CaseManagementPrint {
 			// Only print allergies when printing CPP
 			printer.printAllergies(demographicNo);
 		}
-		printer.printRx(demoNo, othermeds);
+		if(startDate!=null&&endDate!=null){
+			printer.printRx(demoNo, othermeds, startDate, endDate);
+		}
+		else{
+			printer.printRx(demoNo, othermeds);
+		}
 		printer.printPreventions(preventions);
 		printer.printNotes(notes);
 
