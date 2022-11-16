@@ -45,6 +45,12 @@ echo loading measurementMapData.sql...
 mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < measurementMapData.sql
 echo loading expire_oscardoc.sql
 mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < expire_oscardoc.sql
+
+echo changing to release directory...
+cd ../../release
+echo loading patch file...
+mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < patch19.sql
+
 echo all done!
 echo the default user is oscardoc
 echo password mac2002
