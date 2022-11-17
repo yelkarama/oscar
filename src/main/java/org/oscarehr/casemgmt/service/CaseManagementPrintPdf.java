@@ -261,7 +261,13 @@ public class CaseManagementPrintPdf {
                  curFont = normal;
                  phrase = new Phrase(LEADING, "", curFont);
                  String refused = prevention.isRefused()?" (Refused)":"";
-                 phrase.add(formatter.format(prevention.getPreventionDate()) + " - ");
+                 Date preventionDate = prevention.getPreventionDate();
+                 if (preventionDate == null) {
+                     phrase.add("No Prevention Date Set - ");
+                 }
+                 else {
+                     phrase.add(formatter.format(preventionDate) + " - ");
+                 }
                  phrase.add(prevention.getPreventionType() + refused);
                  p.add(phrase);
                  document.add(p);
