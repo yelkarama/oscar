@@ -58,11 +58,12 @@ if(!authed) {
 	</logic:equal>
 </logic:present>
 
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
+<!--<link rel="stylesheet" type="text/css" href="encounterStyles.css">-->
 <html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 <%
     String pdfAttch = (String) request.getAttribute("PDFAttachment");
     
@@ -78,17 +79,17 @@ if(!authed) {
 <body class="BodyStyle" vlink="#0000FF">
 <!--  -->
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+<table class="MainTable" id="scrollNumber1" name="encounterTable" width="100%">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Oscar Messenger</td>
+		<td class="MainTableTopRowLeftColumn">&nbsp;<h4><i class="icon-envelope"></i>&nbsp;&nbsp;<bean:message key="oscarMessenger.ViewMessage.msgMessenger" /></h4></td>
 		<td class="MainTableTopRowRightColumn">
 		<table class="TopStatusBar">
 			<tr>
-				<td>OSCAR Messenger Attachment</td>
+				<td><bean:message key="oscarMessenger.ViewMessage.msgAttachments" /></td>
 				<td></td>
-				<td style="text-align: right"><oscar:help keywords="message" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')">About</a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')">License</a></td>
+				<td style="text-align: right; width:100%;" ><oscar:help keywords="message" key="app.top1"/> <i class="icon-question-sign"></i> <a
+					href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about" /></a> <i class="icon-info-sign"></i> <a
+					href="javascript:popupStart(300,400,'License.jsp')"><bean:message key="global.license" /></a></td>
 			</tr>
 		</table>
 		</td>
@@ -103,25 +104,26 @@ if(!authed) {
 			<table cellspacing=3>
 				<tr>
 					<td>
-					<table class=messButtonsA cellspacing=0 cellpadding=3>
+					<table  cellspacing=0 cellpadding=3>
 						<tr>
-							<td class="messengerButtonsA"><a href="#"
+							<td ><a href="#" class="btn btn-link"
 								onclick="javascript:top.window.close()" class="messengerButtons">
-							Close Attachment </a></td>
+							<bean:message key="global.btnClose" /> </a></td>
 						</tr>
 					</table>
 					</td>
 				</tr>
 			</table>
-			<table>
+			<table class="table table-striped">
 
 				<% Vector attVector = Doc2PDF.getXMLTagValue(pdfAttch, "TITLE" ); %>
 				<% for ( int i = 0 ; i < attVector.size(); i++) { %>
 				<tr>
 					<td bgcolor="#DDDDFF"><%=(String) attVector.get(i)%></td>
 					<td bgcolor="#DDDDFF"><input type=submit
+                        class="btn"
 						onclick=" document.forms[0].file_id.value = <%=i%>"
-						value="Download" /></td>
+						value="<bean:message key="marc-hi.patientDocuments.button.downloadSelected" />" /></td>
 				</tr>
 				<% }  %>
 				<html:hidden property="file_id" />

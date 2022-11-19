@@ -1,5 +1,5 @@
 -- patch sql  for build 932 and newer
--- updated March 22, 2022
+-- updated July 18, 2022 with Dennis' cleanup code
 -- disabled strict mode
 -- this is the delta from May 1, 2019 containing more recent updates
 -- this is used in debs numbered 1 and newer in the OSCAR 19 series
@@ -66,7 +66,6 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS add_column $$
 CREATE PROCEDURE add_column
 (
-    given_database VARCHAR(64),
     given_table    VARCHAR(64),
     given_column   VARCHAR(64),
     given_defin    VARCHAR(64)
@@ -79,27 +78,27 @@ theStart:BEGIN
 
     SELECT COUNT(1) INTO TableIsThere
     FROM INFORMATION_SCHEMA.STATISTICS
-    WHERE table_schema = given_database
+    WHERE table_schema = DATABASE()
     AND   table_name   = given_table;
 
     IF TableIsThere = 0 THEN
-        SELECT CONCAT(given_database,'.',given_table, 
+        SELECT CONCAT(DATABASE(),'.',given_table, 
 	' does not exist.  Unable to add ', given_column) add_columnMessage;
 	LEAVE theStart;
     ELSE
         SET ColumnIsThere = (  SELECT COUNT(*) 
                     FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE   TABLE_SCHEMA = given_database AND 
+                    WHERE   TABLE_SCHEMA = DATABASE() AND 
                             TABLE_NAME = given_table AND 
                             COLUMN_NAME = given_column );
         IF ColumnIsThere = 0 THEN
- 		    SET @sqlstmt = CONCAT('ALTER TABLE ',given_database,'.',given_table,' ADD ',given_column,' ', given_defin);
+ 		    SET @sqlstmt = CONCAT('ALTER TABLE ',DATABASE(),'.',given_table,' ADD ',given_column,' ', given_defin);
 		    PREPARE st FROM @sqlstmt;
 		    EXECUTE st;
 		    DEALLOCATE PREPARE st;
 	    ELSE
 		    SELECT CONCAT('Column ',given_column,' Already Exists ON Table ',
-		    given_database,'.',given_table) add_columnMessage;
+		    DATABASE(),'.',given_table) add_columnMessage;
 	    END IF;
 	 END IF;
 END $$
@@ -234,6 +233,17 @@ END IF;
 -- update-2021-10-20.sql for BCAR 2020
 IF NOT EXISTS( (SELECT * FROM `encounterForm` WHERE `form_name`='BC-AR 2020') ) THEN
     INSERT INTO `encounterForm` (`form_name`,`form_value`,`form_table`,`hidden`) VALUES ('BC-AR 2020', '../form/formBCAR2020pg1.jsp?demographic_no=', 'formBCAR2020', 1);
+END IF;
+
+-- update-2022-05-01.sql for Rourke 2017
+IF NOT EXISTS( (SELECT * FROM `encounterForm` WHERE `form_name`='Rourke2017') ) THEN
+    INSERT INTO `encounterForm` (`form_name`,`form_value`,`form_table`,`hidden`) VALUES ('Rourke2017', '../form/formrourke2017complete.jsp?demographic_no=', 'formRourke2017', 1);
+END IF;
+
+-- update-2022-06-24.sql for preferredPhone apconfig.xml
+IF EXISTS( (SELECT * FROM `eform` WHERE `form_html` LIKE "%phone_best%" ) ) THEN
+    UPDATE `eform` SET `form_html` = REPLACE(`form_html`,"phone_best","preferredPhone");
+    UPDATE `eform_data` SET `form_data` = REPLACE(`form_data`,"phone_best","preferredPhone");
 END IF;
 
 -- phc add PHQ9 and GAD7 scores Jan 25, 2022
@@ -478,11 +488,11 @@ DELIMITER ;
 
 -- update-2019-03-28.sql
 
-CALL add_column('oscar_15','groupMembers_tbl','facilityId','int(6)');
-CALL add_column('oscar_15','groupMembers_tbl','clinicLocationNo','int(6)');
-CALL add_column('oscar_15','messagelisttbl','destinationFacilityId','int(6)');
-CALL add_column('oscar_15','messagelisttbl','sourceFacilityId','int(6)');
-CALL add_column('oscar_15','oscar_msg_type','code','varchar(255)');
+CALL add_column('groupMembers_tbl','facilityId','int(6)');
+CALL add_column('groupMembers_tbl','clinicLocationNo','int(6)');
+CALL add_column('messagelisttbl','destinationFacilityId','int(6)');
+CALL add_column('messagelisttbl','sourceFacilityId','int(6)');
+CALL add_column('oscar_msg_type','code','varchar(255)');
 
 
 update groupMembers_tbl set facilityId = 0 where facilityId is null;
@@ -557,7 +567,7 @@ CREATE TABLE IF NOT EXISTS messageFolder (
 );
 
 
-CALL add_column('oscar_15','messagelisttbl','folderid',"INT(10) DEFAULT 0");
+CALL add_column('messagelisttbl','folderid',"INT(10) DEFAULT 0");
 
 
 
@@ -592,9 +602,9 @@ CREATE TABLE IF NOT EXISTS DHIRTransactionLog (
   PRIMARY KEY(id)
 );
 
-CALL add_column('oscar_15','CVCImmunization','typicalDose',"varchar(255)");
-CALL add_column('oscar_15','CVCImmunization','typicalDoseUofM',"varchar(255)");
-CALL add_column('oscar_15','CVCImmunization','strength',"varchar(255)");
+CALL add_column('CVCImmunization','typicalDose',"varchar(255)");
+CALL add_column('CVCImmunization','typicalDoseUofM',"varchar(255)");
+CALL add_column('CVCImmunization','strength',"varchar(255)");
 
 
 -- update-2020-03-26.sql
@@ -632,7 +642,7 @@ CREATE TABLE IF NOT EXISTS `AppointmentDxLink` (
   KEY(code)
 );
 -- PHC fix, depending on how you upgraded sometimes the table exists but is missing the column
-CALL add_column('oscar_15','AppointmentDxLink','ageRange',"VARCHAR(20)");
+CALL add_column('AppointmentDxLink','ageRange',"VARCHAR(20)");
 
 -- update-2020-07-07.sql
 
@@ -653,7 +663,7 @@ CREATE TABLE IF NOT EXISTS `UAO` (
   );
 
 
-CALL add_column('oscar_15','CVCImmunization','shelfStatus',"varchar(255)");
+CALL add_column('CVCImmunization','shelfStatus',"varchar(255)");
 
 -- update-2019-07-22.sql
 
@@ -705,7 +715,7 @@ CREATE TABLE IF NOT EXISTS `OMDGatewayTransactionLog` (
     `secondsLeft` int(11) DEFAULT NULL,
     UNIQUE KEY `id` (`id`)
 );
-CALL add_column('oscar_15','CVCImmunizationName','CVCImmunizationId','VARCHAR(11) DEFAULT NULL AFTER `value`');
+CALL add_column('CVCImmunizationName','CVCImmunizationId','VARCHAR(11) DEFAULT NULL AFTER `value`');
 
 ALTER TABLE `property` MODIFY COLUMN `value` VARCHAR(4000); 
 
@@ -719,8 +729,8 @@ CREATE TABLE IF NOT EXISTS `rbt_groups` (
 );
 
 -- update 2021-10-11 adds support for the new contacts ui
-CALL add_column('oscar_15','DemographicContact','best_contact','VARCHAR(30) NOT NULL AFTER `mrp`');
-CALL add_column('oscar_15','DemographicContact','health_care_team','tinyint(1) NOT NULL AFTER `best_contact`');
+CALL add_column('DemographicContact','best_contact','VARCHAR(30) NOT NULL AFTER `mrp`');
+CALL add_column('DemographicContact','health_care_team','tinyint(1) NOT NULL AFTER `best_contact`');
 
 -- PHC to remove some warnings and to allow for eventual migration to MariaDB 10.3
 ALTER TABLE `eform` CHANGE `patient_independent` `patient_independent` TINYINT(1) NOT NULL DEFAULT '0';
@@ -1470,43 +1480,217 @@ CREATE TABLE IF NOT EXISTS `formBCAR2020Text` (
   UNIQUE KEY `form_data` (`form_id`,`page_no`,`field`(20))
 );
 
-CALL add_column('oscar_15','demographic','family_physician','VARCHAR(80) NOT NULL AFTER `consentToUseEmailForCare`');
-CALL add_column('oscar_15','demographic','pref_name','VARCHAR(30) NOT NULL AFTER `consentToUseEmailForCare`');
+CALL add_column('demographic','family_physician','VARCHAR(80) NOT NULL AFTER `consentToUseEmailForCare`');
+CALL add_column('demographic','pref_name','VARCHAR(30) NOT NULL AFTER `consentToUseEmailForCare`');
 
 
 -- update-2022-01-01.sql 
-CALL add_column('oscar_15','security','totp_enabled','SMALLINT(1) NOT NULL DEFAULT 0');
-CALL add_column('oscar_15','security','totp_secret','VARCHAR(254) NOT NULL');
-CALL add_column('oscar_15','security','totp_algorithm',"VARCHAR(50) NOT NULL DEFAULT 'sha1'");
-CALL add_column('oscar_15','security','totp_digits',"SMALLINT NOT NULL DEFAULT '6'");
-CALL add_column('oscar_15','security','totp_period',"SMALLINT NOT NULL DEFAULT '30'");
+CALL add_column('security','totp_enabled','SMALLINT(1) NOT NULL DEFAULT 0');
+CALL add_column('security','totp_secret','VARCHAR(254) NOT NULL');
+CALL add_column('security','totp_algorithm',"VARCHAR(50) NOT NULL DEFAULT 'sha1'");
+CALL add_column('security','totp_digits',"SMALLINT NOT NULL DEFAULT '6'");
+CALL add_column('security','totp_period',"SMALLINT NOT NULL DEFAULT '30'");
 ALTER TABLE `security` CHANGE `totp_secret` `totp_secret` VARCHAR(254) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '2-factor authetication BASE32-encoded secret';
  
-CALL add_column('oscar_15','SecurityArchive','oneIdKey',"VARCHAR(255)");
-CALL add_column('oscar_15','SecurityArchive','oneIdEmail',"VARCHAR(255)");
-CALL add_column('oscar_15','SecurityArchive','delegateOneIdEmail',"VARCHAR(255)");
-CALL add_column('oscar_15','SecurityArchive','totp_enabled','SMALLINT(1) NOT NULL DEFAULT 0');
-CALL add_column('oscar_15','SecurityArchive','totp_secret','VARCHAR(254) NOT NULL');
-CALL add_column('oscar_15','SecurityArchive','totp_algorithm',"VARCHAR(50) NOT NULL DEFAULT 'sha1'");
-CALL add_column('oscar_15','SecurityArchive','totp_digits',"SMALLINT NOT NULL DEFAULT '6'");
-CALL add_column('oscar_15','SecurityArchive','totp_period',"SMALLINT NOT NULL DEFAULT '30'");
+CALL add_column('SecurityArchive','oneIdKey',"VARCHAR(255)");
+CALL add_column('SecurityArchive','oneIdEmail',"VARCHAR(255)");
+CALL add_column('SecurityArchive','delegateOneIdEmail',"VARCHAR(255)");
+CALL add_column('SecurityArchive','totp_enabled','SMALLINT(1) NOT NULL DEFAULT 0');
+CALL add_column('SecurityArchive','totp_secret','VARCHAR(254) NOT NULL');
+CALL add_column('SecurityArchive','totp_algorithm',"VARCHAR(50) NOT NULL DEFAULT 'sha1'");
+CALL add_column('SecurityArchive','totp_digits',"SMALLINT NOT NULL DEFAULT '6'");
+CALL add_column('SecurityArchive','totp_period',"SMALLINT NOT NULL DEFAULT '30'");
 
 
 -- update-2022-04-04.sql
-CALL add_column('oscar_15','demographicArchive','pref_name',"VARCHAR(30)");
-CALL add_column('oscar_15','demographicArchive','family_physician',"VARCHAR(80)");
-CALL add_column('oscar_15','demographicArchive','consentToUseEmailForCare',"TINYINT(1)");
+CALL add_column('demographicArchive','pref_name',"VARCHAR(30)");
+CALL add_column('demographicArchive','family_physician',"VARCHAR(80)");
+CALL add_column('demographicArchive','consentToUseEmailForCare',"TINYINT(1)");
 
+-- update-2022-05-01.sql for Rourke 2017
 
+CREATE TABLE IF NOT EXISTS `formRourke2017` (
+   `ID` int(10) NOT NULL AUTO_INCREMENT,
+   `demographic_no` int(10) DEFAULT NULL,
+   `c_male` varchar(2) DEFAULT '',
+   `c_female` varchar(2) DEFAULT '',
+   `provider_no` varchar(6) DEFAULT NULL,
+   `formCreated` date DEFAULT NULL,
+   `formEdited` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   `c_lastVisited` char(3) DEFAULT NULL,
+   `c_birthRemarks` text,
+   `c_riskFactors` text,
+   `c_famHistory` text,
+   `c_pName` varchar(60) DEFAULT NULL,
+   `c_birthDate` date DEFAULT NULL,
+   `c_length` varchar(6) DEFAULT NULL,
+   `c_headCirc` varchar(6) DEFAULT NULL,
+   `c_birthWeight` varchar(7) DEFAULT NULL,
+   `c_dischargeWeight` varchar(7) DEFAULT NULL,
+   `c_fsa` char(3) DEFAULT NULL,
+   `start_of_gestation` DATE DEFAULT NULL,
+   `c_APGAR1min` int(11) DEFAULT NULL,
+   `c_APGAR5min` int(11) DEFAULT NULL,
+   `p1_date1w` date DEFAULT NULL,
+   `p1_date2w` date DEFAULT NULL,
+   `p1_date1m` date DEFAULT NULL,
+   `p1_ht1w` varchar(5) DEFAULT NULL,
+   `p1_wt1w` varchar(5) DEFAULT NULL,
+   `p1_hc1w` varchar(5) DEFAULT NULL,
+   `p1_ht2w` varchar(5) DEFAULT NULL,
+   `p1_wt2w` varchar(5) DEFAULT NULL,
+   `p1_hc2w` varchar(5) DEFAULT NULL,
+   `p1_ht1m` varchar(5) DEFAULT NULL,
+   `p1_wt1m` varchar(5) DEFAULT NULL,
+   `p1_hc1m` varchar(5) DEFAULT NULL,
+   `p1_pConcern1w` text,
+   `p1_pConcern2w` text,
+   `p1_pConcern1m` text,
+   `p1_development1w` text,
+   `p1_development2w` text,
+   `p1_development1m` text,
+   `p1_problems1w` text,
+   `p1_problems2w` text,
+   `p1_problems1m` text,
+   `p1_signature2w` varchar(250) DEFAULT NULL,
+   `p2_date2m` date DEFAULT NULL,
+   `p2_date4m` date DEFAULT NULL,
+   `p2_date6m` date DEFAULT NULL,
+   `p2_ht2m` varchar(5) DEFAULT NULL,
+   `p2_wt2m` varchar(5) DEFAULT NULL,
+   `p2_hc2m` varchar(5) DEFAULT NULL,
+   `p2_ht4m` varchar(5) DEFAULT NULL,
+   `p2_wt4m` varchar(5) DEFAULT NULL,
+   `p2_hc4m` varchar(5) DEFAULT NULL,
+   `p2_ht6m` varchar(5) DEFAULT NULL,
+   `p2_wt6m` varchar(5) DEFAULT NULL,
+   `p2_hc6m` varchar(5) DEFAULT NULL,
+   `p2_pConcern2m` text,
+   `p2_pConcern4m` text,
+   `p2_pConcern6m` text,
+   `p2_nutrition2m` text,
+   `p2_nutrition4m` text,
+   `p2_development2m` text,
+   `p2_development4m` text,
+   `p2_development6m` text,
+   `p2_problems2m` text,
+   `p2_problems4m` text,
+   `p2_problems6m` text,
+   `p2_signature2m` varchar(250) DEFAULT NULL,
+   `p2_signature4m` varchar(250) DEFAULT NULL,
+   `p3_date9m` date DEFAULT NULL,
+   `p3_date12m` date DEFAULT NULL,
+   `p3_date15m` date DEFAULT NULL,
+   `p3_ht9m` varchar(5) DEFAULT NULL,
+   `p3_wt9m` varchar(5) DEFAULT NULL,
+   `p3_hc9m` varchar(5) DEFAULT NULL,
+   `p3_ht12m` varchar(5) DEFAULT NULL,
+   `p3_wt12m` varchar(5) DEFAULT NULL,
+   `p3_hc12m` varchar(5) DEFAULT NULL,
+   `p3_ht15m` varchar(5) DEFAULT NULL,
+   `p3_wt15m` varchar(5) DEFAULT NULL,
+   `p3_hc15m` varchar(5) DEFAULT NULL,
+   `p3_pConcern9m` text,
+   `p3_pConcern12m` text,
+   `p3_pConcern15m` text,
+   `p3_nutrition12m` text,
+   `p3_nutrition15m` text,
+   `p3_development9m` text,
+   `p3_development12m` text,
+   `p3_development15m` text,
+   `p3_problems9m` text,
+   `p3_problems12m` text,
+   `p3_problems15m` text,
+   `p3_signature9m` varchar(250) DEFAULT NULL,
+   `p3_signature12m` varchar(250) DEFAULT NULL,
+   `p3_signature15m` varchar(250) DEFAULT NULL,
+   `p4_date18m` date DEFAULT NULL,
+   `p4_date24m` date DEFAULT NULL,
+   `p4_date48m` date DEFAULT NULL,
+   `p4_ht18m` varchar(5) DEFAULT NULL,
+   `p4_wt18m` varchar(5) DEFAULT NULL,
+   `p4_hc18m` varchar(5) DEFAULT NULL,
+   `p4_ht24m` varchar(5) DEFAULT NULL,
+   `p4_wt24m` varchar(5) DEFAULT NULL,
+   `p4_hc24m` varchar(5) DEFAULT NULL,
+   `p4_ht48m` varchar(5) DEFAULT NULL,
+   `p4_bmi24m` varchar(5) DEFAULT NULL,
+   `p4_bmi48m` varchar(10) DEFAULT NULL,
+   `p4_wt48m` varchar(5) DEFAULT NULL,
+   `p4_pConcern18m` text,
+   `p4_pConcern24m` text,
+   `p4_pConcern48m` text,
+   `p4_problems18m` text,
+   `p4_problems24m` text,
+   `p4_problems48m` text,
+   `p4_signature18m` varchar(250) DEFAULT NULL,
+   `p4_signature24m` varchar(250) DEFAULT NULL,
+   `p4_signature48m` varchar(250) DEFAULT NULL,
+   `p1_signature1w` varchar(250) DEFAULT NULL,
+   `p1_signature1m` varchar(250) DEFAULT NULL,
+   `p2_signature6m` varchar(250) DEFAULT NULL,
+   `p1_pNutrition1w` text,
+   `p1_pNutrition2w` text,
+   `p1_pNutrition1m` text,
+   `p1_education1w` text,
+   `p1_education2w` text,
+   `p1_education1m` text,
+   `p1_pPhysical1w` text,
+   `p1_pPhysical2w` text,
+   `p1_pPhysical1m` text,
+   `p1_immunization1w` text,
+   `p1_immunization2w` text,
+   `p1_immunization1m` text,
+   `p2_nutrition6m` text,
+   `p2_education2m` text,
+   `p2_education4m` text,
+   `p2_education6m` text,
+   `p2_physical2m` text,
+   `p2_physical4m` text,
+   `p2_physical6m` text,
+   `p2_immunization6m` text,
+   `p3_nutrition9m` text,
+   `p3_education9m` text,
+   `p3_education12m` text,
+   `p3_education15m` text,
+   `p3_physical9m` text,
+   `p3_physical12m` text,
+   `p3_physical15m` text,
+   `p4_nutrition18m` text,
+   `p4_nutrition24m` text,
+   `p4_nutrition48m` text,
+   `p4_education18m` text,
+   `p4_education24m` text,
+   `p4_education48m` text,
+   `p4_development18m` text,
+   `p4_development24m` text,
+   `p4_development48m` text,
+   `p4_development36m` text,
+   `p4_development60m` text,
+   `p4_physical18m` text,
+   `p4_physical24m` text,
+   `p4_physical48m` text,
+   `p4_nippisingattained` text,
+   PRIMARY KEY (`ID`),
+   KEY `formRourke2017_demographic_no` (`demographic_no`)
+ ) ENGINE=MyISAM; 
+ 
+CREATE TABLE IF NOT EXISTS `form_boolean_value` (
+   `form_name` varchar(50) NOT NULL,
+   `form_id` int(10) NOT NULL,
+   `field_name` varchar(50) NOT NULL,
+   `value` tinyint(1) DEFAULT NULL,
+   PRIMARY KEY (`form_name`,`form_id`,`field_name`)
+ );
 
 -- PHC the following have Row Size Too Large errors with MariaDB 10.3 with InnoDB
 
 -- Group A that cannot be fixed by changing VARCHAR to TEXT
 -- MyISAM is the only viable solution
-CALL change2MyISAM('oscar_15','formAR');
-CALL change2MyISAM('oscar_15','formONAR');
-CALL change2MyISAM('oscar_15','formBCAR');
-CALL change2MyISAM('oscar_15','formBCAR2012');
+CALL change2MyISAM(DATABASE(),'formAR');
+CALL change2MyISAM(DATABASE(),'formONAR');
+CALL change2MyISAM(DATABASE(),'formBCAR');
+CALL change2MyISAM(DATABASE(),'formBCAR2012');
 
 
 
@@ -1519,11 +1703,11 @@ DROP PROCEDURE IF EXISTS deprecateOldTables;
 DELIMITER $$
 CREATE PROCEDURE deprecateOldTables ()
 BEGIN
-        SELECT CONCAT('DELETE FROM oscar_15.encounterForm WHERE form_table IN (',GROUP_CONCAT(DBTB),');')
+        SELECT CONCAT('DELETE FROM encounterForm WHERE form_table IN (',GROUP_CONCAT(DBTB),');')
         INTO @DeleteCommand
         FROM (SELECT CONCAT("'",table_name,"'") DBTB
         FROM information_schema.tables
-        WHERE table_rows = 0 AND table_schema IN ('oscar_15') AND table_name IN ('formAR', 'formONAR', 'formBCAR', 'formBCAR2012')) A;
+        WHERE table_rows = 0 AND table_schema IN (DATABASE()) AND table_name IN ('formAR', 'formONAR', 'formBCAR', 'formBCAR2012')) A;
         SELECT @DeleteCommand;
 
         IF(!ISNULL(@DeleteCommand) && LENGTH(trim(@DeleteCommand)) > 0) THEN
@@ -1536,7 +1720,7 @@ BEGIN
         INTO @DropCommand
         FROM (SELECT CONCAT(table_schema,'.',table_name) DBTB
         FROM information_schema.tables
-        WHERE table_rows = 0 AND table_schema IN ('oscar_15') AND table_name IN ('formAR', 'formONAR', 'formBCAR', 'formBCAR2012')) A;
+        WHERE table_rows = 0 AND table_schema IN (DATABASE()) AND table_name IN ('formAR', 'formONAR', 'formBCAR', 'formBCAR2012')) A;
         SELECT @DropCommand;
 
         IF(!ISNULL(@DropCommand) && LENGTH(trim(@DropCommand)) > 0) THEN
@@ -1552,24 +1736,25 @@ CALL deprecateOldTables();
 
 
 -- Group B that can be fixed by changing VARCHAR to TEXT
-CALL change2MyISAM('oscar_15','formIntakeHx');
-CALL change2MyISAM('oscar_15','formIntakeInfo');
-CALL change2MyISAM('oscar_15','formInternetAccess');
-CALL change2MyISAM('oscar_15','formLabReq');
-CALL change2MyISAM('oscar_15','formONAREnhancedRecord');
-CALL change2MyISAM('oscar_15','formONAREnhancedRecordExt1');
-CALL change2MyISAM('oscar_15','formONAREnhancedRecordExt2');
-CALL change2MyISAM('oscar_15','formType2Diabetes');
-CALL change2MyISAM('oscar_15','formAdf');
-CALL change2MyISAM('oscar_15','formfollowup');
-CALL change2MyISAM('oscar_15','formintakeb');
-CALL change2MyISAM('oscar_15','formintakec');
-CALL change2MyISAM('oscar_15','formovulation');     
-CALL change2MyISAM('oscar_15','formRourke2009');   
+CALL change2MyISAM(DATABASE(),'formIntakeHx');
+CALL change2MyISAM(DATABASE(),'formIntakeInfo');
+CALL change2MyISAM(DATABASE(),'formInternetAccess');
+CALL change2MyISAM(DATABASE(),'formLabReq');
+CALL change2MyISAM(DATABASE(),'formONAREnhancedRecord');
+CALL change2MyISAM(DATABASE(),'formONAREnhancedRecordExt1');
+CALL change2MyISAM(DATABASE(),'formONAREnhancedRecordExt2');
+CALL change2MyISAM(DATABASE(),'formType2Diabetes');
+CALL change2MyISAM(DATABASE(),'formAdf');
+CALL change2MyISAM(DATABASE(),'formfollowup');
+CALL change2MyISAM(DATABASE(),'formintakeb');
+CALL change2MyISAM(DATABASE(),'formintakec');
+CALL change2MyISAM(DATABASE(),'formovulation');     
+CALL change2MyISAM(DATABASE(),'formRourke2009');   
 
 -- PHC adjust to prevent truncation in some settings
 ALTER TABLE `demographic` CHANGE `family_physician` `family_physician` VARCHAR(80) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;
 ALTER TABLE `demographic` CHANGE `postal` `postal` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE `DigitalSignature` CHANGE `signatureImage` `signatureImage` MEDIUMBLOB NOT NULL;
 
 -- PHC to adjust to new muted color themes
 UPDATE `appointment_status` SET `color`= '#FDFED2' WHERE `color`= '#FDFEC7' AND `description`='To Do';
@@ -1578,14 +1763,10 @@ UPDATE `appointment_status` SET `color`= '#7ff67f' WHERE `color`= '#00ee00' AND 
 UPDATE `appointment_status` SET `color`= '#ffd6ff' WHERE `color`= '#FFBBFF' AND `description`='Picked';
 UPDATE `appointment_status` SET `color`= '#E5F4FE' WHERE `color`= '#FFFF33' AND `description`='Empty Room';
 
--- PHC RTL update to latest, and again for 2.2
-UPDATE `eform` SET `subject`='Rich Text Letter Generator v2.1',`form_date`='2021-12-01',`form_time`='00:00:00',`form_html`=
-'<html>\r\n<head>\r\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\r\n<!--V2.1 Dec 15, 2021 -->\r\n<title>Rich Text Letter</title>\r\n\r\n<style type=\"text/css\">\r\n body { font-family: Arial; }\r\n.butn {width: 140px;}\r\n</style>\r\n<style>\r\n.doc {\r\n	color:blue;\r\n	font-size:10px;\r\n}\r\n.lab {\r\n	color:#CC0099;\r\n	font-size:10px;\r\n}\r\n.hrm {\r\n	color:red;\r\n	font-size:10px;\r\n}\r\n.eform {\r\n	color: green;\r\n	font-size:10px;\r\n}\r\n.chevron {\r\n	cursor: pointer;\r\n	font-weight: bold;\r\n	font-size: 14px;\r\n	-webkit-transform: rotate(180deg);\r\n	display: inline-block;	\r\n}\r\n.hide {\r\n	display: none;\r\n}\r\n.editControlButton span{\r\n    position: relative;\r\n	display: inline-block;\r\n	padding: 6px;\r\n}\r\n.editControlButton i {\r\n	padding: 6px;\r\n	color: #757575;\r\n}\r\n.editControlButton i:hover {\r\n    background-color: lightgrey;\r\n	color: black;\r\n}\r\n</style>\r\n\r\n<style type=\"text/css\" media=\"print\">\r\n.DoNotPrint {\r\n    display: none;\r\n}\r\n</style>\r\n\r\n<script language=\"javascript\">\r\n// GLOBALS\r\nvar needToConfirm = false;\r\nvar ImgArray = [];\r\n</script>\r\n\r\n<script src=\"https://code.jquery.com/jquery-1.12.4.min.js\"   integrity=\"sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=\" crossorigin=\"anonymous\"></script>\r\n\r\n<link href=\"../css/jquery.ui.colorPicker.css\" rel=\"stylesheet\" type=\"text/css\" />\r\n<script src=\"../js/jquery-ui-1.8.18.custom.min.js\" type=\"text/javascript\"></script>\r\n<script src=\"../js/jquery.ui.colorPicker.min.js\" type=\"text/javascript\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/APCache.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/imageControl.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/faxControl.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/signatureControl.jsp\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/printControl.js\"></script>\r\n\r\n\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"../eform/displayImage.do?imagefile=editControl2.js\"></script>\r\n<script src=\'../eform/displayImage.do?imagefile=stamps.js\'></script>\r\n<link rel=\"stylesheet\" href=\"../css/font-awesome.min.css\">\r\n\r\n\r\n<script language=\"javascript\">\r\n//keypress events trigger dirty flag for the iFrame and the subject line\r\ndocument.onkeyup=setDirtyFlag\r\n\r\nfunction setDirtyFlag() {\r\n	needToConfirm = true; \r\n}\r\n\r\nfunction releaseDirtyFlag() {\r\n	needToConfirm = false; //Call this function if dosent requires an alert.\r\n	//this could be called when save button is clicked\r\n}\r\n\r\nwindow.onbeforeunload = confirmExit;\r\n\r\nfunction confirmExit() {\r\n	if (needToConfirm){\r\n	return \"You have attempted to leave this page. If you have made any changes without clicking the Submit button, your changes will be lost. Are you sure you want to exit this page?\";\r\n	}\r\n}\r\n\r\nvar loads=true;\r\n\r\nfunction saveRTL() {\r\n	needToConfirm=false;\r\n	var theRTL=editControlContents(\'edit\');\r\n	var myNewString = theRTL.replace(/\"/g, \'&quot;\');\r\n	myNewString = theRTL.replace(/</g, \'&lt;\');\r\n	myNewString = theRTL.replace(/>/g, \'&gt;\');\r\n	document.getElementById(\'Letter\').value=myNewString.replace(/\'/g, \"&#39;\");\r\n//  alternate approach to escape dangerous characters albeit less human readable, and needs to be unencoded\r\n//	document.getElementById(\'Letter\').value=encodeURIComponent(theRTL);	\r\n}\r\n\r\nfunction maximize() {\r\n    var width=900; //180+cfg_width;\r\n	window.resizeTo(width,1160) ; // width, height\r\n	loads=false;\r\n}\r\n\r\n<!-- CODE FOR PULLING MEASUREMENTS  -->\r\nvar depth=5;\r\n\r\n	function labgrid(){\r\n	//---------Paste lab grid-----------------------------------------------------------\r\n	doHtml(\"<font size=\'3\'><b>Lab testing summary:</font></b><p></p\")  //header\r\n	var LabName = [\"HB\", \"EGFR\", \"SCR\", \"A1C\", \"FBS\", \"BG\", \"GT2\", \"APOB\", \"TCHL\", \"LDLC\", \"LDL\", \"HDL\", \"TCHD\", \"TG\", \"ACR\", \"NA\", \"Kpl\", \"CA\", \"PH\", \"MG\", \"TSH\", \"PSA\", \"PTH\", \"AST\", \"ALT\", \"CRP\", \"FOBT\", \"FITQ\", \"FIT\", \"HPSE\", \"HPSG\", \"HPBT\", \"HPYL\", \"INR\", \"URIC\"]\r\n	for (i = 0; i < LabName.length; i++) {\r\n	   getMeasures(LabName[i], depth)\r\n	}\r\n	}\r\n\r\n	function labgrid2(){\r\n	//---------Paste Vitals grid-----------------------------------------------------------\r\n	doHtml(\"<font size=\'3\'><b>Vitals summary:</font></b><p></p\")  //header\r\n	var LabName = [\"BP\",\"WT\",\"HT\",\"BMI\"]\r\n	for (i = 0; i < LabName.length; i++) {\r\n	   getMeasures(LabName[i], depth)\r\n	}\r\n	}\r\n\r\n	/*add eform attach*/\r\n	function popupEformUpload() {\r\n		var fid,demographic_no= \"\";\r\n		fid = gup(\"fid\");\r\n		demographic_no= gup(\"demographic_no\");\r\n		//popup(\'../eform/attachEform.jsp?demo=\'+demographic_no+\'&requestId=\'+fid); \r\n		popup(\'../eform/attachEform.jsp?demo=\'+demographic_no); \r\n		return false;\r\n	}\r\n	\r\n	function updateAttached() {\r\n	    var t = setTimeout(\'fetchAttached()\', 2000);\r\n	}\r\n	function fetchAttached() {\r\n	    var updateElem = \'tdAttachedDocs\';\r\n		var fid,demographic_no= \"\";\r\n		fid = gup(\"fid\");\r\n		//fid=\'86\';\r\n		demographic_no= gup(\"demographic_no\");\r\n		var params = \"demo=\"+demographic_no+\"&requestId=\"+fid;\r\n		var fdid = \'${fdid}\';\r\n        console.log(params);\r\n	//	alert(demographic_no);\r\n		//alert(params);\r\n		params = \"requestId=\" + fdid;\r\n		var url = \"../eform/displayAttachedFiles.jsp\";\r\n		\r\n		$.ajax({\r\n			url : url,\r\n			data:params,\r\n			type:\'get\',  \r\n			success :function(request) {\r\n				//alert(request.responseText);\r\n				$(\"#tdAttachedDocs\").html(request);\r\n				// $(updateElem).innerHTML = request;\r\n			},\r\n			error:function(request) {\r\n				$(updateElem).innerHTML = \"<h3>Error: \" + + request.status + \"</h3>\";\r\n			}\r\n		});\r\n	}\r\n</script>\r\n\r\n<!-- START OF EDITCONTROL CODE --> \r\n<script language=\"javascript\">\r\n	//put any of the optional configuration variables that you want here\r\n	cfg_width = 720; //editor control width in pixels\r\n	cfg_height = 500; //editor control height in pixels\r\n	cfg_editorname = \'edit\'; //the handle for the editor                  \r\n	cfg_isrc = \'../eform/displayImage.do?imagefile=\'; //location of the button icon files\r\n	cfg_filesrc = \'../eform/displayImage.do?imagefile=\'; //location of the html files\r\n	cfg_template = \'blank.rtl\'; //default style and content template\r\n	cfg_formattemplate = \'<option value=\"\"> loading... </option></select>\';\r\n    cfg_layout = \'<table style=\"background-color:  #E1E1E1; width:\'+cfg_width+\'px\"><tr id=control1><td align=center>\\\r\n[bold][italic][underlined][strike][subscript][superscript]|[left][center][full][right]|[unordered][ordered][rule][undo][redo]|[indent][outdent][select-all][clean]\\\r\n</td></tr><tr id=control2><td align=center>\\\r\n[heading1][table][text-colour][hilight]|[image][link][attach][new-page]|[clock][date][cut][copy][delete][help]|[edit][export]\\\r\n</td></tr><tr id=control3><td align=center>[select-block][select-face][select-size][select-template]\\\r\n</td></tr></table>[edit-area]\'; \r\n	//cfg_layout = \'[all]\';             //adjust the format of the buttons here\r\n	insertEditControl(); // Initialise the edit control and sets it at this point in the webpage\r\n</script>\r\n<!-- END OF EDITCONTROL CODE -->\r\n\r\n<script>\r\n// example of non standard database pulls to create cache that can be pulled from a button\r\nfunction getAgeGender() {\r\n	// set the HTML contents of the letterhead\r\n	var ageGender = cache.get(\'age\')\r\n			+ \' year old  \'\r\n			+ cache.get(\'gender\');\r\n	return ageGender;\r\n}\r\n\r\n	cache.addMapping({\r\n		name: \"ageGender\", \r\n		values: [\"_age\",\"gender\",\"age\",\"sex\",\"ageComplex\"], \r\n		storeInCacheHandler: function (key, value) {\r\n			var text = getAgeGender();\r\n			cache.put(\"ageGender\", text);\r\n		},\r\n		cacheResponseHandler: function () {\r\n			if (checkKeyResponse(this.name)) {\r\n				doHtml(cache.get(this.name));\r\n			}\r\n		}\r\n	});\r\n</script>\r\n</head>\r\n\r\n<body bgcolor=\"FFFFFF\" onload=\"Start();\">\r\n\r\n<form method=\"post\" action=\"\" name=\"RichTextLetter\" >\r\n<input type=\"hidden\" name=\"WT\" id=\"WT\" oscarDB=m$WT#value>\r\n<textarea name=\"Letter\" id=\"Letter\" style=\"width:600px; display: none;\"></textarea>\r\n<div class=\"edit-controllers\" id=\"edit-controllers\"></div>\r\n\r\n    <div class=\"DoNotPrint\" id=\"control4\" style=\"position:absolute; top:5px; left: 740px;\"> <!-- left should be cfg_width +20 -->\r\n\r\n    <!-- Letter Head -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddLetterhead\" id=\"AddLetterhead\" value=\"Letterhead\" onclick=\"printKey(\'letterhead\');\">\r\n    <br>\r\n    <!-- Adressee Select -->\r\n    <input type=\"text\" name=\"referral_name\" id=\"referral_name\" onKeyup=\"consultantSearch(this.value)\" placeholder=\" lastname, firstname\" autocomplete=\"off\" onFocus=\"toggleTempBin(1, \'referral_name\')\" onBlur=\"toggleTempBin(0, \'referral_name\')\"  style=\"font-size:12px; width:140px;\">\r\n        <div id=\"tempBin\" onmouseover=\"tempBinHover(true)\" onmouseout=\"tempBinHover(false)\"style=\"display:none;position:absolute;padding:4px; background-color:white;border:thin solid #cccccc;z-index:999;font-size:12px;\">You must enter at least 2 characters of a doctors name!</div>\r\n    <input type=\"hidden\" name=\"consultantFilter\" id=\"consultantFilter\">\r\n    <textarea name=\"CopyTo\" id=\"CopyTo\" type=\"hidden\" style=\"display:none;\" ></textarea>\r\n    <br>\r\n    <input type=\"button\" class=\"butn\" name=\"AddSelected\" id=\"AddSelected\" value=\"Paste Selected\" onclick=\"doHtml(getElementById(\'CopyTo\').value.replace(/(\\r\\n|\\n|\\r)/gm,\'<br>\'));console.log(getElementById(\'CopyTo\').value);\">\r\n    <br>\r\n    <!-- Referring Block -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddReferral\" id=\"AddReferral\" value=\"Referring Block\" onclick=\"printKey(\'_ReferringBlock\');\">\r\n    <br>\r\n    <!-- Patient Block -->\r\n    <input type=\"button\" class=\"butn\" name=\"label\" value=\"Patient Label\" onclick=\"hist=\'label\';printKey(hist);\">\r\n    <br>\r\n	<input type=\"button\" class=\"butn\" name=\"Patient\" value=\"Patient Name\" onclick=\"printKey(\'first_last_name\');\">\r\n    <br>\r\n    <input type=\"button\" class=\"butn\" name=\"PatientSex\" value=\"Age & Gender\" onclick=\"printKey(\'ageGender\');\">\r\n    <br>\r\n    <!-- Social History -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddSocialFamilyHistory\" value=\"Social History\" onclick=\"var hist=\'_SocialFamilyHistory\';printKey(hist);\">\r\n    <br>\r\n    <!--  Medical History -->\r\n    <input type=\"button\"  class=\"butn\" name=\"AddMedicalHistory\" value=\"Medical History\" width=30 onclick=\"var hist=\'medical_historyS\';printKey(hist);\">\r\n    <br>\r\n    <!--  Ongoing Concerns -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddOngoingConcerns\" value=\"Ongoing Concerns\" onclick=\"var hist=\'ongoingconcerns\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Reminders -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddReminders\" value=\"Reminders\"\r\n	    onclick=\"var hist=\'reminders\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Allergies -->\r\n    <input type=\"button\" class=\"butn\" name=\"Allergies\" id=\"Allergies\" value=\"Allergies\" onclick=\"printKey(\'allergies_des\');\">\r\n    <br>\r\n    <!-- Prescriptions -->\r\n    <input type=\"button\" class=\"butn\" name=\"Medlist\" id=\"Medlist\" value=\"Prescriptions\"	onclick=\"printKey(\'druglist\');\">\r\n    <br>\r\n    <!-- Other Medications -->\r\n    <input type=\"button\" class=\"butn\" name=\"OtherMedicationsHistory\" value=\"Other Medications\" onclick=\"printKey(\'other_medications_history\'); \">\r\n    <br>\r\n    <!-- Risk Factors -->\r\n    <input type=\"button\" class=\"butn\" name=\"RiskFactors\" value=\"Risk Factors\" onclick=\"printKey(\'risk_factors_ext\'); \">\r\n    <br>\r\n    <!-- Family History -->\r\n    <input type=\"button\" class=\"butn\" name=\"FamilyHistory\" value=\"Family History\" onclick=\"printKey(\'family_history\'); \">\r\n    <br>\r\n    <!-- Preventions -->  \r\n    <input type=\"button\" class=\"butn\" name=\"Preventions\" value=\"Preventions\" onclick=\"fpreventions()\">\r\n    <br>\r\n\r\n<script>\r\nfunction fpreventions(){\r\n    var sql2pass=\"SELECT   \'<br>\',  prevention_type as \'<b>PREVENTIONS\',\'&#160;&#160;&#160;Date:&#160;\' as \':\', LEFT(prevention_date,10) as \'</b>\' FROM preventions  WHERE demographic_no=\" + demographicNo + \" AND deleted=\'0\' GROUP by prevention_type, prevention_date \";\r\n    $(document).ready(function () {  \r\n        $.ajax({  \r\n            url: \"../oscarReport/RptByExample.do\" ,\r\n            data: { sql: sql2pass }\r\n        }).then(function(data) {  \r\n           //alert(data)\r\n           var elements = $(data);\r\n           var found = elements.find(\'.MainTableRightColumn table table\');\r\n           doHtml(found.html())\r\n        });  \r\n    });\r\n}\r\n</script>\r\n\r\n    <!-- Closing Salutation -->\r\n    <input type=\"button\" class=\"butn\" name=\"Closing\" value=\"Closing Salutation\" onclick=\"printKey(\'_ClosingSalutation\');\">\r\n    <br>\r\n    <!-- Signature Stamp -->\r\n    <input type=\"button\" class=\"butn\" name=\"stamp\" value=\"Stamp\" onclick=\"printKey(\'stamp\');\">\r\n    <br>\r\n    <!--  Current User -->\r\n    <input type=\"button\" class=\"butn\" name=\"User\" value=\"Current User\" onclick=\"var hist=\'current_user\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Attending Doctor -->\r\n    <input type=\"button\" class=\"butn\" name=\"Doctor\" value=\"Doctor (MRP)\" onclick=\"var hist=\'doctor\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Vitals -->\r\n    <input type=\"button\" class=\"butn\" name=\"Vitals\" value=\"Vitals\" onclick=\"labgrid2()\">\r\n    <br>\r\n    <!-- Common Labs -->\r\n    <input type=\"button\" class=\"butn\" name=\"LabGrid\" value=\"Lab Grid\" onclick=\"labgrid()\">\r\n    <br>\r\n   <!-- Attach File -->\r\n    <input type=\"button\" class=\"butn\" name=\"AttachFile\" value=\"Attach File\" onclick=\"popupEformUpload()\">\r\n    <br>\r\n\r\n    <table style=\"width:140px\">\r\n        <tbody>\r\n            <tr>\r\n                <td style=\"text-align: center\" id=\"tdAttachedLabel\" >Attached Files:</td>\r\n            </tr>\r\n            <tr>\r\n	            <td id=\"tdAttachedDocs\" > <!-- important as this is where the results get put--> </td>\r\n            </tr>\r\n            <tr id=\"trAttachedDocs\" >\r\n	            <td style=\"text-align: center\">Legend<br>\r\n	            <span class=\"doc\">Blue - Documents</span><br>\r\n	            <span class=\"lab\">Purple - Labs</span><br>\r\n	            <span class=\"hrm\">Red - Hrm</span><br>\r\n	            <span class=\"eform\">Green - EForm</span>\r\n	            </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n\r\n<div class=\"DoNotPrint\" >\r\n    <span id=\"arrow\" title=\"expand\" class=\"chevron\" onclick=\"collapseFooter();\">&nbsp^&nbsp;</span>\r\n    <input onclick=\"viewsource(this.checked)\" type=\"checkbox\"> HTML Source\r\n    <input onclick=\"usecss(this.checked)\" type=\"checkbox\">\r\n    Use CSS	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \r\n    Subject: <input name=\"subject\" id=\"subject\" size=\"40\" type=\"text\">		 \r\n\r\n    <table id=\"controls4\">\r\n        <tr id=sig>\r\n            <td><div id=\"signatureInput\">&nbsp;</div></td>\r\n        </tr>\r\n        <tr>\r\n            <td><div id=\"faxControl\">&nbsp;</div></td>\r\n        </tr>      \r\n        <tr>\r\n            <td>\r\n            <input value=\"Submit\" name=\"SubmitButton\" type=\"submit\" onclick=\"saveRTL();  document.RichTextLetter.submit()\">\r\n            <input value=\"Print\" name=\"PrintSaveButton\" type=\"button\" onclick=\"document.getElementById(\'edit\').contentWindow.print();saveRTL();  setTimeout(\'document.RichTextLetter.submit()\',1000);\">\r\n            <input value=\"Reset\" name=\"ResetButton\" type=\"reset\">\r\n            <input value=\"Print\" name=\"PrintButton\" type=\"button\" onclick=\"document.getElementById(\'edit\').contentWindow.print();\">\r\n            </td>\r\n        </tr>\r\n    </table>\r\n</div>\r\n</form>\r\n</body>\r\n</html>'
-    WHERE `form_name` LIKE "%Rich Text Letter%" AND `form_time` IN ('00:00:00','16:00:00') AND DATE(`form_date`) < '2021-12-01' ;
-UPDATE `eform` SET `form_html`= REPLACE(form_html,'../eform/displayImage.do?imagefile=editControl2.js','${oscar_javascript_path}eforms/editControl2.js.jsp')  
-    WHERE `form_name`='Rich Text Letter' AND DATE(`form_date`) = '2021-12-01';
-UPDATE `eform` SET `form_html`= REPLACE(form_html,'<!--V2.1 Dec 15, 2021 -->','<!--V2.2 Mar 4, 2022 -->\n<!-- Author PHC -->'), `subject`='Rich Text Letter Generator v2.2', `form_date` = '2022-03-04', `form_time`='00:00:00' 
-    WHERE `form_name`='Rich Text Letter' AND `form_html` LIKE "%editControl2.js.jsp%";
+-- PHC RTL update to 2.2  
+UPDATE `eform` SET `subject`='Rich Text Letter Generator v2.2',`form_date`='2022-03-04',`form_time`='00:00:00',`form_html`=
+'<html>\r\n<head>\r\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\r\n<!--V2.2 Mar 4, 2022 -->\r\n<!-- Author PHC -->\r\n<title>Rich Text Letter</title>\r\n\r\n<style type=\"text/css\">\r\n body { font-family: Arial; }\r\n.butn {width: 140px;}\r\n</style>\r\n<style>\r\n.doc {\r\n	color:blue;\r\n	font-size:10px;\r\n}\r\n.lab {\r\n	color:#CC0099;\r\n	font-size:10px;\r\n}\r\n.hrm {\r\n	color:red;\r\n	font-size:10px;\r\n}\r\n.eform {\r\n	color: green;\r\n	font-size:10px;\r\n}\r\n.chevron {\r\n	cursor: pointer;\r\n	font-weight: bold;\r\n	font-size: 14px;\r\n	-webkit-transform: rotate(180deg);\r\n	display: inline-block;	\r\n}\r\n.hide {\r\n	display: none;\r\n}\r\n.editControlButton span{\r\n    position: relative;\r\n	display: inline-block;\r\n	padding: 6px;\r\n}\r\n.editControlButton i {\r\n	padding: 6px;\r\n	color: #757575;\r\n}\r\n.editControlButton i:hover {\r\n    background-color: lightgrey;\r\n	color: black;\r\n}\r\n</style>\r\n\r\n<style type=\"text/css\" media=\"print\">\r\n.DoNotPrint {\r\n    display: none;\r\n}\r\n</style>\r\n\r\n<script language=\"javascript\">\r\n// GLOBALS\r\nvar needToConfirm = false;\r\nvar ImgArray = [];\r\n</script>\r\n\r\n<script src=\"https://code.jquery.com/jquery-1.12.4.min.js\"   integrity=\"sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=\" crossorigin=\"anonymous\"></script>\r\n\r\n<link href=\"../css/jquery.ui.colorPicker.css\" rel=\"stylesheet\" type=\"text/css\" />\r\n<script src=\"../js/jquery-ui-1.8.18.custom.min.js\" type=\"text/javascript\"></script>\r\n<script src=\"../js/jquery.ui.colorPicker.min.js\" type=\"text/javascript\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/APCache.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/imageControl.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/faxControl.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/signatureControl.jsp\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/printControl.js\"></script>\r\n<script language=\"javascript\" type=\"text/javascript\" src=\"${oscar_javascript_path}eforms/editControl2.js.jsp\"></script>\r\n\r\n<script src=\'../eform/displayImage.do?imagefile=stamps.js\'></script>\r\n<link rel=\"stylesheet\" href=\"../css/font-awesome.min.css\">\r\n\r\n\r\n<script language=\"javascript\">\r\n//keypress events trigger dirty flag for the iFrame and the subject line\r\ndocument.onkeyup=setDirtyFlag\r\n\r\nfunction setDirtyFlag() {\r\n	needToConfirm = true; \r\n}\r\n\r\nfunction releaseDirtyFlag() {\r\n	needToConfirm = false; //Call this function if dosent requires an alert.\r\n	//this could be called when save button is clicked\r\n}\r\n\r\nwindow.onbeforeunload = confirmExit;\r\n\r\nfunction confirmExit() {\r\n	if (needToConfirm){\r\n	return \"You have attempted to leave this page. If you have made any changes without clicking the Submit button, your changes will be lost. Are you sure you want to exit this page?\";\r\n	}\r\n}\r\n\r\nvar loads=true;\r\n\r\nfunction saveRTL() {\r\n	needToConfirm=false;\r\n	var theRTL=editControlContents(\'edit\');\r\n	var myNewString = theRTL.replace(/\"/g, \'&quot;\');\r\n	myNewString = theRTL.replace(/</g, \'&lt;\');\r\n	myNewString = theRTL.replace(/>/g, \'&gt;\');\r\n	document.getElementById(\'Letter\').value=myNewString.replace(/\'/g, \"&#39;\");\r\n//  alternate approach to escape dangerous characters albeit less human readable, and needs to be unencoded\r\n//	document.getElementById(\'Letter\').value=encodeURIComponent(theRTL);	\r\n}\r\n\r\nfunction maximize() {\r\n    var width=900; //180+cfg_width;\r\n	window.resizeTo(width,1160) ; // width, height\r\n	loads=false;\r\n}\r\n\r\n<!-- CODE FOR PULLING MEASUREMENTS  -->\r\nvar depth=5;\r\n\r\n	function labgrid(){\r\n	//---------Paste lab grid-----------------------------------------------------------\r\n	doHtml(\"<font size=\'3\'><b>Lab testing summary:</font></b><p></p\")  //header\r\n	var LabName = [\"HB\", \"EGFR\", \"SCR\", \"A1C\", \"FBS\", \"BG\", \"GT2\", \"APOB\", \"TCHL\", \"LDLC\", \"LDL\", \"HDL\", \"TCHD\", \"TG\", \"ACR\", \"NA\", \"Kpl\", \"CA\", \"PH\", \"MG\", \"TSH\", \"PSA\", \"PTH\", \"AST\", \"ALT\", \"CRP\", \"FOBT\", \"FITQ\", \"FIT\", \"HPSE\", \"HPSG\", \"HPBT\", \"HPYL\", \"INR\", \"URIC\"]\r\n	for (i = 0; i < LabName.length; i++) {\r\n	   getMeasures(LabName[i], depth)\r\n	}\r\n	}\r\n\r\n	function labgrid2(){\r\n	//---------Paste Vitals grid-----------------------------------------------------------\r\n	doHtml(\"<font size=\'3\'><b>Vitals summary:</font></b><p></p\")  //header\r\n	var LabName = [\"BP\",\"WT\",\"HT\",\"BMI\"]\r\n	for (i = 0; i < LabName.length; i++) {\r\n	   getMeasures(LabName[i], depth)\r\n	}\r\n	}\r\n\r\n	/*add eform attach*/\r\n	function popupEformUpload() {\r\n		var fid,demographic_no= \"\";\r\n		fid = gup(\"fid\");\r\n		demographic_no= gup(\"demographic_no\");\r\n		//popup(\'../eform/attachEform.jsp?demo=\'+demographic_no+\'&requestId=\'+fid); \r\n		popup(\'../eform/attachEform.jsp?demo=\'+demographic_no); \r\n		return false;\r\n	}\r\n	\r\n	function updateAttached() {\r\n	    var t = setTimeout(\'fetchAttached()\', 2000);\r\n	}\r\n	function fetchAttached() {\r\n	    var updateElem = \'tdAttachedDocs\';\r\n		var fid,demographic_no= \"\";\r\n		fid = gup(\"fid\");\r\n		//fid=\'86\';\r\n		demographic_no= gup(\"demographic_no\");\r\n		var params = \"demo=\"+demographic_no+\"&requestId=\"+fid;\r\n		var fdid = \'${fdid}\';\r\n        console.log(params);\r\n	//	alert(demographic_no);\r\n		//alert(params);\r\n		params = \"requestId=\" + fdid;\r\n		var url = \"../eform/displayAttachedFiles.jsp\";\r\n		\r\n		$.ajax({\r\n			url : url,\r\n			data:params,\r\n			type:\'get\',  \r\n			success :function(request) {\r\n				//alert(request.responseText);\r\n				$(\"#tdAttachedDocs\").html(request);\r\n				// $(updateElem).innerHTML = request;\r\n			},\r\n			error:function(request) {\r\n				$(updateElem).innerHTML = \"<h3>Error: \" + + request.status + \"</h3>\";\r\n			}\r\n		});\r\n	}\r\n</script>\r\n\r\n<!-- START OF EDITCONTROL CODE --> \r\n<script language=\"javascript\">\r\n	//put any of the optional configuration variables that you want here\r\n	cfg_width = 720; //editor control width in pixels\r\n	cfg_height = 500; //editor control height in pixels\r\n	cfg_editorname = \'edit\'; //the handle for the editor                  \r\n	cfg_isrc = \'../eform/displayImage.do?imagefile=\'; //location of the button icon files\r\n	cfg_filesrc = \'../eform/displayImage.do?imagefile=\'; //location of the html files\r\n	cfg_template = \'blank.rtl\'; //default style and content template\r\n	cfg_formattemplate = \'<option value=\"\"> loading... </option></select>\';\r\n    cfg_layout = \'<table style=\"background-color:  #E1E1E1; width:\'+cfg_width+\'px\"><tr id=control1><td align=center>\\\r\n[bold][italic][underlined][strike][subscript][superscript]|[left][center][full][right]|[unordered][ordered][rule][undo][redo]|[indent][outdent][select-all][clean]\\\r\n</td></tr><tr id=control2><td align=center>\\\r\n[heading1][table][text-colour][hilight]|[image][link][attach][new-page]|[clock][date][cut][copy][delete][help]|[edit][export]\\\r\n</td></tr><tr id=control3><td align=center>[select-block][select-face][select-size][select-template]\\\r\n</td></tr></table>[edit-area]\'; \r\n	//cfg_layout = \'[all]\';             //adjust the format of the buttons here\r\n	insertEditControl(); // Initialise the edit control and sets it at this point in the webpage\r\n</script>\r\n<!-- END OF EDITCONTROL CODE -->\r\n\r\n<script>\r\n// example of non standard database pulls to create cache that can be pulled from a button\r\nfunction getAgeGender() {\r\n	// set the HTML contents of the letterhead\r\n	var ageGender = cache.get(\'age\')\r\n			+ \' year old  \'\r\n			+ cache.get(\'gender\');\r\n	return ageGender;\r\n}\r\n\r\n	cache.addMapping({\r\n		name: \"ageGender\", \r\n		values: [\"_age\",\"gender\",\"age\",\"sex\",\"ageComplex\"], \r\n		storeInCacheHandler: function (key, value) {\r\n			var text = getAgeGender();\r\n			cache.put(\"ageGender\", text);\r\n		},\r\n		cacheResponseHandler: function () {\r\n			if (checkKeyResponse(this.name)) {\r\n				doHtml(cache.get(this.name));\r\n			}\r\n		}\r\n	});\r\n</script>\r\n</head>\r\n\r\n<body bgcolor=\"FFFFFF\" onload=\"Start();\">\r\n\r\n<form method=\"post\" action=\"\" name=\"RichTextLetter\" >\r\n<input type=\"hidden\" name=\"WT\" id=\"WT\" oscarDB=m$WT#value>\r\n<textarea name=\"Letter\" id=\"Letter\" style=\"width:600px; display: none;\"></textarea>\r\n<div class=\"edit-controllers\" id=\"edit-controllers\"></div>\r\n\r\n    <div class=\"DoNotPrint\" id=\"control4\" style=\"position:absolute; top:5px; left: 740px;\"> <!-- left should be cfg_width +20 -->\r\n\r\n    <!-- Letter Head -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddLetterhead\" id=\"AddLetterhead\" value=\"Letterhead\" onclick=\"printKey(\'letterhead\');\">\r\n    <br>\r\n    <!-- Adressee Select -->\r\n    <input type=\"text\" name=\"referral_name\" id=\"referral_name\" onKeyup=\"consultantSearch(this.value)\" placeholder=\" lastname, firstname\" autocomplete=\"off\" onFocus=\"toggleTempBin(1, \'referral_name\')\" onBlur=\"toggleTempBin(0, \'referral_name\')\"  style=\"font-size:12px; width:140px;\">\r\n        <div id=\"tempBin\" onmouseover=\"tempBinHover(true)\" onmouseout=\"tempBinHover(false)\"style=\"display:none;position:absolute;padding:4px; background-color:white;border:thin solid #cccccc;z-index:999;font-size:12px;\">You must enter at least 2 characters of a doctors name!</div>\r\n    <input type=\"hidden\" name=\"consultantFilter\" id=\"consultantFilter\">\r\n    <textarea name=\"CopyTo\" id=\"CopyTo\" type=\"hidden\" style=\"display:none;\" ></textarea>\r\n    <br>\r\n    <input type=\"button\" class=\"butn\" name=\"AddSelected\" id=\"AddSelected\" value=\"Paste Selected\" onclick=\"doHtml(getElementById(\'CopyTo\').value.replace(/(\\r\\n|\\n|\\r)/gm,\'<br>\'));console.log(getElementById(\'CopyTo\').value);\">\r\n    <br>\r\n    <!-- Referring Block -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddReferral\" id=\"AddReferral\" value=\"Referring Block\" onclick=\"printKey(\'_ReferringBlock\');\">\r\n    <br>\r\n    <!-- Patient Block -->\r\n    <input type=\"button\" class=\"butn\" name=\"label\" value=\"Patient Label\" onclick=\"hist=\'label\';printKey(hist);\">\r\n    <br>\r\n	<input type=\"button\" class=\"butn\" name=\"Patient\" value=\"Patient Name\" onclick=\"printKey(\'first_last_name\');\">\r\n    <br>\r\n    <input type=\"button\" class=\"butn\" name=\"PatientSex\" value=\"Age & Gender\" onclick=\"printKey(\'ageGender\');\">\r\n    <br>\r\n    <!-- Social History -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddSocialFamilyHistory\" value=\"Social History\" onclick=\"var hist=\'_SocialFamilyHistory\';printKey(hist);\">\r\n    <br>\r\n    <!--  Medical History -->\r\n    <input type=\"button\"  class=\"butn\" name=\"AddMedicalHistory\" value=\"Medical History\" width=30 onclick=\"var hist=\'medical_historyS\';printKey(hist);\">\r\n    <br>\r\n    <!--  Ongoing Concerns -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddOngoingConcerns\" value=\"Ongoing Concerns\" onclick=\"var hist=\'ongoingconcerns\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Reminders -->\r\n    <input type=\"button\" class=\"butn\" name=\"AddReminders\" value=\"Reminders\"\r\n	    onclick=\"var hist=\'reminders\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Allergies -->\r\n    <input type=\"button\" class=\"butn\" name=\"Allergies\" id=\"Allergies\" value=\"Allergies\" onclick=\"printKey(\'allergies_des\');\">\r\n    <br>\r\n    <!-- Prescriptions -->\r\n    <input type=\"button\" class=\"butn\" name=\"Medlist\" id=\"Medlist\" value=\"Prescriptions\"	onclick=\"printKey(\'druglist\');\">\r\n    <br>\r\n    <!-- Other Medications -->\r\n    <input type=\"button\" class=\"butn\" name=\"OtherMedicationsHistory\" value=\"Other Medications\" onclick=\"printKey(\'other_medications_history\'); \">\r\n    <br>\r\n    <!-- Risk Factors -->\r\n    <input type=\"button\" class=\"butn\" name=\"RiskFactors\" value=\"Risk Factors\" onclick=\"printKey(\'risk_factors_ext\'); \">\r\n    <br>\r\n    <!-- Family History -->\r\n    <input type=\"button\" class=\"butn\" name=\"FamilyHistory\" value=\"Family History\" onclick=\"printKey(\'family_history\'); \">\r\n    <br>\r\n    <!-- Preventions -->  \r\n    <input type=\"button\" class=\"butn\" name=\"Preventions\" value=\"Preventions\" onclick=\"fpreventions()\">\r\n    <br>\r\n\r\n<script>\r\nfunction fpreventions(){\r\n    var sql2pass=\"SELECT   \'<br>\',  prevention_type as \'<b>PREVENTIONS\',\'&#160;&#160;&#160;Date:&#160;\' as \':\', LEFT(prevention_date,10) as \'</b>\' FROM preventions  WHERE demographic_no=\" + demographicNo + \" AND deleted=\'0\' GROUP by prevention_type, prevention_date \";\r\n    $(document).ready(function () {  \r\n        $.ajax({  \r\n            url: \"../oscarReport/RptByExample.do\" ,\r\n            data: { sql: sql2pass }\r\n        }).then(function(data) {  \r\n           //alert(data)\r\n           var elements = $(data);\r\n           var found = elements.find(\'.MainTableRightColumn table table\');\r\n           doHtml(found.html())\r\n        });  \r\n    });\r\n}\r\n</script>\r\n\r\n    <!-- Closing Salutation -->\r\n    <input type=\"button\" class=\"butn\" name=\"Closing\" value=\"Closing Salutation\" onclick=\"printKey(\'_ClosingSalutation\');\">\r\n    <br>\r\n    <!-- Signature Stamp -->\r\n    <input type=\"button\" class=\"butn\" name=\"stamp\" value=\"Stamp\" onclick=\"printKey(\'stamp\');\">\r\n    <br>\r\n    <!--  Current User -->\r\n    <input type=\"button\" class=\"butn\" name=\"User\" value=\"Current User\" onclick=\"var hist=\'current_user\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Attending Doctor -->\r\n    <input type=\"button\" class=\"butn\" name=\"Doctor\" value=\"Doctor (MRP)\" onclick=\"var hist=\'doctor\'; printKey(hist);\">\r\n    <br>\r\n    <!-- Vitals -->\r\n    <input type=\"button\" class=\"butn\" name=\"Vitals\" value=\"Vitals\" onclick=\"labgrid2()\">\r\n    <br>\r\n    <!-- Common Labs -->\r\n    <input type=\"button\" class=\"butn\" name=\"LabGrid\" value=\"Lab Grid\" onclick=\"labgrid()\">\r\n    <br>\r\n   <!-- Attach File -->\r\n   <input type=\"button\" class=\"butn\" name=\"AttachFile\" value=\"Attach File\" onclick=\"popupEformUpload()\">\r\n    <table style=\"width:140px\">\r\n        <tbody>\r\n            <tr>\r\n                <td style=\"text-align: center\" id=\"tdAttachedLabel\" >Attached Files:</td>\r\n            </tr>\r\n            <tr>\r\n	            <td id=\"tdAttachedDocs\" > <!-- important as this is where the results get put--> </td>\r\n            </tr>\r\n            <tr id=\"trAttachedDocs\" >\r\n	            <td style=\"text-align: center\">Legend<br>\r\n	            <span class=\"doc\">Blue - Documents</span><br>\r\n	            <span class=\"lab\">Purple - Labs</span><br>\r\n	            <span class=\"hrm\">Red - Hrm</span><br>\r\n	            <span class=\"eform\">Green - EForm</span>\r\n	            </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n\r\n<div class=\"DoNotPrint\" >\r\n    <span id=\"arrow\" title=\"expand\" class=\"chevron\" onclick=\"collapseFooter();\">&nbsp^&nbsp;</span>\r\n    <input onclick=\"viewsource(this.checked)\" type=\"checkbox\"> HTML Source\r\n    <input onclick=\"usecss(this.checked)\" type=\"checkbox\">\r\n    Use CSS	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \r\n    Subject: <input name=\"subject\" id=\"subject\" size=\"40\" type=\"text\">		 \r\n\r\n    <table id=\"controls4\">\r\n        <tr id=sig>\r\n            <td><div id=\"signatureInput\">&nbsp;</div></td>\r\n        </tr>\r\n        <tr>\r\n            <td><div id=\"faxControl\">&nbsp;</div></td>\r\n        </tr>      \r\n        <tr>\r\n            <td>\r\n            <input value=\"Submit\" name=\"SubmitButton\" type=\"submit\" onclick=\"saveRTL();  document.RichTextLetter.submit()\">\r\n            <input value=\"Print\" name=\"PrintSaveButton\" type=\"button\" onclick=\"document.getElementById(\'edit\').contentWindow.print();saveRTL();  setTimeout(\'document.RichTextLetter.submit()\',1000);\">\r\n            <input value=\"Reset\" name=\"ResetButton\" type=\"reset\">\r\n            <input value=\"Print\" name=\"PrintButton\" type=\"button\" onclick=\"document.getElementById(\'edit\').contentWindow.print();\">\r\n            </td>\r\n        </tr>\r\n    </table>\r\n</div>\r\n</form>\r\n</body>\r\n</html>'
+    WHERE `form_name` LIKE "%Rich Text Letter%" AND `form_time` IN ('00:00:00','16:00:00') AND DATE(`form_date`) < '2022-03-04' ;
 
 -- PHC activate dashboard for admin and doctor roles.  Note update-2021-03-06.sql above adds the _dashboardChgUser 'o' ie none for doctor and 'x' ie full for admin
 INSERT INTO  `secObjPrivilege` VALUES('admin',  '_dashboardManager', 'x', 0, '999998') ON DUPLICATE KEY UPDATE objectName='_dashboardManager' ;
@@ -1602,4 +1783,564 @@ UPDATE `consentType` SET `active` = '0' WHERE `consentType`.`name` = 'Sunshiner 
 
 -- PHC provide a default for CVCImmunizationName.CVCImmunizationId
 ALTER TABLE `CVCImmunizationName` CHANGE `CVCImmunizationId` `CVCImmunizationId` VARCHAR(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+-- PHC after Dennis Warren some cleanup for data consistancy
+UPDATE casemgmt_note cn
+SET billing_code = ''
+WHERE billing_code IS NULL;
+
+UPDATE casemgmt_note cn
+SET encounter_type = 'face to face encounter with client'
+WHERE encounter_type IS NULL;
+
+UPDATE preventions p
+SET provider_name = NULL 
+WHERE provider_name = '';
+
+UPDATE preventionsExt p
+SET val = ''
+WHERE val IS NULL;
+
+UPDATE measurements m
+SET comments = ''
+WHERE comments IS NULL;
+
+UPDATE document
+SET source = ""
+WHERE source IS NULL;
+
+UPDATE appointment a
+SET type = ''
+WHERE type IS NULL;
+
+UPDATE appointment a
+SET resources = ''
+WHERE resources IS NULL;
+
+UPDATE appointment a
+SET location = ''
+WHERE location IS NULL;
+
+UPDATE tickler
+SET service_date = "0001-01-01"
+WHERE service_date IS NULL;
+
+UPDATE demographiccust
+SET cust1 = ''
+WHERE cust1 IS NULL;
+
+UPDATE demographiccust
+SET cust2 = ''
+WHERE cust2 IS NULL;
+
+UPDATE demographiccust
+SET cust3 = ''
+WHERE cust3 IS NULL;
+
+UPDATE demographiccust
+SET cust4 = ''
+WHERE cust4 IS NULL;
+
+UPDATE drugs
+SET takemax = 0
+WHERE takemax IS NULL;
+
+UPDATE drugs
+SET takemin = 0
+WHERE takemin IS NULL;
+
+UPDATE demographic 
+SET postal = '' 
+WHERE postal IS NULL;
+
+UPDATE demographic
+SET title = ""
+WHERE title IS NULL;
+
+UPDATE demographic
+SET email = ""
+WHERE email IS NULL;
+
+UPDATE demographic
+SET ver = ""
+WHERE ver IS NULL;
+
+UPDATE demographic
+SET roster_status = ""
+WHERE roster_status IS NULL;
+
+-- UPDATE demographic
+-- SET patient_status_date = now()
+-- WHERE patient_status_date IS NULL;
+
+UPDATE demographic
+SET date_joined = now()
+WHERE date_joined IS NULL;
+
+UPDATE demographic
+SET spoken_lang = ""
+WHERE spoken_lang IS NULL;
+
+UPDATE demographic
+SET lastUpdateDate = NOW()
+WHERE lastUpdateDate IS NULL;
+
+UPDATE demographic 
+SET month_of_birth =  CONCAT('0', month_of_birth)
+WHERE CHAR_LENGTH( month_of_birth ) < 2;
+
+UPDATE demographic
+SET date_of_birth =  CONCAT('0', date_of_birth)
+WHERE CHAR_LENGTH( date_of_birth ) < 2;
+
+UPDATE demographic 
+SET patient_status = 'AC'
+WHERE patient_status IS NULL;
+
+UPDATE demographic
+SET family_doctor = "<rdohip></rdohip><rd></rd>"
+WHERE family_doctor IS NULL;
+
+UPDATE demographic
+SET sin = ""
+WHERE sin IS NULL;
+
+UPDATE demographic
+SET country_of_origin = "-1"
+WHERE country_of_origin IS NULL;
+
+update demographic 
+set phone = replace(phone, '\n', '')
+where phone LIKE "%\n%";
+
+UPDATE provider 
+SET `address` = ''
+WHERE `address` IS NULL;
+
+UPDATE provider 
+SET `phone` = ''
+WHERE `phone` IS NULL;
+
+UPDATE provider 
+SET `work_phone` = ''
+WHERE `work_phone` IS NULL;
+
+UPDATE provider 
+SET `comments` = ''
+WHERE `comments` IS NULL;
+
+UPDATE provider 
+SET `provider_activity` = ''
+WHERE `provider_activity` IS NULL;
+
+UPDATE provider 
+SET `lastUpdateUser` = '999998'
+WHERE `lastUpdateUser` IS NULL;
+
+UPDATE provider 
+SET `lastUpdateDate` = NOW()
+WHERE `lastUpdateDate` IS NULL;
+
+UPDATE provider 
+SET `practitionerNoType`= ''
+WHERE `practitionerNoType` IS NULL;
+
+-- PHC cleanup  PROBLEM ticklers survive death or inactivation
+-- Delete Active ticklers on deceased patients 
+UPDATE `tickler` t, `demographic` d SET t.status='D', t.update_date=NOW() 
+WHERE d.demographic_no = t. demographic_no AND d.patient_status IN ('DE') AND t.status ='A';
+
+-- Inactive patients may still need the tickler, probably best not to blanket them deleted
+-- UPDATE `tickler` t, `demographic` d SET t.status='D', t.update_date=NOW() 
+-- WHERE d.demographic_no = t. demographic_no AND d.patient_status IN ('IN') AND t.status ='A';
+
+-- PHC Cleanup PROBLEM ticklers get lost if the provider becomes inactive
+-- reassign future tickler provider to current listed one for the demographic when the tickler provider is inactive
+UPDATE `tickler` t, demographic d, provider p SET `task_assigned_to`=d.provider_no, t.update_date=NOW()
+WHERE d.demographic_no=t.demographic_no AND d.patient_status="AC" AND task_assigned_to =p.provider_no AND p.status="0" AND service_date >= NOW();  
+
+
+-- PHC per Ian Pun, patch up the errorcodes
+CREATE TABLE IF NOT EXISTS `billing_on_errorCode` (
+  `code` varchar(5) NOT NULL,
+  `description` varchar(255) NOT NULL DEFAULT ''
+);
+
+
+INSERT INTO `billing_on_errorCode` (`code`, `description`) VALUES
+('20', 'Resubmit with Manual review documentation '),
+('30', 'this service is not a benefit of OHIP'),
+('32', 'OHIP records show service(s) on this day claimed previously'),
+('33', 'Approved'),
+('35', 'OHIP records show this service rendered has been claimed previously (used on  Pay Practitioner duplicate claims)'),
+('36', 'OHIP records show this service has been rendered by another Practitioner, Group, LAB'),
+('37', 'the listed benefit for this code in 0 LMS units'),
+('40', 'this service allowed only once for same patient'),
+('48', 'paid in accordance with the OHIP schedule of benefits'),
+('49', 'Paid according to the average free for this service ??? independent considerations will be given if clinical records/operative reports are presented'),
+('50', 'fee schedule code changed in accordance with OHIP schedule of benefits'),
+('51', 'Fee allowed according to the appropriate item in the current Ministry Schedule of Benefits'),
+('52', 'Fee-for-service assessed by medical consultant'),
+('53', 'fee allowed according to appropriate item in a previous OHIP schedule of benefits'),
+('54', 'interim payment- claim under review'),
+('55', 'this deduction is an adjustment on an earlier account (applicable only to system generated negates effective May/97'),
+('56', 'claim under review'),
+('57', 'this payment is an adjustment on an earlier account'),
+('58', 'claimed by another physician within group'),
+('59', 'practitionerNULLs notification - WCB claims'),
+('60', 'not a benefit of the reciprocal medical billing agreement'),
+('61', 'OOC claim paid at greater than $9999.99 (prior approval on file)'),
+('65', 'service included in approved hospital payment'),
+('68', 'hospital accommodation paid at standard ward rate'),
+('69', 'elective services paid at 75% of OHIP  schedule of  rates'),
+('70', 'OHIP records show corresponding procedure(s) on this day claimed previously by another physician'),
+('80', 'technical fee adjustment for hospitals and IHFs'),
+('9', 'Fee Schedule Codes used is not correct ??? resubmit using approprate codes from OHIP Schedule of Benefits'),
+('A02', 'prev. OBS service'),
+('A03', 'MRP Visit already Pd.'),
+('A08', 'one assess at delivery'),
+('A2A', 'outside of age limit'),
+('A2B', 'wrong sex for service'),
+('A34', 'multiple dup. claims'),
+('A36', 'claimed by other practitioner.'),
+('A3E', 'no suce F.S. code'),
+('A3F', 'no fee for service'),
+('A3G', 'fee billed low - check'),
+('A3H', 'max # ser FSM ref MC'),
+('A3J', 'fee outside accept range'),
+('A3K', 'auto adj. on prev. man ad'),
+('A3L', 'Other New Pt. Fee Alrdy Pd'),
+('A4A', 'to assess see guideline'),
+('A4D', 'ineligible specialty'),
+('A4E', 'manual assess - code 9'),
+('A4F', 'MRI review by MC'),
+('A6A', 'no claims ref file�A'),
+('A7A', 'claim no. not found �.A'),
+('A81', 'rule error assess & report'),
+('A87', 'FSC mismatch'),
+('A88', 'Adjustment payment type unequal'),
+('A89', 'pay OOP practice # unequal'),
+('A8A', 'claim # previous on file'),
+('A91', 'maximum 99 pat. ID records'),
+('A93', 'maximum 10000 claim item record'),
+('A94', 'claim item not on file'),
+('A95', 'Claim Item On File'),
+('A96', 'claim # previous on file'),
+('A97', 'not all items changed'),
+('A98', 'pay sub disallowed claim'),
+('A99', 'wrong patient info'),
+('AC4', 'unacceptable Ref. #'),
+('AD1', 'Corresponding procedure not claimed by same or different physician'),
+('AD3', 'not allowed with visit'),
+('AD4', 'refer to MC'),
+('AD5', 'proceedure allowed previously'),
+('AD8', 'not allowed alone'),
+('AD9', 'Premium Not Allow Alone'),
+('ADC', 'add. proc. at 50%'),
+('ADD', 'add. proc. at 50%'),
+('ADJ', 'These items may not be claimed together'),
+('ADM', 'emerg. equiv/other visits'),
+('ADP', 'Mutally Exclus Dental'),
+('AEV', 'Visit Only Allowed'),
+('AF1', 'multiple frac/dis.'),
+('AF5', 'fracture. fee incl.'),
+('AG1', 'crit. care alrdy PD'),
+('AG2', 'crit. care alrdy PD'),
+('AH1', 'On-call Admit Same Day'),
+('AH2', 'Hosp. Assess. Other Phys'),
+('AH5', 'Admit Date Mismatch'),
+('AH6', 'emerg. assess. same day'),
+('AH7', 'hosp. assess. same day'),
+('AH8', 'invalid ADM date/hosp #'),
+('AH9', 'diagnostic service same day'),
+('AHA', 'FSC and Time Period Mismatch'),
+('AHB', 'overlapping visits'),
+('AHD', 'extra visits in wk/mth'),
+('AHE', '2 specialties, same period'),
+('AHF', 'con/sup care same period'),
+('AI4', 'claimed by other IHF/PHY'),
+('AMM', 'Max LTC Monthly Fee Apply'),
+('AMO', 'multiple surgery. other dr.'),
+('AMS', 'multiple procedures'),
+('AP', 'this payment is in accordance with legislation - if you disagree with the payment you may appeal to the General Manager'),
+('AP2', 'max fee premium/NB care'),
+('AP4', 'NIC only allowed'),
+('ARD', 'possible duplicate with RMBS'),
+('ARF', 'Technical service code requires referring physician'),
+('AS8', 'pre-op Cons/Assess'),
+('AS9', 'post-op visits'),
+('AV3', 'proc. only allowed'),
+('C1', 'allowed as repeat/limited consultation'),
+('C2', 'allowed at re-assessment fee'),
+('C3', 'allowed at minor assessment fee'),
+('C4', 'consultation not allowed with this service - paid as assessment'),
+('C5', 'allowed as multiple systems assessment'),
+('C6', 'allowed as Type 2 admission assessment'),
+('C7', 'an admission assessment (C003A) or general re-assessment (C004A) may not be claimed by any physician within 30 days following a pr-dental/pre-operative assessment'),
+('C8', 'Payment reduce to geriatric consultation fee ??? maximum number of comprehensive geriatric consultation has been reached '),
+('C9', 'Allowed as in-patient interim admission orders ??? initial assessment already claimed by other physician'),
+('CNA', 'Counselling NOT Allowed'),
+('COA', 'counseling not allowed'),
+('code', 'description'),
+('D1', 'allowed as repeat procedure - initial procedure previously claimed'),
+('D2', 'additional procedures allowed at 50%'),
+('D3', 'not allowed in addition to visit fee'),
+('D4', 'procedure allowed at 50% with visit'),
+('D5', 'procedure already allowed - visit fee adjustment'),
+('D6', 'limit of payment for this procedure reached'),
+('D7', 'not allowed in addition to other procedure'),
+('D8', 'allowed with specific procedures only'),
+('D9', 'not allowed to a hospital department'),
+('DA', 'maximum for this procedure reached - paid as repeat/chronic procedure'),
+('DB', 'Other dialysis procedure already paid'),
+('DC', 'procedure paid previously not allowed in addition to this procedure - fee adjusted to pay the difference'),
+('DD', 'Not allowed as diadnostic code is unrelated to original eye exam'),
+('DE', 'LAB tests already paid - visit fee adjusted'),
+('DF', 'Corresponding fee code has not been claimed or was approved at zero'),
+('DG', 'diagnostic services for hospital in-patients are not payable on a fee-for-service basis - included in the hospital global budget'),
+('DH', 'ventilator support allowed with haemodialysis'),
+('DL', 'allowed as laboratory tests in private office'),
+('DM', 'Paid/Disallowed in accordance with MOH policy regarding an Emergency Department Equivalent'),
+('DN', 'allowed a prudenal block in addition to procedure - as per OHIP policy'),
+('DP', 'procedure paid preciously allowed at 50% in addition to this procedure - fee adjusted to pay the difference'),
+('DS', 'not allowed ??? mutually exclusive code billed'),
+('DT', 'In-patient technical fee not allowed'),
+('DV', 'Service is included in Monthly Management Fee for LTC Patient'),
+('DX', 'Diagnostic code not eligible with FSC'),
+('E1', 'service date prior to start of eligibility'),
+('E2', 'incorrect version code for service date'),
+('E4', 'service date after the eligibility termination date'),
+('E5', 'service date not within an eligible period'),
+('EA', 'service date is not within an eligible period- service provided on or after the 20th of this month will not be paid unless eligibility status changes'),
+('EB', 'additional payment for the claim shown'),
+('EF', 'incorrect version code - services provided on or after the 20th of this month will not be paid unless the current version code is provided'),
+('EF1', 'IHF not approved on S/D'),
+('EF2', 'IHF not Lic. For FSC on S/D'),
+('EF3', 'insured service excl. from IHF'),
+('EF4', 'Prov. Not IHF on S/D'),
+('EF5', 'ins. Srv. Excl. from #991000'),
+('EF7', 'Ref. Phys. # required - IHF SRV'),
+('EF8', 'INULLNULL FSC claimed, non IHF'),
+('EF9', 'mobile site # required'),
+('EH1', 'service. Date <eligibility. Eff. Date'),
+('EH2', 'mismatched version code'),
+('EH4', 'ser. Date >eligibility. end date'),
+('EH5', 'service. Date not in eligibility. Period'),
+('ENB', 'unregistered newborn'),
+('EP1', 'Enrolment Transaction Not Allow'),
+('EP2', 'Cannot Use Q-Code to Enrol/Re-enrol'),
+('EP3', 'Incorrect Service Date ??? Check Date Of Enrolment'),
+('EP4', 'Enrolment Restriction Applied'),
+('EP5', 'Incorrect Fee Code for this Group Type'),
+('EPA', 'network billing not approved'),
+('EPC', 'patient not rostered/rostered to another network'),
+('EPD', 'roster/HRR payment discrepancy'),
+('EPE', 'network affiliation error'),
+('EPF', 'enrolment date mismatch'),
+('EQ1', 'clinic/Dr not on file'),
+('EQ2', 'specialty mismatch'),
+('EQ3', 'pay sub. Claim- Dr. option'),
+('EQ4', 'pay Dr. claim- sub option'),
+('EQ5', 'Lab inactive on S/date'),
+('EQ6', 'incorrect referral #'),
+('EQ8', 'Lab. Not licensed for FSC'),
+('EQ9', 'Lab. # not on file'),
+('EQA', 'confirm registered spec.'),
+('EQB', 'solo practice inact. On S/D'),
+('EQC', 'group not registered on HRR'),
+('EQD', 'group inactive on S/D'),
+('EQE', 'practice not in group on S/D'),
+('EQF', 'aff. Practice inactive on S/D'),
+('EQG', 'ref. Lab. Not req on HRR'),
+('EQH', 'group agreement error on CPDB'),
+('EQI', 'contact characteristics error'),
+('EQJ', 'Pract. Not Elig. On S/D '),
+('EQK', 'MNI Does Not Meet Criteria'),
+('EQL', 'Pract. Not Elig. to Claim FSC '),
+('EQS', 'Practice Criteria Not Met'),
+('ERF', 'Ref. Phys. # currently ineligible for referrals'),
+('ESD', 'app. Group affiliNULLNULLn S/D'),
+('EV', 'check health card for current version (applicable for service dates prior to Feb 1/93'),
+('F1', 'additional fractures/dislocations allowed at 85%'),
+('F2', 'allowed in accordance with transferred care'),
+('F3', 'previous attempted reductions (open or closed) allowed at 85%'),
+('F5', 'two weeks aftercare included in fracture fee'),
+('F6', 'allowed as minor/partial assessment'),
+('FF', 'additional payment for the claim shown'),
+('G1', 'other critical/comprehensive care already paid'),
+('GF', 'coverage lapsed - bill patient for future claims'),
+('H1', 'Admission assessment or ER assessment already paid'),
+('H2', 'allowed as subsequent visit - initial visit previously claimed'),
+('H3', 'maximum fee allowed per week after 5th week'),
+('H4', 'maximum fee allowed per week after 6th week to pediatricians'),
+('H5', 'maximum fee allowed per month after the 13th week'),
+('H6', 'allowed as supportive or concurrent care'),
+('H7', 'allowed as chronic care'),
+('H8', 'hospital number and/or admission date required for in-hospital service'),
+('H9', 'concurrent care already claimed by another doctor'),
+('HA', 'admission assessment claimed by another physician - hospital visit fee applied'),
+('HCC', 'Not complex/vulnerable'),
+('HF', 'concurrent or supportive care already claimed in period'),
+('HM', 'not valid master hosp. # on date of service'),
+('I2', 'Service is globally funded'),
+('I3', 'FSC is not on the IHF license profile for the date specified'),
+('I4', 'record shows service has been rendered by another Practitioner/Group/IHF'),
+('I5', 'service is globally funded and FSC is not on IHF license profile'),
+('I6', 'Premium not applicable'),
+('I8', 'Confirmation not received'),
+('J3', 'approved for stale dated processing'),
+('J7', 'claim submitted six months after service date'),
+('L1', 'this service paid to another laboratory'),
+('L2', 'not allowed to non-medical laboratory director'),
+('L3', 'not allowed in addition to this laboratory procedure'),
+('L4', 'not allowed to attending physicians'),
+('L5', 'not allowed in addition to other procedure paid to another laboratory'),
+('L6', 'procedure paid previously to another laboratory, not allowed in addition to this procedure - fee adjusted to pay the difference'),
+('L7', 'not allowed - referred specimen'),
+('L8', 'not to be claimed with prenatal/fetal assessment as of July 1/93'),
+('L9', 'laboratory services for hospital in-patients or out-patients are not payable on a fee-for-service basis - included in the hospital budget'),
+('LA', 'laboratory service is funded by special laboratory agreement'),
+('LS', 'paid in accordance to special laboratory agreement'),
+('M1', 'maximum feel allowed for these services has been reached'),
+('M2', 'maximum allowance for radiographic examination(s) by 1 or more practitioners'),
+('M3', 'Maximum fee allowed for prenatal care'),
+('M4', 'maximum fee allowed for these services by 1 or more practitioners has bee reached'),
+('M5', 'monthly maximum has been reached'),
+('M6', 'maximum fee allowed for special visit premium- additional patient seen'),
+('MC', 'Maximum of 2 patient case conferences has been reached in a 12 month period'),
+('MN', 'Maximum number of sessions has been reached'),
+('MS', 'Maximum allowable for sleep studies in a 12-month period by one physician has been reached'),
+('MX', 'Maximum of 2artroscopy ???R??? codes with E595 has been reached'),
+('O1', 'fee for obstetric care apportioned'),
+('O2', 'previous prenatal care already claimed'),
+('O3', 'previous prenatal care already claimed by another doctor'),
+('O4', 'office visits relating to pregnancy and claimed prior to delivery included in obstetric fee'),
+('O5', 'not allowed in addition to delivery'),
+('O6', 'medical induction/stimulating of labour allowed once per pregnancy'),
+('O7', 'allowed as subsequent prenatal visit - initial prenatal visit already claimed'),
+('O8', 'allowed once per pregnancy'),
+('O9', 'not allowed in addition to post-natal care'),
+('P2', 'maximum fee allowed for low birth weight care'),
+('P3', 'maximum feel allowed for newborn care'),
+('P4', 'fee for newborn care does not apply when newborn baby is ill'),
+('P5', 'over-age for pediatric rates of payment'),
+('P6', 'over-age for well-baby care'),
+('P9', 'Complex New Patient'),
+('Q8', 'LAB not licensed to perform this test on date of service'),
+('R01', 'missing HSN'),
+('R02', 'invalid HSN'),
+('R03', 'invalid/missing province code'),
+('R04', 'service excluded from RMBS'),
+('R05', 'service DT prior 880401/PG/ON'),
+('R06', 'wrong provider for RMBS'),
+('R07', 'invalid pay type for RMBS'),
+('R08', 'invalid referral number'),
+('R09', 'claim header 2 missing - RMB'),
+('R1', 'only one health exam allowed in a 24-month period'),
+('RD', 'duplicate, paid in RMBS'),
+('S1', 'bilateral surgery, one stage, allowed at 85% higher than unilateral'),
+('S2', 'bilateral surgery, two stage, allowed at 85% higher than unilateral'),
+('S3', 'second surgical procedure allowed at 85%'),
+('S4', 'procedure fee reduced when paid with related surgery or anesthetic'),
+('S5', 'not allowed in addition to major surgical fee'),
+('S6', 'allowed as subsequent procedure - initial procedure - initial procedure previously claimed'),
+('S7', 'normal preoperative/postoperative care included in surgical fee'),
+('SA', 'surgical procedure allowed at consultation fee'),
+('SB', 'normal preoperative visit included in surgical fee - visit fee previously paid - surgical fee adjusted'),
+('SC', 'not allowed, major preoperative visit already claimed'),
+('SD', 'not allowed, team/Assit fee already clamed'),
+('SE', 'major preoperative visit previously paid & admission assessment previously paid - surgery reduced by the admission assessment'),
+('SR', 'fee reduced based on MOH utilization adjustment - contact your provider'),
+('T1', 'fee allowed according to surgery claim'),
+('TH', 'fee reduced per HOH payment policy - contact your physician'),
+('V02', 'invalid region code'),
+('V04', 'error in claim number'),
+('V05', 'error - claim # /service date'),
+('V07', 'invalid practice number'),
+('V08', 'invalid specialty code'),
+('V09', 'invalid referral number'),
+('V1', 'allowed as repeat assessment - initial assessment previously claimed'),
+('V10', 'invalid surname'),
+('V12', 'invalid first name'),
+('V13', 'invalid birth date'),
+('V14', 'invalid sex'),
+('V16', 'unacceptable diagnostic. Code # of services'),
+('V17', 'invalid payment type'),
+('V18', 'invalid ADM/ first visit date'),
+('V19', 'Invalid Chiro Diag Code'),
+('V2', 'allowed as extra patient seen in the home'),
+('V20', 'Unaccept. Age/Diag Code'),
+('V21', 'diagnostic code required'),
+('V22', 'invalid diagnostic code'),
+('V23', 'check # of services'),
+('V25', 'invalid action code'),
+('V26', 'invalid item number'),
+('V27', 'supply same action code'),
+('V28', 'invalid hospital number'),
+('V29', 'Invalid in/out Indicator 1-IN 2-OUT'),
+('V3', 'not allowed in addition to procedure fee'),
+('V30', 'FSC/DX code combination NAB'),
+('V31', 'error in claim header'),
+('V33', 'missing payee address'),
+('V34', 'invalid service code'),
+('V35', 'invalid OOP/00C service'),
+('V36', 'check sessional input criteria'),
+('V37', 'incomplete payee address'),
+('V38', 'inconsistent claim ident.'),
+('V39', 'allowed items only 99'),
+('V4', 'date of service was not a Saturday, Sunday or a statutory holiday'),
+('V40', 'invalid fee schedule code'),
+('V41', 'invalid fee billed'),
+('V42', 'invalid number of services'),
+('V44', 'invalid assessment code'),
+('V46', 'invalid fee approved'),
+('V47', 'fee not divisible'),
+('V48', 'missing explanatory code'),
+('V5', 'only 1 OVA allowed within a 12-month period for age 19 & under or 65 & over & one within 24 months for age 20-64'),
+('V50', 'SVC DRE pre initial visit'),
+('V51', 'invalid location code'),
+('V6', 'allowed as minor assessment - initial assessment already claimed'),
+('V60', 'invalid explanatory code'),
+('V62', 'Invalid Serv Location Indic'),
+('V63', 'invalid Ref. Lab. Number'),
+('V64', 'Missing Serv Location Indic'),
+('V65', 'Missing Master Number'),
+('V66', 'Missing Admission Date'),
+('V67', 'Missing Mstr No/Adm Date'),
+('V68', 'Incorr Serv Location Indic'),
+('V69', 'Serv Dte Invalid for SLI'),
+('V7', 'allowed as specific re-assessment fee'),
+('V70', 'create date <service date'),
+('V8', 'this service paid at lower fee as per OHIP policy'),
+('V9', 'only one initial office visit allowed within a 12-month period'),
+('V94', 'invalid bill 94 adjustment'),
+('V95', 'one bill 94 adjustment per claim'),
+('V96', 'invalid bill 147 adjustment'),
+('V97', 'one bill147 adjustment per claim'),
+('V98', 'Wrong Service Date'),
+('VA', 'procedure fee reduced - consultation/visit fees not allowed in addition'),
+('VB', 'additional OVA is allowed once within 2nd year of patients aged 20-64 following a periodic OVA'),
+('VG', 'only 1 geriatric general assessment premium per patient per 12-month period'),
+('VH1', 'health # is invalid'),
+('VH2', 'health # is missing'),
+('VH3', 'invalid payment program'),
+('VH4', 'invalid version code'),
+('VH5', 'OHIP# required for service date'),
+('VH8', 'HN not registered with MOH'),
+('VH9', 'HN Not Regd with MOH'),
+('VHA', 'OHIP# part.# not on RPDB for HN'),
+('VHO', 'header 2 and HN present'),
+('VJ5', 'invalid service date'),
+('VJ7', 'stale-dated claim'),
+('VM', 'Oculo-visual minor assessment is allowed within 12 consecutive months following a major eye exam'),
+('VP', 'Allowed with special visit only'),
+('VS', 'date of service was a Sat., Sun, or statutory holiday'),
+('VW1', 'invalid WCB service'),
+('VX', 'Completexity premium not applicable to visit fee'),
+('W3', 'Claims submission > 3 m , will still be processed for payment'),
+('X2', 'G.I. Tract includes cline & video tape'),
+('X3', 'G.I. Tract includes survey file of abdomen'),
+('X4', 'Only one BMD allowed within a 24-month period for low risk patient')
+ON DUPLICATE KEY UPDATE description=description;
+
 

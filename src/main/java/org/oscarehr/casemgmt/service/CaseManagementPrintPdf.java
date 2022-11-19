@@ -28,6 +28,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
+import org.oscarehr.common.dao.AllergyDao;
+import org.oscarehr.common.model.Allergy;
 import org.oscarehr.common.model.Prevention;
 import org.oscarehr.common.printing.FontSettings;
 import org.oscarehr.common.printing.PdfWriterFactory;
@@ -62,6 +66,7 @@ import com.lowagie.text.pdf.PdfWriter;
 
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
+import oscar.oscarRx.data.RxPrescriptionData;
 
 /**
  *
@@ -256,7 +261,13 @@ public class CaseManagementPrintPdf {
                  curFont = normal;
                  phrase = new Phrase(LEADING, "", curFont);
                  String refused = prevention.isRefused()?" (Refused)":"";
-                 phrase.add(formatter.format(prevention.getPreventionDate()) + " - ");
+                 Date preventionDate = prevention.getPreventionDate();
+                 if (preventionDate == null) {
+                     phrase.add("No Prevention Date Set - ");
+                 }
+                 else {
+                     phrase.add(formatter.format(preventionDate) + " - ");
+                 }
                  phrase.add(prevention.getPreventionType() + refused);
                  p.add(phrase);
                  document.add(p);
@@ -326,6 +337,62 @@ public class CaseManagementPrintPdf {
                 this.printNotes(notes);
             }
 
+        }
+    }
+    public void printRx(String demoNo, List<CaseManagementNote> cpp, Calendar startDate, Calendar endDate) throws DocumentException {
+        if( demoNo == null )
+            return;
+
+        if( newPage )
+            document.newPage();
+        else
+            newPage = true;
+
+        Paragraph p = new Paragraph();
+        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
+        Phrase phrase = new Phrase(LEADING, "", obsfont);
+        p.setAlignment(Paragraph.ALIGN_CENTER);
+        phrase.add("Patient Rx History");
+        p.add(phrase);
+        document.add(p);
+
+        Font normal = new Font(bf, FONTSIZE, Font.NORMAL);
+
+        RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
+        List<RxPrescriptionData.Prescription> list = new ArrayList<RxPrescriptionData.Prescription>();
+        for (RxPrescriptionData.Prescription prescription :  prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo))){
+            if(startDate.getTime().before(prescription.getRxDate()) && endDate.getTime().after(prescription.getRxDate())){
+                // add the prescription to the list if it is within the date range
+                list.add(prescription);
+            }
+        }
+
+        Font curFont;
+        for(int idx = 0; idx < list.size(); ++idx ) {
+            RxPrescriptionData.Prescription drug = list.get(idx);
+            p = new Paragraph();
+            p.setAlignment(Paragraph.ALIGN_LEFT);
+            if(drug.isCurrent() && !drug.isArchived()){
+                curFont = normal;
+                phrase = new Phrase(LEADING, "", curFont);
+                phrase.add(formatter.format(drug.getRxDate()) + " - ");
+                phrase.add(drug.getFullOutLine().replaceAll(";", " "));
+                p.add(phrase);
+                document.add(p);
+            }
+        }
+
+        if (cpp != null ){
+            List<CaseManagementNote>notes = cpp;
+            if (notes != null && notes.size() > 0){
+                p = new Paragraph();
+                p.setAlignment(Paragraph.ALIGN_LEFT);
+                phrase = new Phrase(LEADING, "\nOther Meds\n", obsfont);
+                p.add(phrase);
+                document.add(p);
+                newPage = false;
+                this.printNotes(notes);
+            }
         }
     }
 
@@ -472,6 +539,39 @@ public class CaseManagementPrintPdf {
             p.add(phrase);
             document.add(p);
         }
+    }
+
+    public void printAllergies(Integer demographicNo) throws DocumentException{
+        Paragraph p = new Paragraph();
+        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
+        Chunk chunk;
+        p.setAlignment(Paragraph.ALIGN_LEFT);
+        Phrase phrase = new Phrase(LEADING, "Allergies\n", obsfont);
+        p.add(phrase);
+        document.add(p);
+        newPage = false;
+
+        AllergyDao allergyDao = SpringUtils.getBean(AllergyDao.class);
+        List<Allergy> allergies = allergyDao.findActiveAllergies(demographicNo);
+
+        if( newPage ){
+            document.newPage();
+        } else{
+            newPage = true;
+        }
+
+        // Print active allergies
+        if(allergies!=null && !allergies.isEmpty()){
+            for(Allergy allergy : allergies) {
+                p = new Paragraph();
+                //p.setSpacingBefore(font.leading(LINESPACING)*2f);
+                phrase = new Phrase(LEADING, "", font);
+                phrase.add(allergy.getDescription() + ", (" + allergy.getSeverityOfReaction() +")\n\n");
+                p.add(phrase);
+                document.add(p);
+            }
+        }
+
     }
 
     public void finish() {

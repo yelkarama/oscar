@@ -36,7 +36,7 @@
 String demographic_no = request.getParameter("demographic_no");
 %>
 
-<title>OSCAR attachment</title>
+<title><bean:message key="oscarMessenger.ViewMessage.msgAttachments" /></title>
 
 <% if ( demographic_no != null ) { %>
 
@@ -47,6 +47,6 @@ String demographic_no = request.getParameter("demographic_no");
 	<frame name="srcFrame" src="">
 </frameset>
 <% } else { %>
-Please select a demographic.
+<bean:message key="dms.incomingDocs.selectDemographicFirst" />
 <% } %>
 </html>

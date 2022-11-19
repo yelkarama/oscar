@@ -1894,7 +1894,13 @@ function fullViewById(id) {
                         postBody: params,
                         evalScripts: true,
                         onSuccess: function(response) {
-                        	$(noteTxtId).update(response.responseText.trim());
+                            if ($(noteTxtId).hasAttribute('data') && $(noteTxtId).getAttribute('data').length >1) {
+                                // its markdown.  all we need to do here is trim it a bit
+                                $(noteTxtId).update(response.responseText.trim());
+                            } else { 
+                                // its acsii so replace the line endings with <br> to format it
+                                $(noteTxtId).update(response.responseText.trim().replace(/\n/g,"<br>"));
+                            }
                             if( largeNote(response.responseText) ) {
                                 new Insertion.After(noteTxtId,btnHtml);
                             }
