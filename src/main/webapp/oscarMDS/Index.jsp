@@ -82,16 +82,15 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 <!-- calendar style sheet -->
 <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" />
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+
+
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.tablesorter.js"></script>
@@ -109,7 +108,10 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css"  />
         
        <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  /> 
-
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
   <script type="text/javascript" src="<%=request.getContextPath()%>/dms/showDocument.js"></script>        
 
 <!-- important leave this last to override the css above -->
@@ -178,7 +180,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 /* Links inside the dropdown */
 .dropdowns-content a {
   color: black;
-  padding: 12px 16px;
+  padding: 8px 12px;
   text-decoration: none;
   display: block;
 }
@@ -190,7 +192,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 .dropdowns:hover .dropdowns-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdowns:hover .dropbtns {background-color: #3e8e41;}
+.dropdowns:hover .dropbtns {background-color: #e6e6e6;}
+
 </style>
 
         <script type="text/javascript" src="showDocument.js"></script>
@@ -575,8 +578,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	.singlePage {
 
 	}
-	
-	input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;padding:0px;}    
+ 
 	#ticklerWrap{position:relative;top:0px;background-color:#FF6600;width:100%;}  
 	
 	.completedTickler{
