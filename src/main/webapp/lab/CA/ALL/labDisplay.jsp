@@ -426,7 +426,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 .DoNotPrint{display:none;}
 }      
         </style>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+
 
 
         <script language="JavaScript">
@@ -738,7 +738,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 /* Links inside the dropdown */
 .dropdowns-content a {
   color: black;
-  padding: 12px 16px;
+  padding: 8px 12px;
   text-decoration: none;
   display: block;
 }
@@ -750,9 +750,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 .dropdowns:hover .dropdowns-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdowns:hover .dropbtns {background-color: #3e8e41;}
+.dropdowns:hover .dropbtns {background-color: #e6e6e6;}
+
 </style>
-    </head>
 
     <body onLoad="javascript:matchMe();">
         <!-- form forwarding of the lab -->
@@ -1770,7 +1770,6 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 			                                        <td valign="top" align="left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><%=handler.getOBXComment(j, k, l)%></pre></td>
 			                                     </tr>
 			                                <%}
-
                                    } else if ((!handler.getOBXResultStatus(j, k).equals("TDIS") && handler.getMsgType().equals("Spire")) )  { %>
 											<tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                                            <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %></a>
