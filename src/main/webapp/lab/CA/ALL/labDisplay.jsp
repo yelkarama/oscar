@@ -426,7 +426,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 .DoNotPrint{display:none;}
 }      
         </style>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+
 
 
         <script language="JavaScript">
@@ -738,7 +738,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 /* Links inside the dropdown */
 .dropdowns-content a {
   color: black;
-  padding: 12px 16px;
+  padding: 8px 12px;
   text-decoration: none;
   display: block;
 }
@@ -750,9 +750,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 .dropdowns:hover .dropdowns-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdowns:hover .dropbtns {background-color: #3e8e41;}
+.dropdowns:hover .dropbtns {background-color: #e6e6e6;}
+
 </style>
-    </head>
 
     <body onLoad="javascript:matchMe();">
         <!-- form forwarding of the lab -->
@@ -921,11 +921,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 675, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
                                     <input type="button" class="btn" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
                                     <input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
-
-                                    <input type="button" class="btn" value="Msg" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
-                                    <input type="button" class="btn" value="Tickler" onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="caseload.msgMsg"/>" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
+                                    <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/>" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/>
-
                                     <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnEChart"/>" onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
                                     <% } %>
@@ -933,19 +931,16 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                         String mRecordWinName = "Master" + demographicID;
                                         String mRecordUrl = "../../../demographic/demographiccontrol.jsp?demographic_no=" + demographicID + "&displaymode=edit&dboperation=search_detail";
                                     %>
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMRecord"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
-				    <input type="button" class="btn" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
-
-
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupStart(700,1000,'<%=mRecordUrl%>', '<%=mRecordWinName%>');">
+                                    <input type="button" class="btn" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
                                    	<% if (bShortcutForm) { %>
 									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
 									<% } %>
 									<% if (bShortcutForm2) { %>
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
-
 <% if(recall){%>
-<input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+									<input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
 <%}%>
 									<%
 										if(remoteLabKey == null || "".equals(remoteLabKey.length())) {
@@ -1775,7 +1770,6 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 			                                        <td valign="top" align="left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><%=handler.getOBXComment(j, k, l)%></pre></td>
 			                                     </tr>
 			                                <%}
-
                                    } else if ((!handler.getOBXResultStatus(j, k).equals("TDIS") && handler.getMsgType().equals("Spire")) )  { %>
 											<tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                                            <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %></a>
