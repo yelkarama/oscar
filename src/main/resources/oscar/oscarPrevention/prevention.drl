@@ -354,7 +354,7 @@
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
-		<java:condition>prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 ||prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12</java:condition>
+		<java:condition>prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 ||prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 ||prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12</java:condition>
 		<java:consequence>              
               prev.log("Flu 2");
               prev.addWarning("Flu", "Needs Influenza Shot ");
@@ -368,6 +368,7 @@
 		<java:condition>prev.getNumberOfPreventionType("Flu") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent high-dose") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent high dose") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza") == 0</java:condition>
 		<java:consequence>              
               prev.log("Flu 3");
