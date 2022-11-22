@@ -359,6 +359,34 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
     //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
+                                                                            }else if(action=='msgLabFIT'){
+                                                                                demoid=json.demoId;
+                                                                                if(demoid!=null && demoid.length>0){
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+    //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
+    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+    }
+                                                                            }else if(action=='msgLabCOLONOSCOPY'){
+                                                                                demoid=json.demoId;
+                                                                                if(demoid!=null && demoid.length>0){
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');                              
+<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
+    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing'); 
+<% } %> 
+    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+    }
+                                                                            }else if(action=='msgLabBMD'){
+                                                                                demoid=json.demoId;
+                                                                                if(demoid!=null && demoid.length>0){
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');                              
+    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+    }
+                                                                            }else if(action=='msgLabPSA'){
+                                                                                demoid=json.demoId;
+                                                                                if(demoid!=null && demoid.length>0){
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');                              
+    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+    }
                                                                             }
 
                                                                         }else{
@@ -1306,7 +1334,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
 									%>
 											  <div class="dropdowns">
-											  <button class="dropbtns btn">Macros<span class="caret" ></span></button>
+											  <button class="dropbtns btn">Macros&nbsp;<span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 
 											  
