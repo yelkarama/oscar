@@ -530,7 +530,9 @@ if (openInTabs){
 									<% } %>                                                 
                                                     
                                                         <input type="submit" id="ackBtn_<%=docId%>" class="btn  btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
+                                                    <% if( skipComment ) { %> 
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
+                                                    <%}%>
                                                         <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
@@ -987,7 +989,9 @@ if (openInTabs){
 									<% } %>
 									                                               
                                                         <input type="submit" id="ackBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
+                                                    <% if( skipComment ) { %> 
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
+                                                    <% } %> 
                                                         <input type="button" id="fwdBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
 
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
