@@ -972,7 +972,7 @@ input[id^='acklabel_']{
 											</div>
 									        <% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
-                                            <% if( skipComment ) { %> <--! skipComment setting allows you to Ack without comment, so give them the *Option*   -->
+                                            <% if( skipComment ) { %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
 									        <% } %>
                                     <% } %>
@@ -2227,7 +2227,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 											</div>
 									<% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
-                                            <% if( skipComment ) { %> <--! skipComment setting allows you to Ack without comment, so give them the *Option*   -->
+                                            <% if( skipComment ) { %> 
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
 									        <% } %>
                                     <% } %>
