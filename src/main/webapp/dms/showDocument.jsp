@@ -550,7 +550,7 @@ if (openInTabs){
                                                         }
                                                         
                                                         %>
-                                                        <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> 
+                                                        <!-- <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
                                                         <input type="button" id="msgBtn_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="doLab('<%=demographicID%>','<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
                                                         
                                                 <%
