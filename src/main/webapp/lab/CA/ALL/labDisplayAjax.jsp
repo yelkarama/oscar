@@ -91,6 +91,14 @@ if(!authed) {
 <%
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+
+    boolean bShortcutForm = props.getProperty("appt_formview", "").equalsIgnoreCase("on") ? true : false;
+    String formName = bShortcutForm ? props.getProperty("appt_formview_name") : "";
+    String formNameShort = formName.length() > 3 ? (formName.substring(0,2)+".") : formName;
+    String formName2 = bShortcutForm ? props.getProperty("appt_formview_name2", "") : "";
+    String formName2Short = formName2.length() > 3 ? (formName2.substring(0,2)+".") : formName2;
+    boolean bShortcutForm2 = bShortcutForm && !formName2.equals("");
+
     UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 	String curUser_no = (String) session.getAttribute("user"); 
 	UserProperty tabViewProp = userPropertyDao.getProp(curUser_no, UserProperty.OPEN_IN_TABS);
@@ -209,7 +217,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 %>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
 
-                <script language="JavaScript">
+    <script language="JavaScript">
          popupStart=function(vheight,vwidth,varpage,windowname) {
             var page = varpage;
             windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
@@ -222,7 +230,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
             vheight     = typeof(vheight)   != 'undefined' ? vheight : '700px';
             vwidth      = typeof(vwidth)    != 'undefined' ? vwidth : '1024px';
             var page = "" + varpage;
-            windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
+            windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0,noreferrer";
             var popup=window.open(varpage, windowName, windowprops);
             if (popup != null) {
                 if (popup.opener == null) {
@@ -312,12 +320,12 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                             }else if(action=='msgLab'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(700,960,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg');
+                                                                                    popup(700,960,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg');
                                                                             }else if(action=='msgLabRecall'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(700,980,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid+"&recall",'msgRecall');
-                                                                                    window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall','ticklerRecall');
+                                                                                    popup(700,980,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid+"&recall",'msgRecall');
+                                                                                    popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall','ticklerRecall');
                                                                             }else if(action=='ticklerLab'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0)
@@ -510,37 +518,47 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     <%      } %>
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
-                                    <input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
 
-<% if (isLinkedToDemographic) { %>
-    <div class="dropdowns" >
-        <button class="dropbtns btn"  ><bean:message key="dms.documentReport.msgDemographic"/>&nbsp;<span class="caret" ></span></button>
-        <div class="dropdowns-content">
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLab');return false;"/><bean:message key="global.messenger"/></a>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','ticklerLab');return false;"/><bean:message key="global.tickler"/></a>
+                                     <input type="button" class="btn" value="<bean:message key="caseload.msgMsg"/>" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
 
-    <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
-    <% if(recall){%> 
-            <a href="#" title="Msg & Tickler" onclick="handleLab('','<%=segmentID%>','msgLabRecall'); return false;">Recall</a>
-    <% } %>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a> 
-    <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
-    <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
-            <a href="#" onClick="pop4(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
-    <% } %>
-            <a href="#" onClick="pop4(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
-            <a href="#" onclick="pop4(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-            <a href="#" onclick="pop4(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
-<% } %>     
-          
-        </div>
-    </div>
-<% } %>
+                                     <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
+                            <% if(recall){%>
+                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">								
+                            <%}%>
+                            <div class="dropdowns" >
+                                <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
+                                <div class="dropdowns-content">                                   
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabBMD'); return false;">BMD</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPSA'); return false;">PSA</a>
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
+                            <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
+                                    <a href="#" onClick="popupStart(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
+                                    <a href="#" onClick="popupStart(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
+                                    <a href="#" onclick="popupStart(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
+                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
+                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
+                                <% } %>     
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
+                            <% } %>
+                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
+                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
+                                </div>
+                            </div>
+                                    
+                                    
+                                   	<% if (bShortcutForm) { %>
+									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
+									<% } %>
+									<% if (bShortcutForm2) { %>
+									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
+									<% } %>
 
-                                    <input type="button" class="btn" value="Req#" title="Link to Requisition" href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');return false;" />
+ 							
                                     <input type="button" class="btn" id="createLabel" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
 				
 
@@ -1313,41 +1331,51 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 											</div>
 									<% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
+                                            <% if( skipComment ) { %> 
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
+                                            <% } %>
                                     <% } %>
-<input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
 
+                                     <input type="button" class="btn" value="<bean:message key="caseload.msgMsg"/>" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
 
-                                    <input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
+                                     <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
+                            <% if(recall){%>
+                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">								
+                            <%}%>
+                            <div class="dropdowns" >
+                                <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
+                                <div class="dropdowns-content">                                   
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabBMD'); return false;">BMD</a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPSA'); return false;">PSA</a>
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
+                            <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
+                                    <a href="#" onClick="popupStart(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
+                                    <a href="#" onClick="popupStart(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
+                                    <a href="#" onclick="popupStart(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
+                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
+                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
+                                <% } %>     
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
+                            <% } %>
+                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
+                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
+                                </div>
+                            </div>
                                     
-<% if (isLinkedToDemographic) { %>
-    <div class="dropdowns" >
-        <button class="dropbtns btn"  ><bean:message key="dms.documentReport.msgDemographic"/>&nbsp;<span class="caret" ></span></button>
-        <div class="dropdowns-content">
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLab');return false;"/><bean:message key="global.messenger"/></a>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','ticklerLab');return false;"/><bean:message key="global.tickler"/></a>
+                                    
+                                   	<% if (bShortcutForm) { %>
+									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
+									<% } %>
+									<% if (bShortcutForm2) { %>
+									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
+									<% } %>
 
-    <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
-    <% if(recall){%> 
-            <a href="#" title="Msg & Tickler" onclick="handleLab('','<%=segmentID%>','msgLabRecall'); return false;">Recall</a>
-    <% } %>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
-            <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a> 
-    <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
-    <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
-            <a href="#" onClick="pop4(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
-    <% } %>
-            <a href="#" onClick="pop4(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
-            <a href="#" onclick="pop4(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-            <a href="#" onclick="pop4(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
-<% } %>     
-          
-        </div>
-    </div>
-<% } %>
-                                    <input type="button" class="btn" value="Req#" title="Link to Requisition" href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');return false;" />             
                                     <input type="button" class="btn" id="createLabel2" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
                                 </td>
                             </tr>
