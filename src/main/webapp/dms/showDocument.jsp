@@ -506,7 +506,7 @@ if (openInTabs){
 
 									%>
 											<div class="dropdowns">
-											  <button class="dropbtns btn">Macros<span class="caret"></span></button>
+											  <button class="dropbtns btn">Macros&nbsp;<span class="caret"></span></button>
 											  <div class="dropdowns-content">
 											  <%
 											    try {
@@ -565,8 +565,7 @@ if (openInTabs){
                                                 <% if(recall){%>
                                                         <input type="button" id="recallBtn_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
-                                                        <input type="button" id="rxBtn_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
-
+ 
                                                 <div class="dropdowns" id="dropdown_<%=docId%>" disabled>
                                                     <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret"></span></button>
                                                     <div class="dropdowns-content">
@@ -582,7 +581,8 @@ if (openInTabs){
                                                 <% } %>
                                                         <a href="#" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
                                                         <a href="#" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
-                                            <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
+                                                       
+                                           <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
                                                         <a href="#" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a> 
                                             <% } %>     
                                                 <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
@@ -593,7 +593,8 @@ if (openInTabs){
                                             <% } %>        
                                                     </div>
                                                 </div>                                                     
-                                                       
+                                                        
+                                                        <input type="button" id="rxBtn_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
                                                         <input type="button" id="refileDoc_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
                                                         <select  id="queueList_<%=docId%>" name="queueList" style="width:100px;"> 
                                                             <%
@@ -965,7 +966,7 @@ if (openInTabs){
 
 									%>
 											<div class="dropdowns">
-											  <button class="dropbtns btn">Macros<span class="caret" ></span></button>
+											  <button class="dropbtns btn">Macros&nbsp;<span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 											  <%
 											    try {
@@ -1002,7 +1003,7 @@ if (openInTabs){
                                                         <%}%>
                                                     <%}%>
 
-                                                        <input type="button" id="closeBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> 
+                                                        <!--<input type="button" id="closeBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
                                                         <input type="button" id="msgBtn2_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="doLab('<%=demographicID%>','<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
                                                         
                                                 <%
@@ -1015,8 +1016,7 @@ if (openInTabs){
                                                 <% if(recall){%>
                                                         <input type="button" id="recallBtn2_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
-                                                        <input type="button" id="rxBtn2_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
-
+                                                        
                                                 <div class="dropdowns" id="dropdown2_<%=docId%>" disabled>
                                                     <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret"></span></button>
                                                     <div class="dropdowns-content">
@@ -1043,7 +1043,8 @@ if (openInTabs){
                                             <% } %>        
                                                     </div>
                                                 </div>                                                     
- 
+                                                        <input type="button" id="rxBtn2_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
+
                                                         <input type="button" id="refileDoc2_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
 
 
