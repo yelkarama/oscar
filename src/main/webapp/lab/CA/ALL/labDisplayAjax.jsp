@@ -572,7 +572,6 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                 <% } %>     
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
-                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
                                 </div>
@@ -586,7 +585,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
 
- 							
+									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')"> 							
                                     <input type="button" class="btn" id="createLabel" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
 				
 
@@ -1390,7 +1389,6 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                 <% } %>     
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
-                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
                                 </div>
@@ -1404,7 +1402,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
 
-                                    <input type="button" class="btn" id="createLabel2" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
+									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
                                 </td>
                             </tr>
                         </table>
