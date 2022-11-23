@@ -11,6 +11,8 @@
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*,oscar.util.StringUtils,oscar.util.UtilDateUtilities, oscar.OscarProperties" %>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.apache.commons.collections.MultiHashMap" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -35,6 +37,28 @@ if(!authed) {
 %>
 
 <%
+oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+            UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+            String providerNo = request.getParameter("providerNo");
+String curUser_no = (String) session.getAttribute("user");
+            UserProperty  getRecallDelegate = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_DELEGATE);
+            UserProperty  getRecallTicklerAssignee = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_ASSIGNEE);
+            UserProperty  getRecallTicklerPriority = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_PRIORITY);
+            boolean recall = false;
+            String recallDelegate = "";
+            String ticklerAssignee = "";
+            String recallTicklerPriority = "";
+
+            if(getRecallDelegate!=null){
+                recall = true;
+                recallDelegate = getRecallDelegate.getValue();
+                recallTicklerPriority = getRecallTicklerPriority.getValue();
+                if(getRecallTicklerAssignee.getValue().equals("yes")){
+	                ticklerAssignee = "&taskTo="+recallDelegate;
+                }
+            }
+
+
 @SuppressWarnings("unchecked")
 ArrayList<PatientInfo> patients = (ArrayList<PatientInfo>) request.getAttribute("patients");
 if (patients!=null) {
@@ -49,7 +73,7 @@ Integer abnormalCount 	= (Integer) request.getAttribute("abnormalCount");
 Integer normalCount 	= (Integer) request.getAttribute("normalCount");
 Integer totalNumDocs    = (Integer) request.getAttribute("totalNumDocs");
 Long categoryHash       = (Long) request.getAttribute("categoryHash");
-String  providerNo		= (String) request.getAttribute("providerNo");
+
 String searchProviderNo = (String) request.getAttribute("searchProviderNo");
 String demographicNo	= (String) request.getAttribute("demographicNo");
 String ackStatus 		= (String) request.getAttribute("ackStatus");
@@ -259,6 +283,87 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	            	}
 	        	}});
 			}
+
+contextpath='<%=request.getContextPath()%>';
+        function handleDocSave(docid,action){
+			var url=contextpath + "/dms/inboxManage.do";
+			var data='method=isDocumentLinkedToDemographic&docId='+docid;
+			new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
+                            var json=transport.responseText.evalJSON();
+                            if(json!=null){
+                                var success=json.isLinkedToDemographic;
+                                var demoid='';
+                            	                                       
+                                if(success){
+                                    demoid=json.demoId;
+                                    if(demoid!=null && demoid.length>0) {
+            switch(String(action)) {
+                case "msgLab":
+                    popupStart(900,1280,contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg', docid);
+                    break;
+                case "addTickler":
+                    popupStart(450,600,contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId='+docid+'&demographic_no='+demoid,'tickler');
+                    break;
+                case "msgLabRecall":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid+"&recall",'msgRecall');
+                    window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=DOC&docId='+docid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall','ticklerRecall');
+                    break;
+                case "msgLabMAM":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=MAM','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing'); 
+                <% } %>                              
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgLabPAP":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PAP','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing'); 
+                <% } %>                               
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgLabFIT":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgLabCOLONOSCOPY":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention'); 
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing'); 
+                <% } %>                             
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgLabBMD":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');                              
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgLabPSA":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');                              
+                    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
+                    break;
+                case "msgInf":
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?search=true&demographic_no='+demoid+'&snomedId=46233009&brandSnomedId=46233009','prevention');  
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q130A','billing'); 
+                <% } %>
+                    break;               
+                default:
+                    console.log('default');
+                    break;
+            }
+}
+
+
+
+                   
+                                }
+                                else {
+                                    alert("Make sure demographic is linked and document changes saved!");
+                                }
+                            }
+			}});
+        }
+
 		</script>
 <title>
 <bean:message key="oscarMDS.index.title"/>
