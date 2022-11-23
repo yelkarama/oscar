@@ -347,7 +347,7 @@ if (openInTabs){
                                     if(demoid!=null && demoid.length>0) {
             switch(String(action)) {
                 case "msgLab":
-                    popupStart(900,1280,contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=docId%>');
+                    popupStart(900,1280,contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg', '<%=docId%>');
                     break;
                 case "addTickler":
                     popupStart(450,600,contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId='+docid+'&demographic_no='+demoid,'tickler');
@@ -538,9 +538,9 @@ if (openInTabs){
 									<% } %>                                                 
                                                     
                                                         <input type="submit" id="ackBtn_<%=docId%>" class="btn  btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-                                                    <% if( skipComment ) { %> 
+                                                    
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
-                                                    <%}%>
+                                                    
                                                         <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
@@ -1001,9 +1001,9 @@ if (openInTabs){
 									<% } %>
 									                                               
                                                         <input type="submit" id="ackBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-                                                    <% if( skipComment ) { %> 
+                                                    
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
-                                                    <% } %> 
+                                                   
                                                         <input type="button" id="fwdBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
 
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
