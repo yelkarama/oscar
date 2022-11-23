@@ -1004,7 +1004,6 @@ input[id^='acklabel_']{
                                 <% } %>     
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
-                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
                                 </div>
@@ -1017,7 +1016,7 @@ input[id^='acklabel_']{
 									<% if (bShortcutForm2) { %>
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
-
+                                    <input type="button" class="btn"  value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
 									<%
 										if(remoteLabKey == null || "".equals(remoteLabKey.length())) {
 									%>
@@ -2259,20 +2258,17 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                 <% } %>     
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
-                                    <a href="#" onclick="printPDF('<%=segmentID%>')"><bean:message key="global.btnPDF"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
                                 </div>
-                            </div>
-                                    
-                                    
+                            </div>                               
                                    	<% if (bShortcutForm) { %>
 									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
 									<% } %>
 									<% if (bShortcutForm2) { %>
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
-									<input type="button" class="btn" id="createLabel2_<%=segmentID%>" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">
+									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
                                 </td>
                             </tr><tr><td align="left" width="50%"></td>
                                 <td width="50%" valign="center" align="left">
