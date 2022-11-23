@@ -972,9 +972,9 @@ input[id^='acklabel_']{
 											</div>
 									        <% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
-                                            <% if( skipComment ) { %>
+                                            
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
-									        <% } %>
+									        
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 675, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
                                     <input type="button" class="btn" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
@@ -2226,9 +2226,9 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 											</div>
 									<% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
-                                            <% if( skipComment ) { %> 
+                                             
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
-									        <% } %>
+									        
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 675, '../../../oscarMDS/SelectProvider.jsp?docId=<%=segmentID%>&labDisplay=true', 'providerselect')">
                                     <input type="button" class="btn" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
