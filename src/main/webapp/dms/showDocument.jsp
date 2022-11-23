@@ -67,12 +67,14 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Tickler" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.managers.CanadianVaccineCatalogueManager2"%>
 <%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%@ page import="org.oscarehr.common.model.Provider" %>
 <%@ page import="org.oscarehr.common.dao.*"%>
 <%@ page import="org.oscarehr.common.model.*"%>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="java.util.*" %>
@@ -559,7 +561,7 @@ if (openInTabs){
                                                         
                                                         %>
                                                         <!-- <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
-                                                        <input type="button" id="msgBtn_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="doLab('<%=demographicID%>','<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
+                                                        <input type="button" id="msgBtn_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="handleDocSave('<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
                                                         
                                                 <%
                                                 if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
@@ -581,7 +583,9 @@ if (openInTabs){
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabBMD'); return false;">BMD</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPSA'); return false;">PSA</a>
-                                                        <!--<a href="#" onclick="handleDocSave('<%=docId%>','msgInf'); return false;">[Inf] Influenza</a>-->
+                                                <% if(!StringUtils.isEmpty(CanadianVaccineCatalogueManager2.getCVCURL())) { %>
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgInf'); return false;">[Inf] Influenza</a>
+                                                <% } %>
                                                 <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                 <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                                         <a href="#" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
@@ -1011,7 +1015,7 @@ if (openInTabs){
                                                     <%}%>
 
                                                         <!--<input type="button" id="closeBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
-                                                        <input type="button" id="msgBtn2_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="doLab('<%=demographicID%>','<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
+                                                        <input type="button" id="msgBtn2_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="handleDocSave('<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
                                                         
                                                 <%
                                                 if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
@@ -1033,7 +1037,9 @@ if (openInTabs){
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabBMD'); return false;">BMD</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPSA'); return false;">PSA</a>
-                                                        <!--<a href="#" onclick="handleDocSave('<%=docId%>','msgInf'); return false;">[Inf] Influenza</a>-->
+                                                <% if(!StringUtils.isEmpty(CanadianVaccineCatalogueManager2.getCVCURL())) { %>
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgInf'); return false;">[Inf] Influenza</a>
+                                                <% } %>
                                                 <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                 <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                                         <a href="#" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
