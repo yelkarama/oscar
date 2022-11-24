@@ -63,6 +63,7 @@
 <%@ page import="oscar.SxmlMisc" %>
 <%@ page import="oscar.util.StringUtils" %>
 <%@ page import="oscar.util.UtilDateUtilities"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -178,7 +179,7 @@
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"  />
-        
+        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">        
         <style type="text/css">
         	.multiPage {
         		background-color: RED;
@@ -188,6 +189,10 @@
 				font-size: medium;
         	}
         	.singlePage {
+
+        	}
+        	.FieldData {
+font-size: 14px;
 
         	}
  
@@ -219,7 +224,9 @@
                 <%
                             if(request.getAttribute("faxSuccessful")!=null){
                                 if((Boolean)request.getAttribute("faxSuccessful")==true){ %>
-                alert("Fax sent successfully!");
+                    <div class="alert alert-success">
+      <bean:message key="dms.incomingDocs.fax"/> <bean:message key="oscarMessenger.DisplayMessages.msgStatusSent"/>
+    </div>
             <% }
             request.removeAttribute("faxSuccessful");
             }  %>
@@ -902,7 +909,7 @@ function sendMRP(ele){
                                                         <input type="hidden" name="status" value="A" id="ackStatus"/>
                                                         <input type="hidden" name="labType" value="DOC"/>
                                                         <input type="hidden" name="ajaxcall" value="yes"/>
-                                                        <textarea  tabindex="<%=tabindex++%>" name="comment" cols="40" rows="4"></textarea>
+                                                        <textarea  tabindex="<%=tabindex++%>" name="comment" cols="40" rows="4" style="width:400px;"></textarea>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -947,8 +954,8 @@ function sendMRP(ele){
                                 </table>
                             </form>
                         </fieldset>
-                        <% Boolean faxEnabled = (!StringUtils.isNullOrEmpty(demographicID) && !StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0); %>
-                        <fieldset  id="faxFields_<%=docId%>"  <%=faxEnabled?"":"style='display:none'"%>  >
+                        <% if (!StringUtils.isNullOrEmpty(demographicID) && !StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0){ %>
+                        <fieldset>
                             <script type="text/javascript">
                                 jQuery.noConflict();
                                 function faxDocument(docId){
@@ -960,11 +967,7 @@ function sendMRP(ele){
                                     }
                                     else{
                                         for(var i=0; i<$("faxRecipients").children.length; i++){
-                                            var separator = "&faxRecipients=";
-                                            if (i === ($("faxRecipients").children.length - 1)) {
-                                                separator = "";
-                                            }
-                                            faxRecipients += document.getElementsByName('faxRecipients')[i].value + separator;
+                                            faxRecipients += document.getElementsByName('faxRecipients')[i].value + ",";
                                         }
                                         document.getElementsByName('faxRecipients').length
                                     }
@@ -979,14 +982,13 @@ function sendMRP(ele){
                                     });
                                 }
                             </script>
-                            <legend>Fax</legend>
+                            <legend><bean:message key="dms.incomingDocs.fax"/></legend>
                             <form name="faxForm_<%=docId%>" id="faxForm_<%=docId%>" onsubmit="" method="post" action="javascript:void(0);">
-                                <input type="hidden" name="<csrf:tokenname />" value="<csrf:tokenvalue />" />
                                 <table border="0px">
                                     <tbody>
                                     <tr>
                                         <td>
-                                            Referral Doctor:
+                                            <bean:message key="Appointment.formDoctor"/>:
                                         </td>
                                         <td>
                                             <select id="otherFaxSelect" style="margin-left: 5px;max-width: 300px;min-width:150px;">
@@ -1001,8 +1003,6 @@ function sendMRP(ele){
                                                         String  address    =  displayServiceUtil.addressVec.elementAt(i);
                                                         String  phone      =  displayServiceUtil.phoneVec.elementAt(i);
                                                         String  fax        =  displayServiceUtil.faxVec.elementAt(i);
-                                                        String  annotation  = displayServiceUtil.annotationVec.elementAt(i);
-                                                        boolean annotateInSearch = displayServiceUtil.annotateInSearchVec.elementAt(i) && StringUtils.filled(annotation);
                                                         String  referralNo = "";
                                                         if (rdohip != null && !"".equals(rdohip) && rdohip.equals(referralNo)) {
                                                             rdName = String.format("%s, %s", lName, fName);
@@ -1011,7 +1011,7 @@ function sendMRP(ele){
                                                         if (!"".equals(fax)) {
                                                 %>
 
-                                                <option value="<%= Encode.forHtmlContent(fax) %>"> <%= Encode.forHtmlContent(String.format("%s, %s %s", lName, fName, (annotateInSearch ? "(" + annotation + ")" : ""))) %> </option>
+                                                <option value="<%= fax %>"> <%= String.format("%s, %s", lName, fName) %> </option>
                                                 <%
                                                         }
                                                     }
@@ -1020,15 +1020,15 @@ function sendMRP(ele){
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="submit" value="Add" onclick="addOtherFaxProvider(); return false;">
+                                            <input type="submit" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td>Fax Number:</td>
+                                        <td><bean:message key="provider.pref.general.fax"/>:</td>
                                         <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value=""/></td>
                                         <td>
-                                            <input type="submit"  value="Add" onclick="addOtherFax(); return false;">
+                                            <input type="submit"  value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1049,13 +1049,13 @@ function sendMRP(ele){
                                         </ul>
                                     </div>
                                     <div style="margin-top: 5px; text-align: center">
-                                        <input type="submit" onclick="faxDocument('<%=docId%>');" value="Send"/>
+                                        <input type="submit" id="fax_button" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
                                     </div>
                                 </div>
 
                             </form>
                         </fieldset>
-                       <% } %>
+                        <% } %>
                     </td>
                 </tr>
                 <tr>
