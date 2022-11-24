@@ -174,12 +174,13 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/datasource-min.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/autocomplete-min.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script> 
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>       
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>       
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"  />
-        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">        
+        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">  
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script>      
         <style type="text/css">
         	.multiPage {
         		background-color: RED;
@@ -199,6 +200,7 @@ font-size: 14px;
         </style>               
         
         <script>
+    
         	//?segmentID=1&providerNo=999998&searchProviderNo=999998&status=A&demoName=
        	   function checkDelete(url, docDescription){
         	// revision Apr 05 2004 - we now allow anyone to delete documents
@@ -221,15 +223,7 @@ font-size: 14px;
         </script>
         <script type="text/javascript">
 
-                <%
-                            if(request.getAttribute("faxSuccessful")!=null){
-                                if((Boolean)request.getAttribute("faxSuccessful")==true){ %>
-                    <div class="alert alert-success">
-      <bean:message key="dms.incomingDocs.fax"/> <bean:message key="oscarMessenger.DisplayMessages.msgStatusSent"/>
-    </div>
-            <% }
-            request.removeAttribute("faxSuccessful");
-            }  %>
+               
 
         </script>
     </head>
@@ -1052,7 +1046,15 @@ function sendMRP(ele){
                                         <input type="submit" id="fax_button" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
                                     </div>
                                 </div>
-
+ <%
+                            if(session.getAttribute("faxSuccessful")!=null){
+                                if((Boolean)session.getAttribute("faxSuccessful")==true){ %><br>
+                    <div class="alert alert-success alert-block fade in"><button type="button" class="close" data-dismiss="alert">&times;</button>
+      <bean:message key="dms.incomingDocs.fax"/> <bean:message key="oscarMessenger.DisplayMessages.msgStatusSent"/>
+    </div>
+            <% }
+            session.removeAttribute("faxSuccessful");
+            }  %>
                             </form>
                         </fieldset>
                         <% } %>
