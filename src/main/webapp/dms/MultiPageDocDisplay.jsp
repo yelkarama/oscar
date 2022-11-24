@@ -40,19 +40,36 @@
 	}
 %>
 
-<%@page import="oscar.util.UtilDateUtilities"%>
-<%@ page import="oscar.dms.*,java.util.*" %>
-<%@ page import="org.oscarehr.phr.util.MyOscarUtils,org.oscarehr.myoscar.utils.MyOscarLoggedInInfo,org.oscarehr.util.WebUtils"%>
+<%@ page import="java.util.*" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@page import="org.springframework.web.context.WebApplicationContext"%>
+
+<%@ page import="org.oscarehr.common.model.Tickler" %>
+<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.common.dao.*"%>
+<%@ page import="org.oscarehr.common.model.*"%>
+<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.oscarehr.phr.util.MyOscarUtils"%>
+<%@ page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
+<%@ page import="org.oscarehr.util.WebUtils"%>
+
+<%@ page import="oscar.dms.*" %>
+<%@ page import="oscar.oscarLab.ca.all.*"%>
+<%@ page import="oscar.oscarMDS.data.*"%>
+<%@ page import="oscar.oscarLab.ca.all.util.*"%>
+<%@ page import="oscar.oscarDemographic.data.DemographicData" %>
+<%@ page import="oscar.SxmlMisc" %>
+<%@ page import="oscar.util.StringUtils" %>
+<%@ page import="oscar.util.UtilDateUtilities"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.oscarLab.ca.all.*,oscar.oscarMDS.data.*,oscar.oscarLab.ca.all.util.*"%>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*, org.oscarehr.PMmodule.dao.ProviderDao"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<jsp:useBean id="displayServiceUtil" scope="request" class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
 <%
             LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
             WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
@@ -110,6 +127,28 @@
                 numOfPageStr=(new Integer(numOfPage)).toString();
             String url = request.getContextPath()+"/dms/ManageDocument.do?method=viewDocPage&doc_no=" + docId+"&curPage=1";
             String url2 = request.getContextPath()+"/dms/ManageDocument.do?method=display&doc_no=" + docId;
+
+
+    displayServiceUtil.estSpecialist();
+    String providerNoFromChart = null;
+    String demoNo = request.getParameter("demographicNo");
+    DemographicData demoData = null;
+    Demographic demographic = null;
+    String familyDoctor = null;
+    String rdohip = "";
+
+    if (demoNo != null) {
+        demoData = new oscar.oscarDemographic.data.DemographicData();
+        demographic = demoData.getDemographic(loggedInInfo, demoNo);
+
+        providerNoFromChart = demographic.getProviderNo();
+
+        familyDoctor = demographic.getFamilyDoctor();
+        if (familyDoctor != null && familyDoctor.trim().length() > 0) {
+            rdohip = SxmlMisc.getXmlContent(familyDoctor, "rdohip");
+            rdohip = rdohip == null ? "" : rdohip.trim();
+        }
+    }
 %>
 
 <html>
@@ -123,22 +162,22 @@
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
 <!-- calendar stylesheet -->
 <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1" />
-        <script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js" ></script>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="../share/javascript/effects.js"></script>
-        <script type="text/javascript" src="../share/javascript/controls.js"></script>
+        <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js" ></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/effects.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/controls.js"></script>
 
-        <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
-        <script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script> 
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/connection-min.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/animation-min.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/datasource-min.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/autocomplete-min.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script> 
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>       
-
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"  />
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"  />
         
         <style type="text/css">
         	.multiPage {
@@ -174,6 +213,17 @@
 					<%
 				}
 			%>
+        </script>
+        <script type="text/javascript">
+
+                <%
+                            if(request.getAttribute("faxSuccessful")!=null){
+                                if((Boolean)request.getAttribute("faxSuccessful")==true){ %>
+                alert("Fax sent successfully!");
+            <% }
+            request.removeAttribute("faxSuccessful");
+            }  %>
+
         </script>
     </head>
     <body >
@@ -707,14 +757,15 @@ function sendMRP(ele){
                                             <%
             Properties p = (Properties) session.getAttribute("providerBean");
             List<ProviderInboxItem> routeList = providerInboxRoutingDao.getProvidersWithRoutingForDocument("DOC", Integer.parseInt(docId));
+            int countValidProvider = 0;
                                             %>
                                             <ul>
                                                 <%for (ProviderInboxItem pItem : routeList) {
                                                     String s=p.getProperty(pItem.getProviderNo(), pItem.getProviderNo());
                                                     if(!s.equals("0")){  %>
                                                         <li><%=s%></li>
-                                                <%}
-                                                }%>
+                                                <% countValidProvider++;}
+                                                 }%>
                                             </ul>
                                         </td>
                                     </tr>
@@ -896,6 +947,115 @@ function sendMRP(ele){
                                 </table>
                             </form>
                         </fieldset>
+                        <% Boolean faxEnabled = (!StringUtils.isNullOrEmpty(demographicID) && !StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0); %>
+                        <fieldset  id="faxFields_<%=docId%>"  <%=faxEnabled?"":"style='display:none'"%>  >
+                            <script type="text/javascript">
+                                jQuery.noConflict();
+                                function faxDocument(docId){
+
+                                    var faxRecipients = "";
+                                    if($("faxRecipients").children.length <= 0){
+                                        alert("Please select at least one Fax Recipient");
+                                        return false;
+                                    }
+                                    else{
+                                        for(var i=0; i<$("faxRecipients").children.length; i++){
+                                            var separator = "&faxRecipients=";
+                                            if (i === ($("faxRecipients").children.length - 1)) {
+                                                separator = "";
+                                            }
+                                            faxRecipients += document.getElementsByName('faxRecipients')[i].value + separator;
+                                        }
+                                        document.getElementsByName('faxRecipients').length
+                                    }
+                                    jQuery.ajax({
+                                        type: "POST",
+                                        url: "<%=request.getContextPath() %>/dms/ManageDocument.do",
+                                        data: "method=fax&docId=" + docId + "&faxRecipients=" + faxRecipients + "&demoNo=<%=demographicID%>&docType=DOC",
+                                        success: function(data) {
+                                            if (data != null)
+                                                location.reload();
+                                        }
+                                    });
+                                }
+                            </script>
+                            <legend>Fax</legend>
+                            <form name="faxForm_<%=docId%>" id="faxForm_<%=docId%>" onsubmit="" method="post" action="javascript:void(0);">
+                                <input type="hidden" name="<csrf:tokenname />" value="<csrf:tokenvalue />" />
+                                <table border="0px">
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            Referral Doctor:
+                                        </td>
+                                        <td>
+                                            <select id="otherFaxSelect" style="margin-left: 5px;max-width: 300px;min-width:150px;">
+                                                <%
+                                                    String rdName = "";
+                                                    String rdFaxNo = "";
+                                                    for (int i=0;i < displayServiceUtil.specIdVec.size(); i++) {
+                                                        String  specId     =  displayServiceUtil.specIdVec.elementAt(i);
+                                                        String  fName      =  displayServiceUtil.fNameVec.elementAt(i);
+                                                        String  lName      =  displayServiceUtil.lNameVec.elementAt(i);
+                                                        String  proLetters =  displayServiceUtil.proLettersVec.elementAt(i);
+                                                        String  address    =  displayServiceUtil.addressVec.elementAt(i);
+                                                        String  phone      =  displayServiceUtil.phoneVec.elementAt(i);
+                                                        String  fax        =  displayServiceUtil.faxVec.elementAt(i);
+                                                        String  annotation  = displayServiceUtil.annotationVec.elementAt(i);
+                                                        boolean annotateInSearch = displayServiceUtil.annotateInSearchVec.elementAt(i) && StringUtils.filled(annotation);
+                                                        String  referralNo = "";
+                                                        if (rdohip != null && !"".equals(rdohip) && rdohip.equals(referralNo)) {
+                                                            rdName = String.format("%s, %s", lName, fName);
+                                                            rdFaxNo = fax;
+                                                        }
+                                                        if (!"".equals(fax)) {
+                                                %>
+
+                                                <option value="<%= Encode.forHtmlContent(fax) %>"> <%= Encode.forHtmlContent(String.format("%s, %s %s", lName, fName, (annotateInSearch ? "(" + annotation + ")" : ""))) %> </option>
+                                                <%
+                                                        }
+                                                    }
+                                                %>
+
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="submit" value="Add" onclick="addOtherFaxProvider(); return false;">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Fax Number:</td>
+                                        <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value=""/></td>
+                                        <td>
+                                            <input type="submit"  value="Add" onclick="addOtherFax(); return false;">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div id="faxOps">
+                                    <div>
+
+                                        <ul id="faxRecipients">
+                                            <%
+                                                if (!"".equals(rdName) && !"".equals(rdFaxNo)) {
+                                            %>
+
+                                            <input type="hidden" name="faxRecipients" value="<%= rdFaxNo %>" />
+
+                                            <%
+                                                }
+                                            %>
+                                        </ul>
+                                    </div>
+                                    <div style="margin-top: 5px; text-align: center">
+                                        <input type="submit" onclick="faxDocument('<%=docId%>');" value="Send"/>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </fieldset>
+                       <% } %>
                     </td>
                 </tr>
                 <tr>
