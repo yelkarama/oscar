@@ -1104,7 +1104,7 @@ public class ManageDocumentAction extends DispatchAction {
 		}
 
 		LogAction.addLog(provider_no, LogConst.SENT, LogConst.CON_FAX, "DOCUMENT  "+ docId);
-		request.getSession().setAttribute("faxSuccessful", validFaxNumber);
+		request.getSession().setAttribute("faxSuccessful", true); //validFaxNumber);
 
 		return null;
 	}
