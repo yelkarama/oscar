@@ -1046,7 +1046,7 @@ if (openInTabs){
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="submit" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
+                                            <input type="submit" class="btn" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
                                         </td>
                                     </tr>
 
@@ -1054,7 +1054,7 @@ if (openInTabs){
                                         <td><bean:message key="provider.pref.general.fax"/>:</td>
                                         <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value=""/></td>
                                         <td>
-                                            <input type="submit"  value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
+                                            <input type="submit" class="btn" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1075,7 +1075,7 @@ if (openInTabs){
                                         </ul>
                                     </div>
                                     <div style="margin-top: 5px; text-align: center">
-                                        <input type="submit" id="fax_button" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
+                                        <input type="submit" id="fax_button"  class="btn" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
                                     </div>
                                 </div>
  <%
