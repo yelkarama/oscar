@@ -56,7 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.lowagie.text.DocumentException
+import com.lowagie.text.DocumentException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
