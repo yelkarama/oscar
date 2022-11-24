@@ -60,7 +60,7 @@ import com.lowagie.text.DocumentException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -950,7 +950,7 @@ public class ManageDocumentAction extends DispatchAction {
 			
 			//TODO improvements with how this streams are needed. This is a quick patch to take advantage of the new MTOM in Integrator.
 			DataHandler dataHandler = remoteDocumentContents.getFileContents();
-			contentBytes = IOUtils.toByteArray(dataHandler.getInputStream());
+			contentBytes = org.apache.commons.io.IOUtils.toByteArray(dataHandler.getInputStream());
 		}
 
 		if (docxml != null && !docxml.trim().equals("")) {
