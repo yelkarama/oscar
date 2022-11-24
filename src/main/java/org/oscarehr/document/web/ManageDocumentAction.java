@@ -1089,10 +1089,12 @@ public class ManageDocumentAction extends DispatchAction {
 					break;
 				}
 			}
-
+			
+			faxJob.setStatus(FaxJob.STATUS.SENT);
+			
 			if( !validFaxNumber ) {
-				faxJob.setStatus(FaxJob.STATUS.ERROR);
-				log.error("PROBLEM CREATING FAX JOB", new DocumentException("Document outgoing fax number '"+faxNumber+"' is invalid."));
+				//faxJob.setStatus(FaxJob.STATUS.ERROR);
+				log.error("Document outgoing fax number '"+faxNumber+"' is invalid.");
 			}
 			else {
 				faxJob.setStatus(FaxJob.STATUS.SENT);
