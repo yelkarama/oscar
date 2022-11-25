@@ -124,17 +124,6 @@ if(!authed) {
 
   CVCMappingDao cvcMappingDao = SpringUtils.getBean(CVCMappingDao.class);
   
-  //boolean dsProblems = false;
-  //try{
-  //   pf.getMessages(p);
-  //}catch(Exception dsException){
-//	  MiscUtils.getLogger().error("Error running prevention rules",dsException);
-  //    dsProblems = true;
-  //}
-
- // ArrayList warnings = p.getWarnings();
- // ArrayList recomendations = p.getReminder();
-
   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
   String todayString = simpleDateFormat.format(Calendar.getInstance().getTime());
 
@@ -219,6 +208,11 @@ if(!authed) {
 
 
 <script>
+
+$(document).ready(function(){
+  $("#recommendations").load("preventionRecommendations.jsp?demographic_no=<%=demographic_no%>"); // load the preventionRecommendations.jsp into the div 
+});
+
 function showMenu(menuNumber, eventObj) {
     var menuId = 'menu' + menuNumber;
     return showPopup(menuId, eventObj);
@@ -832,10 +826,10 @@ if(bShowAll){
 					}
 				}
 		%> 
-					<div class="recommendations">
-<jsp:include page="preventionRecommendations.jsp" flush="true">
-    <jsp:param name="demographic_no" value="<%=demographic_no%>"/>
-</jsp:include>
+					<div id="recommendations" class="recommendations">
+                        <br>
+                        &nbsp;<bean:message key="caseload.msgLoading" />
+                        <br>
 						<%
                     if(printError) {
                    %>
