@@ -903,7 +903,7 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
     }
 
     public MeasurementFlowSheet getFlowSheet(String flowsheetName) {
-        if (flowsheetName =="Ocean" ) { flowsheetName = "__Ocean" }
+        if (flowsheetName.equals("Ocean") ) { flowsheetName = "__Ocean"; }
         log.debug("GET FLOWSHEET "+flowsheetName+"  "+flowsheets.get(flowsheetName));
         return flowsheets.get(flowsheetName);
     }
