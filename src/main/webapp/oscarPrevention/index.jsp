@@ -24,14 +24,16 @@
 
 --%>
 
+<%@page import="oscar.OscarProperties"%>
+<%@page import="oscar.oscarDemographic.data.*"%>
+<%@page import="oscar.oscarPrevention.*"%>
+
 <%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager2"%>
 <%@page import="org.oscarehr.managers.SecurityInfoManager"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.UserProperty"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="org.oscarehr.common.model.CVCMapping"%>
 <%@page import="org.oscarehr.common.dao.CVCMappingDao"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="org.oscarehr.common.model.DHIRSubmissionLog"%>
 <%@page import="org.oscarehr.managers.DHIRSubmissionManager"%>
 <%@page import="org.oscarehr.common.model.Consent"%>
@@ -39,21 +41,20 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.util.WebUtilsOld"%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
-<%@page import="oscar.OscarProperties"%>
-<%@page
-	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*"%>
 <%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
-<%@page
-	import="org.oscarehr.common.dao.DemographicDao, org.oscarehr.common.model.Demographic"%>
+<%@page	import="org.oscarehr.common.dao.DemographicDao"%>
+<%@page	import="org.oscarehr.common.model.Demographic"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.util.LocaleUtils"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
-
-<%@page import="org.apache.logging.log4j.Logger"%>
-
 <%@page import="org.oscarehr.managers.PreventionManager"%>
+
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.apache.logging.log4j.Logger"%>
 <%@page import="org.owasp.encoder.Encode"%>
+<%@page import="java.util.*"%>
 <%@page import="java.text.SimpleDateFormat"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -73,7 +74,7 @@ logger.info("starting loading preventions");
 <security:oscarSec roleName="<%=roleName$%>" objectName="_prevention"
 	rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_prevention");%>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_prevention");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -119,20 +120,20 @@ if(!authed) {
   Date demographicDateOfBirth=PreventionData.getDemographicDateOfBirth(loggedInInfo, Integer.valueOf(demographic_no));
   String demographicDob = oscar.util.UtilDateUtilities.DateToString(demographicDateOfBirth);
 
-  PreventionDS pf = SpringUtils.getBean(PreventionDS.class);
+  //PreventionDS pf = SpringUtils.getBean(PreventionDS.class);
 
   CVCMappingDao cvcMappingDao = SpringUtils.getBean(CVCMappingDao.class);
   
-  boolean dsProblems = false;
-  try{
-     pf.getMessages(p);
-  }catch(Exception dsException){
-	  MiscUtils.getLogger().error("Error running prevention rules",dsException);
-      dsProblems = true;
-  }
+  //boolean dsProblems = false;
+  //try{
+  //   pf.getMessages(p);
+  //}catch(Exception dsException){
+//	  MiscUtils.getLogger().error("Error running prevention rules",dsException);
+  //    dsProblems = true;
+  //}
 
-  ArrayList warnings = p.getWarnings();
-  ArrayList recomendations = p.getReminder();
+ // ArrayList warnings = p.getWarnings();
+ // ArrayList recomendations = p.getReminder();
 
   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
   String todayString = simpleDateFormat.format(Calendar.getInstance().getTime());
@@ -192,29 +193,29 @@ if(!authed) {
 <!--I18n-->
 <link rel="stylesheet" type="text/css"
 	href="../share/css/OscarStandardLayout.css" />
-<script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
 <!-- note that 1.9 has a mapping issue -->
 
-<script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
-<script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
-<script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
 <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
 
 
 <link rel="stylesheet" type="text/css"
-	href="../share/yui/css/fonts-min.css" />
+	href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css" />
 <link rel="stylesheet" type="text/css"
-	href="../share/yui/css/autocomplete.css" />
+	href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css" />
 
 <link rel="stylesheet" type="text/css" media="all"
-	href="../share/css/demographicProviderAutocomplete.css" />
+	href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css" />
 
-<script src="../share/javascript/popupmenu.js" type="text/javascript"></script>
-<script src="../share/javascript/menutility.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/popupmenu.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/menutility.js" type="text/javascript"></script>
 
 
 <script>
@@ -280,12 +281,12 @@ span.footnote {
 </style>
 
 <link rel="stylesheet" type="text/css"
-	href="../share/css/niftyCorners.css" />
+	href="<%=request.getContextPath()%>/share/css/niftyCorners.css" />
 <link rel="stylesheet" type="text/css"
-	href="../share/css/niftyPrint.css" media="print" />
+	href="<%=request.getContextPath()%>/share/css/niftyPrint.css" media="print" />
 <!-- this doesn't exist link rel="stylesheet" type="text/css" href="preventPrint.css" media="print" /> -->
 
-<script type="text/javascript" src="../share/javascript/nifty.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/nifty.js"></script>
 <script type="text/javascript">
 window.onload=function(){
 if(!NiftyCheck())
@@ -830,9 +831,11 @@ if(bShowAll){
 					<%
 					}
 				}
-		%> <%
-                if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { %>
+		%> 
 					<div class="recommendations">
+<jsp:include page="preventionRecommendations.jsp" flush="true">
+    <jsp:param name="demographic_no" value="<%=demographic_no%>"/>
+</jsp:include>
 						<%
                     if(printError) {
                    %>
@@ -841,23 +844,9 @@ if(bShowAll){
 						<%
                     }
                    %>
-						<span style="font-size: larger;">Prevention Recommendations</span>
-						<ul>
-							<% for (int i = 0 ;i < warnings.size(); i++){
-                       String warn = (String) warnings.get(i);%>
-							<li style="color: red;"><%=warn%></li>
-							<%}%>
-							<% for (int i = 0 ;i < recomendations.size(); i++){
-                       String warn = (String) recomendations.get(i);%>
-							<li style="color: black;"><%=warn%></li>
-							<%}%>
-							<!--li style="color: red;">6 month TD overdue</li>
-                 <li>12 month MMR due in 2 months</li-->
-							<% if (dsProblems){ %>
-							<li style="color: red;">Decision Support Had Errors Running.</li>
-							<% } %>
-						</ul>
-					</div> <% } %> <br /> <%if(!StringUtils.isEmpty(CanadianVaccineCatalogueManager2.getCVCURL())) { %>
+
+
+					</div> <br /> <%if(!StringUtils.isEmpty(CanadianVaccineCatalogueManager2.getCVCURL())) { %>
 					<table>
 						<tr>
 							<td style="font-size: 12pt">Add by Brand/Generic/Lot#</td>
