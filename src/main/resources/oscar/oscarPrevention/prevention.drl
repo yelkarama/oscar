@@ -366,7 +366,7 @@
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("Flu") == 0</java:condition>
-		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent") == 0</java:condition
+		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent high-dose") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent high dose") == 0</java:condition>
