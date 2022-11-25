@@ -25,12 +25,9 @@
 --%>
 
 <%@page import="org.oscarehr.util.MiscUtils"%>
-<%@page import="net.sf.json.JSONException"%>
-<%@page import="net.sf.json.JSONSerializer"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="net.sf.json.JSONObject"%>
-<%@page import="net.sf.json.JSONArray"%>
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -46,18 +43,27 @@
 	}
 %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.util.*" %>
+<%@ page import="net.sf.json.JSONException"%>
+<%@ page import="net.sf.json.JSONSerializer"%>
+<%@ page import="net.sf.json.JSONObject"%>
+<%@ page import="net.sf.json.JSONArray"%>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="org.springframework.web.context.WebApplicationContext"%>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+
+<%@ page import="oscar.SxmlMisc" %>
 <%@ page import="oscar.log.*"%>
 <%@ page import="oscar.dms.*" %>
 <%@ page import="oscar.util.ConversionUtils" %>
+
 <%@ page import="oscar.OscarProperties" %>
 <%@ page import="oscar.oscarLab.ca.all.*"%>
 <%@ page import="oscar.oscarMDS.data.*"%>
 <%@ page import="oscar.oscarLab.ca.all.util.*"%>
+<%@ page import="oscar.oscarDemographic.data.DemographicData" %>
+
 <%@ page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@ page import="org.oscarehr.phr.util.MyOscarUtils"%>
 <%@ page import="org.oscarehr.util.WebUtils"%>
@@ -72,14 +78,34 @@
 <%@ page import="org.oscarehr.common.model.Provider" %>
 <%@ page import="org.oscarehr.common.dao.*"%>
 <%@ page import="org.oscarehr.common.model.*"%>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@ page import="org.springframework.web.context.WebApplicationContext"%>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-<%@ page import="java.util.*" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<jsp:useBean id="displayServiceUtil" scope="request" class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
+
 <%
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    displayServiceUtil.estSpecialist();
+    String providerNoFromChart = null;
+    String demoNo = request.getParameter("demographicNo");
+    DemographicData demoData = null;
+    Demographic demographic = null;
+    String familyDoctor = null;
+    String rdohip = "";
+    if (demoNo != null) {
+        demoData = new oscar.oscarDemographic.data.DemographicData();
+        demographic = demoData.getDemographic(loggedInInfo, demoNo);
+        providerNoFromChart = demographic.getProviderNo();
+        familyDoctor = demographic.getFamilyDoctor();
+        if (familyDoctor != null && familyDoctor.trim().length() > 0) {
+            rdohip = SxmlMisc.getXmlContent(familyDoctor, "rdohip");
+            rdohip = rdohip == null ? "" : rdohip.trim();
+        }
+    }
+
     oscar.OscarProperties props = oscar.OscarProperties.getInstance();
 	String curUser_no = (String) session.getAttribute("user"); 
 	UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
@@ -169,8 +195,8 @@ if (openInTabs){
             String demographicID = curdoc.getModuleId();
             if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")){
                 DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-                Demographic demographic = demographicDao.getDemographic(demographicID);  
-				demoName = demographic.getLastName()+","+demographic.getFirstName();
+                //Demographic demographic = demographicDao.getDemographic(demographicID);  
+				//demoName = demographic.getLastName()+","+demographic.getFirstName();
 				LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(),demographicID);
             }
             
@@ -225,12 +251,13 @@ if (openInTabs){
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
         <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js" ></script>
-        
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
 
         
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script> 
         <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
@@ -783,6 +810,7 @@ if (openInTabs){
                                             <%
             Properties p = (Properties) session.getAttribute("providerBean");
             List<ProviderInboxItem> routeList = providerInboxRoutingDao.getProvidersWithRoutingForDocument("DOC", Integer.parseInt(docId));
+            int countValidProvider = 0;
                                             %>
                                             <ul>
                                                 <%for (ProviderInboxItem pItem : routeList) {
@@ -790,7 +818,7 @@ if (openInTabs){
 
                                                     if(!s.equals("0")&&!s.equals("null")&& !pItem.getStatus().equals("X")){  %>
                                                         <li><%=s%><a href="#" onclick="removeLink('DOC', '<%=docId %>', '<%=pItem.getProviderNo() %>', this);return false;"><bean:message key="inboxmanager.document.RemoveLinkedProviderMsg" /></a></li>
-                                                <%}
+                                                <%countValidProvider++;}
                                                 }%>
                                             </ul>
                                         </td>
@@ -949,7 +977,120 @@ if (openInTabs){
                                 <input type="hidden" name="favorites" value="" />
                                 <input type="hidden" name="ajax" value="yes" />
                             </form>
-                         </fieldset>                                                  	                                
+                         </fieldset> 
+<% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {  %>
+                        <% if (!oscar.util.StringUtils.isNullOrEmpty(demographicID) && !oscar.util.StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0){ %>
+                        <fieldset>
+                            <script type="text/javascript">
+                                jQuery.noConflict();
+                                function faxDocument(docId){
+
+                                    var faxRecipients = "";
+                                    if($("faxRecipients").children.length <= 0){
+                                        alert("Please select at least one Fax Recipient");
+                                        return false;
+
+                                    }else{
+                                        for(var i=0; i<$("faxRecipients").children.length; i++){
+                                            faxRecipients += document.getElementsByName('faxRecipients')[i].value + ",";
+                                        }
+                                        document.getElementsByName('faxRecipients').length
+                                    }
+
+                                    jQuery.ajax({
+                                        type: "POST",
+                                        url: "<%=request.getContextPath() %>/dms/ManageDocument.do",
+                                        data: "method=fax&docId=" + docId + "&faxRecipients=" + faxRecipients + "&demoNo=<%=demographicID%>&docType=DOC",
+                                        success: function(data) {
+                                            if (data != null)
+                                                location.reload();
+                                        }
+                                    });
+                                }
+                            </script>
+                            <legend><bean:message key="dms.incomingDocs.fax"/></legend>
+                            <form name="faxForm_<%=docId%>" id="faxForm_<%=docId%>" onsubmit="" method="post" action="javascript:void(0);">
+                                <table border="0px">
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <bean:message key="Appointment.formDoctor"/>:
+                                        </td>
+                                        <td>
+                                            <select id="otherFaxSelect" style="margin-left: 5px;max-width: 300px;min-width:150px;">
+                                                <%
+                                                    String rdName = "";
+                                                    String rdFaxNo = "";
+                                                    for (int i=0;i < displayServiceUtil.specIdVec.size(); i++) {
+                                                        String  specId     =  displayServiceUtil.specIdVec.elementAt(i);
+                                                        String  fName      =  displayServiceUtil.fNameVec.elementAt(i);
+                                                        String  lName      =  displayServiceUtil.lNameVec.elementAt(i);
+                                                        String  proLetters =  displayServiceUtil.proLettersVec.elementAt(i);
+                                                        String  address    =  displayServiceUtil.addressVec.elementAt(i);
+                                                        String  phone      =  displayServiceUtil.phoneVec.elementAt(i);
+                                                        String  fax        =  displayServiceUtil.faxVec.elementAt(i);
+                                                        String  referralNo = "";
+                                                        if (rdohip != null && !"".equals(rdohip) && rdohip.equals(referralNo)) {
+                                                            rdName = String.format("%s, %s", lName, fName);
+                                                            rdFaxNo = fax;
+                                                        }
+                                                        if (!"".equals(fax)) {
+                                                %>
+
+                                                <option value="<%= fax %>"> <%= String.format("%s, %s", lName, fName) %> </option>
+                                                <%
+                                                        }
+                                                    }
+                                                %>
+
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="submit" class="btn" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><bean:message key="provider.pref.general.fax"/>:</td>
+                                        <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value=""/></td>
+                                        <td>
+                                            <input type="submit" class="btn" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div id="faxOps">
+                                    <div>
+
+                                        <ul id="faxRecipients">
+                                            <%
+                                                if (!"".equals(rdName) && !"".equals(rdFaxNo)) {
+                                            %>
+
+                                            <input type="hidden" name="faxRecipients" value="<%= rdFaxNo %>" />
+
+                                            <%
+                                                }
+                                            %>
+                                        </ul>
+                                    </div>
+                                    <div style="margin-top: 5px; text-align: center">
+                                        <input type="submit" id="fax_button"  class="btn" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
+                                    </div>
+                                </div>
+ <%
+                            if(session.getAttribute("faxSuccessful")!=null){
+                                if((Boolean)session.getAttribute("faxSuccessful")==true){ %><br>
+                    <div class="alert alert-success alert-block fade in"><button type="button" class="close" data-dismiss="alert">&times;</button>
+      <bean:message key="dms.incomingDocs.fax"/> <bean:message key="oscarMessenger.DisplayMessages.msgStatusSent"/>
+    </div>
+            <% }
+            session.removeAttribute("faxSuccessful");
+            }  %>
+                            </form>
+                        </fieldset>
+                        <% } %>
+                         <% } %>                                               	                                
                     </td>
                 </tr>
                 <tr>
