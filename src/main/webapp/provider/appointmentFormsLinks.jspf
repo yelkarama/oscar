@@ -1,16 +1,26 @@
 <%@page import="org.oscarehr.web.AppointmentProviderAdminDayUIBean"%>
-<%@page import="java.util.Collection, java.util.Collections, java.util.List, java.util.ArrayList"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.common.model.EForm"%>
+<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.common.model.ProviderData"%>
+<%@page import="org.oscarehr.common.dao.ProviderDataDao"%>
 
+<%@page import="java.util.Collection, java.util.Collections, java.util.List, java.util.ArrayList"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
 <%
 	LoggedInInfo loggedInInfo3=LoggedInInfo.getLoggedInInfoFromSession(request);
 	ProviderPreference providerPreference = (ProviderPreference)request.getAttribute("providerPreference");
 	String demographic_no = request.getParameter("demographic_no");
 	String appointment_no = request.getParameter("appointment_no");
 	String appointmentDate = request.getParameter("appointment_date");
+    DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+	Demographic demographic = demographicDao.getDemographic(demographic_no);
+	ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
+	ProviderData provider = providerDao.findByProviderNo(String.valueOf(providerPreference.getProviderNo()));
 	if (providerPreference!=null)
 	{
 		Collection<String> formNames=providerPreference.getAppointmentScreenForms();
@@ -49,6 +59,12 @@
 			String escapedLinkUrl=quickLink.getUrl();
 			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{contextPath\\}", request.getContextPath());
 			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{demographicId\\}", String.valueOf(demographic_no));
+			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{appointmentId\\}", String.valueOf(appointment_no));
+			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{providerId\\}", String.valueOf(providerPreference.getProviderNo()));
+			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{providerOhip\\}", StringUtils.trimToEmpty(provider.getOhipNo()));
+			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{demographicHin\\}", StringUtils.trimToEmpty(demographic.getHin()));
+			escapedLinkUrl=escapedLinkUrl.replaceAll("\\$\\{demographicVer\\}", StringUtils.trimToEmpty(demographic.getVer()));
+			
 			escapedLinkUrl=StringEscapeUtils.escapeHtml(escapedLinkUrl);
 			
 			String escapedLinkName=StringEscapeUtils.escapeHtml(quickLink.getName());
