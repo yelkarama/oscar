@@ -114,6 +114,11 @@ public class CanadianVaccineCatalogueManager {
 		List<CVCImmunization> results = immunizationDao.findAllGeneric();
 		return results;
 	}
+	
+	public List<CVCImmunization> getGenericMarketedImmunizationList() {
+		List<CVCImmunization> results = immunizationDao.findAllGenericMarketed();
+		return results;
+	}
 
 	public List<CVCMedication> getMedicationByDIN(LoggedInInfo loggedInInfo, String din) {
 		List<CVCMedication> results = medicationDao.findByDIN(din);
