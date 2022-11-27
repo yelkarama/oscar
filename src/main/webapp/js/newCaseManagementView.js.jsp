@@ -604,13 +604,14 @@ function navBarLoader() {
                   ctx + "/CaseManagementView.do?hc=" + Colour.familyHistory + "&method=listNotes&providerNo=" + providerNo + "&demographicNo=" + demographicNo + "&issue_code=FamHistory&title=" + famHistoryLabel + "&cmd=FamHistory"+ "&appointment_no="+appointmentNo,
                   ctx + "/oscarEncounter/displayIssues.do?hC=" + Colour.unresolvedIssues,
                   ctx + "/oscarEncounter/displayResolvedIssues.do?hC=" + Colour.resolvedIssues,
-                  ctx + "/oscarEncounter/displayDecisionSupportAlerts.do?providerNo=" + providerNo + "&demographicNo=" + demographicNo,                                       
+                  ctx + "/oscarEncounter/displayDecisionSupportAlerts.do?providerNo=" + providerNo + "&demographicNo=" + demographicNo,
+                  ctx + "/oscarPrevention/preventionRecommendations.jsp?demographic_no="+ demographicNo,
                   ctx + "/oscarEncounter/displayEpisodes.do?hC=" + Colour.episode,
                   ctx + "/oscarEncounter/displayPregnancies.do?hC="+ Colour.episode,
                   ctx + "/oscarEncounter/displayContacts.do?hC=" + Colour.contacts
               ];
 
-            var rightNavBarTitles = [ "allergies", "Rx", "OMeds", "RiskFactors", "FamHistory", "unresolvedIssues", "resolvedIssues", "Guidelines","episode","pregnancy","contacts"];
+            var rightNavBarTitles = [ "allergies", "Rx", "OMeds", "RiskFactors", "FamHistory", "unresolvedIssues", "resolvedIssues", "Guidelines","PreventionDS","episode","pregnancy","contacts"];
 
 
           var navbar = "leftNavBar";
