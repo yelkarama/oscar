@@ -72,8 +72,7 @@ if(!authed) {
 	
 	if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { 
 %>
-					
-						<span style="font-size: larger;">Prevention Recommendations</span>
+
 						<ul>
 							<% for (int i = 0 ;i < warnings.size(); i++){
                        String warn = (String) warnings.get(i);%>
