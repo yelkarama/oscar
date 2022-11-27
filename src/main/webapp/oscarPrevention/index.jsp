@@ -832,10 +832,10 @@ if(bShowAll){
 					}
 				}
 		%> 
-					<span style="font-size: larger;">Prevention Recommendations</span>
+					<br><span style="font-size: larger;">Prevention Recommendations</span>
 					<div id="recommendations" class="recommendations">
                         <br>
-                        &nbsp;<img src='<%=request.getContextPath()%>/images/DMSLoader.gif'><bean:message key="caseload.msgLoading" />
+                        &nbsp;<img src='<%=request.getContextPath()%>/images/DMSLoader.gif'>&nbsp;<bean:message key="caseload.msgLoading" />
                         <br>
 						<%
                     logger.info("rendering loading of reccomendations");
