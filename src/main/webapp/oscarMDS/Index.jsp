@@ -684,7 +684,7 @@ contextpath='<%=request.getContextPath()%>';
 
 	}
  
-	#ticklerWrap{position:relative;top:0px;background-color:#FF6600;width:100%;}  
+	[id^=ticklerWrap]{position:relative;top:0px;background-color:#FF6600;width:100%;}  
 	
 	.completedTickler{
 	    opacity: 0.8;
