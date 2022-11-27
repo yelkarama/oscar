@@ -770,7 +770,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                     						if (demographic.getConsentToUseEmailForCare() != null && demographic.getConsentToUseEmailForCare()){ %>
                                                                             <a href="mailto:<%=demographic.getEmail()%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=demographic.getEmail()%></a>
                                                                         <% } else { %>
-                                                                            <span id="email"><%=demographic.getEmail()%></span>
+                                                                            <span id="email<%= segmentID %>"><%=demographic.getEmail()%></span>
                                                                         <% } } %> 
                                                                         </div>
                                                                     </td>
@@ -896,10 +896,10 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 							    
 							    if(LabTicklers!=null && LabTicklers.size()>0){
 							    %>
-							    <div id="ticklerWrap" class="DoNotPrint">
-							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
+							    <div id="ticklerWrap<%= segmentID %>" class="DoNotPrint">
+							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklersp<%= segmentID %>" onclick="showHideItem('ticklerDisplay<%= segmentID %>')">View Ticklers</a> Linked to this Lab</h4>
 							    
-							           <div id="ticklerDisplay" style="display:none">
+							           <div id="ticklerDisplay<%= segmentID %>" style="display:none">
 							   <%
 							   String flag;
 							   String ticklerClass;
@@ -1040,7 +1040,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                <td width="*">&nbsp;</td>
                            </tr>
                        </table>
-                       <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs" id="tblDiscs">
+                       <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs">
                            <tr class="Field2">
                                <td width="25%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formTestName"/></td>
                                <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formResult"/></td>
@@ -1094,14 +1094,14 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 	                           </tr>
 	                       </table>
                            	<%if(isUnstructuredDoc){%>
-	                       <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs" id="tblDiscs">
+	                       <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs">
 	                           <tr class="Field2">
 	                               <td width="20%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formTestName"/></td>
 	                               <td width="60%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formResult"/></td>
 	                               <td width="20%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formDateTimeCompleted"/></td>
 	                           </tr><%
 						} else {%>
-                        <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs" id="tblDiscs">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3" name="tblDiscs">
                             <tr class="Field2">
                                 <td width="25%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formTestName"/></td>
                                 <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formResult"/></td>
