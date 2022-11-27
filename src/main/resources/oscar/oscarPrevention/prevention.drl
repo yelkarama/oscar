@@ -354,25 +354,60 @@
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
-		<java:condition>prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 ||prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 ||prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12</java:condition>
+		<java:condition>(prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("Flu") &lt;0)&amp;&amp; 
+(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &lt;0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose")&lt;0)&amp;&amp; (prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &lt;0)</java:condition>
 		<java:consequence>              
               prev.log("Flu 2");
               prev.addWarning("Flu", "Needs Influenza Shot ");
         </java:consequence>
 	</rule>
-	<rule name="Flu 3">
+		<rule name="Flu 3">
 		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("Flu") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza trivalent high-dose") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent") == 0</java:condition>
-		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent high dose") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza quadrivalent high-dose") == 0</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Inf] Influenza") == 0</java:condition>
 		<java:consequence>              
               prev.log("Flu 3");
-              prev.addWarning("Flu", "Needs Influenza Shot ");
+              prev.addWarning("Flu", "No Influenza Shots on File ");
+        </java:consequence>
+	</rule>
+		<rule name="Pneumo 23">
+		<parameter identifier="prev">
+			<class>oscar.oscarPrevention.Prevention</class>
+		</parameter>
+		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
+		<java:condition>prev.getAgeInYears() &lt;=70</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("Pneumovax") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("Pneu-C") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("Pneumococcus") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Pneu-C-13] Pneumococcal conjugate 13") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Pneu-P] Pneumococcal polysaccharide") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Pneu-P-23] Pneumococcal polysaccharide 23") == 0</java:condition>
+		<java:consequence>              
+              prev.log("Pneumo 23");
+              prev.addWarning("Pneumo23", "Needs Pneumococcal Vaccine ");
+        </java:consequence>
+	</rule>
+		<rule name="HZV">
+		<parameter identifier="prev">
+			<class>oscar.oscarPrevention.Prevention</class>
+		</parameter>
+		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
+		<java:condition>prev.getAgeInYears() &lt;=70</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("HZV") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("Zostavax") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Zos] Zoster (Shingles)") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Zos] Zoster (Shingles) live") == 0</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Zos] Zoster (Shingles) non-live") == 0</java:condition>
+		<java:consequence>              
+              prev.log("Zoster");
+              prev.addWarning("Zoster", "Needs Shingles Vaccine ");
         </java:consequence>
 	</rule>
 	<rule name="PAP 1">
@@ -597,6 +632,7 @@
               prev.addReminder("Need Bone Mineral Density Test");
         </java:consequence>
 	</rule>
+<!--
 	<rule name="PHV">
 		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
@@ -619,6 +655,7 @@
               prev.addWarning("PHV", "Periodic Health Visit has not occurred in over two years");
         </java:consequence>
 	</rule>
+-->
 	<!--
 	<rule name="Annual Physical">
 		<parameter identifier="prev">
