@@ -69,7 +69,7 @@ public class PreventionDisplayConfig {
     static CVCMappingDao cvcMapping = SpringUtils.getBean(CVCMappingDao.class);
 
     private PreventionDisplayConfig() {
-    	// use getInstance()
+    	// use getInstance() or getMInstance()
     }
     
     static public PreventionDisplayConfig getInstance(){
@@ -79,6 +79,13 @@ public class PreventionDisplayConfig {
        return preventionDisplayConfig;
     }
 
+    static public PreventionDisplayConfig getMInstance(){
+       if (preventionDisplayConfig.prevList == null) {
+         preventionDisplayConfig.loadMarketedPreventions();
+       }
+       return preventionDisplayConfig;
+    }
+	
     public ArrayList<HashMap<String,String>> getPreventions() {
         if (prevList == null) {
             loadPreventions();
