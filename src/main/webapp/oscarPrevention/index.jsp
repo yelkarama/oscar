@@ -832,12 +832,13 @@ if(bShowAll){
 					}
 				}
 		%> 
+					<span style="font-size: larger;">Prevention Recommendations</span>
 					<div id="recommendations" class="recommendations">
                         <br>
                         &nbsp;<img src='<%=request.getContextPath()%>/images/DMSLoader.gif'><bean:message key="caseload.msgLoading" />
                         <br>
 						<%
-logger.info("rendering loading of reccomendations");
+                    logger.info("rendering loading of reccomendations");
                     if(printError) {
                    %>
 						<p style="color: red; font-size: larger">An error occurred
