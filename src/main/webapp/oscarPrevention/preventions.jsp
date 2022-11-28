@@ -76,6 +76,7 @@ if(!authed) {
 		else return("");
 	}
 %>
+
 <%
 	long startTime = System.nanoTime();
     long endTime = System.nanoTime();
@@ -105,7 +106,11 @@ if(!authed) {
 	boolean isSSOLoggedIn = session.getAttribute("oneIdEmail") != null;
 	boolean hasIspaConsent = ispaConsent != null && !ispaConsent.isOptout();
 	boolean hasNonIspaConsent = nonIspaConsent != null && !nonIspaConsent.isOptout();
-
+%>
+    <form name="printFrm" method="post" onsubmit="return onPrint();"
+	    action="<rewrite:reWrite jspPage="printPrevention.do"/>">
+	    <input type="hidden" name="immunizationOnly" value="false" />
+<%
     if (!oscar.OscarProperties.getInstance().getBooleanProperty("PREVENTION_CLASSIC_VIEW","yes")){
         ArrayList<Map<String,Object>> hiddenlist = new ArrayList<Map<String,Object>>();
         Map<String,String> shownBefore = new HashMap<String,String>();//See explanation below.
@@ -495,3 +500,13 @@ String r(Object re, String result){
     }
 
 %>
+            <span id="print_buttons"> 
+                <input type="button" class="noPrint"
+					name="printButton" onclick="EnablePrint(this)" value="Enable Print">
+				</input> 
+			    <br>
+			    <!--<input type="button" name="sendToPhrButton" value="Send To MyOscar (PDF)" style="display: none;" onclick="sendToPhr(this)">-->
+			    <input type="hidden" name="demographicNo"
+				    value="<%=demographic_no%>" />
+            </span>
+</form>
