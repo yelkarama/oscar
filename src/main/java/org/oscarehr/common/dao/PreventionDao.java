@@ -193,7 +193,16 @@ public class PreventionDao extends AbstractDao<Prevention> {
 		
 		return (results);
 	}
-	
+
+
+	public List<Prevention> findUniqueTypes() {
+		Query query = entityManager.createQuery("select x from "+modelClass.getSimpleName()+" x where deleted='0' GROUP BY preventionType ORDER BY preventionDate DESC");
+
+		@SuppressWarnings("unchecked")
+		List<Prevention> results = query.getResultList();
+		
+		return (results);
+	}
 	
 	@NativeSql("preventions")
 	public List<Integer> findNewPreventionsSinceDemoKey(String keyName) {
