@@ -46,7 +46,7 @@
         </java:consequence>
 	</rule>
 	<rule name="DTaP-IPV 3">
-<parameter identifier="prev">
+		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInMonths() &gt;= 6</java:condition>
@@ -214,7 +214,6 @@
               prev.addWarning("MMR", "Needs 1st MMRV");
         </java:consequence>
 	</rule>
-
 	<rule name="MenC-C 1">
 		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
@@ -336,7 +335,6 @@
               prev.log("Td 1");
               prev.addWarning("Td", "Needs first Td");
         </java:consequence>
-	</rule>
 	</rule>
 	<rule name="Td 2">
 		<parameter identifier="prev">
