@@ -408,8 +408,7 @@
               prev.addWarning("Zoster", "Needs Shingles Vaccine ");
         </java:consequence>
 	</rule>
-	</rule>
-		<rule name="HZV2">
+	<rule name="HZV2">
 		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
