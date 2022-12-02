@@ -45,13 +45,13 @@ theStart:BEGIN
 
 	    IF IndexIsThere = 0 THEN
 		SET @sqlstmt = CONCAT('CREATE ',given_unique,' INDEX ',given_index,' ON ',
-		given_database,'.',given_table,' (',given_columns,')');
+		DATABASE(),'.',given_table,' (',given_columns,')');
 		PREPARE st FROM @sqlstmt;
 		EXECUTE st;
 		DEALLOCATE PREPARE st;
 	    ELSE
 		SELECT CONCAT('Index ',given_index,' Already Exists ON Table ',
-		given_database,'.',given_table) CreateIndexMessage;
+		DATABASE(),'.',given_table) CreateIndexMessage;
 	    END IF;
 
 	END IF;
