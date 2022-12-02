@@ -3329,7 +3329,7 @@ CREATE TABLE `eform_data` (
   KEY `idx_eform_data_from_date` (`form_date`),
   KEY `idx_eform_data_form_name` (`form_name`),
   KEY `idx_eform_data_subject` (`subject`),
-  KEY `idx_eform_data_fid` (`fid`),
+  KEY `idx_eform_data_fid_status_demo` (`fid`, `status`, `demographic_no`),
   KEY `idx_eform_data_form_provider` (`form_provider`)
 );
 
