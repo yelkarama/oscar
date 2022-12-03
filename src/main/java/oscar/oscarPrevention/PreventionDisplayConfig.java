@@ -106,10 +106,17 @@ public class PreventionDisplayConfig {
     }
 	
     public ArrayList<HashMap<String,String>> getMarketedPreventions() {
-        if (prevList == null) {
+        if (prevMarketedList == null) {
             loadMarketedPreventions();
         }
-        return prevList;
+        return prevMarketedList;
+    }
+	
+    public ArrayList<HashMap<String,String>> getExistingPreventions() {
+        if (prevExistingList == null) {
+            loadExistingPreventions();
+        }
+        return prevExistingList;
     }
 
     public HashMap<String,String> getPrevention(String s) {
