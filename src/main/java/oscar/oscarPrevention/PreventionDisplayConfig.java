@@ -41,8 +41,10 @@ import org.jdom.input.SAXBuilder;
 import org.oscarehr.common.dao.CVCImmunizationDao;
 import org.oscarehr.common.dao.CVCMappingDao;
 import org.oscarehr.common.dao.CVCMedicationDao;
+import org.oscarehr.common.dao.PreventionDao;
 import org.oscarehr.common.model.CVCImmunization;
 import org.oscarehr.common.model.CVCMapping;
+import org.oscarehr.common.model.Prevention;
 import org.oscarehr.managers.CanadianVaccineCatalogueManager;
 import org.oscarehr.managers.PreventionManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -58,12 +60,15 @@ public class PreventionDisplayConfig {
    
     private HashMap<String,HashMap<String,String>> prevHash = null;
     private ArrayList<HashMap<String,String>> prevList = null;
+	private ArrayList<HashMap<String,String>> prevMarketedList = null;
+	private ArrayList<HashMap<String,String>> prevExistingList = null;
 
     private HashMap<String,Map<String,Object>> configHash = null;
     private ArrayList<Map<String,Object>> configList = null;
     
     static CVCImmunizationDao cvcImmunizationDao = SpringUtils.getBean(CVCImmunizationDao.class);
-    static CVCMedicationDao cvcMedicationDao = null;
+	static CVCMedicationDao cvcMedicationDao = null;
+	static PreventionDao preventionDao = null;
     
     static CanadianVaccineCatalogueManager cvcManager = SpringUtils.getBean(CanadianVaccineCatalogueManager.class);
     static CVCMappingDao cvcMapping = SpringUtils.getBean(CVCMappingDao.class);
@@ -80,8 +85,15 @@ public class PreventionDisplayConfig {
     }
 
     static public PreventionDisplayConfig getMInstance(){
-       if (preventionDisplayConfig.prevList == null) {
+       if (preventionDisplayConfig.prevMarketedList == null) {
          preventionDisplayConfig.loadMarketedPreventions();
+       }
+       return preventionDisplayConfig;
+    }
+	
+    static public PreventionDisplayConfig getEInstance(){
+       if (preventionDisplayConfig.prevExistingList == null) {
+         preventionDisplayConfig.loadExistingPreventions();
        }
        return preventionDisplayConfig;
     }
@@ -111,7 +123,7 @@ public class PreventionDisplayConfig {
 	public void loadPreventions() {
 		prevList = new ArrayList<HashMap<String, String>>();
 		prevHash = new HashMap<String, HashMap<String, String>>();
-		log.debug("STARTING2");
+		log.debug("STARTING1");
 		
 		InputStream is = null;
 		try {
@@ -195,10 +207,96 @@ public class PreventionDisplayConfig {
 	}
 
 	public void loadMarketedPreventions() {
-		prevList = new ArrayList<HashMap<String, String>>();
+		prevMarketedList = new ArrayList<HashMap<String, String>>();
 		prevHash = new HashMap<String, HashMap<String, String>>();
 		log.debug("STARTING2");
 		
+		InputStream is = null;
+		try {
+			if (OscarProperties.getInstance().getProperty("PREVENTION_ITEMS") != null) {
+				String filename = OscarProperties.getInstance().getProperty("PREVENTION_ITEMS");
+				if(filename.startsWith("classpath:")) {
+					is = this.getClass().getClassLoader().getResourceAsStream(filename.substring(10));
+				} else {
+					is = new FileInputStream(filename);
+				}
+			}
+			else {
+				is = this.getClass().getClassLoader().getResourceAsStream("oscar/oscarPrevention/PreventionItems.xml");
+			}
+
+			List<String> addedSnomeds = new ArrayList<String>();
+
+			SAXBuilder parser = new SAXBuilder();
+			Document doc = parser.build(is);
+			Element root = doc.getRootElement();
+			List items = root.getChildren("item");
+			for (int i = 0; i < items.size(); i++) {
+				Element e = (Element) items.get(i);
+				List attr = e.getAttributes();
+				HashMap<String, String> h = new HashMap<String, String>();
+				for (int j = 0; j < attr.size(); j++) {
+					Attribute att = (Attribute) attr.get(j);
+					h.put(att.getName(), att.getValue());
+				}
+				
+				//Do we have a mapped CVC Entry?
+				CVCMapping mapping = cvcMapping.findByOscarName(h.get("name"));
+				if(mapping != null) {
+					if(mapping.getPreferCVC() != null && mapping.getPreferCVC()) {
+						continue;
+					}
+					CVCImmunization cvcImm = cvcImmunizationDao.findBySnomedConceptId(mapping.getCvcSnomedId());
+					if(cvcImm != null) {
+						h.put("snomedConceptCode", mapping.getCvcSnomedId());
+						h.put("cvcName", cvcImm.getPicklistName());
+						h.put("ispa",String.valueOf(cvcImm.isIspa()));
+						addedSnomeds.add(mapping.getCvcSnomedId());
+					}
+					
+				}
+				
+				prevMarketedList.add(h);
+				prevHash.put(h.get("name"), h);
+				
+			}
+			
+			for(CVCImmunization imm:cvcManager.getGenericMarketedImmunizationList()) {
+				HashMap<String, String> h = new HashMap<String, String>();
+				h.put("resultDesc", "");
+				h.put("desc", imm.getDisplayName());
+				h.put("name", imm.getPicklistName());
+				h.put("cvcName", imm.getPicklistName());
+				h.put("healthCanadaType", imm.getPicklistName());
+				h.put("layout", "injection");
+				h.put("atc", "");
+				h.put("showIfMinRecordNum", "1");
+				h.put("snomedConceptCode", imm.getSnomedConceptId());
+				h.put("ispa", String.valueOf(imm.isIspa()));
+				if(!addedSnomeds.contains(imm.getSnomedConceptId())) {
+					prevMarketedList.add(h);
+					prevHash.put(h.get("name"), h);
+				}
+			}
+			
+			
+			
+		} catch (Exception e) {
+			MiscUtils.getLogger().error("Error", e);
+		} finally {
+			try {
+	            if (is != null) is.close();
+            } catch (IOException e) {
+	           log.error("Unexpected error", e);
+            }
+		}
+	}
+	
+	public void loadExistingPreventions() {
+		prevExistingList = new ArrayList<HashMap<String, String>>();
+		prevHash = new HashMap<String, HashMap<String, String>>();
+		log.debug("STARTING3");
+
 		InputStream is = null;
 		try {
 			if (OscarProperties.getInstance().getProperty("PREVENTION_ITEMS") != null) {
@@ -249,20 +347,20 @@ public class PreventionDisplayConfig {
 				
 			}
 			
-			for(CVCImmunization imm:cvcManager.getGenericMarketedImmunizationList()) {
+			for(Prevention prev:preventionDao.findUniqueTypes()) {
 				HashMap<String, String> h = new HashMap<String, String>();
 				h.put("resultDesc", "");
-				h.put("desc", imm.getDisplayName());
-				h.put("name", imm.getPicklistName());
-				h.put("cvcName", imm.getPicklistName());
-				h.put("healthCanadaType", imm.getPicklistName());
+				h.put("desc", prev.getPreventionType());
+				h.put("name", prev.getPreventionType());
+				h.put("cvcName", prev.getPreventionType());
+				h.put("healthCanadaType", prev.getPreventionType());
 				h.put("layout", "injection");
 				h.put("atc", "");
 				h.put("showIfMinRecordNum", "1");
-				h.put("snomedConceptCode", imm.getSnomedConceptId());
-				h.put("ispa", String.valueOf(imm.isIspa()));
-				if(!addedSnomeds.contains(imm.getSnomedConceptId())) {
-					prevList.add(h);
+				h.put("snomedConceptCode", prev.getSnomedId());
+				h.put("ispa", "");
+				if(!addedSnomeds.contains(prev.getSnomedId())) {
+					prevExistingList.add(h);
 					prevHash.put(h.get("name"), h);
 				}
 			}
@@ -279,6 +377,7 @@ public class PreventionDisplayConfig {
             }
 		}
 	}
+
 	
     public ArrayList<Map<String,Object>> getConfigurationSets() {
         log.debug("returning config sets");
