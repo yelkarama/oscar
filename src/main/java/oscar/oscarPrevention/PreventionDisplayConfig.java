@@ -69,7 +69,7 @@ public class PreventionDisplayConfig {
     static CVCMappingDao cvcMapping = SpringUtils.getBean(CVCMappingDao.class);
 
     private PreventionDisplayConfig() {
-    	// use getInstance()
+    	// use getInstance() or getMInstance()
     }
     
     static public PreventionDisplayConfig getInstance(){
@@ -79,9 +79,23 @@ public class PreventionDisplayConfig {
        return preventionDisplayConfig;
     }
 
+    static public PreventionDisplayConfig getMInstance(){
+       if (preventionDisplayConfig.prevList == null) {
+         preventionDisplayConfig.loadMarketedPreventions();
+       }
+       return preventionDisplayConfig;
+    }
+	
     public ArrayList<HashMap<String,String>> getPreventions() {
         if (prevList == null) {
             loadPreventions();
+        }
+        return prevList;
+    }
+	
+    public ArrayList<HashMap<String,String>> getMarketedPreventions() {
+        if (prevList == null) {
+            loadMarketedPreventions();
         }
         return prevList;
     }
@@ -180,7 +194,92 @@ public class PreventionDisplayConfig {
 		}
 	}
 
+	public void loadMarketedPreventions() {
+		prevList = new ArrayList<HashMap<String, String>>();
+		prevHash = new HashMap<String, HashMap<String, String>>();
+		log.debug("STARTING2");
+		
+		InputStream is = null;
+		try {
+			if (OscarProperties.getInstance().getProperty("PREVENTION_ITEMS") != null) {
+				String filename = OscarProperties.getInstance().getProperty("PREVENTION_ITEMS");
+				if(filename.startsWith("classpath:")) {
+					is = this.getClass().getClassLoader().getResourceAsStream(filename.substring(10));
+				} else {
+					is = new FileInputStream(filename);
+				}
+			}
+			else {
+				is = this.getClass().getClassLoader().getResourceAsStream("oscar/oscarPrevention/PreventionItems.xml");
+			}
 
+			List<String> addedSnomeds = new ArrayList<String>();
+
+			SAXBuilder parser = new SAXBuilder();
+			Document doc = parser.build(is);
+			Element root = doc.getRootElement();
+			List items = root.getChildren("item");
+			for (int i = 0; i < items.size(); i++) {
+				Element e = (Element) items.get(i);
+				List attr = e.getAttributes();
+				HashMap<String, String> h = new HashMap<String, String>();
+				for (int j = 0; j < attr.size(); j++) {
+					Attribute att = (Attribute) attr.get(j);
+					h.put(att.getName(), att.getValue());
+				}
+				
+				//Do we have a mapped CVC Entry?
+				CVCMapping mapping = cvcMapping.findByOscarName(h.get("name"));
+				if(mapping != null) {
+					if(mapping.getPreferCVC() != null && mapping.getPreferCVC()) {
+						continue;
+					}
+					CVCImmunization cvcImm = cvcImmunizationDao.findBySnomedConceptId(mapping.getCvcSnomedId());
+					if(cvcImm != null) {
+						h.put("snomedConceptCode", mapping.getCvcSnomedId());
+						h.put("cvcName", cvcImm.getPicklistName());
+						h.put("ispa",String.valueOf(cvcImm.isIspa()));
+						addedSnomeds.add(mapping.getCvcSnomedId());
+					}
+					
+				}
+				
+				prevList.add(h);
+				prevHash.put(h.get("name"), h);
+				
+			}
+			
+			for(CVCImmunization imm:cvcManager.getGenericMarketedImmunizationList()) {
+				HashMap<String, String> h = new HashMap<String, String>();
+				h.put("resultDesc", "");
+				h.put("desc", imm.getDisplayName());
+				h.put("name", imm.getPicklistName());
+				h.put("cvcName", imm.getPicklistName());
+				h.put("healthCanadaType", imm.getPicklistName());
+				h.put("layout", "injection");
+				h.put("atc", "");
+				h.put("showIfMinRecordNum", "1");
+				h.put("snomedConceptCode", imm.getSnomedConceptId());
+				h.put("ispa", String.valueOf(imm.isIspa()));
+				if(!addedSnomeds.contains(imm.getSnomedConceptId())) {
+					prevList.add(h);
+					prevHash.put(h.get("name"), h);
+				}
+			}
+			
+			
+			
+		} catch (Exception e) {
+			MiscUtils.getLogger().error("Error", e);
+		} finally {
+			try {
+	            if (is != null) is.close();
+            } catch (IOException e) {
+	           log.error("Unexpected error", e);
+            }
+		}
+	}
+	
     public ArrayList<Map<String,Object>> getConfigurationSets() {
         log.debug("returning config sets");
         if (configList == null) {

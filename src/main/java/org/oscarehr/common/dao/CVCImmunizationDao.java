@@ -51,6 +51,14 @@ public class CVCImmunizationDao extends AbstractDao<CVCImmunization> {
 		List<CVCImmunization> result = query.getResultList();
 		return result;
 	}
+
+	public List<CVCImmunization> findAllGenericMarketed() {
+		Query query = entityManager.createQuery("SELECT x FROM CVCImmunization x WHERE x.generic = :generic AND x.shelfStatus = :status");
+		query.setParameter("generic", true);
+		query.setParameter("status", "Marketed");
+		List<CVCImmunization> result = query.getResultList();
+		return result;
+	}
 	
 	public List<CVCImmunization> findByParent(String conceptCodeId) {
 		Query query = entityManager.createQuery("SELECT x FROM CVCImmunization x WHERE x.parentConceptId = :parentConceptId");

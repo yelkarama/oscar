@@ -46,7 +46,7 @@
         </java:consequence>
 	</rule>
 	<rule name="DTaP-IPV 3">
-<parameter identifier="prev">
+		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInMonths() &gt;= 6</java:condition>
@@ -214,7 +214,6 @@
               prev.addWarning("MMR", "Needs 1st MMRV");
         </java:consequence>
 	</rule>
-
 	<rule name="MenC-C 1">
 		<parameter identifier="prev">
 			<class>oscar.oscarPrevention.Prevention</class>
@@ -344,7 +343,7 @@
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;= 14</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("Td") + prev.getNumberOfPreventionType("dTap") + prev.getNumberOfPreventionType("[Td] Tetanus + Diphtheria") + prev.getNumberOfPreventionType("[Tdap] Tetanus + Diphtheria + Pertussis") &gt;= 1</java:condition>
-		<java:condition>prev.getHowManyMonthsSinceLast("Td") &gt;= 120 || prev.getHowManyMonthsSinceLast("dTap") &gt;= 120 || prev.getHowManyMonthsSinceLast("[Td] Tetanus + Diphtheria") &gt;= 120 || prev.getHowManyMonthsSinceLast("[Tdap] Tetanus + Diphtheria + Pertussis") &gt;= 120</java:condition>
+		<java:condition>(prev.getHowManyMonthsSinceLast("Td") &gt;= 120 || prev.getHowManyMonthsSinceLast("Td") &lt; 0)&amp;&amp;(prev.getHowManyMonthsSinceLast("dTap") &gt;= 120 || prev.getHowManyMonthsSinceLast("dTap") &lt; 0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Td] Tetanus + Diphtheria") &gt;= 120 || prev.getHowManyMonthsSinceLast("[Td] Tetanus + Diphtheria") &lt; 0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Tdap] Tetanus + Diphtheria + Pertussis") &gt;= 120 || prev.getHowManyMonthsSinceLast("[Tdap] Tetanus + Diphtheria + Pertussis") &lt; 0)</java:condition>
 		<java:consequence>              
               prev.log("Td 2");
               prev.addWarning("Td", "Needs repeat Td");
@@ -355,8 +354,7 @@
 			<class>oscar.oscarPrevention.Prevention</class>
 		</parameter>
 		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
-		<java:condition>(prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("Flu") &lt;0)&amp;&amp; 
-(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &lt;0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose")&lt;0)&amp;&amp; (prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &lt;0)</java:condition>
+		<java:condition>(prev.getHowManyMonthsSinceLast("Flu") &gt;= 12 || prev.getHowManyMonthsSinceLast("Flu") &lt;0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent high-dose") &lt;0)&amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza trivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent") &lt;0) &amp;&amp;(prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza quadrivalent high-dose")&lt;0)&amp;&amp; (prev.getHowManyMonthsSinceLast("[Inf] Influenza") &gt;= 12 || prev.getHowManyMonthsSinceLast("[Inf] Influenza") &lt;0)</java:condition>
 		<java:consequence>              
               prev.log("Flu 2");
               prev.addWarning("Flu", "Needs Influenza Shot ");
@@ -409,6 +407,20 @@
 		<java:consequence>              
               prev.log("Zoster");
               prev.addWarning("Zoster", "Needs Shingles Vaccine ");
+        </java:consequence>
+	</rule>
+	<rule name="HZV2">
+		<parameter identifier="prev">
+			<class>oscar.oscarPrevention.Prevention</class>
+		</parameter>
+		<java:condition>prev.getAgeInYears() &gt;=65</java:condition>
+		<java:condition>prev.getAgeInYears() &lt;=70</java:condition>
+		<java:condition>prev.getNumberOfPreventionType("[Zos] Zoster (Shingles) non-live") + prev.getNumberOfPreventionType("HZV") == 1</java:condition>
+		<java:condition>prev.getHowManyMonthsSinceLast("[Zos] Zoster (Shingles) non-live") &gt;=2 || prev.getHowManyMonthsSinceLast("HZV") &gt;=2</java:condition>
+		<java:condition>prev.getHowManyMonthsSinceLast("[Zos] Zoster (Shingles) non-live") &lt;6 && prev.getHowManyMonthsSinceLast("HZV") &lt;6</java:condition>
+		<java:consequence>              
+              prev.log("Zoster2");
+              prev.addWarning("Zoster", "Needs Second Zoster Vaccine ");
         </java:consequence>
 	</rule>
 	<rule name="PAP 1">

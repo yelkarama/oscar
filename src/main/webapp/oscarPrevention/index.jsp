@@ -806,9 +806,7 @@ if(bShowAll){
 <% }  %>  
 			</td>
 
-			<form name="printFrm" method="post" onsubmit="return onPrint();"
-				action="<rewrite:reWrite jspPage="printPrevention.do"/>">
-				<input type="hidden" name="immunizationOnly" value="false" />
+			
 				<td valign="top" class="MainTableRightColumn"><a href="#"
 					onclick="popup(600,800,'https://www.canada.ca/en/public-health/services/publications/healthy-living/canadian-immunization-guide-part-1-key-immunization-information/page-13-recommended-immunization-schedules.html')">Immunization
 						Schedules - Public Health Agency of Canada</a> <%
@@ -832,12 +830,13 @@ if(bShowAll){
 					}
 				}
 		%> 
+					<br><span style="font-size: larger;">Prevention Recommendations</span>
 					<div id="recommendations" class="recommendations">
                         <br>
-                        &nbsp;<img src='<%=request.getContextPath()%>/images/DMSLoader.gif'><bean:message key="caseload.msgLoading" />
+                        &nbsp;<img src='<%=request.getContextPath()%>/images/DMSLoader.gif'>&nbsp;<bean:message key="caseload.msgLoading" />
                         <br>
 						<%
-logger.info("rendering loading of reccomendations");
+                    logger.info("rendering loading of reccomendations");
                     if(printError) {
                    %>
 						<p style="color: red; font-size: larger">An error occurred
@@ -913,10 +912,10 @@ logger.info("rendering loading of reccomendations");
 									<%=legend%></td>
 		</tr>
 		<tr>
-			<td class="MainTableBottomRowLeftColumn"><span
+			<td class="MainTableBottomRowLeftColumn"> <!-- <span
 				id="print_buttons"> <input type="button" class="noPrint"
 					name="printButton" onclick="EnablePrint(this)" value="Enable Print">
-				</input> <!--
+				</input> 
 			<br>
 			<input type="button" name="sendToPhrButton" value="Send To MyOscar (PDF)" style="display: none;" onclick="sendToPhr(this)">
 --></td>
@@ -929,7 +928,7 @@ logger.info("rendering loading of reccomendations");
             endTime = System.nanoTime();
             logger.info("Thats the basic page after " + ((endTime - startTime)/1000)/1000 + " milliseconds");
  %>
-								</form>
+								
 		</tr>
 	</table>
 

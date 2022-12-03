@@ -415,7 +415,7 @@ pre {
     font-weight:600;
 } 
 
-#ticklerWrap{position:relative;top:0px;background-color:#FF6600;width:100%;}  
+[id^=ticklerWrap]{position:relative;top:0px;background-color:#FF6600;width:100%;}  
 
 input[id^='acklabel_']{
     margin-top: 10px; /* align with bootstrap buttons */
@@ -1402,7 +1402,7 @@ input[id^='acklabel_']{
                                 <td align="center" bgcolor="white" colspan="2" style="padding:0px;" cellspacing="0">							    
 <%
 String[] multiID = multiLabId.split(",");
-						
+boolean isTickler = false;						
 for(int mcount=0; mcount<multiID.length; mcount++){
 	if(demographicID!=null && !demographicID.equals("")){
 							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
@@ -1410,14 +1410,18 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							    if(demographicID != null) {
 							    	LabTicklers = ticklerManager.getTicklerByLabIdAnyProvider(loggedInInfo, Integer.valueOf(multiID[mcount]), Integer.valueOf(demographicID));
 							    }
-							    
+                                							    
 							    if(LabTicklers!=null && LabTicklers.size()>0){
-							    %>
-							    <div id="ticklerWrap" class="DoNotPrint">
-							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
-							    
-							           <div id="ticklerDisplay" style="display:none">
-							   <%
+                                    if(!isTickler){
+%>
+                            <div id="ticklerWrap" class="DoNotPrint">
+							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4>
+                                <div id="ticklerDisplay" style="display:none">
+<%
+
+                                        isTickler = true;
+                                    }
+
 							   String flag;
 							   String ticklerClass;
 							   String ticklerStatus;
@@ -1438,29 +1442,36 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							  	 ticklerClass="";
 							   }
 							   %>	
-							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
-							   	<table width="100%">
-							   	<tr>
-							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
-							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
-							   	</tr>
-							   	<tr>
-							   	<td colspan="4"><%=tickler.getMessage()%></td>
-							   	</tr>
-							   	</table>
-							   </div>
-							   <br>
+							       <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
+							       	<table width="100%">
+							       	<tr>
+							       	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
+							       	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
+							       	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							       	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							       	</tr>
+							       	<tr>
+							       	<td colspan="4"><%=tickler.getMessage()%></td>
+							       	</tr>
+							       	</table>
+							       </div>
+							       <br>
 							   <%
 							   }
 							   %>
-							   		</div><!-- end ticklerDisplay -->
-							   </div>   
-							   <%}//no ticklers to display 
+							   		<!-- end ticklers for this v-->
+							     
+							   <%}//no ticklers to display OR
 
 	}
+
 }
+    if(isTickler){
+    %>
+                                </div><!-- end ticklerDisplay-->
+                            </div><!-- end ticklerWrap-->
+    <%
+    }
 								
 								
                                     ReportStatus report;
