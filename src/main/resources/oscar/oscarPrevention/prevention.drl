@@ -417,7 +417,7 @@
 		<java:condition>prev.getAgeInYears() &lt;=70</java:condition>
 		<java:condition>prev.getNumberOfPreventionType("[Zos] Zoster (Shingles) non-live") + prev.getNumberOfPreventionType("HZV") == 1</java:condition>
 		<java:condition>prev.getHowManyMonthsSinceLast("[Zos] Zoster (Shingles) non-live") &gt;=2 || prev.getHowManyMonthsSinceLast("HZV") &gt;=2</java:condition>
-		<java:condition>prev.getHowManyMonthsSinceLast("[Zos] Zoster (Shingles) non-live") &lt;6 && prev.getHowManyMonthsSinceLast("HZV") &lt;6</java:condition>
+		<java:condition>prev.getHowManyMonthsSinceLast("[Zos] Zoster (Shingles) non-live") &lt;6 &amp;&amp; prev.getHowManyMonthsSinceLast("HZV") &lt;6</java:condition>
 		<java:consequence>              
               prev.log("Zoster2");
               prev.addWarning("Zoster", "Needs Second Zoster Vaccine ");
