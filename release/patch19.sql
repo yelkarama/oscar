@@ -15,7 +15,6 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS `CreateIndex` $$
 CREATE PROCEDURE `CreateIndex`
 (
-    given_database VARCHAR(64),
     given_table    VARCHAR(64),
     given_unique   VARCHAR(64),
     given_index    VARCHAR(64),
@@ -29,7 +28,7 @@ theStart:BEGIN
 
     SELECT COUNT(1) INTO TableIsThere
     FROM INFORMATION_SCHEMA.STATISTICS
-    WHERE table_schema = given_database
+    WHERE table_schema = DATABASE()
     AND   table_name   = given_table;
 
     IF TableIsThere = 0 THEN
@@ -40,19 +39,19 @@ theStart:BEGIN
 
 	    SELECT COUNT(1) INTO IndexIsThere
 	    FROM INFORMATION_SCHEMA.STATISTICS
-	    WHERE table_schema = given_database
+	    WHERE table_schema = DATABASE()
 	    AND   table_name   = given_table
 	    AND   index_name   = given_index;
 
 	    IF IndexIsThere = 0 THEN
 		SET @sqlstmt = CONCAT('CREATE ',given_unique,' INDEX ',given_index,' ON ',
-		given_database,'.',given_table,' (',given_columns,')');
+		DATABASE(),'.',given_table,' (',given_columns,')');
 		PREPARE st FROM @sqlstmt;
 		EXECUTE st;
 		DEALLOCATE PREPARE st;
 	    ELSE
 		SELECT CONCAT('Index ',given_index,' Already Exists ON Table ',
-		given_database,'.',given_table) CreateIndexMessage;
+		DATABASE(),'.',given_table) CreateIndexMessage;
 	    END IF;
 
 	END IF;
@@ -2343,4 +2342,5 @@ INSERT INTO `billing_on_errorCode` (`code`, `description`) VALUES
 ('X4', 'Only one BMD allowed within a 24-month period for low risk patient')
 ON DUPLICATE KEY UPDATE description=description;
 
-
+-- PHC per Earl W, speed up eforms  2022-12-02
+CALL CreateIndex('eform_data','','idx_eform_data_fid_status_demo','`fid`, `status`, `demographic_no`');
