@@ -60,8 +60,6 @@ public class PreventionDisplayConfig {
    
     private HashMap<String,HashMap<String,String>> prevHash = null;
     private ArrayList<HashMap<String,String>> prevList = null;
-	private ArrayList<HashMap<String,String>> prevMarketedList = null;
-	private ArrayList<HashMap<String,String>> prevExistingList = null;
 
     private HashMap<String,Map<String,Object>> configHash = null;
     private ArrayList<Map<String,Object>> configList = null;
@@ -106,17 +104,17 @@ public class PreventionDisplayConfig {
     }
 	
     public ArrayList<HashMap<String,String>> getMarketedPreventions() {
-        if (prevMarketedList == null) {
+        if (prevList == null) {
             loadMarketedPreventions();
         }
-        return prevMarketedList;
+        return prevList;
     }
 	
     public ArrayList<HashMap<String,String>> getExistingPreventions() {
-        if (prevExistingList == null) {
+        if (prevList == null) {
             loadExistingPreventions();
         }
-        return prevExistingList;
+        return prevList;
     }
 
     public HashMap<String,String> getPrevention(String s) {
@@ -214,7 +212,7 @@ public class PreventionDisplayConfig {
 	}
 
 	public void loadMarketedPreventions() {
-		prevMarketedList = new ArrayList<HashMap<String, String>>();
+		prevList = new ArrayList<HashMap<String, String>>();
 		prevHash = new HashMap<String, HashMap<String, String>>();
 		log.debug("STARTING2");
 		
@@ -263,7 +261,7 @@ public class PreventionDisplayConfig {
 					
 				}
 				
-				prevMarketedList.add(h);
+				prevList.add(h);
 				prevHash.put(h.get("name"), h);
 				
 			}
@@ -281,7 +279,7 @@ public class PreventionDisplayConfig {
 				h.put("snomedConceptCode", imm.getSnomedConceptId());
 				h.put("ispa", String.valueOf(imm.isIspa()));
 				if(!addedSnomeds.contains(imm.getSnomedConceptId())) {
-					prevMarketedList.add(h);
+					prevList.add(h);
 					prevHash.put(h.get("name"), h);
 				}
 			}
@@ -300,7 +298,7 @@ public class PreventionDisplayConfig {
 	}
 	
 	public void loadExistingPreventions() {
-		prevExistingList = new ArrayList<HashMap<String, String>>();
+		prevList = new ArrayList<HashMap<String, String>>();
 		prevHash = new HashMap<String, HashMap<String, String>>();
 		log.debug("STARTING3");
 
@@ -367,7 +365,7 @@ public class PreventionDisplayConfig {
 				h.put("snomedConceptCode", prev.getSnomedId());
 				h.put("ispa", "");
 				if(!addedSnomeds.contains(prev.getSnomedId())) {
-					prevExistingList.add(h);
+					prevList.add(h);
 					prevHash.put(h.get("name"), h);
 				}
 			}
