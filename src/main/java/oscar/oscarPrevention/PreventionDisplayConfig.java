@@ -83,14 +83,14 @@ public class PreventionDisplayConfig {
     }
 
     static public PreventionDisplayConfig getMInstance(){
-       if (preventionDisplayConfig.prevMarketedList == null) {
+       if (preventionDisplayConfig.prevList == null) {
          preventionDisplayConfig.loadMarketedPreventions();
        }
        return preventionDisplayConfig;
     }
 	
     static public PreventionDisplayConfig getEInstance(){
-       if (preventionDisplayConfig.prevExistingList == null) {
+       if (preventionDisplayConfig.prevList == null) {
          preventionDisplayConfig.loadExistingPreventions();
        }
        return preventionDisplayConfig;
