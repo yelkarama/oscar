@@ -1,5 +1,6 @@
 -- patch sql  for build 932 and newer
 -- updated July 18, 2022 with Dennis' cleanup code
+-- updated Dec 5, 2022 with DeleteIndex procedure
 -- disabled strict mode
 -- this is the delta from May 1, 2019 containing more recent updates
 -- this is used in debs numbered 1 and newer in the OSCAR 19 series
@@ -57,7 +58,6 @@ theStart:BEGIN
 	END IF;
 
 END $$
-
 DELIMITER ;
 
 
@@ -84,7 +84,7 @@ theStart:BEGIN
 	LEAVE theStart;
     ELSE
         SET IdxIsThere = (  SELECT COUNT(*) 
-                    FROM INFORMATION_SCHEMA.COLUMNS
+                    FROM INFORMATION_SCHEMA.STATISTICS
                     WHERE   TABLE_SCHEMA = DATABASE() AND 
                             TABLE_NAME = given_table AND 
                             INDEX_NAME = given_idx );
@@ -100,7 +100,6 @@ theStart:BEGIN
 	 END IF;
 
 END $$
-
 DELIMITER ;
 
 DELIMITER $$
@@ -2384,5 +2383,16 @@ INSERT INTO `billing_on_errorCode` (`code`, `description`) VALUES
 ('X4', 'Only one BMD allowed within a 24-month period for low risk patient')
 ON DUPLICATE KEY UPDATE description=description;
 
--- PHC per Earl W, speed up eforms  2022-12-02
+-- PHC per Earl W and Eugene R, speed up eforms  2022-12-02
 CALL CreateIndex('eform_data','','idx_eform_data_fid_status_demo','`fid`, `status`, `demographic_no`');
+CALL DeleteIndex('eform_data','idx_eform_data_fid');
+CALL DeleteIndex('eform_data','id');
+CALL DeleteIndex('eform_data','idx_eform_data_fid');
+CALL DeleteIndex('eform_data','idx_eform_data_status');
+CALL DeleteIndex('eform_data','patient_independentIndex');
+
+
+CALL CreateIndex('eform_values','','idx_eform_values_demo_varname_varvalue','`demographic_no`, `var_name`, `var_value`(30)');
+CALL CreateIndex('eform_values','','idx_eform_values_fdid_varname','`fdid`, `var_name`');
+CALL DeleteIndex('eform_values','fdidIndex');
+CALL DeleteIndex('eform_values','eform_values_varname_varvalue');
