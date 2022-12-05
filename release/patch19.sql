@@ -67,16 +67,38 @@ CREATE PROCEDURE DeleteIndex(
     given_table    VARCHAR(64),
     given_idx      VARCHAR(64)
 )
-BEGIN
 
-IF EXISTS ( SELECT * 
+theStart:BEGIN
+
+    DECLARE TableIsThere INTEGER;
+    DECLARE IdxIsThere INTEGER;
+
+    SELECT COUNT(1) INTO TableIsThere
     FROM INFORMATION_SCHEMA.STATISTICS
     WHERE table_schema = DATABASE()
-    AND   table_name   = given_table
-    AND   INDEX_NAME = given_idx; 
-    ) THEN
-   ALTER TABLE table_name DROP INDEX given_idx;
-END IF;
+    AND   table_name   = given_table;
+
+    IF TableIsThere = 0 THEN
+        SELECT CONCAT(DATABASE(),'.',given_table, 
+	' does not exist.  Unable to delete ', given_idx) DeleteIndexMessage;
+	LEAVE theStart;
+    ELSE
+        SET IdxIsThere = (  SELECT COUNT(*) 
+                    FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE   TABLE_SCHEMA = DATABASE() AND 
+                            TABLE_NAME = given_table AND 
+                            INDEX_NAME = given_idx );
+        IF IdxIsThere = 1 THEN
+ 		    SET @sqlstmt = CONCAT('ALTER TABLE ',DATABASE(),'.',given_table,' DROP INDEX ',given_idx);
+		    PREPARE st FROM @sqlstmt;
+		    EXECUTE st;
+		    DEALLOCATE PREPARE st;
+	    ELSE
+		    SELECT CONCAT('Index ',given_idx,' doesnt exist ON Table ',
+		    DATABASE(),'.',given_table) DeleteIndexMessage;
+	    END IF;
+	 END IF;
+
 END $$
 
 DELIMITER ;
