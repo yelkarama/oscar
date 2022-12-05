@@ -62,6 +62,7 @@ DELIMITER ;
 
 
 DELIMITER $$
+DROP PROCEDURE IF EXISTS `DeleteIndex` $$
 CREATE PROCEDURE DeleteIndex(
     given_table    VARCHAR(64),
     given_idx      VARCHAR(64)
