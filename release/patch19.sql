@@ -62,6 +62,25 @@ DELIMITER ;
 
 
 DELIMITER $$
+CREATE PROCEDURE DeleteIndex(
+    given_table    VARCHAR(64),
+    given_idx      VARCHAR(64)
+)
+BEGIN
+
+IF EXISTS ( SELECT * 
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE table_schema = DATABASE()
+    AND   table_name   = given_table
+    AND   INDEX_NAME = given_idx; 
+    ) THEN
+   ALTER TABLE table_name DROP INDEX given_idx;
+END IF;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS add_column $$
 CREATE PROCEDURE add_column
 (
