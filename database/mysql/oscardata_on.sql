@@ -13447,7 +13447,6 @@ insert into billing_on_errorCode values ('VS', 'date of service was a Sat., Sun,
 insert into billing_on_errorCode values ('X2', 'G.I. Tract includes cline & video tape');
 insert into billing_on_errorCode values ('X3', 'G.I. Tract includes survey file of abdomen');
 insert into billing_on_errorCode values ('RD', 'duplicate, paid in RMBS');
-insert into billing_on_errorCode values ('60', 'not a benefit of the reciprocal medical billing agreement');
 insert into billing_on_errorCode values ('S1', 'bilateral surgery, one stage, allowed at 85% higher than unilateral');
 insert into billing_on_errorCode values ('S2', 'bilateral surgery, two stage, allowed at 85% higher than unilateral');
 insert into billing_on_errorCode values ('S3', 'second surgical procedure allowed at 85%');

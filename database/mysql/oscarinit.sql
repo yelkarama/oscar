@@ -323,8 +323,6 @@ CREATE TABLE `DHIRTransactionLog` (
 
 CREATE TABLE `DemographicContact` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `facilityId` int(11) NOT NULL,
-  `creator` varchar(20) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updateDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `deleted` tinyint(4) DEFAULT NULL,
@@ -332,12 +330,17 @@ CREATE TABLE `DemographicContact` (
   `contactId` varchar(100) DEFAULT NULL,
   `role` varchar(100) DEFAULT NULL,
   `type` int(11) DEFAULT NULL,
-  `category` varchar(100) DEFAULT NULL,
   `sdm` varchar(25) DEFAULT NULL,
   `ec` varchar(25) DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
   `note` varchar(200) DEFAULT NULL,
+  `facilityId` int(11) NOT NULL,
+  `creator` varchar(20) NOT NULL,
   `consentToContact` tinyint(1) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
+  `mrp` tinyint(1) DEFAULT NULL,
+  `best_contact` varchar(30) DEFAULT NULL,
+  `health_care_team` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `demographicNo` (`demographicNo`)
 );
