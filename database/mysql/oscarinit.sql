@@ -122,6 +122,7 @@ CREATE TABLE `CVCImmunization` (
   `typicalDose` varchar(255) DEFAULT NULL,
   `typicalDoseUofM` varchar(255) DEFAULT NULL,
   `strength` varchar(255) DEFAULT NULL,
+  `shelfStatus` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -137,6 +138,7 @@ CREATE TABLE `CVCImmunizationName` (
   `useCode` varchar(255) DEFAULT NULL,
   `useDisplay` varchar(255) DEFAULT NULL,
   `value` varchar(255) DEFAULT NULL,
+  `CVCImmunizationId` varchar(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -2714,6 +2716,8 @@ CREATE TABLE `demographic` (
   `residentialProvince` varchar(20) DEFAULT NULL,
   `residentialPostal` varchar(9) DEFAULT NULL,
   `consentToUseEmailForCare` tinyint(1) DEFAULT NULL,
+  `family_physician` varchar(80) DEFAULT NULL,
+  `pref_name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`demographic_no`),
   UNIQUE KEY `myOscarUserName` (`myOscarUserName`),
   KEY `hin` (`hin`),
@@ -2780,6 +2784,9 @@ CREATE TABLE `demographicArchive` (
   `residentialCity` varchar(50) DEFAULT NULL,
   `residentialProvince` varchar(20) DEFAULT NULL,
   `residentialPostal` varchar(9) DEFAULT NULL,
+  `consentToUseEmailForCare` TINYINT(1) DEFAULT NULL,
+  `family_physician` varchar(80) DEFAULT NULL,
+  `pref_name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -13961,6 +13968,27 @@ CREATE TABLE `tickler_text_suggest` (
   `active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
+
+--
+-- Table structure for table `UAO`
+--
+
+
+CREATE TABLE IF NOT EXISTS `UAO` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `started` timestamp,
+  `providerNo` varchar(25),
+  `friendlyName` varchar(255),
+  `name` varchar(255),
+  `demographicNo` int(10),
+  `resultCode` int(10),
+  `defaultUAO` tinyint(1),
+  `active` tinyint(1),
+  `addedBy` varchar(25),
+  `dateCreated` timestamp,
+  `dateUpdated` timestamp,
+  PRIMARY KEY (`id`)
+  );
 
 --
 -- Table structure for table `uploadfile_from`
