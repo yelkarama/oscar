@@ -2304,7 +2304,11 @@ if( demographic!=null) {
 							<% if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
 								      key="demographic.demographiceditdemographic.formHin" />:</span></td>
-							<td width="100%"><span class="info" id="hinver" onclick="copyHIN2Clipboard(this.id)" ondblclick="copyHINver2Clipboard(this.id)"><%=StringUtils.trimToEmpty(demographic.getHin())%>&nbsp;<%=StringUtils.trimToEmpty(demographic.getVer())%></span></td>
+							<td width="100%"><span class="info" id="hinver" onclick="copyHIN2Clipboard(this.id)" ondblclick="copyHINver2Clipboard(this.id)"><%=StringUtils.trimToEmpty(demographic.getHin())%>&nbsp;<%=StringUtils.trimToEmpty(demographic.getVer())%></span>
+                                <% if (!StringUtils.trimToEmpty(demographic.getVer()).equals("")) { %>
+                                <a class="btn btn-link" href="https://apps.ontariomd.ca/HCValidationWeb/form.do?healthNumber=<%=demographic.getHin()%>&versionCode=<%=demographic.getVer()%>&billingNumber="><bean:message key="oscarReport.manageProvider.msgCheck"/></a>
+							    <%}%> 
+                            </td>
 							</tr>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
 								      key="demographic.demographiceditdemographic.formHCType" />:</span></td>
