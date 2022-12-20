@@ -660,7 +660,7 @@ public class ConvertToEdoc {
 			logger.warn("Could not load Tidy properties ", e);
 		}
 
-		System.out.println( printTidyConfig( tidy ) );
+		logger.info( printTidyConfig( tidy ) );
 		
 		return tidy;
 	}
