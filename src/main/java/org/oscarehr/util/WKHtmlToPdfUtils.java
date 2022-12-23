@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
+import io.woo.htmltopdf.*;
 
 import oscar.OscarProperties;
 
@@ -60,7 +61,7 @@ public class WKHtmlToPdfUtils {
 	 * This method should convert the html page at the sourceUrl into a pdf as returned by the byte[]. This method requires wkhtmltopdf to be installed on the machine.
 	 * 
 	 * @throws IOException
-	 */
+	 *
 	public static byte[] convertToPdf(String sourceUrl) throws IOException {
 		File outputFile = null;
 
@@ -81,12 +82,35 @@ public class WKHtmlToPdfUtils {
 			if (outputFile != null) outputFile.delete();
 		}
 	}
+*/
+	/**
+	 * This method should convert the html page at the sourceUrl into a pdf as returned by the byte[].
+	 *  Uses the io.woo.htmltopdf tools for HTML to PDF
+	 */
 
+	public static byte[] convertToPdf(String sourceUrl) {
+
+	    HtmlToPdf htmlToPdf = HtmlToPdf.create()
+	        .object(HtmlToPdfObject.forUrl( sourceUrl ));
+
+	        try (InputStream in = htmlToPdf.convert()) {
+	            // "in" has PDF bytes loaded
+	        	byte[] results = IOUtils.toByteArray(in);
+	        	if (in != null) in.close();
+	        	return (results);
+	        } catch (HtmlToPdfException e) {
+	            // HtmlToPdfException is a RuntimeException, thus you are not required to
+	            // catch it in this scope. It is thrown when the conversion fails.
+	        	logger.error("eForm conversion to PDF failed ", e);
+		    } 
+
+	}
+	
 	/**
 	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile. This method requires wkhtmltopdf to be installed on the machine. In general the outputFile should be a unique temp file. If you're not sure what you're
 	 * doing don't call this method as you will leave lingering data everywhere or you may overwrite important files...
 	 * @throws Exception 
-	 */
+	 *
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
 		String outputFilename = outputFile.getCanonicalPath();
 
@@ -102,6 +126,19 @@ public class WKHtmlToPdfUtils {
 
 		logger.info(command);
 		runtimeExec(command, outputFilename);
+	}
+*/
+	/**
+	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile. In general the outputFile should be a unique temp file. If you're not sure what you're
+	 * doing don't call this method as you will leave lingering data everywhere or you may overwrite important files...
+	 * @throws Exception 
+	 */
+	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
+
+	    boolean success = HtmlToPdf.create()
+	    .object(HtmlToPdfObject.forUrl( sourceUrl ))
+	    .convert(outputFile);
+	    
 	}
 
 	/**
