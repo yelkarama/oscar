@@ -134,10 +134,10 @@ public class WKHtmlToPdfUtils {
 	 * @throws Exception 
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
-
+		String outputFilename = outputFile.getCanonicalPath();
 	    boolean success = HtmlToPdf.create()
 	    .object(HtmlToPdfObject.forUrl( sourceUrl ))
-	    .convert(outputFile);
+	    .convert(outputFilename);
 	    
 	}
 
