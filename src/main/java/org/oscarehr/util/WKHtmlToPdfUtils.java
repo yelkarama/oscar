@@ -90,7 +90,7 @@ public class WKHtmlToPdfUtils {
 
 	public static byte[] convertToPdf(String sourceUrl) throws IOException {
 
-		byte[] results;
+		byte[] results = new byte[0];
 	    HtmlToPdf htmlToPdf = HtmlToPdf.create()
 	        .object(HtmlToPdfObject.forUrl( sourceUrl ));
 
