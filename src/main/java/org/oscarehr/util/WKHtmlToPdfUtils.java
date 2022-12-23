@@ -88,14 +88,15 @@ public class WKHtmlToPdfUtils {
 	 *  Uses the io.woo.htmltopdf tools for HTML to PDF
 	 */
 
-	public static byte[] convertToPdf(String sourceUrl) {
+	public static byte[] convertToPdf(String sourceUrl) throws IOException {
 
+		byte[] results;
 	    HtmlToPdf htmlToPdf = HtmlToPdf.create()
 	        .object(HtmlToPdfObject.forUrl( sourceUrl ));
 
 	        try (InputStream in = htmlToPdf.convert()) {
 	            // "in" has PDF bytes loaded
-	        	byte[] results = IOUtils.toByteArray(in);
+	        	results = IOUtils.toByteArray(in);
 	        	if (in != null) in.close();
 	        	return (results);
 	        } catch (HtmlToPdfException e) {
@@ -103,6 +104,8 @@ public class WKHtmlToPdfUtils {
 	            // catch it in this scope. It is thrown when the conversion fails.
 	        	logger.error("eForm conversion to PDF failed ", e);
 		    } 
+
+		return(results);
 
 	}
 	
