@@ -272,7 +272,7 @@ public class PrintAction extends Action {
 	        	 eFormDataDao.merge(eFormData);
 			}
 			*/
-		} catch ( IOException e) {
+		} catch ( com.itextpdf.text.DocumentException | IOException e) {
 			//logger.error("Error converting and sending eform. id=" + eFormId, e);
 			MiscUtils.getLogger().error("",e);
 		}
