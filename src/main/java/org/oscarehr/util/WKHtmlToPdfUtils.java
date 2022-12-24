@@ -139,10 +139,13 @@ public class WKHtmlToPdfUtils {
 	 * @throws Exception 
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
+	   logger.debug("In:"+sourceUrl);
+	   logger.debug("Out:"+outputFile.getCanonicalPath());
 	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
 			put("load.blockLocalFileAccess", "false");
 		}};
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
+	   logger.debug("HtmlToPdf Object created");	   
 	   try (InputStream inputStream = htmlToPdf.convert();
 		   OutputStream outputStream = new FileOutputStream(outputFile)) {
 		  int read;
