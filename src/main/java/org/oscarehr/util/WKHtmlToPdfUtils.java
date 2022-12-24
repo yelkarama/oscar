@@ -147,13 +147,15 @@ public class WKHtmlToPdfUtils {
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
 	   logger.debug("HtmlToPdf Object created");	   
 	   try (InputStream inputStream = htmlToPdf.convert();
-		   OutputStream outputStream = new FileOutputStream(outputFile)) {
-		  int read;
-		  byte[] bytes = new byte[1024];
-		  while ((read = inputStream.read(bytes)) != -1) {
-			 outputStream.write(bytes, 0, read);
-		  }
+			OutputStream outputStream = new FileOutputStream(outputFile)) {
+			logger.debug("OutputStream created");	
+			int read;
+			byte[] bytes = new byte[1024];
+			while ((read = inputStream.read(bytes)) != -1) {
+				outputStream.write(bytes, 0, read);
+			}
 	   }
+	   logger.info(sourceUrl + " written to " + outputFile.getCanonicalPath());
 	}
 
 	/**
