@@ -25,9 +25,7 @@ package org.oscarehr.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -139,23 +137,23 @@ public class WKHtmlToPdfUtils {
 	 * @throws Exception 
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
+	   String filePath = outputFile.getCanonicalPath();
 	   logger.debug("In:"+sourceUrl);
-	   logger.debug("Out:"+outputFile.getCanonicalPath());
+	   logger.debug("Out:"+filePath);
 	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
 			put("load.blockLocalFileAccess", "false");
 		}};
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
-	   logger.debug("HtmlToPdf Object created");	   
-	   try (InputStream inputStream = htmlToPdf.convert();
-			OutputStream outputStream = new FileOutputStream(outputFile)) {
-			logger.debug("OutputStream created");	
-			int read;
-			byte[] bytes = new byte[1024];
-			while ((read = inputStream.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
-			}
-	   }
-	   logger.info(sourceUrl + " written to " + outputFile.getCanonicalPath());
+	   logger.debug("HtmlToPdf Object created");	
+	   
+	   try (boolean success = htmlToPdf.convert(filePath)) {
+	   } catch (HtmlToPdfException e) {
+			// HtmlToPdfException is a RuntimeException, thus you are not required to
+			// catch it in this scope. It is thrown when the conversion fails
+			// for any reason.
+			logger.error("Conversion to PDF failed ",e);
+		}
+	   logger.info(sourceUrl + " written to " + filePath);
 	}
 
 	/**
