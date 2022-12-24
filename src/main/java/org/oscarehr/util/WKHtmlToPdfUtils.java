@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -93,7 +94,6 @@ public class WKHtmlToPdfUtils {
 
 	public static byte[] convertToPdf(String sourceUrl) throws IOException {
 	   File outputFile = null;
-
 	   try {
 		  outputFile = File.createTempFile("wkhtmltopdf.", ".pdf");
 		  outputFile.deleteOnExit();
@@ -139,8 +139,10 @@ public class WKHtmlToPdfUtils {
 	 * @throws Exception 
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
-
-	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl));
+	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
+			put("load.blockLocalFileAccess", "false");
+		}};
+	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
 	   try (InputStream inputStream = htmlToPdf.convert();
 		   OutputStream outputStream = new FileOutputStream(outputFile)) {
 		  int read;
