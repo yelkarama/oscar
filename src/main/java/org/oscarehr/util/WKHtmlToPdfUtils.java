@@ -89,24 +89,23 @@ public class WKHtmlToPdfUtils {
 	 */
 
 	public static byte[] convertToPdf(String sourceUrl) throws IOException {
+	   File outputFile = null;
 
-		byte[] results = new byte[0];
-	    HtmlToPdf htmlToPdf = HtmlToPdf.create()
-	        .object(HtmlToPdfObject.forUrl( sourceUrl ));
+	   try {
+		  outputFile = File.createTempFile("wkhtmltopdf.", ".pdf");
+		  outputFile.deleteOnExit();
 
-	        try (InputStream in = htmlToPdf.convert()) {
-	            // "in" has PDF bytes loaded
-	        	results = IOUtils.toByteArray(in);
-	        	if (in != null) in.close();
-	        	return (results);
-	        } catch (HtmlToPdfException e) {
-	            // HtmlToPdfException is a RuntimeException, thus you are not required to
-	            // catch it in this scope. It is thrown when the conversion fails.
-	        	logger.error("eForm conversion to PDF failed ", e);
-		    } 
+		  convertToPdf(sourceUrl, outputFile);
 
-		return(results);
+		  try (FileInputStream fis = new FileInputStream(outputFile)){
+			 return IOUtils.toByteArray(fis);
+		  }
 
+	   } finally {
+		  if (outputFile != null) {
+			 outputFile.delete();
+		  }
+	   }
 	}
 	
 	/**
@@ -137,11 +136,16 @@ public class WKHtmlToPdfUtils {
 	 * @throws Exception 
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
-		String outputFilename = outputFile.getCanonicalPath();
-	    boolean success = HtmlToPdf.create()
-	    .object(HtmlToPdfObject.forUrl( sourceUrl ))
-	    .convert(outputFilename);
-	    
+
+	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl));
+	   try (InputStream inputStream = htmlToPdf.convert();
+		   OutputStream outputStream = new FileOutputStream(outputFile)) {
+		  int read;
+		  byte[] bytes = new byte[1024];
+		  while ((read = inputStream.read(bytes)) != -1) {
+			 outputStream.write(bytes, 0, read);
+		  }
+	   }
 	}
 
 	/**
