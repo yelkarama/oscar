@@ -25,7 +25,7 @@ package org.oscarehr.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-
+import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -146,13 +146,7 @@ public class WKHtmlToPdfUtils {
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
 	   logger.debug("HtmlToPdf Object created");	
 	   
-	   try (boolean success = htmlToPdf.convert(filePath)) {
-	   } catch (HtmlToPdfException e) {
-			// HtmlToPdfException is a RuntimeException, thus you are not required to
-			// catch it in this scope. It is thrown when the conversion fails
-			// for any reason.
-			logger.error("Conversion to PDF failed ",e);
-		}
+	   boolean success = htmlToPdf.convert(filePath));
 	   logger.info(sourceUrl + " written to " + filePath);
 	}
 
