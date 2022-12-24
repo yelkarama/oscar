@@ -146,7 +146,7 @@ public class WKHtmlToPdfUtils {
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
 	   logger.debug("HtmlToPdf Object created");	
 	   
-	   boolean success = htmlToPdf.convert(filePath));
+	   boolean success = htmlToPdf.convert(filePath);
 	   logger.info(sourceUrl + " written to " + filePath);
 	}
 
