@@ -89,7 +89,7 @@ public class WKHtmlToPdfUtils {
 	 * Do not call this method without being sure as to the uniqueness of the temp file 
 	 * and how it is consumed or you risk leaving files or overwriting them....
 	 */
-	public static void convertToPdf(String sourceUrl, File outputFile)  {
+	public static void convertToPdf(String sourceUrl, File outputFile)  throws IOException {
 
 		if (CONVERT_COMMAND != null) {
 			convertToPdfexternal(sourceUrl, outputFile);
