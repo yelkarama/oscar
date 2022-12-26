@@ -60,34 +60,8 @@ public class WKHtmlToPdfUtils {
 	}
 
 	/**
-	 * This method should convert the html page at the sourceUrl into a pdf as returned by the byte[]. This method requires wkhtmltopdf to be installed on the machine.
-	 * 
-	 * @throws IOException
-	 *
-	public static byte[] convertToPdf(String sourceUrl) throws IOException {
-		File outputFile = null;
-
-		try {
-			outputFile = File.createTempFile("wkhtmltopdf.", ".pdf");
-			outputFile.deleteOnExit();
-
-			convertToPdf(sourceUrl, outputFile);
-
-			FileInputStream fis = new FileInputStream(outputFile);
-			try {
-				byte[] results = IOUtils.toByteArray(fis);
-				return (results);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		} finally {
-			if (outputFile != null) outputFile.delete();
-		}
-	}
-*/
-	/**
 	 * This method should convert the html page at the sourceUrl into a pdf as returned by the byte[].
-	 *  Uses the io.woo.htmltopdf tools for HTML to PDF
+	 * the method is superloaded through convertToPdf(sourceUrl, outputFile) to either internal or external converters
 	 */
 
 	public static byte[] convertToPdf(String sourceUrl) throws IOException {
@@ -110,11 +84,26 @@ public class WKHtmlToPdfUtils {
 	}
 	
 	/**
-	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile. This method requires wkhtmltopdf to be installed on the machine. In general the outputFile should be a unique temp file. If you're not sure what you're
-	 * doing don't call this method as you will leave lingering data everywhere or you may overwrite important files...
+	 * This method switches between internal and external methods to convert the pdf
+	 * To use the internal method provide an empty value for WKHTMLTOPDF_COMMAND in oscar.properties
+	 * Do not call this method without being sure as to the uniqueness of the temp file 
+	 * and how it is consumed or you risk leaving files or overwriting them....
+	 */
+	public static void convertToPdf(String sourceUrl, File outputFile)  {
+
+		if (CONVERT_COMMAND != null) {
+			convertToPdfexternal(sourceUrl, outputFile);
+		} else {
+			convertToPdfinternal(sourceUrl, outputFile);		
+		}
+	}
+	
+	/**
+	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile. 
+	 * This method requires the binary executable wkhtmltopdf to be installed on the machine. 
 	 * @throws Exception 
-	 *
-	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
+	 */
+	public static void convertToPdfexternal(String sourceUrl, File outputFile) throws IOException {
 		String outputFilename = outputFile.getCanonicalPath();
 
 		// example command : wkhtmltopdf-i386 "https://127.0.0.1:8443/oscar/eformViewForPdfGenerationServlet?fdid=2&parentAjaxId=eforms" /tmp/out.pdf
@@ -130,13 +119,14 @@ public class WKHtmlToPdfUtils {
 		logger.info(command);
 		runtimeExec(command, outputFilename);
 	}
-*/
+
 	/**
-	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile. In general the outputFile should be a unique temp file. If you're not sure what you're
-	 * doing don't call this method as you will leave lingering data everywhere or you may overwrite important files...
+	 * This method should convert the html page at the sourceUrl into a pdf written to the outputFile.
+	 * It uses the internal io.woo.htmltopdf class for conversion 
+	 * which in turn requires multiple binary dependencies installed in either Focal or Bullseye
 	 * @throws Exception 
 	 */
-	public static void convertToPdf(String sourceUrl, File outputFile) throws IOException {
+	public static void convertToPdfinternal(String sourceUrl, File outputFile) throws IOException {
 	   String filePath = outputFile.getCanonicalPath();
 	   logger.debug("In:"+sourceUrl);
 	   logger.debug("Out:"+filePath);
