@@ -114,13 +114,13 @@ public final class FaxAction {
 		List<HRMDocumentToDemographic> attachedHRMReports = hrmDocumentToDemographicDao.findHRMDocumentsAttachedToEForm(formId);
 
 		try {
-			tempFile = File.createTempFile("EForm." + formId, ".pdf");
+			//tempFile = File.createTempFile("EForm." + formId, ".pdf");
 			
 			//tempFile.deleteOnExit();
 
 			// convert to PDF
 
-			logger.info("Writing pdf to : "+tempFile.getCanonicalPath());
+			logger.info("Writing a base pdf to : "+"EForm." + formId + ".pdf");
 			
 			//logger.info("Generating PDF for eform with fdid = " + formId);
 			bos = new ByteOutputStream();
@@ -204,9 +204,7 @@ public final class FaxAction {
 			    fos.close();
 
 			}
-
-
-			
+		
 			// Removing all non digit characters from fax numbers.
 			for (int i = 0; i < numbers.length; i++) { 
 				numbers[i] = numbers[i].trim().replaceAll("\\D", "");
@@ -218,14 +216,19 @@ public final class FaxAction {
 			String tempPath = OscarProperties.getInstance().getProperty(
 				"fax_file_location", System.getProperty("java.io.tmpdir"));
 			FileOutputStream fos;
+			
+			// point to the created file
+			File tempFile = new File(tempPath + "EForm." + formId + ".pdf");
+
 			for (int i = 0; i < recipients.size(); i++) {					
 			    String faxNo = recipients.get(i).trim().replaceAll("\\D", "");
+				logger.info("Generating PDF and text files for recipient "+faxNo+" for eForm " + formId);	
 			    if (faxNo.length() < 7) { throw new DocumentException("Document target fax number '"+faxNo+"' is invalid."); }
 			    String tempName = "EForm-" + formId + "." + System.currentTimeMillis();
 				
 				String tempPdf = String.format("%s%s%s.pdf", tempPath, File.separator, tempName);
 				String tempTxt = String.format("%s%s%s.txt", tempPath, File.separator, tempName);
-				
+			
 				// Copying the fax pdf.
 				FileUtils.copyFile(tempFile, new File(tempPdf));
 				
