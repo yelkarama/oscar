@@ -114,15 +114,10 @@ public final class FaxAction {
 		List<HRMDocumentToDemographic> attachedHRMReports = hrmDocumentToDemographicDao.findHRMDocumentsAttachedToEForm(formId);
 
 		try {
-			//tempFile = File.createTempFile("EForm." + formId, ".pdf");
-			
-			//tempFile.deleteOnExit();
-
-			// convert to PDF
+			tempFile = File.createTempFile("EForm." + formId, ".pdf");
 
 			logger.info("Writing a base pdf to : "+"EForm." + formId + ".pdf");
 			
-			//logger.info("Generating PDF for eform with fdid = " + formId);
 			bos = new ByteOutputStream();
 			buffer = WKHtmlToPdfUtils.convertToPdf(localUri + formId);
 			bis = new ByteInputStream(buffer, buffer.length);
@@ -198,11 +193,10 @@ public final class FaxAction {
 				bos = new ByteOutputStream();
 				ConcatPDF.concat(alist, bos);
 				byte[] data = bos.toByteArray();
-				FileOutputStream fos = new FileOutputStream("EForm." + formId + ".pdf");
+				FileOutputStream fos = new FileOutputStream(tempFile);
 				fos.write(data);
 				// Close the FileOutputStream
 			    fos.close();
-
 			}
 		
 			// Removing all non digit characters from fax numbers.
@@ -217,9 +211,6 @@ public final class FaxAction {
 				"fax_file_location", System.getProperty("java.io.tmpdir"));
 			FileOutputStream fos;
 			
-			// point to the created file
-			File tempFile = new File(tempPath + "EForm." + formId + ".pdf");
-
 			for (int i = 0; i < recipients.size(); i++) {					
 			    String faxNo = recipients.get(i).trim().replaceAll("\\D", "");
 				logger.info("Generating PDF and text files for recipient "+faxNo+" for eForm " + formId);	
