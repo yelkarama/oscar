@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -93,7 +94,7 @@ public final class FaxAction {
 	 * @throws DocumentException 
 	 */
 	
-		public void faxForms(HttpServletRequest request, LoggedInInfo loggedInInfo, String formId, String providerId) {	
+		public void faxForms(HttpServletRequest request, LoggedInInfo loggedInInfo, String[] numbers, String formId, String providerId) {	
 		File tempFile = null;
 
 		byte[] buffer;
