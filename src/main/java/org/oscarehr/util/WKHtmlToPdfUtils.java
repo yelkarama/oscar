@@ -48,7 +48,7 @@ public class WKHtmlToPdfUtils {
 	static {
 		String convertCommand = OscarProperties.getInstance().getProperty("WKHTMLTOPDF_COMMAND");
 		if (convertCommand != null) CONVERT_COMMAND = convertCommand;
-		else CONVERT_COMMAND = null;
+		else throw (new RuntimeException("Properties file is missing property : WKHTMLTOPDF_COMMAND"));
 		
 		String convertParameters = OscarProperties.getInstance().getProperty("WKHTMLTOPDF_ARGS");
 		if (convertParameters != null) CONVERT_ARGS = convertParameters;
@@ -91,10 +91,10 @@ public class WKHtmlToPdfUtils {
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile)  throws IOException {
 
-		if (CONVERT_COMMAND != null) {
-			convertToPdfexternal(sourceUrl, outputFile);
+		if (CONVERT_COMMAND equalsIgnoreCase('internal')) {
+			convertToPdfinternal(sourceUrl, outputFile);
 		} else {
-			convertToPdfinternal(sourceUrl, outputFile);		
+			convertToPdfexternal(sourceUrl, outputFile);		
 		}
 	}
 	
