@@ -91,7 +91,7 @@ public class WKHtmlToPdfUtils {
 	 */
 	public static void convertToPdf(String sourceUrl, File outputFile)  throws IOException {
 
-		if (CONVERT_COMMAND equalsIgnoreCase('internal')) {
+		if (CONVERT_COMMAND.equalsIgnoreCase("internal")) {
 			convertToPdfinternal(sourceUrl, outputFile);
 		} else {
 			convertToPdfexternal(sourceUrl, outputFile);		
