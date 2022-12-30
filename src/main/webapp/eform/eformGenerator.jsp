@@ -48,7 +48,8 @@
 <%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <!--
-eForm Generator version 7.1
+eForm Generator version 7.2
+		7.2 reverted default width to 750
 		7.1 bug fixes
 		7.0 Tickler support, refactored signatures to simplify, bug fixes
 		6.5 further adjusted defaults for width to 825
@@ -1710,7 +1711,7 @@ show('classic');
 	onmouseup="SetMouseUp(); DrawMarker();loadInputList();"
 	onload="finishLoadingImage()">
 
-<h1><bean:message key="eFormGenerator.title"/> 7.1</h1>
+<h1><bean:message key="eFormGenerator.title"/> 7.2</h1>
 
 <!-- this form  used for injecting html in to Edit E-Form  efmformmanageredit.jsp -->
 <form method="post" action="efmformmanageredit.jsp" id="toSave">
@@ -1769,7 +1770,7 @@ show('classic');
 	<!-- <p><b>Image Name:</b><input type="text" name="imageName" id="imageName"></p> -->
 	<p>	- <bean:message key="eFormGenerator.imageUploadPrompt"/> <bean:message key="eFormGenerator.imageUploadLink"/> </p>
 	<p><b>Orientation of form:</b><br>
-			<input type="radio" name="Orientation" id="OrientPortrait" value="825" checked><bean:message key="eFormGenerator.imagePortrait"/><br>
+			<input type="radio" name="Orientation" id="OrientPortrait" value="750" checked><bean:message key="eFormGenerator.imagePortrait"/><br>
 			<input type="radio" name="Orientation" id="OrientLandscape" value="1000"><bean:message key="eFormGenerator.imageLandscape"/><br>
 			<input type="radio" name="Orientation" id="OrientCustom" value="CustomWidth"><bean:message key="eFormGenerator.imageCustom"/> <input type="text" name="OrientCustomValue" id="OrientCustomValue" width="100"> <bean:message key="eFormGenerator.imageEnterInteger"/><br>
 			<input type="button" value=<bean:message key="eFormGenerator.imageLoadButton"/> onClick="loadImage();">
@@ -2906,13 +2907,13 @@ function RedrawImage(RedrawParameter){
 function drawPortraitOutline(){
 	jg.setColor('red');
 	jg.setStroke(StrokeThickness);
-	jg.drawRect(0,0,825,1100);
+	jg.drawRect(0,0,750,1000);
 	jg.paint();
 }
 function drawLandscapeOutline(){
 	jg.setColor('red');
 	jg.setStroke(StrokeThickness);
-	jg.drawRect(0,0,1100,825);
+	jg.drawRect(0,0,1000,750);
 	jg.paint();
 }
 <!-- Drawing code ends -->
