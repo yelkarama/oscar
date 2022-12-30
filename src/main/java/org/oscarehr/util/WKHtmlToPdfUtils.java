@@ -126,20 +126,34 @@ public class WKHtmlToPdfUtils {
 	 * which in turn requires multiple binary dependencies installed in either Focal or Bullseye
 	 * @throws Exception 
 	 */
+
 	public static void convertToPdfinternal(String sourceUrl, File outputFile) throws IOException {
 	   String filePath = outputFile.getCanonicalPath();
 	   logger.debug("In:"+sourceUrl);
 	   logger.debug("Out:"+filePath);
-	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
-			put("load.blockLocalFileAccess", "false");
-		}};
+	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>();
+	   htmlToPdfSettings.put("load.blockLocalFileAccess", "false");
+	   Sring lookback="";
+	   if (CONVERT_ARGS != null) {
+			for(String arg : CONVERT_ARGS.split("\\s")) {
+				if arg.equalsIgnoreCase("--print-media-type") htmlToPdfSettings.put("web.printMediaType", "true");
+				if arg.equalsIgnoreCase("--enable-smart-shrinking") htmlToPdfSettings.put("web.enableIntelligentShrinking", "true"); //default
+				if arg.equalsIgnoreCase("--disable-smart-shrinking") htmlToPdfSettings.put("web.enableIntelligentShrinking", "false");
+				if arg.equalsIgnoreCase("--print-media-type") htmlToPdfSettings.put("web.printMediaType", "true");
+				if arg.equalsIgnoreCase("--disable-javascript") htmlToPdfSettings.put("web.enableJavascript", "false");
+				if arg.equalsIgnoreCase("--no-stop-slow-scripts") htmlToPdfSettings.put("load.stopSlowScript", "false");
+				if lookback.equalsIgnoreCase("--minimum-font-size") htmlToPdfSettings.put("web.minimumFontSize", arg);
+				if lookback.equalsIgnoreCase("--javascript-delay") htmlToPdfSettings.put("load.jsdelay", arg);
+				if lookback.equalsIgnoreCase("--zoom") htmlToPdfSettings.put("load.zoomFactor", arg);
+			}
+		}
+
 	   HtmlToPdf htmlToPdf = HtmlToPdf.create().object(HtmlToPdfObject.forUrl(sourceUrl, htmlToPdfSettings));
 	   logger.debug("HtmlToPdf Object created");	
 	   
 	   boolean success = htmlToPdf.convert(filePath);
 	   logger.info(sourceUrl + " written to " + filePath);
 	}
-
 	/**
 	 * Normally you can just run a command and it'll complete. The problem with doing that is if the command takes a while and you need to know when it's completed, like if it's cpu intensive like image processing and possibly in this case pdf creation.
 	 * This method will run the command and it has 2 stopping conditions, 1) normal completion as per the process.exitValue() or if the process does not appear to be doing anything. As a result there's a polling thread to check the out put file to see if
