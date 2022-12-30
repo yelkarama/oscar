@@ -133,7 +133,7 @@ public class WKHtmlToPdfUtils {
 	   logger.debug("Out:"+filePath);
 	   HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>();
 	   htmlToPdfSettings.put("load.blockLocalFileAccess", "false");
-	   Sring lookback="";
+	   String lookback = "";
 	   if (CONVERT_ARGS != null) {
 			for(String arg : CONVERT_ARGS.split("\\s")) {
 				if (arg.equalsIgnoreCase("--print-media-type")) { htmlToPdfSettings.put("web.printMediaType", "true");}
