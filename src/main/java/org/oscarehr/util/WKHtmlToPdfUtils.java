@@ -136,15 +136,17 @@ public class WKHtmlToPdfUtils {
 	   Sring lookback="";
 	   if (CONVERT_ARGS != null) {
 			for(String arg : CONVERT_ARGS.split("\\s")) {
-				if arg.equalsIgnoreCase("--print-media-type") htmlToPdfSettings.put("web.printMediaType", "true");
-				if arg.equalsIgnoreCase("--enable-smart-shrinking") htmlToPdfSettings.put("web.enableIntelligentShrinking", "true"); //default
-				if arg.equalsIgnoreCase("--disable-smart-shrinking") htmlToPdfSettings.put("web.enableIntelligentShrinking", "false");
-				if arg.equalsIgnoreCase("--print-media-type") htmlToPdfSettings.put("web.printMediaType", "true");
-				if arg.equalsIgnoreCase("--disable-javascript") htmlToPdfSettings.put("web.enableJavascript", "false");
-				if arg.equalsIgnoreCase("--no-stop-slow-scripts") htmlToPdfSettings.put("load.stopSlowScript", "false");
-				if lookback.equalsIgnoreCase("--minimum-font-size") htmlToPdfSettings.put("web.minimumFontSize", arg);
-				if lookback.equalsIgnoreCase("--javascript-delay") htmlToPdfSettings.put("load.jsdelay", arg);
-				if lookback.equalsIgnoreCase("--zoom") htmlToPdfSettings.put("load.zoomFactor", arg);
+				if arg.equalsIgnoreCase("--print-media-type") { htmlToPdfSettings.put("web.printMediaType", "true");}
+				if arg.equalsIgnoreCase("--enable-smart-shrinking") { htmlToPdfSettings.put("web.enableIntelligentShrinking", "true");} //default
+				if arg.equalsIgnoreCase("--disable-smart-shrinking") { htmlToPdfSettings.put("web.enableIntelligentShrinking", "false");}
+				if arg.equalsIgnoreCase("--print-media-type") { htmlToPdfSettings.put("web.printMediaType", "true");}
+				if arg.equalsIgnoreCase("--disable-javascript") { htmlToPdfSettings.put("web.enableJavascript", "false");}
+				if arg.equalsIgnoreCase("--no-stop-slow-scripts") { htmlToPdfSettings.put("load.stopSlowScript", "false");}
+				// lookbacks are not currently checked to be appropriate as to type
+				if lookback.equalsIgnoreCase("--minimum-font-size") { htmlToPdfSettings.put("web.minimumFontSize", arg);} //int  
+				if lookback.equalsIgnoreCase("--javascript-delay") { htmlToPdfSettings.put("load.jsdelay", arg);} //default 200 in ms
+				if lookback.equalsIgnoreCase("--zoom") { htmlToPdfSettings.put("load.zoomFactor", arg);}  //float
+				lookback = arg;
 			}
 		}
 
