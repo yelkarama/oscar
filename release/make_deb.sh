@@ -251,6 +251,19 @@
 #      - quarterly update of Drugref April 7, 2022
 #      - update to OHIP schedule to April 1, 2022 (for new installs only, but could be extracted)
 #      - update CVC to final version April 7, 2022
+# v 66 - added ReadWritePaths=/tmp/ to all overrides for Tomcat 9 and changed the WKHTMLTOPDF_ARGS
+# v 67 - switch to NIO2 connector for Tomcat9 and make a simpler default file
+# v 68 - added Adding relaxedQueryChars to ${C_BASE}conf/server.xml for OCEAN support
+# v 69 - using Drugref 2.26 last build that supports type 10 allergy checking per AHFS category
+# v 70 - resume using latest Drugref 2.36 that resumes support for type 10 allergy checking per AHFS category
+# v 71 - restore ability to set BC billing region
+# v 72 - fixed chown for pems for new Certbot installs
+# v 73 - fixed sed flags in postinst for new installs
+# v 74 - drugref.sql of Nov 9, 2022
+# v 75 - referencing on line patch19.sql
+# v 76 - apparmor patch for wkhtmltopdf 
+# v 77 - server.xml relaxedQueryChars="[,]"
+# v 78 - added formBCAR2007 to the MyISAM conversions in patch.sql
 
 # --- sanity check
 if [ "$(id -u)" != "0" ];
@@ -261,7 +274,7 @@ fi
 
 echo "#########" `date` "#########" 
 
-DEB_SUBVERSION=65
+DEB_SUBVERSION=78
 PROGRAM=oscar
 PACKAGE=oscar-emr
 
@@ -302,7 +315,8 @@ if [ -z "$1" ];
     else
         if [ -n "$1" ] && [ "$1" -eq "$1" ] 2>/dev/null; then
           echo "numeric argument supplied.. proceed with build ${1}"
-          curl -o build http://jenkins.oscar-emr.com:8080/job/$WGET_VERSION/${1}/
+            ## https://bitbucket.org/oscaremr/oscar/downloads/oscar-19.2017.war
+            custom=${1}
         else
           if [ "$1" == "f" ]; then
             echo "force.. proceed with last build regardless of stability"
@@ -314,12 +328,23 @@ if [ -z "$1" ];
             fi
         fi
 fi
-
-
+## get the patch19.sql from source
+## curl this way to overwrite the existing patch19.sql
+## NOTE THIS URL will need to be updated at you edit changes in the patch19.sql file on line
+curl https://bitbucket.org/oscaremr/oscar/raw/6b784a12de3039c42cc74828dca8629805e7600d/release/patch19.sql > patch19.sql
 
 ##curl -o lastStableBuild http://jenkins.oscar-emr.com:8080/job/$WGET_VERSION/lastBuild/
-##TEMPORARILY USE either THE LAST BUILD or the last Successful Build REGARDLESS OF STABILITY WHILE CONGURATION CHANGES ARE MADE
 
+    D_BUILD=$(grep 'BUILD_NUMBER'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
+    D_buildDateTime=$(grep 'BUILD_DATE'  latestDrugref  | tail -n 1 | cut -d "=" -f2 )   
+    D_WAR_URL=$(grep 'WAR_URL'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
+    D_COMMIT=$(grep 'COMMIT_MESSAGE'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
+    
+##TEMPORARILY USE fixed build of drugref2.26
+    #D_BUILD=26 
+    #D_buildDateTime=2022-01-28  
+    #D_WAR_URL=https://bitbucket.org/oscaremr/drugref2/downloads/drugref2.26.war 
+    #D_COMMIT="last build that supports type 10 allergy checking per AHFS category" 
 
 if [ ! $custom ]; then
     echo getting build information from Bitbucket
@@ -332,17 +357,13 @@ if [ ! $custom ]; then
     OSCAR_COMMIT=$(grep 'COMMIT_MESSAGE'  latestStable  | tail -n 1 | cut -d "=" -f2 ) 
     SHA1=""
 
-    D_BUILD=$(grep 'BUILD_NUMBER'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
-    D_buildDateTime=$(grep 'BUILD_DATE'  latestDrugref  | tail -n 1 | cut -d "=" -f2 )   
-    D_WAR_URL=$(grep 'WAR_URL'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
-    D_COMMIT=$(grep 'COMMIT_MESSAGE'  latestDrugref  | tail -n 1 | cut -d "=" -f2 ) 
 
     #BUILD=$(grep '<title>' build | head -n 1 | sed "s/<title>$WGET_VERSION #\([0-9]*\).*/\1/;s/^[[:space:]]*//;s/[[:space:]]*$//")
     ##buildDateTime=$(grep '       (' build | head -n 1 |sed 's/^[[:space:]]*(//;s/)[[:space:]]*$//')
     ##SHA1=$(grep 'Revision' build | head -n 1 |sed 's/.*Revision.* \(.*\)/\1/')
    else
       echo build is custom
-      BUILD=custom
+      BUILD=$custom
       buildDateTime=date 
       SHA1=""
 fi
@@ -537,6 +558,9 @@ echo "Configuring postinst"
 
 # determine the date of the drugref.sql that we have to load 
 # lets take the last history revision on the line by cutting backwards
+# NOTE requires a one line insert like
+# INSERT INTO `history` (`id`, `date_time`, `action`) VALUES (1, '2022-09-20 19:04:45', 'update db');
+
 newdate=$(grep "INSERT INTO \`history\`" drugref.sql | rev | cut -f 4 -d "'" | rev | cut -f 1 -d " ")
 
 echo "SANITY CHECK THIS..."
@@ -612,6 +636,7 @@ chmod 755 ./${DEBNAME}/usr/share/${PACKAGE}/gateway.cron
 #cd ../
 
 echo "copying over utility scripts"
+cp -R usr.local.bin.wkhtmltopdf ./${DEBNAME}/usr/share/${PACKAGE}/
 cp -R demo.sql ./${DEBNAME}/usr/share/${PACKAGE}/
 cp -R drugref.sql ./${DEBNAME}/usr/share/${PACKAGE}/
 cp -R CVC.sql ./${DEBNAME}/usr/share/${PACKAGE}/
@@ -638,6 +663,7 @@ cp -R opr2017.sql ./${DEBNAME}/usr/share/${PACKAGE}/
 
 chmod 644 ./${DEBNAME}/usr/share/${PACKAGE}/rbr2014.zip
 chmod 644 ./${DEBNAME}/usr/share/${PACKAGE}/ndss.zip
+
 
 cp -R patch19.sql ./${DEBNAME}/usr/share/${PACKAGE}/patch.sql
 
@@ -755,3 +781,4 @@ echo wget http://sourceforge.net/projects/oscarmcmaster/files/Oscar\\ Debian\\+U
 echo "the md5sum is" 
 md5sum ${DEBNAME}.deb
 echo "#########" `date` "#########" 
+
