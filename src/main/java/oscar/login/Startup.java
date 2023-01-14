@@ -151,8 +151,12 @@ public class Startup implements ServletContextListener {
 
 			// CHECK FOR DEFAULT PROPERTIES
 			String baseDocumentDir = p.getProperty("BASE_DOCUMENT_DIR");
-			if (baseDocumentDir != null) {
-				logger.info("Found Base Document Dir: " + baseDocumentDir);
+			if (baseDocumentDir != null && baseDocumentDir.length() > 0 ) {
+				// ensure that the property is formatted with a terminal file separator, if not add it
+				if (baseDocumentDir.charAt(baseDocumentDir.length() - 1) != sep) {
+					baseDocumentDir = baseDocumentDir + sep;
+				}			
+				logger.info("Using Base Document Dir: " + baseDocumentDir);
 				checkAndSetProperty(baseDocumentDir, contextPath, "HOME_DIR", "/billing/download/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "DOCUMENT_DIR", "/document/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "eform_image", "/eform/images/");
@@ -179,13 +183,13 @@ public class Startup implements ServletContextListener {
 	}
 
 	// Checks for default property with name propName. If the property does not exist,
-	// the property is set with value equal to the base directory, plus /, plus the webapp context
+	// the property is set with value equal to the base directory, plus the webapp context
 	// path and any further extensions. If the formed directory does not exist in the system,
 	// it is created.
 	private void checkAndSetProperty(String baseDir, String context, String propName, String endDir) {
 		String propertyDir = p.getProperty(propName);
 		if (propertyDir == null) {
-			propertyDir = baseDir + "/" + context + endDir;
+			propertyDir = baseDir + context + endDir;
 			logger.debug("Setting property " + propName + " with value " + propertyDir);
 			p.setProperty(propName, propertyDir);
 			// Create directory if it does not exist
