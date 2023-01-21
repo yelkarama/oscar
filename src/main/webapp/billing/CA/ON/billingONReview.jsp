@@ -722,7 +722,7 @@ window.onload=function(){
                 nextBillDateCal.add(Calendar.YEAR,1); 
                 nextBillDateCal.add(Calendar.DATE,1);
                 if (nextBillDateCal.after(serviceDateCal)) {
-                      codeValid = false;
+                      //codeValid = false; the bill will not be rejected if its only the second A003A and the diagnosis differs
     %>
                        <tr style="color:white">
                             <td align=center>
