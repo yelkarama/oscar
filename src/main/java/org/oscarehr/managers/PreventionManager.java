@@ -133,6 +133,14 @@ public class PreventionManager {
 		return false;
 	}
 	
+	public boolean isShowPrevItemExist() {
+		List<Property> props = propertyDao.findByName(SHOW_PREVENTION_ITEM);
+		if(props.size()>0){
+			return true;
+		}		
+		return false;
+	}
+	
 	public boolean hideItem(String item) {
 
 		String itemsToKeep = null;
@@ -171,6 +179,16 @@ public class PreventionManager {
 		return itemsToRemove;
 	}
 	
+	public static String getCustomPreventionShownItems() {
+		String itemsToKeep = "";
+		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+		Property p = propertyDao.checkByName(SHOW_PREVENTION_ITEM);
+		if(p!=null && p.getValue()!=null){
+		itemsToKeep = p.getValue();
+		}
+		return itemsToKeep;
+	}
+	
 	public void addCustomPreventionItems(String items){
 		boolean propertyExists = isHidePrevItemExist();
 		if(propertyExists){
@@ -185,6 +203,20 @@ public class PreventionManager {
 		}
 	}	
 
+	public void addCustomPreventionShownItems(String items){
+		boolean propertyExists = isShowPrevItemExist();
+		if(propertyExists){
+			Property p = propertyDao.checkByName(SHOW_PREVENTION_ITEM);
+			p.setValue(items);
+			propertyDao.merge(p);
+		}else{
+			Property x = new Property();
+			x.setName("show_prevention_item");
+			x.setValue(items);
+			propertyDao.persist(x);
+		}
+	}
+	
 	public void addPreventionWithExts(Prevention prevention, HashMap<String, String> exts) {
 		if (prevention == null) return;
 
