@@ -144,8 +144,8 @@ public class PreventionManager {
 				if(i.equals(item)){
 					return false;
 				}
-			return true;
 			}
+			return true;
 		}
 		String itemsToRemove = null;
 		Property p2 = propertyDao.checkByName(HIDE_PREVENTION_ITEM);
