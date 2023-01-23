@@ -163,18 +163,19 @@ if(!authed) {
 			    <p>
     <%
 			    List<CVCMapping> mappings = cvcMappingDao.findMultipleByOscarName(prevName);
+			    String displayName = h.get("displayName") != null ? h.get("displayName") : prevName;
 			    if (mappings != null && mappings.size() > 1) {
 	    %>
 			    <a href="javascript: function myFunction() {return false; }"
 				    onclick="javascript:popup(600,1100,'AddPreventionDataDisambiguate.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
-			        <span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
+			        <span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=displayName%></span>
 				</a>
 	    <%
 				} else {
 	    %>
 				<a href="javascript: function myFunction() {return false; }"
 				    onclick="javascript:popup(820,800,'AddPreventionData.jsp?1=1&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
-				    <span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
+				    <span title="<%=h.get("desc")%>" style="font-weight: bold;"><%=ispa1%><%=displayName%></span>
 				</a>
 	    <%
 			    }
@@ -279,6 +280,7 @@ if(!authed) {
 											Map<String, Object> h2 = hiddenlist.get(i);
 											HashMap<String, String> h = (HashMap<String, String>) h2.get("prev");
 											String prevName = h.get("name");
+											String displayName = h.get("displayName") != null ? h.get("displayName") : prevName;
 											ArrayList<HashMap<String, String>> alist = (ArrayList<HashMap<String, String>>) h2.get("list");
 										%>
 										<div class="preventionSection">
@@ -312,7 +314,7 @@ if(!authed) {
 															href="javascript: function myFunction() {return false; }"
 															onclick="javascript:popup(820,800,'AddPreventionData.jsp?2=2&<%=snomedId != null ? "snomedId=" + snomedId + "&" : ""%>prevention=<%=java.net.URLEncoder.encode(h.get("name"))%>&amp;demographic_no=<%=demographic_no%>&amp;prevResultDesc=<%=java.net.URLEncoder.encode(h.get("resultDesc"))%>','addPreventionData<%=Math.abs((h.get("name")).hashCode())%>')">
 															<span title="<%=h.get("desc")%>"
-															style="font-weight: bold;"><%=ispa1%><%=h.get("name")%></span>
+															style="font-weight: bold;"><%=ispa1%><%=displayName%></span>
 														</a> <br />
 													</p>
 												</div>

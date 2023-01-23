@@ -450,7 +450,7 @@ Varicella Immunoglobulin	VarIg
 
 	<item
 			resultDesc=""
-			desc="BCG=Bacillus Calmette-Guérin"
+			desc="BCG=Bacillus Calmette-Gu�rin"
 			name="BCG"
 			headingName="Immunizations"
 			healthCanadaType="BCG"
@@ -524,6 +524,12 @@ Varicella Immunoglobulin	VarIg
 			desc="Women from ages 25 to 70 are recommended to receive a PAP" name="PAP"
 			headingName="Screenings" link="" layout="PAPMAM" minAge="25"
 			maxAge="70" sex="F" showIfMinRecordNum="1" />
+
+	<item
+			resultDesc=""
+			desc="Women from ages 25 to 74" name="HPV-CERVIX"
+			headingName="Screenings" link="" layout="PAPMAM" minAge="25"
+			maxAge="74" sex="F" showIfMinRecordNum="1" />
 
 	<item
 			resultDesc=""
