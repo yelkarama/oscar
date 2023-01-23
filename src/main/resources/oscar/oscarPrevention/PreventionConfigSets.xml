@@ -11,10 +11,13 @@
        minAge="0" maxAge="19" prevList="DTaP-IPV,Hib,Pneu-C,MMR,MMRV,MenC-C,VZ,HepB,dTap,Td,Flu,Rot" />
 
 	<set title="Women's Preventive Care" effective="" minAge="20"
-		maxAge="65" sex="F" prevList="PAP,MAM,Flu,Td" />
+		maxAge="74" sex="F" prevList="PAP,HPV-CERVIX,MAM,Flu,Td" />
 
-	<set title="Men's Preventive Care" effective="" minAge="20" maxAge="65"
+	<set title="Men's Preventive Care" effective="" minAge="20" maxAge="74"
 		sex="M" prevList="Td,Flu,PSA" />
+
+	<set title="Preventive Care" effective="" minAge="50" maxAge="74"
+		prevList="FOBT" />
 
 	<set title="Over 65 Preventive Care" effective="" minAge="65"
 		prevList="Flu,Td" />
