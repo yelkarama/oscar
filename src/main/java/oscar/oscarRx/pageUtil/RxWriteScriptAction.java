@@ -1173,9 +1173,10 @@ public final class RxWriteScriptAction extends DispatchAction {
             return null;
         }
         
-	public ActionForward changeToLongTerm(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, Exception {
+
+        public ActionForward changeLongTerm(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, Exception {
 		checkPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), PRIVILEGE_WRITE);
-		
+
 		String strId = request.getParameter("ltDrugId");
 		if (strId != null) {
 			int drugId = Integer.parseInt(strId);
@@ -1187,12 +1188,9 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 			RxPrescriptionData rxData = new RxPrescriptionData();
 			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
-			oldRx.setLongTerm(true);
-			oldRx.setShortTerm(false);
-			boolean b = oldRx.Save(oldRx.getScript_no());
+			oldRx.SetLongTermAndSave(!oldRx.isLongTerm());
 			HashMap hm = new HashMap();
-			if (b) hm.put("success", true);
-			else hm.put("success", false);
+			hm.put("success", true);
 			JSONObject jsonObject = JSONObject.fromObject(hm);
 			response.getOutputStream().write(jsonObject.toString().getBytes());
 			return null;
@@ -1203,7 +1201,8 @@ public final class RxWriteScriptAction extends DispatchAction {
 			response.getOutputStream().write(jsonObject.toString().getBytes());
 			return null;
 		}
-	}
+}
+
 
 	public void saveDrug(final HttpServletRequest request) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

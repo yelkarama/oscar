@@ -219,38 +219,41 @@ if (heading != null){
             </td>
             <td valign="top">
             	<%
-            		if(prescriptDrug.isLongTerm())
+             		if(prescriptDrug.isLongTerm())
             		{
-            		%>
-            			*
-            		<%
+            	%>
+                                <a id="longTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugShortTerm'/>" onclick="changeLt('<%=prescriptIdInt%>', true);" href="javascript:void(0);">
+                                        <bean:message key='global.yes'/>
+                                </a>
+                        <%
             		}
             		else
             		{
             			if (prescriptDrug.getRemoteFacilityId()==null)
-            			{
+                                {
             				%>
 							<%
-								if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
-							%>
-		            			<a id="notLongTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugLongTerm'/>" onclick="changeLt('<%=prescriptIdInt%>');" href="javascript:void(0);">
-		            			L
-		            			</a>
-							<% } else { %>
-            					<span style="color:blue">L</span>
-            				<% } %>
+								if(securityManager.hasWriteAccess("_rx",roleName$,true)) {
+ 							%>
+ 						<a id="notLongTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugLongTerm'/>" onclick="changeLt('<%=prescriptIdInt%>', false);" href="javascript:void(0);">
+                                                <bean:message key='global.no'/>
+                                                </a>
+                                                        <% } else { %>
+                                                <span style="color:blue">no</span>
+                                        <% } %>
 
-            				<%
-            			}
-            			else
-            			{
-		            		%>
-		            		L
-		            		<%
-            			}
-           			}
-           			%>
+                                        <%
+                                }
+                                else
+                                {
+                                        %>
+                                        L
+                                        <%
+                                }
+                                }
+                                %>
             </td>
+
 			<%
 			//display comment as tooltip if not null - simply using the TITLE attr
 			String xComment=prescriptDrug.getComment();

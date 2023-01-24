@@ -1705,6 +1705,15 @@ public class RxPrescriptionData {
 			drug.setPharmacyId(getPharmacyId());
 		}
 
+       		public boolean SetLongTermAndSave(boolean lt) {
+                        DrugDao dao = SpringUtils.getBean(DrugDao.class);
+                        Drug drug = dao.find(this.getDrugId());
+                        drug.setLongTerm(lt);
+                        dao.merge(drug);
+                        return true;
+                }
+
+
 		public boolean AddToFavorites(String providerNo, String favoriteName) {
 			Favorite fav = new Favorite(0, providerNo, favoriteName, this.getBrandName(), this.getGCN_SEQNO(), this.getCustomName(), this.getTakeMin(), this.getTakeMax(), this.getFrequencyCode(), this.getDuration(), this.getDurationUnit(), this.getQuantity(), this.getRepeat(), this.getNosubsInt(), this.getPrnInt(), this.getSpecial(), this.getGenericName(), this.getAtcCode(), this.getRegionalIdentifier(), this.getUnit(), this.getUnitName(), this.getMethod(), this.getRoute(), this.getDrugForm(),
 			        this.getCustomInstr(), this.getDosage());
