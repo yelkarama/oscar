@@ -1311,26 +1311,24 @@ top.window.resizeTo(1440,900);  //width,height for 19" LCD allowing for most Rx 
                         }
 %>
 <script type="text/javascript">
-function changeLt(drugId){
-    if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />')==true) {
-           var data="ltDrugId="+drugId+"&rand="+Math.floor(Math.random()*10001);
-           var url="<c:out value='${ctx}'/>"+ "/oscarRx/WriteScript.do?parameterValue=changeToLongTerm";
-           new Ajax.Request(url,{method: 'post',parameters:data,onSuccess:function(transport){
-                   var json=transport.responseText.evalJSON();
-                   if(json!=null && (json.success=='true'||json.success==true) ){
-                        $("notLongTermDrug_"+drugId).innerHTML="*";
-                        $("notLongTermDrug_"+drugId).setStyle({
-                            textDecoration: 'none',
-                            color: 'red'
-                        });
-                        $("notLongTermDrug_"+drugId).setAttribute("onclick","");
-                        $("notLongTermDrug_"+drugId).setAttribute("href","");
-                    }else{
-                    }
-               }});
-       }
+function changeLt (drugId, isLongTerm) {
+    if (confirm (isLongTerm ? '<bean:message key = "oscarRx.Prescription.changeDrugShortTermConfirm" />' : '<bean:message key = "oscarRx.Prescription.changeDrugLongTermConfirm" />') == true) {
+        let data = "ltDrugId=" + drugId + "&rand=" + Math.floor (Math.random () * 10001);
+        let url = "<c:out value = '${ctx}'/>" + "/oscarRx/WriteScript.do?parameterValue=changeLongTerm";
+
+        new Ajax.Request (url, {method: 'post', parameters: data, onSuccess: function(transport) {
+            let json = transport.responseText.evalJSON ();
+            if (json != null && (json.success == 'true' || json.success == true)) {
+                let elementName = isLongTerm ? "longTermDrug_" : "notLongTermDrug_";
+                $(elementName + drugId).innerHTML = isLongTerm ? "<bean:message key = "global.no" />" : "<bean:message key = "global.yes" />";
+	        $(elementName + drugId).setAttribute("onclick", "changeLt('" + drugId + "', " + !isLongTerm + ");");
+	        isLongTerm ? $(elementName + drugId).setAttribute("id", "notLongTermDrug_" + drugId) : $(elementName + drugId).setAttribute("id", "longTermDrug_" + drugId); 
+            }
+       }});
+    }
 }
-    function checkReRxLongTerm(){
+
+function checkReRxLongTerm(){
         var url=window.location.href;
         var match=url.indexOf('ltm=true');
         if(match>-1){
