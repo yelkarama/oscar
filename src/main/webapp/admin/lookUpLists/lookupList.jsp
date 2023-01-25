@@ -40,7 +40,7 @@
 		</div>
 	</div>
 	
-	<div class="row lookupListItems" id="lookupListItems_${ lookuplist.id }"  >		
+	<div class="row lookupListItems" id="lookupListItems_<c:out value="${ lookuplist.id } />"  >		
 		<ul>						
 			<c:forEach var="lookupListItem" items="${ lookuplist.items }" >	
 				<c:if test="${ lookupListItem.active }" >
