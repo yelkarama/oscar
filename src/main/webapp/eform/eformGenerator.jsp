@@ -730,8 +730,8 @@ function GetTextTop(){
 		// ensure that we check the integrety of the CDN's version
 		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;https://code.jquery.com/jquery-2.2.1.min.js&quot; integrity=&quot;sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=&quot; crossorigin=&quot;anonymous&quot; &gt;&lt;/script&gt;\n";	
 		// if unavailable reference the one in OSCAR
-		//textTop += "&lt;script&gt;\nwindow.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.7.1.min.js&quot;&gt;&lt;\/script&gt;');\n\n"
-		 textTop += "&lt;script&gt; window.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.7.1.min.js&quot;&gt;&lt; &#92;/script&gt;') &lt;/script&gt;\n";
+		//textTop += "&lt;script&gt;\nwindow.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.12.3.js&quot;&gt;&lt;\/script&gt;');\n\n"
+		 textTop += "&lt;script&gt; window.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.12.3.js&quot;&gt;&lt; &#92;/script&gt;') &lt;/script&gt;\n";
 	}
  
     //Peter Hutten-Czapski's Xbox scripts   
