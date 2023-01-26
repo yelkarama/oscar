@@ -23,9 +23,9 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.managers.PreventionManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="java.util.*" %>
+<%@page import="org.oscarehr.managers.PreventionManager"%>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="java.util.*"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -34,123 +34,176 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+boolean authed = true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_prevention" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_prevention");%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_prevention"
+	rights="r" reverse="<%=true%>">
+	<%
+	authed = false;
+	%>
+	<%
+	response.sendRedirect("../securityError.jsp?type=_prevention");
+	%>
 </security:oscarSec>
 <%
-if(!authed) {
+if (!authed) {
 	return;
 }
 %>
 <!DOCTYPE html>
 <html>
-	<head>
-		<title><bean:message key="oscarprevention.preventionlistmanager.title" /></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<title><bean:message
+		key="oscarprevention.preventionlistmanager.title" /></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="<%=request.getContextPath()%>/css/bootstrap.min.css"
+	rel="stylesheet" media="screen">
 
-		<style>
-			.table tbody tr:hover td, .table tbody tr:hover th {
-			    background-color: #FFFFAA;
-			    cursor: pointer; cursor: hand;
-			}
-			
-			.table tbody td.item-active {
-			  background-color: #009900 !important;
-			}
-		</style>
-	</head>
+<style type="text/css">
+.table tbody tr:hover td, .table tbody tr:hover th {
+	background-color: #FFFFAA;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.table tbody td.item-active {
+	background-color: #009900 !important;
+}
+</style>
+</head>
 
 <body>
 
-<div class="container">
-<h1><bean:message key="oscarprevention.preventionlistmanager.title" /></h1>
-<p class="lead">Customize which prevention items to display on the prevention list.</p>
-<p style="margin-top:-20px"><span class="label label-info">Info</span> Any changes made here will affect every provider using the prevention module. To add/remove any item from the prevention list simply click on the item below. Green indicates that the item is available from the prevention module.</p>
+	<div class="container">
+		<h1>
+			<bean:message key="oscarprevention.preventionlistmanager.title" />
+		</h1>
+		<p class="lead">
+			<bean:message key="oscarprevention.preventionlistmanager.lead" />
+		</p>
+		<p style="margin-top: -20px">
+			<span class="label label-info"><bean:message key="global.info" /></span>
+			<bean:message
+				key="oscarprevention.preventionlistmanager.instructions" />
+		</p>
 
-<table class="table table-striped table-hover table-bordered">
+		<table class="table table-striped table-hover table-bordered">
 
-<thead><tr><th></th><th width="200px">Name</th><th>Description</th></tr></thead>
+			<thead>
+				<tr>
+					<th></th>
+					<th width="200px"><bean:message key="global.name" /></th>
+					<th><bean:message key="global.description" /></th>
+				</tr>
+			</thead>
 
-<tbody>
-<%
-PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
+			<tbody>
+				<%
+				PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
 
-if(request.getParameter("formAction")!=null && request.getParameter("formAction").equals("update")){
-	preventionManager.addCustomPreventionItems(request.getParameter("prevention-bin"));
-}
+				if (request.getParameter("formAction") != null && request.getParameter("formAction").equals("update")) {
+					preventionManager.addCustomPreventionShownItems(request.getParameter("prevention-bin"));
+				}
 
-LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-ArrayList<HashMap<String,String>> prevList = preventionManager.getPreventionTypeDescList();
+				LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+				ArrayList<HashMap<String, String>> prevList = preventionManager.getPreventionTypeDescList();
 
-String customPreventionItems = "";
+				String customPreventionItems = "Tuberculosis,PAP,HPV-CERVIX,MAM,PSA,FOBT,COLONOSCOPY,BMD,HIV,HepB screen,HepC,screen,VDRL,chlamydia,ghonorrhea PCR,PHV,Smoking,OtherB";
 
-boolean propertyExists = preventionManager.isHidePrevItemExist();
+				boolean propertyExists = preventionManager.isHidePrevItemExist();
+				boolean propertyShowExists = preventionManager.isShowPrevItemExist();
 
-if(propertyExists){
-	customPreventionItems=preventionManager.getCustomPreventionItems();
-}
+				if (propertyExists && !propertyShowExists) {
+				%>
+				<script type="text/javascript">
+				alert("<bean:message
+						key="oscarprevention.preventionlistmanager.reset" />");
+				</script>
+				<%
+				}
 
-String prevId = null;
-String prevName = null;
-String prevDesc = null;
-String regex = "[`~!@#$%^&*()=+\\[{\\]}\\\\|;:'\",<.>/?\\s]";
-for (int e = 0 ; e < prevList.size(); e++){ 
-	HashMap<String,String> h = prevList.get(e);
-		prevId = h.get("name").replaceAll(regex,"");
-		prevName = h.get("name");
-		prevDesc = h.get("desc");             	
-%>
-			<tr class="prevention-item" id="<%=prevId%>" prevention-data="<%=prevName%>"> 
-				<td class="item-active" title="Available on master list"></td><td><%=prevName%></td><td><%=prevDesc%></td> 
-			</tr>
-			
-<%}%>
-</tbody>
-</table>
+				if (propertyShowExists) {
+				customPreventionItems = preventionManager.getCustomPreventionShownItems();
+				}
 
-<!-- Button to trigger modal confirmation -->
-<button id="btnVoid" class="btn btn-large pull-right" disabled>Save</button>
-<a href="#modalConfirm" id="btnConfirm" class="btn btn-large btn-success pull-right" data-toggle="modal" data-backdrop="false" style="display:none">Save</a>
+				String prevId = null;
+				String prevName = null;
+				String prevDesc = null;
+				String regex = "[`~!@#$%^&*()=+\\[{\\]}\\\\|;:'\",<.>/?\\s]";
+				for (int e = 0; e < prevList.size(); e++) {
+				HashMap<String, String> h = prevList.get(e);
+				prevId = h.get("name").replaceAll(regex, "");
+				prevName = h.get("name");
+				prevDesc = h.get("desc");
+				%>
+				<tr class="prevention-item" id="<%=prevId%>"
+					prevention-data="<%=prevName%>">
+					<td class="" title="Removed from master list"></td>
+					<td><%=prevName%></td>
+					<td><%=prevDesc%></td>
+				</tr>
 
-</div><!-- container -->
+				<%
+				}
+				%>
+			</tbody>
+		</table>
 
+		<!-- Button to trigger modal confirmation -->
+		<button id="btnVoid" class="btn pull-right" disabled
+			style="display: none"><bean:message
+						key="global.btnSave" /></button>
+		<a href="#modalConfirm" id="btnConfirm"
+			class="btn btn-primary pull-right" data-toggle="modal"
+			data-backdrop="false"><bean:message
+						key="global.btnSave" /></a>
 
-<form action="PreventionListManager.jsp?formAction=update" method="post">     
-    <!-- Modal -->
-    <div id="modalConfirm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalConfirmLabel" aria-hidden="true">
-      <div class="modal-header" style="background-color:#fbb450;">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="modalConfirmLabel">Are you sure?</h3>
-      </div>
-      <div class="modal-body">
-        <p>Please confirm your changes to the prevention list:</p>
-        <div class="well" id="modalItems"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">No, don't save</button>
-        <button type="submit" class="btn btn-danger">Yes, please save </button>
-      </div>
-    </div>
-    
-    <!-- property value to be saved: hidden-->
-	<input type="hidden" name="prevention-bin" id="prevention-bin">
-</form>   
+	</div>
+	<!-- container -->
 
 
-<!-- property value from database: hidden-->
-<input type="hidden" name="property-bin" id="property-bin" style="width:1200px" value="<%=customPreventionItems%>">
+	<form action="PreventionListManager.jsp?formAction=update"
+		method="post">
+		<!-- Modal -->
+		<div id="modalConfirm" class="modal hide fade" tabindex="-1"
+			role="dialog" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+			<div class="modal-header" style="background-color: silver">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">x</button>
+				<h3 id="modalConfirmLabel"><bean:message
+						key="oscarprevention.preventionlistmanager.modal.title" /></h3>
+			</div>
+			<div class="modal-body">
+				<p><bean:message
+						key="oscarprevention.preventionlistmanager.modal.confirmchanges" />:</p>
+				<div class="well" id="modalItems"></div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true"><bean:message
+						key="oscarprevention.preventionlistmanager.modal.btnBack" /></button>
+				<button type="submit" class="btn btn-danger"><bean:message
+						key="oscarprevention.preventionlistmanager.modal.btnSave" /></button>
+			</div>
+		</div>
 
-	
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+		<!-- property value to be saved: hidden-->
+		<input type="hidden" name="prevention-bin" id="prevention-bin">
+	</form>
 
-<script>
+
+	<!-- property value from database: hidden-->
+	<input type="hidden" name="property-bin" id="property-bin"
+		style="width: 1200px" value="<%=customPreventionItems%>">
+
+
+	<script type="text/javascript"
+		src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript"
+		src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
 $(".prevention-item").click(function () {
     var id = $(this).attr("id");
     var name = $(this).attr("prevention-data");
@@ -164,18 +217,20 @@ function indicatorDisplay(id, name){
 	    indicator = $('#'+id+' td:first-child');
         
         console.log("   id="+id+"\n name="+name);
-	    if(indicator.hasClass("item-active")){
-		    indicator.removeClass('item-active');
-		    indicator.attr("title", "Removed from master list");	    
+	    if(!indicator.hasClass("item-active")){
+		    indicator.addClass('item-active');
+		    indicator.attr("title", "<bean:message
+					key="oscarprevention.preventionlistmanager.listed" />");	    
 		    addPreventionToBin(name);
 	        
 	    }else{
-		    indicator.addClass('item-active');
-		    indicator.attr("title", "Available on master list");
+		    indicator.removeClass('item-active');
+		    indicator.attr("title", "<bean:message
+					key="oscarprevention.preventionlistmanager.notlisted" />");
 		    removePreventionFromBin(name);
 	    }
 
-	    btnSaveDisplay();
+	    //btnSaveDisplay();
     }
 }
 
@@ -198,7 +253,7 @@ function addPreventionToBin(name){
 	bin = $("#prevention-bin");
 	if(bin.val()!=""){
 		bin.val(bin.val() + "," + name.trim());
-        console.log("added to hide list="+name);
+        console.log("added to show list="+name);
 	}else{
 		bin.val(name);
 	}
@@ -216,7 +271,7 @@ function removePreventionFromBin(itemToBeRemoved){
 			if(index > -1){
 				preventions.splice(index, 1);
 				bin.val(preventions);
-                console.log("removed from hide list="+itemToBeRemoved);
+                console.log("removed from show list="+itemToBeRemoved);
 			}
 			
 		}else{
@@ -246,7 +301,8 @@ function setModalItems(){
 	preventions = bin.val().split(',');
 	n = preventions.length;
 	
-	$('#modalItems').html("<h5>Hide the following prevention(s):</h5>");
+	$('#modalItems').html("<h5><bean:message
+			key="oscarprevention.preventionlistmanager.modal.show" /></h5>");
 		if(n>1){
 			for(i=0;i<n;i++){
 			
@@ -256,7 +312,8 @@ function setModalItems(){
 			$('#modalItems').append(bin.val()+"<br>");
 		}
 	}else{
-		$('#modalItems').html("Make all preventions available.");
+		$('#modalItems').html("<bean:message
+				key="oscarprevention.preventionlistmanager.modal.none" />");
 	}
 }
 
@@ -275,6 +332,6 @@ if($('#property-bin').val()!=""){
 
     parent.parent.resizeIframe($('html').height());	
 });
-</script>		
+</script>
 </body>
 </html>

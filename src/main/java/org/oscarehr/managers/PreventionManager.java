@@ -63,6 +63,8 @@ public class PreventionManager {
 	private SecurityInfoManager securityInfoManager;
 		
 	private static final String HIDE_PREVENTION_ITEM = "hide_prevention_item";
+	private static final String SHOW_PREVENTION_ITEM = "show_prevention_item";
+
 
 	private ArrayList<String> preventionTypeList = new ArrayList<String>();
 
@@ -131,12 +133,32 @@ public class PreventionManager {
 		return false;
 	}
 	
+	public boolean isShowPrevItemExist() {
+		List<Property> props = propertyDao.findByName(SHOW_PREVENTION_ITEM);
+		if(props.size()>0){
+			return true;
+		}		
+		return false;
+	}
+	
 	public boolean hideItem(String item) {
+
+		String itemsToKeep = null;
+		Property p1 = propertyDao.checkByName(SHOW_PREVENTION_ITEM);
+		if(p1!=null && p1.getValue()!=null){
+			itemsToKeep = p1.getValue();
+			List<String> jabs = Arrays.asList(itemsToKeep.split("\\s*,\\s*"));
+			for(String i:jabs){
+				if(i.equals(item)){
+					return false;
+				}
+			}
+			return true;
+		}
 		String itemsToRemove = null;
-		Property p = propertyDao.checkByName(HIDE_PREVENTION_ITEM);
-		
-		if(p!=null && p.getValue()!=null){
-			itemsToRemove = p.getValue();
+		Property p2 = propertyDao.checkByName(HIDE_PREVENTION_ITEM);
+		if(p2!=null && p2.getValue()!=null){
+			itemsToRemove = p2.getValue();
 			List<String> items = Arrays.asList(itemsToRemove.split("\\s*,\\s*"));
 			for(String i:items){
 				if(i.equals(item)){
@@ -157,6 +179,16 @@ public class PreventionManager {
 		return itemsToRemove;
 	}
 	
+	public static String getCustomPreventionShownItems() {
+		String itemsToKeep = "";
+		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+		Property p = propertyDao.checkByName(SHOW_PREVENTION_ITEM);
+		if(p!=null && p.getValue()!=null){
+		itemsToKeep = p.getValue();
+		}
+		return itemsToKeep;
+	}
+	
 	public void addCustomPreventionItems(String items){
 		boolean propertyExists = isHidePrevItemExist();
 		if(propertyExists){
@@ -171,6 +203,20 @@ public class PreventionManager {
 		}
 	}	
 
+	public void addCustomPreventionShownItems(String items){
+		boolean propertyExists = isShowPrevItemExist();
+		if(propertyExists){
+			Property p = propertyDao.checkByName(SHOW_PREVENTION_ITEM);
+			p.setValue(items);
+			propertyDao.merge(p);
+		}else{
+			Property x = new Property();
+			x.setName("show_prevention_item");
+			x.setValue(items);
+			propertyDao.persist(x);
+		}
+	}
+	
 	public void addPreventionWithExts(Prevention prevention, HashMap<String, String> exts) {
 		if (prevention == null) return;
 
