@@ -2,7 +2,25 @@
  *                with print functionality intact (if print button on the form).
  */
 
-if (typeof jQuery == "undefined") { alert("The printControl library requires jQuery. Please ensure that it is loaded first"); }
+if (typeof jQuery == "undefined") { alert("The printControl library requires jQuery v 1.7.x+. Please ensure that it is loaded first"); }
+
+function compareVersions (v1, v2)
+{
+    v1 = v1.split('.');
+    v2 = v2.split('.');
+    var longestLength = (v1.length > v2.length) ? v1.length : v2.length;
+    for (var i = 0; i < longestLength; i++) {
+        if (v1[i] != v2[i]) {
+            return (v1 > v2) ? 1 : -1
+        }
+    }
+    return 0; 
+ }
+
+if ( compareVersions(jQuery.fn.jquery,'1.7.1') < 0 ) {
+    alert("You have loaded jQuery version "+ jQuery.fn.jquery + " but we require at least v 1.7.1");
+}
+
 var printControl = {
 	initialize: function () {
 
@@ -12,23 +30,27 @@ var printControl = {
 		submit.append("<input name='pdfButton' type='button'>");
 		var pdf = jQuery("input[name='pdfButton']");
 		var pdfSave = jQuery("input[name='pdfSaveButton']");
-		if (pdf.size() == 0) { pdf = jQuery("input[name='pdfButton']"); }
-		if (pdfSave.size() == 0) { pdfSave = jQuery("input[name='pdfSaveButton']"); }
+		if (pdf.length == 0) { pdf = jQuery("input[name='pdfButton']"); }
+		if (pdfSave.length == 0) { pdfSave = jQuery("input[name='pdfSaveButton']"); }
 	
 		pdf.insertAfter(submit);	
 		pdfSave.insertAfter(submit);
 
-		if (pdf.size() != 0) {
-			pdf.attr("onclick", "").unbind("click");
+		if (pdf.length != 0) {
+
+			pdf.off('click');
 			pdf.attr("value", "PDF");
-			pdf.click(function(){submitPrintButton(false);});
+			pdf.on('click', function()  {submitPrintButton(false);});
+
 		}
-		if (pdfSave.size() != 0) {
-			pdfSave.attr("onclick", "").unbind("click");
+		if (pdfSave.length != 0) {
+
+			pdfSave.off('click');
 			pdfSave.attr("value", "Submit & PDF");
-			pdfSave.click(function(){submitPrintButton(true);});
+			pdfSave.on('click', function()  {submitPrintButton(true);});
+
 		}
-		if (printSave.size() != 0) {
+		if (printSave.length != 0) {
 			printSave.attr("value", "Submit & Print");
 		}
 
@@ -77,7 +99,7 @@ $.when(setTickler()).then(function( data, textStatus, jqXHR ) {
 
 function submitPrintButton(save) {
 	var ticklerFlag = $("#tickler_send_to");     
-    if (ticklerFlag.size() >0) { 
+    if (ticklerFlag.length >0) { 
         $.when(setTickler()).then(function( data, textStatus, jqXHR ) {
             console.log("printControl.js reports tickler "+textStatus);
             if ( jqXHR.status != 200 ){ alert("ERROR ("+jqXHR.status+") automatic tickler FAILED to be set");}
@@ -91,14 +113,14 @@ function submitPrintButton(save) {
 function finishPdf(save) {
 	// Setting this form to print.
 	var printHolder = jQuery('#printHolder');
-	if (printHolder == null || printHolder.size() == 0) {
+	if (printHolder == null || printHolder.length == 0) {
 		jQuery("form").append("<input id='printHolder' type='hidden' name='print' value='true' >");
 	}	
 	printHolder = jQuery('#printHolder');
 	printHolder.val("true");
 	
 	var saveHolder = jQuery("#saveHolder");
-	if (saveHolder == null || saveHolder.size() == 0) {
+	if (saveHolder == null || saveHolder.length == 0) {
 		jQuery("form").append("<input id='saveHolder' type='hidden' name='skipSave' value='"+!save+"' >");
 	}
 	saveHolder = jQuery("#saveHolder");
