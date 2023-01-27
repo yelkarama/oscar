@@ -48,7 +48,8 @@
 <%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <!--
-eForm Generator version 7.2
+eForm Generator version 7.3
+		7.3 upgraded jQuery support to current
 		7.2 reverted default width to 750
 		7.1 bug fixes
 		7.0 Tickler support, refactored signatures to simplify, bug fixes
@@ -689,6 +690,7 @@ function GetTextTop(){
     textTop += document.getElementById('eFormName').value;
     textTop += "&lt;/title&gt;\n"
     textTop += "&lt;style type=&quot;text/css&quot; media=&quot;screen&quot; &gt;\n";
+    textTop += " body {\n\tfont-family:sans-serif;\n\tfont-style:normal; \n\tfont-weight:normal;\n }\n"
     textTop += " input {\n\t-moz-box-sizing: content-box;\n\t-webkit-print-color-adjust: exact;\n\t-webkit-box-sizing: content-box;\n\tbox-sizing: content-box\n }\n"
 	textTop += " .noborder {\n\border: 1px solid #d2d2d2 !important;\n }\n"
     if (document.getElementById('AddSignature').checked){
@@ -739,7 +741,7 @@ function GetTextTop(){
         textTop += "&lt;!-- scripts for Xbox functions --&gt;\n"
         textTop += "&lt;script language=&quot;javascript&quot;&gt;\n"
         textTop += "$(document).ready(function() {\n"
-        textTop += "\t$( &quot;.Xbox&quot; ).click(function() {\n"
+        textTop += "\t$( &quot;.Xbox&quot; ).on('click', function() {\n"
         if (document.getElementById('BlackBox').checked){
             textTop += "\t\tvar bc = $( this ).css( &quot;background-color&quot; );\n"
             textTop += "\t\tif (bc==&quot;rgb(0, 0, 0)&quot;) {\n"
@@ -765,10 +767,10 @@ function GetTextTop(){
         //  textTop += "\t});\n\n"
         //}
  
-        textTop += "\t$( &quot;.Xbox&quot; ).keypress(function(event) {\n"
+        textTop += "\t$( &quot;.Xbox&quot; ).on('keypress',function(event) {\n"
         textTop += "\t// any key press except tab will constitute a value change to the checkbox\n"
         textTop += "\t\tif (event.which != 0){\n"
-        textTop += "\t\t\t$( this ).click();\n"
+        textTop += "\t\t\t$( this ).trigger('click');\n"
         textTop += "\t\t\treturn false;\n"
         textTop += "\t\t\t}\n"
         textTop += "\t});\n\n"
@@ -1711,7 +1713,7 @@ show('classic');
 	onmouseup="SetMouseUp(); DrawMarker();loadInputList();"
 	onload="finishLoadingImage()">
 
-<h1><bean:message key="eFormGenerator.title"/> 7.2</h1>
+<h1><bean:message key="eFormGenerator.title"/> 7.3</h1>
 
 <!-- this form  used for injecting html in to Edit E-Form  efmformmanageredit.jsp -->
 <form method="post" action="efmformmanageredit.jsp" id="toSave">
