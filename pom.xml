@@ -463,12 +463,6 @@
          <artifactId>macplus_client_stubs</artifactId>
          <version>SNAPSHOT</version>
       </dependency>
-      <!-- apache xmlgraphics batik -->
-      <dependency>
-         <groupId>org.apache.xmlgraphics</groupId>
-         <artifactId>batik-dom</artifactId>
-         <version>1.7</version>
-      </dependency>
       <!-- apache commons codec -->
       <dependency>
          <groupId>commons-codec</groupId>
