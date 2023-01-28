@@ -584,7 +584,6 @@
             }
 
             function checkFav() {
-                //oscarLog("****** in checkFav");
                 var usefav = '<%=usefav%>';
                 var favid = '<%=favid%>';
                 if (usefav == "true" && favid != null && favid != 'null') {
@@ -592,17 +591,6 @@
                     useFav2(favid);
                 } else {
                 }
-            }
-
-            //not used , represcribe a drug
-            function represcribeOnLoad(drugId) {
-                var data = "drugId=" + drugId + "&rand=" + Math.floor(Math.random() * 10001);
-                var url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=saveReRxDrugIdToStash";
-                new Ajax.Updater('rxText', url, {
-                    method: 'get', parameters: data, evalScripts: true, insertion: Insertion.Bottom,
-                    onSuccess: function (transport) {
-                    }
-                });
             }
 
             function moveDrugDown(drugId, swapDrugId, demographicNo) {
@@ -2088,24 +2076,6 @@ THEME 2*/
                         window.location.href = "SearchDrug3.jsp";
                     }
                 })
-            }
-        }
-
-        var resHidden2 = 0;//not used
-        //not used
-        function showHiddenRes() {
-            var list = $$('div.hiddenResource');
-            if (resHidden2 == 0) {
-                list.invoke('show');
-                resHidden2 = 1;
-                $('showHiddenResWord').update('hide');
-                var url = "updateHiddenResources.jsp";
-                var params = "hiddenResources=&rand=" + Math.floor(Math.random() * 10001);
-                new Ajax.Request(url, {method: 'post', parameters: params});
-            } else {
-                $('showHiddenResWord').update('show');
-                list.invoke('hide');
-                resHidden2 = 0;
             }
         }
 
