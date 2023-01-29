@@ -179,7 +179,6 @@ if (heading != null){
                       continue;
                     }
                 }
-
                 if (request.getParameter("longTermOnly") != null && request.getParameter("longTermOnly").equals("acute")){
                     if (prescriptDrug.isLongTerm()){
                       continue;
@@ -188,8 +187,9 @@ if (heading != null){
                 if(request.getParameter("drugLocation")!=null&&request.getParameter("drugLocation").equals("external")){
                     if(!prescriptDrug.isExternal())
                         continue;
-                }
-//add all long term med drugIds to an array.
+                } 
+
+                //add all long term med drugIds to an array.
                 styleColor = getClassColour( prescriptDrug, now, month);
                 String specialText=prescriptDrug.getSpecial();
                 specialText= specialText == null ? "" : specialText.replace("\n"," ");
@@ -199,7 +199,7 @@ if (heading != null){
                 boolean startDateUnknown = prescriptDrug.getStartDateUnknown();
         %>
         <tr>
-        <td valign="top"><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%></a></td>
+        <td valign="top"><%=oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%></a></td>
             <td valign="top">
             	<% if(startDateUnknown) { %>
             		
@@ -207,7 +207,7 @@ if (heading != null){
             		String startDate = oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getRxDate());
             		startDate = partialDateDao.getDatePartial(startDate, PartialDate.DRUGS,  prescriptDrug.getId(), PartialDate.DRUGS_STARTDATE);
             	%>
-            		<a id="rxDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>"><%=startDate%></a>
+		    <%=startDate%></nobr> 
             	<% } %>
             </td>
             <td valign="top">
@@ -218,24 +218,24 @@ if (heading != null){
             	<% } %>
             </td>
             <td valign="top">
-            	<%
-             		if(prescriptDrug.isLongTerm())
-            		{
-            	%>
+                <%
+                        if(prescriptDrug.isLongTerm())
+                        {
+                        %>
                                 <a id="longTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugShortTerm'/>" onclick="changeLt('<%=prescriptIdInt%>', true);" href="javascript:void(0);">
                                         <bean:message key='global.yes'/>
                                 </a>
                         <%
-            		}
-            		else
-            		{
-            			if (prescriptDrug.getRemoteFacilityId()==null)
+                        }
+                        else
+                        {
+                                if (prescriptDrug.getRemoteFacilityId()==null)
                                 {
-            				%>
-							<%
-								if(securityManager.hasWriteAccess("_rx",roleName$,true)) {
- 							%>
- 						<a id="notLongTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugLongTerm'/>" onclick="changeLt('<%=prescriptIdInt%>', false);" href="javascript:void(0);">
+                                        %>
+                                                        <%
+                                                                if(securityManager.hasWriteAccess("_rx",roleName$,true)) {
+                                                        %>
+                                                <a id="notLongTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugLongTerm'/>" onclick="changeLt('<%=prescriptIdInt%>', false);" href="javascript:void(0);">
                                                 <bean:message key='global.no'/>
                                                 </a>
                                                         <% } else { %>
