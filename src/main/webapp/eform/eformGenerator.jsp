@@ -684,33 +684,8 @@ function resetAll(){
 }
 
 function GetTextTop(){
-    textTop = "&lt;html&gt;\n&lt;head&gt;\n"
-    textTop += "&lt;META http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;\n"
-    textTop += "&lt;title&gt;"
-    textTop += document.getElementById('eFormName').value;
-    textTop += "&lt;/title&gt;\n"
-    textTop += "&lt;style type=&quot;text/css&quot; media=&quot;screen&quot; &gt;\n";
-    textTop += " body {\n\tfont-family:sans-serif;\n\tfont-style:normal; \n\tfont-weight:normal;\n }\n"
-    textTop += " input {\n\t-moz-box-sizing: content-box;\n\t-webkit-print-color-adjust: exact;\n\t-webkit-box-sizing: content-box;\n\tbox-sizing: content-box\n }\n"
-	textTop += " .noborder {\n\border: 1px solid #d2d2d2 !important;\n }\n"
-    if (document.getElementById('AddSignature').checked){
-        textTop += " .sig {\n\tborder: "+SignatureBorder+";\n\tcolor: "+SignatureColor+";\n\tbackground-color: white;\n }\n"
-    }
-    textTop += "/* Drawing the 'gripper' for touch-enabled devices */\n html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n"
-    textTop += "&lt;/style&gt;\n";
- 
-    textTop += "&lt;style type=&quot;text/css&quot; media=&quot;print&quot;&gt;\n"
-    textTop += " .DoNotPrint {\n\tdisplay: none;\n }\n .noborder {\n\tborder : 0px;\n\tbackground: transparent;"
-    // scrollbar is not supported in Firefox nor Chrome
-    //textTop += "\n\tscrollbar-3dlight-color: transparent;\n\tscrollbar-3dlight-color: transparent;\n\tscrollbar-arrow-color: transparent;\n\tscrollbar-base-color: transparent;\n\tscrollbar-darkshadow-color: transparent;\n\tscrollbar-face-color: transparent;\n\tscrollbar-highlight-color: transparent;\n\tscrollbar-shadow-color: transparent;\n\tscrollbar-track-color: transparent;"
-    textTop += "\n\tbackground: transparent;\n\toverflow: hidden;\n }\n"
-    if (document.getElementById('AddSignature').checked){
-        textTop += " .sig {\n\tborder-style: solid;\n\tborder-color: transparent;\n\tcolor: "+SignatureColor+";\n\tbackground-color: transparent;\n }\n\n "
-    }
-    textTop += "&lt;/style&gt;\n\n";
- 
-    
-        var parentPresent=false;
+
+    var parentPresent=false;
     for (j=0; (j < (DrawData.length) ); j++){
         var P = DrawData[j].split("|");
         if ((P[3]=="parent1")||(P[5]=="parent1") ){
@@ -724,6 +699,41 @@ function GetTextTop(){
             xPresent=true;      
         }
     }
+    var radioPresent=false;
+    //PHC add in test to detect Radio
+
+    textTop = "&lt;html&gt;\n&lt;head&gt;\n"
+    textTop += "&lt;META http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;\n";
+    textTop += "&lt;title&gt;"
+    textTop += document.getElementById('eFormName').value;
+    textTop += "&lt;/title&gt;\n";
+    // first style that is there for all media
+    textTop += "&lt;style&gt;\n";    
+    textTop += " body {\n\tfont-size:12px;\n\tfont-family:sans-serif;\n\tfont-style:normal;\n\tfont-weight:normal;\n\ttext-align:left;\n\tbackground-color:transparent;\n }\n";
+    textTop += " input {\n\t-moz-box-sizing: content-box;\n\t-webkit-print-color-adjust: exact;\n\t-webkit-box-sizing: content-box;\n\tbox-sizing: content-box;\n }\n";
+    if (xPresent){
+        textTop += " .Xbox {\n\twidth:14px;\n\theight:14px;\n\tfont-weight:bold;\n\ttext-align:center;\n\tbackground-color:white;\n }\n";
+    }
+    if (radioPresent){
+        textTop += " .Radio {\n\twidth:14px;\n\theight:14px;\n\tfont-weight:bold;\n\ttext-align:center;\n\tbackground-color:white;\n\tborder-radius:14px;\n }\n";
+    }
+    if (document.getElementById('AddSignature').checked){
+        textTop += " .sig {\n\tborder: "+SignatureBorder+";\n\tcolor: "+SignatureColor+";\n\tbackground-color: white;\n }\n"
+    }
+    textTop += "&lt;/style&gt;\n\n";
+
+    // for screen media noborder should have a border and supply a gripper
+    textTop += "&lt;style type=&quot;text/css&quot; media=&quot;screen&quot; &gt;\n";
+	textTop += " .noborder {\n\tborder:1px solid; !important\n }\n"
+    textTop += "/* Drawing the 'gripper' for touch-enabled devices */\n html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n";
+
+    textTop += "&lt;/style&gt;\n\n";
+    // for print media do not display DoNotPrint nor noborders
+    textTop += "&lt;style type=&quot;text/css&quot; media=&quot;print&quot;&gt;\n"
+    textTop += " .DoNotPrint {\n\tdisplay:none;\n }\n .noborder {\n\tborder:0px;\n\tbackground: transparent;\n";
+    textTop += "&lt;/style&gt;\n\n";
+    
+
 		if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ||
 		(document.getElementById('XboxType').checked) ||
 		(xPresent) ) {
@@ -1257,20 +1267,33 @@ var InputType = P[0];
 		m += "px; width:"
 		m += width
 		m += "px; height:"
-		m += height
-		m += "px; font-family:"
-		m += fontFamily
-		m += "; font-style:"
-		m += fontStyle
-		m += "; font-weight:"
-		m += fontWeight
-		m += "; font-size:"
-		m += fontSize
-		m += "px; text-align:"
-		m += textAlign
-		m += "; background-color:"
-		m += bgColor
-		m += ";&quot; "
+		m += height;
+		m += "px; "
+        if (fontFamily != 'sans-serif') {
+		    m += "font-family:";
+		    m += fontFamily + "; ";
+        }
+        if (fontStyle != 'normal') {
+		    m += "font-style:";
+		    m += fontStyle + "; ";
+        }
+        if (fontWeight != 'normal') {
+		    m += "font-weight:";
+		    m += fontWeight + "; ";
+        }
+        if (fontSize != '12') {
+		    m += "font-size:";
+		    m += fontSize + "; ";
+        }
+        if (textAlign != 'left') {
+		    m += "text-align:";
+		    m += textAlign + "; ";
+        }
+        if (bgColor != 'transparent') {
+		    m += "background-color:";
+		    m += bgColor + "; ";
+        }
+		m += "&quot; "
 		if (oscarDB){
 			m += " oscarDB="
 			m += oscarDB
@@ -1310,19 +1333,32 @@ var InputType = P[0];
 		m += width
 		m += "px; height:"
 		m += height
-		m += "px; font-family:"
-		m += fontFamily
-		m += "; font-style:"
-		m += fontStyle
-		m += "; font-weight:"
-		m += fontWeight
-		m += "; font-size:"
-		m += fontSize
-		m += "px; text-align:"
-		m += textAlign
-		m += "; background-color:"
-		m += bgColor
-		m += ";&quot; "
+		m += "px; ";
+        if (fontFamily != 'sans-serif') {
+		    m += "font-family:";
+		    m += fontFamily + "; ";
+        }
+        if (fontStyle != 'normal') {
+		    m += "font-style:";
+		    m += fontStyle + "; ";
+        }
+        if (fontWeight != 'normal') {
+		    m += "font-weight:";
+		    m += fontWeight + "; ";
+        }
+        if (fontSize != '12') {
+		    m += "font-size:";
+		    m += fontSize + "; ";
+        }
+        if (textAlign != 'left') {
+		    m += "text-align:";
+		    m += textAlign + "; ";
+        }
+        if (bgColor != 'transparent') {
+		    m += "background-color:";
+		    m += bgColor + "; ";
+        }
+		m += "&quot; "
 		if (oscarDB){
 			m += " oscarDB="
 			m += oscarDB
@@ -1382,30 +1418,41 @@ var InputType = P[0];
         m += "&quot; type=&quot;text&quot; class=&quot;"
         m += inputClassValue
         m += "&quot; style=&quot;position:absolute; left:"
-		m += x0
-		m += "px; top:"
-		m += y0
-		m += "px; width:"
-		m += width
-		m += "px; height:"
-		m += height
-		m += "px; font-family:"
-		m += fontFamily
-		m += "; font-style:"
-		m += fontStyle
-		m += "; font-weight:"
-		m += "bold"
-		m += "; font-size:"
-		m += fontSize
-		m += "px; text-align:"
-		m += "center"
-		m += "; background-color:"
+		m += x0;
+		m += "px; top:";
+		m += y0;
+		m += "px;";
+        if (width != '14') {
+		    m += "width:";
+		    m += width + "px; ";
+        }
+        if (height != '14') {
+		    m += "height:";
+		    m += height + "px; ";
+        }
+        if (fontFamily != 'sans-serif') {
+		    m += "font-family:";
+		    m += fontFamily + "; ";
+        }
+        if (fontStyle != 'normal') {
+		    m += "font-style:";
+		    m += fontStyle + "; ";
+        }
+        // font weight bold and text align center are set in the default CSS style declaration with no override
+        if (fontSize != '12') {
+		    m += "font-size:";
+		    m += fontSize + "; ";
+        }
 		if ((document.getElementById('BlackBox').checked) && (inputValue=='X')) {
-			m +="rgb(0,0,0)"
-		} else {
-			m += bgColor
-		}
-		m += ";&quot; "
+		    m += "background-color:";
+			m += "rgb(0,0,0)";
+		    m += "; ";
+        } else if (bgColor != 'white') {
+		    m += "background-color:";
+			m += bgColor;
+		    m += "; ";
+        }
+		m += "&quot; "
 		if (inputValue){
 			m += "value=&quot;"
 			m += inputValue
