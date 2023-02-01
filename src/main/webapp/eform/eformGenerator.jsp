@@ -48,7 +48,10 @@
 <%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <!--
-eForm Generator version 7.3
+eForm Generator version 7.4 (C)	Peter Hutten-Czapski 2014-2023
+    based on the origional stand alone eform generator by Shelter Lee
+    version notes
+        7.4 Removed inline CSS if its default can be specified for the page
 		7.3 upgraded jQuery support to current
 		7.2 reverted default width to 750
 		7.1 bug fixes
@@ -60,12 +63,12 @@ eForm Generator version 7.3
         6.2 file selector for images
         revert changed relative to absolute positions for page ids
         6.1 added some snap to form elements 
-	origional copyright by the OSCAR community including notably
-	Shelter Lee
-	Darius
+    This generator has had numerous contributions from the OSCAR community
+	There have been too many ideas and suggestions to be able to list them all but I would like to note
+    Darius
 	Charlie Livingston
-	Adrian Starzynski
-	Peter Hutten-Czapski 2014-2022
+	Adrian Starzynski 
+
 	released under 
 	AGPL v2+
 	and other liscences (MIT, LGPL etc) as indicated
@@ -709,7 +712,7 @@ function GetTextTop(){
     textTop += "&lt;/title&gt;\n";
     // first style that is there for all media
     textTop += "&lt;style&gt;\n";    
-    textTop += " body {\n\tfont-size:12px;\n\tfont-family:sans-serif;\n\tfont-style:normal;\n\tfont-weight:normal;\n\ttext-align:left;\n\tbackground-color:transparent;\n }\n";
+    textTop += " body, textarea {\n\tfont-size:12px;\n\tfont-family:sans-serif;\n\tfont-style:normal;\n\tfont-weight:normal;\n\ttext-align:left;\n\tbackground-color:transparent;\n }\n";
     textTop += " input {\n\t-moz-box-sizing: content-box;\n\t-webkit-print-color-adjust: exact;\n\t-webkit-box-sizing: content-box;\n\tbox-sizing: content-box;\n }\n";
     if (xPresent){
         textTop += " .Xbox {\n\twidth:14px;\n\theight:14px;\n\tfont-weight:bold;\n\ttext-align:center;\n\tbackground-color:white;\n }\n";
@@ -1760,7 +1763,7 @@ show('classic');
 	onmouseup="SetMouseUp(); DrawMarker();loadInputList();"
 	onload="finishLoadingImage()">
 
-<h1><bean:message key="eFormGenerator.title"/> 7.3</h1>
+<h1><bean:message key="eFormGenerator.title"/> 7.4</h1>
 
 <!-- this form  used for injecting html in to Edit E-Form  efmformmanageredit.jsp -->
 <form method="post" action="efmformmanageredit.jsp" id="toSave">
