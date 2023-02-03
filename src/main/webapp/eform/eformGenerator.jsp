@@ -758,9 +758,7 @@ function GetTextTop(){
     textTop += "&lt;/style&gt;\n\n";
 
 
-		if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ||
-		(document.getElementById('XboxType').checked) ||
-		(xPresent) ) {
+		if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ) {
 		textTop += "&lt;!-- jQuery for greater functionality --&gt;\n"
 		// dependency on jquery up to version 2.2.1 for pdf and faxing
 		// ensure that we check the integrety of the CDN's version
@@ -1570,7 +1568,7 @@ function GetTextBottom(){
 
 	textBottom += "\t&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n"
 	textBottom += "\n&lt;!-- Copy Left --&gt;\n"
-	textBottom += "&lt;a rel=&quot;liscence&quot; href=&quot;http://creativecommons.org/licenses/by-sa/3.0/deed.en_US&quot; target=&quot;blank&quot;&gt;&lt;img alt=&quot;Creative Commons License&quot; src=&quot;http://i.creativecommons.org/l/by-sa/3.0/80x15.png&quot;/&gt;&lt;/a&gt;&lt;br&gt;\n"
+	textBottom += "&lt;a rel=&quot;liscence&quot; href=&quot;https://www.gnu.org/licenses/gpl.html&quot; target=&quot;blank&quot;&gt;&lt;img alt=&quot;GPLv3&quot; src=&quot;https://www.gnu.org/graphics/gplv3-88x31.png&quot;/&gt;&lt;/a&gt;&lt;br&gt;\n"
 	textBottom += "&lt;/div&gt;\n"
 	//close pagation
 	textBottom += "&lt;/div&gt;\n"
