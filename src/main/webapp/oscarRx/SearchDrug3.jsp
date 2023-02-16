@@ -200,7 +200,118 @@
         <script>
             jQuery.noConflict();
         </script>
+        <script>
+        async function getRxcui(names) {
+            // we have to get RxCUI
+            let responses = "";
+            for (let name of names){
+                const response = await fetch('https://rxnav.nlm.nih.gov/REST/rxcui.json?name='+name);
+                const json = await response.json();
+                console.log(name+json.idGroup.rxnormId);
+                if (json.hasOwnProperty('idGroup')){
+                    if (json.idGroup.hasOwnProperty('rxnormId')){
+                        responses += json.idGroup.rxnormId ;
+                        responses += "+";
+                    }
+                }
+            }
+            console.log("Rxcui found:"+responses);
+            return responses;
+        }
 
+        function assembleRxDrugs() {
+            //iterate through the generic names and assemble the array
+            var druglist = []
+            var atag = document.getElementsByTagName('a');
+            for (var i = 0; i < atag.length; i++) {
+                if (atag[i].outerHTML.indexOf("window.open") > -1) {
+                    y = atag[i].innerText
+                    y = y.split("/")
+                    for (j = 0; j < y.length; j++) {
+                        y[j] = y[j].trim()
+                        //take the first word or the first word in each word/word combo
+                        newwordA = y[j].match(/(?:^|(?:\.\s))(\w+)/);
+                        if (newwordA){
+                            console.log(newwordA[0])
+                            druglist.push(newwordA[0])
+                            //alert(druglist)
+                        }
+                    }
+                }
+            }
+            console.log("Searching the following drugs for interactions:"+druglist)
+            return druglist;
+        }
+
+        function assembleCurrentDrugs() {
+            //iterate through the current names and assemble the array
+            var druglist = []
+            var ctag = document.getElementsByClassName('currentDrug');
+            for (var i = 0; i < ctag.length; i++) {
+                    if (ctag[i].id.slice(0,9)=='prescrip_'){
+                        y = ctag[i].getAttribute("title");
+                        if (y && y != "null"){
+                            y = y.split("/")
+                            for (j = 0; j < y.length; j++) {
+                                y[j] = y[j].trim()
+                                //take the first word or the first word in each word/word combo
+                                newword = y[j].match(/(?:^|(?:\.\s))(\w+)/);
+                                if (newword){
+                                    console.log(newword[0])
+                                    druglist.push(newword[0])
+                                    //alert(druglist)
+                                }
+                            }
+                        }
+                    }
+            }
+            console.log("Searching the following current drugs for interactions:"+druglist)
+            return druglist;
+        }
+
+        async function getInteractions(drugs) {
+            let drugsStr = drugs.toString().replace(/,/gi,', ');
+            let alertlist= "<strong>"+ drugsStr +" interactions are:</strong><br>";
+            getRxcui(drugs).then(
+                async function(rxcuis) {
+                const response = await fetch('https://rxnav.nlm.nih.gov/REST/interaction/list?rxcuis='+rxcuis);
+                const str = await response.text();
+                parser = new DOMParser();
+                xmlDoc = parser.parseFromString(str, 'text/xml');
+                y = xmlDoc.getElementsByTagName("description").length
+                for (x = 0; x < y; x++) {
+                    z = (xmlDoc.getElementsByTagName("description")[x].childNodes[0].nodeValue);
+                    alertlist = alertlist + "<p>" + z
+                }
+                if (y <1 ) { alertlist="No interactions found with " + drugsStr; }
+
+                //append
+                document.getElementById('interactionsRxMyD').innerHTML += '<div style="background-color:silver;margin-right:100px;margin-left:20px;margin-top:10px;padding-left:10px;padding-top:10px;padding-bottom:5px;border-bottom: 2px solid gray;border-right: 2px solid #999;border-top: 1px solid #CCC;border-left: 1px solid #CCC;width:300px;">' +
+alertlist +'<p>source: NLM and drugbank CC BY-NC 4.0</div>'
+
+                }
+            )
+        }
+
+        function checkRxInteract() {
+            let drugs = assembleRxDrugs();
+            getInteractions(drugs);
+
+        }
+
+        function checkCurrentDrugs() {
+            let drugs = assembleCurrentDrugs();
+            getInteractions(drugs);
+
+        }
+        function checkAllDrugs() {
+            let currentdrugs = assembleCurrentDrugs();
+            let alldrugs = currentdrugs.concat(assembleRxDrugs());
+            console.log("All drugs:"+alldrugs);
+            getInteractions(alldrugs);
+
+        }
+        </script>
         <link rel="stylesheet" href="<c:out value="${ctx}/share/lightwindow/css/lightwindow.css"/>" type="text/css"
               media="screen"/>
         <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
@@ -982,6 +1093,9 @@ THEME 2*/
                                                 <a href="javascript: void(0);"
                                                    onclick="callReplacementWebService('GetmyDrugrefInfo.do?method=view','interactionsRxMyD');">DS
                                                     run</a>
+                                                &nbsp;&nbsp;
+                                                <a href="javascript: void(0);"
+                                                   onclick="checkAllDrugs();">Interactions</a>                                                   
                                                 <oscar:oscarPropertiesCheck property="oneid.oauth2.enabled"
                                                                             value="true">
                                                     <% if (loggedInInfo.hasOneIdKey() && patient.getHin() != null && !patient.getHin().trim().isEmpty() && "ON".equalsIgnoreCase(patient.getHcType())) { %>
