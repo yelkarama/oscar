@@ -72,6 +72,7 @@
 	TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
 	String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver","07");
+	String help_url = oscar.OscarProperties.getInstance().getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/");
 	if(labReqVer.equals("")) {labReqVer="07";}
 
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -571,7 +572,7 @@ var beginD = "1900-01-01"
     </td>
 	<td align="right" >
             <i class="icon-question-sign"></i> 
-            <a href="https://worldoscar.org/knowledge-base/tickler/" target="_blank"><bean:message key="app.top1"/></a>
+            <a href="<%=help_url%>tickler/" target="_blank"><bean:message key="app.top1"/></a>
             <i class=" icon-info-sign" style="margin-left:10px;"></i> 
             <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>
     </td>

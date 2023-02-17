@@ -93,7 +93,7 @@ List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
 <%
 UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 Properties oscarVariables = OscarProperties.getInstance();
-
+String help_url = (oscarVariables.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
 
 //if delete request is made
 if (request.getParameter("delDocumentNo") != null) {
@@ -339,7 +339,7 @@ function popup1(height, width, url, windowName){
 
 <div class="row-fluid hidden-print" style="text-align:right">
 <i class=" icon-question-sign"></i> 
-<a href="https://worldoscar.org/knowledge-base/patient-document-management/" target="_blank"><bean:message key="app.top1"/></a>
+<a href="<%=help_url%>patient-document-management/" target="_blank"><bean:message key="app.top1"/></a>
 
 <i class=" icon-info-sign" style="margin-left:10px;"></i> <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>
 </div><!-- hidden print -->

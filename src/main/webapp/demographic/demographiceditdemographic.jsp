@@ -97,6 +97,8 @@
     WaitingListNameDao waitingListNameDao = SpringUtils.getBean(WaitingListNameDao.class);
 	
 	OscarProperties oscarProps = OscarProperties.getInstance();
+    String help_url = (oscarProps.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
+	String hin_check_url = (oscarProps.getProperty("HIN_CHECK_URL","https://apps.ontariomd.ca/HCValidationWeb/form.do?")).trim();    
     String privateConsentEnabledProperty = oscarProps.getProperty("privateConsentEnabled");
     boolean privateConsentEnabled = (privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true"));
 %>
@@ -1254,7 +1256,7 @@ patientName.append(" (").append(demographic.getAlias()).append(")");
 		</td>
 		<td width="10%" align="right" style="text-align:right;font-size:14px;">
 <i class=" icon-question-sign"></i> 
-<a href="https://worldoscar.org/knowledge-base/master-demographic-page/" target="_blank"><bean:message key="app.top1"/></a>
+<a href="<%=help_url%>master-demographic-page/" target="_blank"><bean:message key="app.top1"/></a>
 <i class=" icon-info-sign" style="margin-left:10px;"></i> 
 <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>
 		</td>
@@ -2306,7 +2308,7 @@ if( demographic!=null) {
 								      key="demographic.demographiceditdemographic.formHin" />:</span></td>
 							<td width="100%"><span class="info" id="hinver" onclick="copyHIN2Clipboard(this.id)" ondblclick="copyHINver2Clipboard(this.id)"><%=StringUtils.trimToEmpty(demographic.getHin())%>&nbsp;<%=StringUtils.trimToEmpty(demographic.getVer())%></span>
                                 <% if (!StringUtils.trimToEmpty(demographic.getVer()).equals("")) { %>
-                                <a class="btn btn-link" href="https://apps.ontariomd.ca/HCValidationWeb/form.do?healthNumber=<%=demographic.getHin()%>&versionCode=<%=demographic.getVer()%>&billingNumber=" target=”_blank”><bean:message key="oscarReport.manageProvider.msgCheck"/></a>
+                                <a class="btn btn-link" href="<%=hin_check_url%>healthNumber=<%=demographic.getHin()%>&versionCode=<%=demographic.getVer()%>" target=”_blank”><bean:message key="oscarReport.manageProvider.msgCheck"/></a>
 							    <%}%> 
                             </td>
 							</tr>

@@ -51,8 +51,8 @@ String roleName$ = (String)session.getAttribute("userrole") + "," + (String) ses
 String curUser_no = (String) session.getAttribute("user");
 String userfirstname = (String) session.getAttribute("userfirstname");
 String userlastname = (String) session.getAttribute("userlastname");
-String prov= (oscarVariables.getProperty("billregion","")).trim().toUpperCase();
-
+String prov = (oscarVariables.getProperty("billregion","")).trim().toUpperCase();
+String help_url = (oscarVariables.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
    		
 GregorianCalendar cal = new GregorianCalendar();
 int curYear = cal.get(Calendar.YEAR);
@@ -261,7 +261,7 @@ i[class*='icon-']:hover {color:#0088cc;}
 <div class="row-fluid hidden-print" style="text-align:right">
 <i class=" icon-question-sign"></i> 
 
-		<a href="https://worldoscar.org/knowledge-base/category/administration/" target="_blank">Help</a> 
+		<a href="<%=help_url%>administration/" target="_blank"><bean:message key="global.help" /></a> 
 
 <i class=" icon-info-sign" style="margin-left:10px;"></i> <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a></div>
 

@@ -179,6 +179,8 @@
         issueIds[idx] = String.valueOf(issue.getId());
     }
     List<CaseManagementNote> notes = cmgmtMgr.getNotes(bean.getDemographicNo() + "", issueIds);
+    String url_get_rxcui = OscarProperties.getInstance().getProperty("URL_GET_RXCUI") != null ? OscarProperties.getInstance().getProperty("URL_GET_RXCUI") : "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=";
+    String url_get_interaction = OscarProperties.getInstance().getProperty("URL_GET_INTERACTION") != null ? OscarProperties.getInstance().getProperty("URL_GET_INTERACTION") : "https://rxnav.nlm.nih.gov/REST/interaction/list?rxcuis=";
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
@@ -205,7 +207,7 @@
             // we have to get RxCUI
             let responses = "";
             for (let name of names){
-                const response = await fetch('https://rxnav.nlm.nih.gov/REST/rxcui.json?name='+name);
+                const response = await fetch('<%=url_get_rxcui%>'+name);
                 const json = await response.json();
                 console.log(name+json.idGroup.rxnormId);
                 if (json.hasOwnProperty('idGroup')){
@@ -234,7 +236,6 @@
                         if (newwordA){
                             console.log(newwordA[0])
                             druglist.push(newwordA[0])
-                            //alert(druglist)
                         }
                     }
                 }
@@ -259,7 +260,6 @@
                                 if (newword){
                                     console.log(newword[0])
                                     druglist.push(newword[0])
-                                    //alert(druglist)
                                 }
                             }
                         }
@@ -274,7 +274,7 @@
             let alertlist= "<strong>"+ drugsStr +" interactions are:</strong><br>";
             getRxcui(drugs).then(
                 async function(rxcuis) {
-                const response = await fetch('https://rxnav.nlm.nih.gov/REST/interaction/list?rxcuis='+rxcuis);
+                const response = await fetch('<%=url_get_interaction%>'+rxcuis);
                 const str = await response.text();
                 parser = new DOMParser();
                 xmlDoc = parser.parseFromString(str, 'text/xml');

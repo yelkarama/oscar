@@ -82,7 +82,7 @@ A:hover {color: black;}
 				<p><u>About OSCAR</u></p>
 				
 				<p style="text-align:justify;">OSCAR through its product suite and partnerships offers a unique model for connecting care and creating community. The OSCAR EMR has been collaboratively developed based on the collective work, ideas and support of numerous health care providers and developers across the nation. Together these individuals form the OSCAR community known as the OSCAR Canada Users Society (OCUS). The enthusiasm of the OSCAR Community to improve patient care has brought together dedicated individuals from across the country who work towards continuously developing the not only the software tools to enable this, but also a strong community to support it.</p>
-				<p>For more information on OSCAR, click <a href="https://worldoscar.org/about/" target="_blank">here</a>.</p>
+				<p>For more information on OSCAR, click <a href="https://oscargalaxy.org/about/" target="_blank">here</a>.</p>
 				
 				<br />
 				

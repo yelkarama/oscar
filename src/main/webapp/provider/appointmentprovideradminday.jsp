@@ -269,7 +269,7 @@ private HashMap<String,String> CurrentSiteMap = new HashMap<String,String>();%>
 <jsp:useBean id="dateTimeCodeBean" class="java.util.Hashtable" scope="page" />
 <%
 	Properties oscarVariables = OscarProperties.getInstance();   
-
+	String help_url = (oscarVariables.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
     String econsultUrl = oscarVariables.getProperty("backendEconsultUrl");
 	
 	//Gets the request URL
@@ -1557,7 +1557,7 @@ java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.stru
 
         
 	<%}else{%>
-		<a href="javascript:void(0)" onClick ="pop3(750,750,'https://worldoscar.org/knowledge-base/booking-appointment-screen/')"><i class="icon-question-sign" title="<bean:message key="app.top1"/>"></i></a>
+		<a href="javascript:void(0)" onClick ="pop3(750,750,'<%=help_url%>booking-appointment-screen/')"><i class="icon-question-sign" title="<bean:message key="app.top1"/>"></i></a>
 
 
 

@@ -66,6 +66,7 @@
     userColour = colourUpdater.getColour();
     
 	String privateConsentEnabledProperty = OscarProperties.getInstance().getProperty("privateConsentEnabled");
+    String help_url = (OscarProperties.getInstance().getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
 	boolean privateConsentEnabled = privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true");
 	DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     DemographicExt infoExt = demographicExtDao.getDemographicExt(Integer.parseInt(demoNo), "informedConsent");
@@ -274,7 +275,7 @@
 </td>
 <td align=right>
 	<span class="HelpAboutLogout">
-	<a style="font-size:10px;font-style:normal;" href="https://worldoscar.org/knowledge-base/echart/" target="_blank"><bean:message key="global.help" /></a>&nbsp;|
+	<a style="font-size:10px;font-style:normal;" href="<%=help_url%>echart/" target="_blank"><bean:message key="global.help" /></a>&nbsp;|
 	<a style="font-size:10px;font-style:normal;" href="javascript:void(0)" onclick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,top=0')"><bean:message key="global.about" /></a>
 	</span>
 </td>
