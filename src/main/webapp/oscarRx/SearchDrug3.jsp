@@ -197,8 +197,14 @@
         <script type="text/javascript">
             var ctx = '${ ctx }';
         </script>
-        <script type="text/javascript" src="${ ctx }/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="${ ctx }/js/jquery-ui-1.8.18.custom.min.js"></script>
+
+        <script type="text/javascript" src="${ ctx }/js/jquery-1.12.3.js"></script>
+        <script type="text/javascript" src="${ ctx }/library/jquery/jquery-migrate-1.4.1.js"></script>
+        <script type="text/javascript" src="${ ctx }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+        <!--<script type="text/javascript" src="${ ctx }/js/jquery-1.7.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="${ ctx }/js/jquery-ui-1.8.18.custom.min.js"></script>-->
+
         <script>
             jQuery.noConflict();
         </script>
@@ -270,6 +276,10 @@
         }
 
         async function getInteractions(drugs) {
+            if (drugs.length < 1) {
+                alert("You must have existing current drugs or some Rx set to perscribe prior to checking");
+                return;
+            }
             let drugsStr = drugs.toString().replace(/,/gi,', ');
             let alertlist= "<strong>"+ drugsStr +" interactions are:</strong><br>";
             getRxcui(drugs).then(
@@ -283,11 +293,11 @@
                     z = (xmlDoc.getElementsByTagName("description")[x].childNodes[0].nodeValue);
                     alertlist = alertlist + "<p>" + z
                 }
-                if (y <1 ) { alertlist="No interactions found with " + drugsStr; }
+                if (y <1 ) { alertlist="No interactions found with " + drugsStr +"<p>Use this service with discretion!  This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product"; }
 
                 //append
                 document.getElementById('interactionsRxMyD').innerHTML += '<div style="background-color:silver;margin-right:100px;margin-left:20px;margin-top:10px;padding-left:10px;padding-top:10px;padding-bottom:5px;border-bottom: 2px solid gray;border-right: 2px solid #999;border-top: 1px solid #CCC;border-left: 1px solid #CCC;width:300px;">' +
-alertlist +'<p>source: NLM and drugbank CC BY-NC 4.0</div>'
+alertlist +'<p>source: <a href="https://lhncbc.nlm.nih.gov/RxNav/" target="blank_">RxNav</a> and <a href="https://go.drugbank.com/drug-interaction-checker" target="blank_">Drugbank</a> <span style="font-size:9px;">CC BY-NC 4.0</span></div>'
 
                 }
             )
@@ -1095,7 +1105,7 @@ THEME 2*/
                                                     run</a>
                                                 &nbsp;&nbsp;
                                                 <a href="javascript: void(0);"
-                                                   onclick="checkAllDrugs();">Interactions</a>                                                   
+                                                   onclick="checkAllDrugs();" title="Drug-Drug Interactions for Rx and all Current Drugs">All Interactions</a>
                                                 <oscar:oscarPropertiesCheck property="oneid.oauth2.enabled"
                                                                             value="true">
                                                     <% if (loggedInInfo.hasOneIdKey() && patient.getHin() != null && !patient.getHin().trim().isEmpty() && "ON".equalsIgnoreCase(patient.getHcType())) { %>
