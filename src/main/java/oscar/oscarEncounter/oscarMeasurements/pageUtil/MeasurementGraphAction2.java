@@ -42,6 +42,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -173,7 +175,6 @@ public class MeasurementGraphAction2 extends Action {
         TaskSeriesCollection datasetDrug = new TaskSeriesCollection();
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
 
-
         for(String din:dins){
              oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
              if(arr != null && arr.length>0) {
@@ -181,9 +182,9 @@ public class MeasurementGraphAction2 extends Action {
 	             for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
 	                 ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
 	             }
-	             datasetDrug.add(ts);
+             datasetDrug.add(ts);
              }
-        }
+         }
 
         XYTaskDataset dataset = new XYTaskDataset(datasetDrug);
             dataset.setTransposed(true);
@@ -197,9 +198,11 @@ public class MeasurementGraphAction2 extends Action {
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
         for(String din:dins){
              oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic,din);
-             if(arr!= null && arr.length>0) {
-            	 list.add( arr[0].getBrandName() );
+             String brandName = arr[0].getBrandName();
+             if (brandName!=null && brandName.length() > 50) {
+                 brandName = brandName.substring(0, 50) + "...";
              }
+             list.add(brandName);
 
         }
         ret = list.toArray( new String[list.size()] );
@@ -239,7 +242,7 @@ public class MeasurementGraphAction2 extends Action {
             String typeLegendName = sampleLine.getTypeDisplayName();
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
 
                 try{
                     Hashtable h = getMeasurementsExt( mdb.getId());
@@ -339,7 +342,7 @@ public class MeasurementGraphAction2 extends Action {
             typeYAxisName = sampleLine.getTypeDescription(); // this should be the type of measurement
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
             }
             dataset.addSeries(newSeries);
         }
@@ -462,7 +465,7 @@ public class MeasurementGraphAction2 extends Action {
             typeYAxisName = sampleLine.getTypeDescription(); // this should be the type of measurement
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
             }
             dataset.addSeries(newSeries);
         }
@@ -536,19 +539,24 @@ public class MeasurementGraphAction2 extends Action {
                     newSeries.setKey(typeLegendName);
                     nameSet = true;
                 }
-                newSeries.addOrUpdate(new Day((Date) mdb.get("collDateDate")), Double.parseDouble(""+mdb.get("result")));
+                String result = (String)mdb.get("result");
+                if (StringUtils.isNotEmpty(result)) {
+                    result = result.replaceAll("[^\\d.-]","");
+                    if (NumberUtils.isParsable(result)) {
+                        newSeries.addOrUpdate(new Day((Date) mdb.get("collDateDate")),
+                            Double.parseDouble(result));
+                    }
+                }
                 log.debug("RANGE "+mdb.get("range"));
 
                 if (mdb.get("range") != null){
                     String range = (String) mdb.get("range");
                     if (range.indexOf("-") != -1){
                         String[] sp = range.split("-");
-                        String sp0 = sp[0].replaceAll("%","").trim();
-                        String sp1 = sp[1].replaceAll("%","").trim();
-                        double open = Double.parseDouble(sp0);
-                        double high = Double.parseDouble(sp1);
-                        double low = Double.parseDouble(sp0);
-                        double close = Double.parseDouble(sp1);
+                        double open = Double.parseDouble(sp[0]);
+                        double high = Double.parseDouble(sp[1]);
+                        double low = Double.parseDouble(sp[0]);
+                        double close = Double.parseDouble(sp[1]);
                         double volume = 1045;
                         dataItems.add(new OHLCDataItem(new Day((Date) mdb.get("collDateDate")).getStart(), open, high, low, close, volume));
                     }
@@ -651,12 +659,10 @@ public class MeasurementGraphAction2 extends Action {
                     String range = (String) mdb.get("range");
                     if (range.indexOf("-") != -1){
                         String[] sp = range.split("-");
-                        String sp0 = sp[0].replaceAll("%","").trim();
-                        String sp1 = sp[1].replaceAll("%","").trim();
-                        double open = Double.parseDouble(sp0);
-                        double high = Double.parseDouble(sp1);
-                        double low = Double.parseDouble(sp0);
-                        double close = Double.parseDouble(sp1);
+                        double open = Double.parseDouble(sp[0]);
+                        double high = Double.parseDouble(sp[1]);
+                        double low = Double.parseDouble(sp[0]);
+                        double close = Double.parseDouble(sp[1]);
                         double volume = 1045;
                         dataItems.add(new OHLCDataItem(new Day((Date) mdb.get("collDateDate")).getStart(), open, high, low, close, volume));
                     }
@@ -769,7 +775,7 @@ public class MeasurementGraphAction2 extends Action {
             typeYAxisName = sampleLine.getTypeDescription(); // this should be the type of measurement
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
                 try{
                     Hashtable h = getMeasurementsExt( mdb.getId());
                     if (h != null && h.containsKey("minimum")){
@@ -881,7 +887,7 @@ public class MeasurementGraphAction2 extends Action {
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
             	
             	if(!mdb.getDataField().equals("")){
-            		newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+            		newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
             	}else{
             		log.debug("Error passing measurement value to chart. DataField is empty for ID:" + mdb.getId());
             	}
@@ -906,7 +912,7 @@ public class MeasurementGraphAction2 extends Action {
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list2) { //dataVector) {
             	if(!mdb.getDataField().equals("")){
-            		newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField()));
+            		newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
 	            }else{
 	        		log.debug("Error passing measurement value to chart. DataField is empty for ID:" + mdb.getId());
 	            }
