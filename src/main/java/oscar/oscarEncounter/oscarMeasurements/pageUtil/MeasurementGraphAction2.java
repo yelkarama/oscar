@@ -349,7 +349,14 @@ public class MeasurementGraphAction2 extends Action {
             typeYAxisName = sampleLine.getTypeDescription(); // this should be the type of measurement
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
+                String result = (String)mdb.getDataField();
+                if (StringUtils.isNotEmpty(result)) {
+                    result = result.replaceAll(NUMERIC_REGEX,"");
+                    if (NumberUtils.isParsable(result)) {
+                       newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()),
+                            Double.parseDouble(result));
+                    }
+                }
             }
             dataset.addSeries(newSeries);
         }
@@ -472,7 +479,14 @@ public class MeasurementGraphAction2 extends Action {
             typeYAxisName = sampleLine.getTypeDescription(); // this should be the type of measurement
             TimeSeries newSeries = new TimeSeries(typeLegendName, Day.class);
             for (EctMeasurementsDataBean mdb : list) { //dataVector) {
-                newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()), Double.parseDouble(mdb.getDataField().replaceAll("[^\\d.-]","")));
+                String result = (String)mdb.getDataField();
+                if (StringUtils.isNotEmpty(result)) {
+                    result = result.replaceAll(NUMERIC_REGEX,"");
+                    if (NumberUtils.isParsable(result)) {
+                       newSeries.addOrUpdate(new Day(mdb.getDateObservedAsDate()),
+                            Double.parseDouble(result));
+                    }
+                }
             }
             dataset.addSeries(newSeries);
         }
