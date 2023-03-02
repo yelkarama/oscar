@@ -5,7 +5,6 @@ DROP PROCEDURE IF EXISTS `CreateIndex` $$
 CREATE PROCEDURE `CreateIndex`
 (
     given_table    VARCHAR(64),
-    given_unique   VARCHAR(64),
     given_index    VARCHAR(64),
     given_columns  VARCHAR(64)
 
@@ -33,7 +32,7 @@ theStart:BEGIN
 	    AND   index_name   = given_index;
 
 	    IF IndexIsThere = 0 THEN
-		SET @sqlstmt = CONCAT('CREATE ',given_unique,' INDEX ',given_index,' ON ',
+		SET @sqlstmt = CONCAT('CREATE INDEX ',given_index,' ON ',
 		DATABASE(),'.',given_table,' (',given_columns,')');
 		PREPARE st FROM @sqlstmt;
 		EXECUTE st;
@@ -91,7 +90,7 @@ END $$
 DELIMITER ;
 
 
-CALL CreateIndex('eform_data','','idx_eform_data_fid_status_demo','`fid`, `status`, `demographic_no`');
+CALL CreateIndex('eform_data','idx_eform_data_fid_status_demo','`fid`, `status`, `demographic_no`');
 CALL DeleteIndex('eform_data','idx_eform_data_fid');
 CALL DeleteIndex('eform_data','id');
 CALL DeleteIndex('eform_data','idx_eform_data_fid');
@@ -99,7 +98,7 @@ CALL DeleteIndex('eform_data','idx_eform_data_status');
 CALL DeleteIndex('eform_data','patient_independentIndex');
 
 
-CALL CreateIndex('eform_values','','idx_eform_values_demo_varname_varvalue','`demographic_no`, `var_name`, `var_value`(30)');
-CALL CreateIndex('eform_values','','idx_eform_values_fdid_varname','`fdid`, `var_name`');
+CALL CreateIndex('eform_values','idx_eform_values_demo_varname_varvalue','`demographic_no`, `var_name`, `var_value`(30)');
+CALL CreateIndex('eform_values','idx_eform_values_fdid_varname','`fdid`, `var_name`');
 CALL DeleteIndex('eform_values','fdidIndex');
 CALL DeleteIndex('eform_values','eform_values_varname_varvalue');
