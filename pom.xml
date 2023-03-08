@@ -278,9 +278,9 @@
       </dependency>
       <!-- pdf / jpedal -->
       <dependency>
-         <groupId>org</groupId>
-         <artifactId>jpedal</artifactId>
-         <version>lgpl</version>
+         <groupId>com.github.Lonzak</groupId>
+         <artifactId>JPedal</artifactId>
+         <version>4.92-p13</version>
       </dependency>
       <!--  pdfbox -->
       <dependency>
