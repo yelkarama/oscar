@@ -26,6 +26,7 @@
 package oscar.oscarEncounter.oscarMeasurements.pageUtil;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Paint;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -117,8 +118,8 @@ public class MeasurementGraphAction2 extends Action {
 
         String patientName = oscar.oscarDemographic.data.DemographicNameAgeString.getInstance().getNameAgeString(LoggedInInfo.getLoggedInInfoFromSession(request), demographicNo);
         String chartTitle = "Data Graph for " + patientName;
-        int width = 800;
-        int height = 400;
+        int width = 1000;
+        int height = 600;
 
         String method = request.getParameter("method");
 
@@ -301,6 +302,7 @@ public class MeasurementGraphAction2 extends Action {
         renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
         renderer.setBaseItemLabelsVisible(true);
+
         plot.setBackgroundPaint(Color.WHITE);
         plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -386,6 +388,7 @@ public class MeasurementGraphAction2 extends Action {
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
             renderer.setBaseItemLabelsVisible(true);
+
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -426,6 +429,10 @@ public class MeasurementGraphAction2 extends Action {
             XYBarRenderer xyrenderer = new XYBarRenderer();
             xyrenderer.setUseYInterval(true);
             xyrenderer.setBarPainter(new StandardXYBarPainter());
+
+
+            Font font = new Font("helvetica", Font.PLAIN, 8);
+            renderer.setBaseItemLabelFont(font);
 
             xyrenderer.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator("HAPPY{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00")));
             XYPlot xyplot = new XYPlot(dataset2, xAxis, yAxis, xyrenderer);
@@ -509,10 +516,15 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
+            
+            Font font = new Font("helvetica", Font.PLAIN, 8);
+            renderer.setBaseItemLabelFont(font);
+            
             XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
             renderer.setBaseItemLabelsVisible(true);
+
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -604,10 +616,19 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
-            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
-            renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
-            renderer.setBaseItemLabelsVisible(true);
+            Font font = new Font("helvetica", Font.PLAIN, 8);
+            renderer.setBaseItemLabelFont(font);
+        
+            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
+            
+                        
+            renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
+            if ( newSeries.getItemCount() > 9 ) {
+                renderer.setBaseItemLabelsVisible(false);
+            } else {
+                renderer.setBaseItemLabelsVisible(true);
+            }
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -721,7 +742,11 @@ public class MeasurementGraphAction2 extends Action {
             XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
-            renderer.setBaseItemLabelsVisible(true);
+            if ( newSeries.getItemCount() > 9 ) {
+                renderer.setBaseItemLabelsVisible(false);
+            } else {
+                renderer.setBaseItemLabelsVisible(true);
+            }
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
