@@ -178,15 +178,17 @@ public class MeasurementGraphAction2 extends Action {
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
 
         for(String din:dins){
-             oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
-             if(arr != null && arr.length>0) {
-	             TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
-	             for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
-	                 ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
-	             }
-             datasetDrug.add(ts);
-             }
-         }
+            if (din != null ) {
+                oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
+                if(arr != null && arr.length>0) {
+                    TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
+                    for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
+                        ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
+                    }
+                    datasetDrug.add(ts);
+                }
+            }
+        }
 
         XYTaskDataset dataset = new XYTaskDataset(datasetDrug);
             dataset.setTransposed(true);
@@ -199,13 +201,14 @@ public class MeasurementGraphAction2 extends Action {
         ArrayList<String> list = new ArrayList<String>();
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
         for(String din:dins){
+            if (din != null ) {
              oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic,din);
              String brandName = arr[0].getBrandName();
-             if (brandName!=null && brandName.length() > 50) {
-                 brandName = brandName.substring(0, 50) + "...";
+             if (brandName!=null && brandName.length() > 30) {
+                 brandName = brandName.substring(0, 30) + "...";
              }
              list.add(brandName);
-
+            }
         }
         ret = list.toArray( new String[list.size()] );
         return ret;
@@ -616,21 +619,30 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
-
-            Font font = new Font("helvetica", Font.PLAIN, 8);
-            renderer.setBaseItemLabelFont(font);
-        
-            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
+			XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
             
+			switch ((int) newSeries.getItemCount()/10) {
+				case 0:
+					//("0-9");
+					generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				case 1:
+					//("10-19");
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				case 2:
+					//("20-29");
+					Font font = new Font("helvetica", Font.PLAIN, 8);
+					renderer.setBaseItemLabelFont(font);
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				default:
+					renderer.setBaseItemLabelsVisible(false);
+					break;
+			}                
                         
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
-            if ( newSeries.getItemCount() > 9 ) {
-                renderer.setBaseItemLabelsVisible(false);
-            } else {
-                renderer.setBaseItemLabelsVisible(true);
-            }
-            plot.setBackgroundPaint(Color.WHITE);
-            plot.setDomainCrosshairPaint(Color.GRAY);
 
             if (renderer instanceof XYLineAndShapeRenderer) {
                 XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) renderer;
@@ -649,6 +661,10 @@ public class MeasurementGraphAction2 extends Action {
                 plot.setRenderer(1,new HighLowRenderer());
 
             }
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setDomainCrosshairPaint(Color.GRAY);
+            plot.setRangeGridlinePaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.lightGray); // grid from x axis
 
             return chart;
         }
@@ -739,17 +755,29 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
-            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
+			XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{2}",  new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+
+			switch ((int) newSeries.getItemCount()/6) {
+				case 0:
+					//("0-5");
+					generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				case 1:
+					//("6-11");
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				case 2:
+					//("12-17");
+					Font font = new Font("helvetica", Font.PLAIN, 8);
+					renderer.setBaseItemLabelFont(font);
+					renderer.setBaseItemLabelsVisible(true);
+					break;
+				default:
+					renderer.setBaseItemLabelsVisible(false);
+					break;
+			}
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
-
-            if ( newSeries.getItemCount() > 9 ) {
-                renderer.setBaseItemLabelsVisible(false);
-            } else {
-                renderer.setBaseItemLabelsVisible(true);
-            }
-            plot.setBackgroundPaint(Color.WHITE);
-            plot.setDomainCrosshairPaint(Color.GRAY);
-
             if (renderer instanceof XYLineAndShapeRenderer) {
                 XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) renderer;
                 rend.setBaseShapesVisible(true);
@@ -767,7 +795,12 @@ public class MeasurementGraphAction2 extends Action {
                 plot.setRenderer(1,new HighLowRenderer());
 
             }
-
+            
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setDomainCrosshairPaint(Color.GRAY);
+            plot.setRangeGridlinePaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.lightGray); // grid fro x axis
+            
             XYTaskDataset drugDataset = getDrugDataSet( demographicNo,drugs);
 
             //DateAxis xAxis = new DateAxis("Date/Time");
