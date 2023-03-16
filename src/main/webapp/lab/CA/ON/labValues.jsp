@@ -39,13 +39,19 @@ if(!authed) {
 }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="java.io.Serializable"%>
-<%@page import="org.w3c.dom.Document"%>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedDemographicLabResult"%>
-<%@page import="oscar.oscarLab.ca.all.web.LabDisplayHelper"%>
-<%@ page
-	import="java.util.*,oscar.oscarLab.ca.on.*,oscar.oscarDemographic.data.*"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
+
+<%@ page import="org.w3c.dom.Document"%>
+<%@ page import="org.oscarehr.caisi_integrator.ws.CachedDemographicLabResult"%>
+
+<%@ page import="java.util.*"%>
+<%@ page import="java.io.Serializable"%>
+
+<%@ page import="oscar.oscarLab.ca.on.*"%>
+<%@ page import="oscar.oscarDemographic.data.*"%>
+<%@ page import="oscar.oscarLab.ca.all.web.LabDisplayHelper"%>
+<%@ page import="org.owasp.encoder.Encode"%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -86,13 +92,45 @@ if (!(demographicNo == null || demographicNo.equals("null"))){
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<html:base />
-<title><%=""%>, <%=""%> <bean:message
-	key="oscarMDS.segmentDisplay.title" /></title>
-<link rel="stylesheet" type="text/css"
-	href="../../../share/css/OscarStandardLayout.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <html:base />
+    <title><bean:message
+	    key="oscarMDS.segmentDisplay.title" /></title>
+
+
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+
+    <script type="text/javascript">
+	    jQuery(document).ready( function () {
+	        jQuery('#tblDiscs').DataTable({
+            "order": [],
+	        "bPaginate": false,
+            "searching": false
+            });
+	    });
+    </script>
+
+    <style type="text/css">
+        .AbnormalRes {
+            color: red;
+        }
+        .LoRes {
+            color: blue;
+        }
+    </style>
+
+    <style type="text/css" media="print">
+         .DoNotPrint {
+	        display:none;
+         }
+
+     </style>
 </head>
 
 <script language="JavaScript">
@@ -150,25 +188,25 @@ window.close();
 									<tr>
 										<td colspan="2" nowrap>
 										<div class="FieldData"><strong><bean:message
-											key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=demographic.getLastName()%>,
-										<%=demographic.getFirstName()%></div>
+											key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=Encode.forHtml(demographic.getLastName())%>,
+										<%=Encode.forHtml(demographic.getFirstName())%></div>
 
 										</td>
 										<td colspan="2" nowrap>
 										<div class="FieldData" nowrap="nowrap"><strong><bean:message
-											key="oscarMDS.segmentDisplay.formSex" />: </strong><%=demographic.getSex()%>
+											key="oscarMDS.segmentDisplay.formSex" />: </strong><%=Encode.forHtml(demographic.getSex())%>
 										</div>
 										</td>
 									</tr>
 									<tr>
 										<td colspan="2" nowrap>
 										<div class="FieldData"><strong><bean:message
-											key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=DemographicData.getDob(demographic,"-")%>
+											key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=Encode.forHtml(DemographicData.getDob(demographic,"-"))%>
 										</div>
 										</td>
 										<td colspan="2" nowrap>
 										<div class="FieldData" nowrap="nowrap"><strong><bean:message
-											key="oscarMDS.segmentDisplay.formAge" />: </strong><%=demographic.getAge()%>
+											key="oscarMDS.segmentDisplay.formAge" />: </strong><%=Encode.forHtml(demographic.getAge())%>
 										</div>
 										</td>
 									</tr>
@@ -217,35 +255,42 @@ window.close();
 
 		<table width="100%" border="0" cellspacing="0" cellpadding="2"
 			bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3"
-			name="tblDiscs" id="tblDiscs">
-			<tr class="Field2">
-				<td width="25%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formTestName" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formResult" /></td>
-				<td width="5%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formAbn" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formReferenceRange" /></td>
-				<td width="10%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formUnits" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formDateTimeCompleted" /></td>
-			</tr>
+			name="tblDiscs" id="tblDiscs" class= "table table-condensed table-striped">
+            <thead>
+			    <tr class="Field2">
+				    <td width="25%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formTestName" /></td>
+				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formResult" /></td>
+				    <td width="5%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formAbn" /></td>
+				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formReferenceRange" /></td>
+				    <td width="10%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formUnits" /></td>
+				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
+					    key="oscarMDS.segmentDisplay.formDateTimeCompleted" /></td>
+			    </tr>
+            </thead>
 			<%  int linenum = 0;
-				
+
                             if (list != null){
-                               for (int i = 0 ;  i < list.size(); i++){                            	                               		                               	   
+                               for (int i = 0 ;  i < list.size(); i++){
                                    Map h = (Map) list.get(i);
                                    String lineClass = "NormalRes";
                                    if ( h.get("abn") != null && h.get("abn").equals("A")){
                                       lineClass = "AbnormalRes";
                                    }
+                                   if ( h.get("abn") != null && (h.get("abn").equals("L") || h.get("abn").equals("LO")) ){
+                                      lineClass = "LoRes";
+                                   }
+                                   if ( h.get("abn") != null && (h.get("abn").equals("H") || h.get("abn").equals("HI")) ){
+                                      lineClass = "AbnormalRes";
+                                   }
 %>
 
-			<tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>"
-				class="<%=lineClass%>">
-				<td valign="top" align="left"><%=h.get("testName") %></td>
+			<tr class="<%=lineClass%>">
+				<td valign="top" align="left"><%=h.get("testName")%></td>
 				<td align="right"><%=h.get("result") %></td>
 				<td align="center"><%=h.get("abn") %></td>
 				<td align="left"><%=h.get("range")%></td>
@@ -261,15 +306,15 @@ window.close();
 		<table width="100%" border="0" cellspacing="0" cellpadding="3"
 			class="MainTableBottomRowRightColumn" bgcolor="#003399">
 			<tr>
-				<td align="left"><input type="button"
+				<td align="left"><input type="button" class="btn DoNotPrint"
 					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"> <input type="button"
+					onClick="window.close()"> <input type="button" class="btn DoNotPrint"
 					value=" <bean:message key="global.btnPrint"/> "
 					onClick="window.print()">
                                <%-- <input type="button" value="Plot"
                                 onclick="window.open('../../../oscarEncounter/GraphMeasurements.do?method=actualLab&demographic_no=<%=demographicNo%>&labType=<%=labType%>&identifier=<%=identifier%>&testName=<%=testName%>');"/>
                                 --%>
-                               <input type="button" value="Plot"
+                               <input type="button" value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>" class="btn DoNotPrint"
                                 onclick="window.location = 'labValuesGraph.jsp?demographic_no=<%=demographicNo%>&labType=<%=labType%>&identifier=<%=identifier%>&testName=<%=testName%>';"/>
 
                                 </td>

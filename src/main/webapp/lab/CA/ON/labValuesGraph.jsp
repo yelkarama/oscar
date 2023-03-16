@@ -40,8 +40,10 @@ if(!authed) {
 %>
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page
-    import="java.util.*,oscar.oscarLab.ca.on.*,oscar.oscarDemographic.data.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="oscar.oscarLab.ca.on.*"%>
+<%@ page import="oscar.oscarDemographic.data.*"%>
+<%@ page import="org.owasp.encoder.Encode"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -78,16 +80,20 @@ if(!authed) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@page import="org.oscarehr.util.MiscUtils"%><html>
     <head>
-        <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <html:base />
-        <title><%=""/*lab.pLastName*/%>, <%=""/*lab.pFirstName*/%> <bean:message
+        <title><%=Encode.forHtml(demographic.getLastName())%>, <%=Encode.forHtml(demographic.getFirstName())%> <bean:message
             key="oscarMDS.segmentDisplay.title" /></title>
-        <link rel="stylesheet" type="text/css"
-              href="../../../share/css/OscarStandardLayout.css">
+
+        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+
+
         <style type="text/css" media="print">
          .DoNotPrint {
 	        display:none;
          }
+
         </style>
     </head>
 
@@ -118,25 +124,25 @@ if(!authed) {
                                                                 <tr>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=demographic.getLastName()%>,
-                                                                        <%=demographic.getFirstName()%></div>
+                                                                                key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=Encode.forHtml(demographic.getLastName())%>,
+                                                                        <%=Encode.forHtml(demographic.getFirstName())%></div>
 
                                                                     </td>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData" nowrap="nowrap"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formSex" />: </strong><%=demographic.getSex()%>
+                                                                                key="oscarMDS.segmentDisplay.formSex" />: </strong><%=Encode.forHtml(demographic.getSex())%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=DemographicData.getDob(demographic,"-")%>
+                                                                                key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=Encode.forHtml(DemographicData.getDob(demographic,"-"))%>
                                                                         </div>
                                                                     </td>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData" nowrap="nowrap"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formAge" />: </strong><%=demographic.getAge()%>
+                                                                                key="oscarMDS.segmentDisplay.formAge" />: </strong><%=Encode.forHtml(demographic.getAge())%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>

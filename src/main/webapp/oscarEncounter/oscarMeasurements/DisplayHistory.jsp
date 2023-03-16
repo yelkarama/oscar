@@ -39,7 +39,7 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
-    String demo = ((Integer) request.getAttribute("demographicNo")).toString();	
+    String demo = ((Integer) request.getAttribute("demographicNo")).toString();
 %>
 
 <html:html locale="true">
@@ -52,11 +52,24 @@
 
 </head>
 
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
-<script type="text/javascript" language=javascript>
-    
-</script>
+    <script type="text/javascript">
+	    jQuery(document).ready( function () {
+	        jQuery('#tblDiscs').DataTable({
+            "order": [],
+	        "bPaginate": false,
+            "searching": false
+            });
+	    });
+    </script>
+
 <body topmargin="0" leftmargin="0" vlink="#0000FF"
 	onload="window.focus();">
 <html:errors />
@@ -65,6 +78,7 @@
 		<tr>
 			<td>
 			<table>
+
 				<tr>
 					<logic:present name="messages">
 						<logic:iterate id="msg" name="messages">
@@ -79,6 +93,9 @@
 				</tr>
 				<tr>
 					<td>
+			</table>
+			<table name="tblDiscs" id="tblDiscs" class= "table table-condensed table-striped">
+                <thead>
 				<tr>
 					<logic:present name="data" property="canPlot">
 						<th align="left" class="Header" width="5"></th>
@@ -91,7 +108,7 @@
 							key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
 						</th>
 					</logic:notPresent>
-					<th align="left" class="Header" width="20"><bean:message
+					<th align="left" class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingProvider" />
 					</th>
 					<th align="left" class="Header" width="200"><bean:message
@@ -113,9 +130,10 @@
 					<th align="left" class="Header" width="10"><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete" />
 					</th>
-					</security:oscarSec> 
-					
+					</security:oscarSec>
+
 				</tr>
+                </thead>
 				<logic:iterate id="data" name="measurementsData" property="measurementsDataVector" indexId="ctr">
 					<logic:present name="data" property="remoteFacility">
 						<tr class="data" style="background-color:#ffcccc" >
@@ -125,8 +143,7 @@
 					</logic:notPresent>
 						<logic:present name="data" property="canPlot">
 							<td width="5">
-								<img src="img/chart.gif" title="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
-								onclick="window.open('../../servlet/oscar.oscarEncounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet?type=<bean:write name="data" property="type"/>&mInstrc=<bean:write name="data" property="measuringInstrc"/>')" />
+
 							</td>
 							<td width="5">
 								<a title="<bean:write name="data" property="typeDescription" />"><bean:write name="data" property="type" /></a>
@@ -137,9 +154,9 @@
 								<a title="<bean:write name="data" property="typeDescription" />">
 								<bean:write name="data" property="type" /></a>
 							</td>
-						</logic:notPresent>		
-							<td width="20">
-								<bean:write name="data" property="providerFirstName" /> 
+						</logic:notPresent>
+							<td>
+								<bean:write name="data" property="providerFirstName" />
 								<bean:write name="data" property="providerLastName" />
 								<logic:present name="data" property="remoteFacility">
 									<br /><span style="color:#990000"> @: <bean:write name="data" property="remoteFacility" /><span>
@@ -158,33 +175,33 @@
 							<logic:notPresent name="data" property="remoteFacility">
 					    		<input type="checkbox" name="deleteCheckbox" value="<bean:write name="data" property="id" />">
 							</logic:notPresent>
-                              
+
                             </td>
                             </security:oscarSec>
-						</tr>					
+						</tr>
 					</logic:iterate>
 				</td>
 				</tr>
 			</table>
 			<table>
 				<tr>
-					<td><input type="button" name="Button"
+					<td><input type="button" name="Button" class="btn"
 						value="List Old Measurements Index"
 						onClick="javascript: popupPage(300,800,'SetupHistoryIndex.do')"></td>
-					<td><input type="button" name="Button"
+					<td><input type="button" name="Button" class="btn"
 						value="<bean:message key="global.btnPrint"/>"
 						onClick="window.print()"></td>
-					<td><input type="button" name="Button"
+					<td><input type="button" name="Button" class="btn"
 						value="<bean:message key="global.btnClose"/>"
 						onClick="window.close()"></td>
 					<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-					<td><input type="button" name="Button"
+					<td><input type="button" name="Button" class="btn"
 						value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
 						onclick="submit();" /></td>
 					</security:oscarSec>
 					<logic:present name="data" property="canPlot">
-						<td><input type="button" name="Button" value="Graph"
-							onClick="javascript: popupPage(300,800,'../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=<bean:write name="type" />')" />
+						<td><input type="button" name="Button" class="btn" value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
+							onClick="javascript: popupPage(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=<bean:write name="type" />')" />
 						</td>
 					</logic:present>
 					<logic:present name="type">
