@@ -495,12 +495,6 @@
          <artifactId>indivo-model-phr-jackson</artifactId>
          <version>3.1-SNAPSHOT</version>
       </dependency>
-      <!-- jcharts -->
-      <dependency>
-         <groupId>net.sf.jcharts</groupId>
-         <artifactId>krysalis-jCharts</artifactId>
-         <version>0.7.5</version>
-      </dependency>
       <dependency>
          <groupId>batik</groupId>
          <artifactId>batik-awt-util</artifactId>
