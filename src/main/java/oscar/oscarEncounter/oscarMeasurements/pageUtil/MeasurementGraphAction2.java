@@ -209,7 +209,7 @@ public class MeasurementGraphAction2 extends Action {
                  brandName = arr[0].getBrandName();             
              }
              if (brandName!=null && brandName.length() > 30) {
-                 brandName = brandName.substring(0, 30) + "...";
+                 brandName = brandName.substring(0, 27) + "...";
              }
              list.add(brandName);
             }
@@ -223,7 +223,7 @@ public class MeasurementGraphAction2 extends Action {
 
 
 
-    JFreeChart referenceRangeChart(Integer demographicNo, String typeIdName, String typeIdName2, String patientName, String chartTitle) {
+    private JFreeChart referenceRangeChart(Integer demographicNo, String typeIdName, String typeIdName2, String patientName, String chartTitle) {
              org.jfree.data.time.TimeSeriesCollection dataset = new org.jfree.data.time.TimeSeriesCollection();
 
         ArrayList<EctMeasurementsDataBean> list = getList(demographicNo, typeIdName);
@@ -586,12 +586,19 @@ public class MeasurementGraphAction2 extends Action {
                     String range = (String) mdb.get("range");
                     if (range.indexOf("-") != -1){
                         String[] sp = range.split("-");
-                        double open = Double.parseDouble(sp[0]);
-                        double high = Double.parseDouble(sp[1]);
-                        double low = Double.parseDouble(sp[0]);
-                        double close = Double.parseDouble(sp[1]);
+                        String sp0 = sp[0].replaceAll("%","").trim();
+                        String sp1 = sp[1].replaceAll("%","").trim();
+                        double open = Double.parseDouble(sp0);
+                        double high = Double.parseDouble(sp1);
+                        double low = Double.parseDouble(sp0);
+                        double close = Double.parseDouble(sp1);
                         double volume = 1045;
-                        dataItems.add(new OHLCDataItem(new Day((Date) mdb.get("collDateDate")).getStart(), open, high, low, close, volume));
+                        String collectionDate = (String) mdb.get("collDate");
+                        if(collectionDate != null) {
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Day regularTimePeriod = new Day(simpleDateFormat.parse(collectionDate));
+                            dataItems.add(new OHLCDataItem(regularTimePeriod.getStart(), open, high, low, close, volume));
+                        }
                     }
                 }
 
@@ -726,12 +733,13 @@ public class MeasurementGraphAction2 extends Action {
                     String range = (String) mdb.get("range");
                     if (range.indexOf("-") != -1){
                         String[] sp = range.split("-");
-                        double open = Double.parseDouble(sp[0]);
-                        double high = Double.parseDouble(sp[1]);
-                        double low = Double.parseDouble(sp[0]);
-                        double close = Double.parseDouble(sp[1]);
+                        String sp0 = sp[0].replaceAll("%","").trim();
+                        String sp1 = sp[1].replaceAll("%","").trim();
+                        double open = Double.parseDouble(sp0);
+                        double high = Double.parseDouble(sp1);
+                        double low = Double.parseDouble(sp0);
+                        double close = Double.parseDouble(sp1);
                         double volume = 1045;
-                        dataItems.add(new OHLCDataItem(new Day((Date) mdb.get("collDateDate")).getStart(), open, high, low, close, volume));
                         String collectionDate = (String) mdb.get("collDate");
                         if(collectionDate != null) {
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
