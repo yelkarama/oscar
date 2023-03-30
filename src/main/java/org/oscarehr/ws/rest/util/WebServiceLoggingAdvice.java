@@ -74,8 +74,10 @@ public class WebServiceLoggingAdvice {
 			long duration = System.currentTimeMillis();
 			Object result = joinpoint.proceed();
 			duration = System.currentTimeMillis() - duration;
-
-			logAccess("REST WS: " + getServiceCallDescription(joinpoint));
+			String action = getServiceCallDescription(joinpoint);
+			if (!action.equals("ResourceService.getNotificationsNumber")) {
+				logAccess("REST WS: " + action);
+			}
 			return result;
 		} catch (Throwable t) {
 			logger.debug("WS Failure", t);
@@ -97,9 +99,7 @@ public class WebServiceLoggingAdvice {
 		log.setIp(request.getRemoteAddr());
 		log.setContent(request.getRequestURL().toString());
 		log.setData(request.getParameterMap().toString());
-		if (action != "REST WS: ResourceService.getNotificationsNumber") {
-			LogAction.addLogSynchronous(log);
-		}
+		LogAction.addLogSynchronous(log);
 	}
 
 }
