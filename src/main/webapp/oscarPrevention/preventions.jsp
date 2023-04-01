@@ -116,8 +116,8 @@ if(!authed) {
         Map<String,String> shownBefore = new HashMap<String,String>();//See explanation below.
         for (int i = 0 ; i < prevList.size(); i++){
             HashMap<String,String> h = prevList.get(i);
-            String prevName = h.get("name");                   
-            //This is here because the CVC integration adds all the CVC Immunizations as possible types BUT the list is not unique. 
+            String prevName = h.get("name");
+            //This is here because the CVC integration adds all the CVC Immunizations as possible types BUT the list is not unique.
             //So there are two Mumps types. If a mumps vaccine is added without this two lines will show with the same preventions.
             if(shownBefore.containsKey(prevName)){
                 continue;
@@ -137,7 +137,7 @@ if(!authed) {
         <div class="preventionSection">
 		    <!-- <%=prevName%> <%=i%> of <%=prevList.size()%> -->
             <input type="hidden" id="preventionHeader<%=i%>"
-				name="preventionHeader<%=i%>" value="<%=h.get("name")%>"> 
+				name="preventionHeader<%=i%>" value="<%=h.get("name")%>">
     <%
                 String snomedId = h.get("snomedConceptCode") != null ? h.get("snomedConceptCode") : null;
                 boolean ispa = h.get("ispa") != null ? Boolean.valueOf(h.get("ispa")) : false;
@@ -185,7 +185,7 @@ if(!authed) {
 			</div>
     <%
                 endTime = System.nanoTime();
-                logger.info("Iterating " + h.get("name") + " at " + ((endTime - startTime)/1000)/1000 + " milliseconds"); 
+                logger.info("Iterating " + h.get("name") + " at " + ((endTime - startTime)/1000)/1000 + " milliseconds");
 			    String result;
 			    for (int k = 0; k < alist.size(); k++) {
 			    Map<String, Object> hdata = alist.get(k);
@@ -199,67 +199,71 @@ if(!authed) {
 					+ "&amp;demographic_no=" + demographic_no + "')";
     %>
 
-            <input type="hidden" id="preventProcedureProvider<%=i%>-<%=k%>" name="preventProcedureProvider<%=i%>-<%=k%>" value="<%=hdata.get("provider_name")%>" /> 
-            <input type="hidden" id="preventProcedureStatus<%=i%>-<%=k%>" name="preventProcedureStatus<%=i%>-<%=k%>" value="<%=hdata.get("refused")%>"> 
-            <input type="hidden" id="preventProcedureAge<%=i%>-<%=k%>" name="preventProcedureAge<%=i%>-<%=k%>" value="<%=hdata.get("age")%>"> 
+            <input type="hidden" id="preventProcedureProvider<%=i%>-<%=k%>" name="preventProcedureProvider<%=i%>-<%=k%>" value="<%=hdata.get("provider_name")%>" />
+            <input type="hidden" id="preventProcedureStatus<%=i%>-<%=k%>" name="preventProcedureStatus<%=i%>-<%=k%>" value="<%=hdata.get("refused")%>">
+            <input type="hidden" id="preventProcedureAge<%=i%>-<%=k%>" name="preventProcedureAge<%=i%>-<%=k%>" value="<%=hdata.get("age")%>">
             <input type="hidden" id="preventProcedureDate<%=i%>-<%=k%>" name="preventProcedureDate<%=i%>-<%=k%>" value="<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>">
- 
+
          <%  String comments = hExt.get("comments");
-			if (comments != null && !comments.isEmpty()) {%>      
+			if (comments != null && !comments.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureComments<%=i%>-<%=k%>"
 					name="preventProcedureComments<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(comments)%>">
 		<%  } %>
 
-		<%  
-			if (result != null && !result.isEmpty()) {%>      
+		<%
+			if (result != null && !result.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureResult<%=i%>-<%=k%>"
 					name="preventProcedureResult<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(result)%>">
 		<%  } %>
 
 		<%  String reason = hExt.get("reason");
-			if (reason != null && !reason.isEmpty()) {%>      
+			if (reason != null && !reason.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureReason<%=i%>-<%=k%>"
 					name="preventProcedureReason<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(reason)%>">
 		<%  } %>
 
 		<%  String nameOfVaccine = hExt.get("name");
-			if (nameOfVaccine != null && !nameOfVaccine.isEmpty()) {%>      
+			if (nameOfVaccine != null && !nameOfVaccine.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureNameOfVaccine<%=i%>-<%=k%>"
 					name="preventProcedureNameOfVaccine<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(nameOfVaccine)%>">
-		<%  } %> 
+		<%  } %>
 
 		<%  String manufacture = hExt.get("manufacture");
-			if (manufacture != null && !manufacture.isEmpty()) {%>      
+			if (manufacture != null && !manufacture.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureManufacture<%=i%>-<%=k%>"
 					name="preventProcedureManufacture<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(manufacture)%>">
-		<%  } %> 
+		<%  } %>
 
 		<%  String lotID = hExt.get("lot");
-			if (lotID != null && !lotID.isEmpty()) {%>      
+			if (lotID != null && !lotID.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureLotID<%=i%>-<%=k%>"
 					name="preventProcedureLotID<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(lotID)%>">
-		<%  } %> 
+		<%  } %>
 
 		<%  String doseAdministered = hExt.get("dose");
-			if (doseAdministered != null && !doseAdministered.isEmpty()) {%>      
+			if (doseAdministered != null && !doseAdministered.isEmpty()) {%>
 				<input type="hidden" id="preventProcedureDoseAdministered<%=i%>-<%=k%>"
 					name="preventProcedureDoseAdministered<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(doseAdministered)%>">
-		<%  } %> 
+		<%  } %>
 
 		<%  String locationOfShot = hExt.get("location");
-			if (locationOfShot != null && !locationOfShot.isEmpty()  && !locationOfShot.matches("\\d+")) { // for CVC the location is coded numeric %>      
+			if (locationOfShot != null && locationOfShot.matches("\\d+")) {
+				// for CVC the location is a numeric code, get the human readable location display
+				locationOfShot = hExt.get("locationDisplay");
+			}
+			if (locationOfShot != null && !locationOfShot.isEmpty() && !locationOfShot.matches("\\d+")) { %>
 				<input type="hidden" id="preventProcedureLocationOfShot<%=i%>-<%=k%>"
 					name="preventProcedureLocationOfShot<%=i%>-<%=k%>"
 					value="<%=StringEscapeUtils.escapeHtml(locationOfShot)%>">
 		<%  } %>
-        
+
             <div class="preventionProcedure" onclick="<%=onClickCode%>"
 			    title="fade=[on] header=[<%=StringEscapeUtils.escapeHtml((String) hdata.get("age"))%> -- Date:<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>] body=[<%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%>&lt;br/&gt;Administered By: <%=StringEscapeUtils.escapeHtml((String) hdata.get("provider_name"))%>]">
                 <p <%=r(hdata.get("refused"), result)%>>
@@ -270,7 +274,7 @@ if(!authed) {
 			    }
 	%>
 				<br />
-				
+
 				    Date:<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>
     <%
 			    if (hExt.get("comments") != null && (hExt.get("comments")).length() > 0) {
@@ -329,8 +333,8 @@ if(!authed) {
 									<div style="display: none;" id="otherElements">
 										<%
                                         endTime = System.nanoTime();
-                                        logger.info("Starting to render otherElements after " + ((endTime - startTime)/1000)/1000 + " milliseconds");            
-            
+                                        logger.info("Starting to render otherElements after " + ((endTime - startTime)/1000)/1000 + " milliseconds");
+
 										for (int i = 0; i < hiddenlist.size(); i++) {
 											Map<String, Object> h2 = hiddenlist.get(i);
 											HashMap<String, String> h = (HashMap<String, String>) h2.get("prev");
@@ -514,11 +518,11 @@ if(!authed) {
 											</div> <!--immSet-->
     <% }%>
 										</div> <!--end otherElements-->
-<% }%>										
-										
+<% }%>
+
 										<%
                                         endTime = System.nanoTime();
-                                        logger.info("Thats all folks after " + ((endTime - startTime)/1000)/1000 + " milliseconds"); 
+                                        logger.info("Thats all folks after " + ((endTime - startTime)/1000)/1000 + " milliseconds");
 										}
 										}
 										%>
@@ -550,17 +554,17 @@ String r(Object re, String result){
            }
            else if(result!=null && result.equals("abnormal")){
 	        	   ret = "style=\"background: #ee5f5b;\"";
-	           
+
            }
         }
         return ret;
     }
 
 %>
-            <span id="print_buttons"> 
+            <span id="print_buttons">
                 <input type="button" class="noPrint"
 					name="printButton" onclick="EnablePrint(this)" value="Enable Print">
-				</input> 
+				</input>
 			    <br>
 			    <!--<input type="button" name="sendToPhrButton" value="Send To MyOscar (PDF)" style="display: none;" onclick="sendToPhr(this)">-->
 			    <input type="hidden" name="demographicNo"
