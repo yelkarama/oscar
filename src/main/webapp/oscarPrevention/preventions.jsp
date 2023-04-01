@@ -203,8 +203,63 @@ if(!authed) {
             <input type="hidden" id="preventProcedureStatus<%=i%>-<%=k%>" name="preventProcedureStatus<%=i%>-<%=k%>" value="<%=hdata.get("refused")%>"> 
             <input type="hidden" id="preventProcedureAge<%=i%>-<%=k%>" name="preventProcedureAge<%=i%>-<%=k%>" value="<%=hdata.get("age")%>"> 
             <input type="hidden" id="preventProcedureDate<%=i%>-<%=k%>" name="preventProcedureDate<%=i%>-<%=k%>" value="<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>">
-            <input type="hidden" id="preventProcedureComments<%=i%>-<%=k%>"	name="preventProcedureComments<%=i%>-<%=k%>" value="<%=StringEscapeUtils.escapeHtml(hExt.get("comments"))%>">
+ 
+         <%  String comments = hExt.get("comments");
+			if (comments != null && !comments.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureComments<%=i%>-<%=k%>"
+					name="preventProcedureComments<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(comments)%>">
+		<%  } %>
 
+		<%  
+			if (result != null && !result.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureResult<%=i%>-<%=k%>"
+					name="preventProcedureResult<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(result)%>">
+		<%  } %>
+
+		<%  String reason = hExt.get("reason");
+			if (reason != null && !reason.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureReason<%=i%>-<%=k%>"
+					name="preventProcedureReason<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(reason)%>">
+		<%  } %>
+
+		<%  String nameOfVaccine = hExt.get("name");
+			if (nameOfVaccine != null && !nameOfVaccine.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureNameOfVaccine<%=i%>-<%=k%>"
+					name="preventProcedureNameOfVaccine<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(nameOfVaccine)%>">
+		<%  } %> 
+
+		<%  String manufacture = hExt.get("manufacture");
+			if (manufacture != null && !manufacture.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureManufacture<%=i%>-<%=k%>"
+					name="preventProcedureManufacture<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(manufacture)%>">
+		<%  } %> 
+
+		<%  String lotID = hExt.get("lot");
+			if (lotID != null && !lotID.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureLotID<%=i%>-<%=k%>"
+					name="preventProcedureLotID<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(lotID)%>">
+		<%  } %> 
+
+		<%  String doseAdministered = hExt.get("dose");
+			if (doseAdministered != null && !doseAdministered.isEmpty()) {%>      
+				<input type="hidden" id="preventProcedureDoseAdministered<%=i%>-<%=k%>"
+					name="preventProcedureDoseAdministered<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(doseAdministered)%>">
+		<%  } %> 
+
+		<%  String locationOfShot = hExt.get("location");
+			if (locationOfShot != null && !locationOfShot.isEmpty()  && !locationOfShot.matches("\\d+")) { // for CVC the location is coded numeric %>      
+				<input type="hidden" id="preventProcedureLocationOfShot<%=i%>-<%=k%>"
+					name="preventProcedureLocationOfShot<%=i%>-<%=k%>"
+					value="<%=StringEscapeUtils.escapeHtml(locationOfShot)%>">
+		<%  } %>
+        
             <div class="preventionProcedure" onclick="<%=onClickCode%>"
 			    title="fade=[on] header=[<%=StringEscapeUtils.escapeHtml((String) hdata.get("age"))%> -- Date:<%=StringEscapeUtils.escapeHtml((String) hdata.get("prevention_date_no_time"))%>] body=[<%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%>&lt;br/&gt;Administered By: <%=StringEscapeUtils.escapeHtml((String) hdata.get("provider_name"))%>]">
                 <p <%=r(hdata.get("refused"), result)%>>
