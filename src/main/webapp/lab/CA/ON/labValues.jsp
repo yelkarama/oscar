@@ -260,15 +260,15 @@ window.close();
 			    <tr class="Field2">
 				    <td width="25%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formTestName" /></td>
-				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
+				    <td width="10%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formResult" /></td>
-				    <td width="5%" align="middle" valign="bottom" class="Cell"><bean:message
+				    <td width="8%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formAbn" /></td>
 				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formReferenceRange" /></td>
 				    <td width="10%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formUnits" /></td>
-				    <td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
+				    <td width="20%" align="middle" valign="bottom" class="Cell"><bean:message
 					    key="oscarMDS.segmentDisplay.formDateTimeCompleted" /></td>
 			    </tr>
             </thead>
