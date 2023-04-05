@@ -162,7 +162,7 @@
 									<br /><span style="color:#990000"> @: <bean:write name="data" property="remoteFacility" /><span>
 								</logic:present>
 							</td>
-							<td width="200"><bean:write name="data"	property="measuringInstrc" /></td>
+							<td width="200"><logic:match name="data" property="measuringInstrc" value="NULL" ></logic:match><logic:notMatch name="data" property="measuringInstrc" value="NULL" ><bean:write name="data"	property="measuringInstrc" /></logic:notMatch></td>
 							<td width="10"><bean:write name="data" property="dataField" /></td>
 							<td width="300"><bean:write name="data" property="comments" /></td>
 							<td width="150"><bean:write name="data" property="dateObservedAsDate" format="yyyy-MM-dd" /></td>
