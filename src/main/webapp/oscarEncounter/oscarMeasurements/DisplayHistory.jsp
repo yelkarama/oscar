@@ -35,32 +35,42 @@
 <%@ page import="oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
 <%@ page import="oscar.oscarEncounter.oscarMeasurements.bean.*"%>
 <%@ page import="java.util.Vector"%>
+
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<%@ page import="org.oscarehr.common.model.Demographic"%>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
+
+<%@ page import="org.owasp.encoder.Encode"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
     String demo = ((Integer) request.getAttribute("demographicNo")).toString();
-%>
+    LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    DemographicManager demographicManager = SpringUtils.getBean( DemographicManager.class );
+    Demographic demographic = demographicManager.getDemographic(loggedInInfo, demo);
 
+%>
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.Index.oldMeasurements" />
 </title>
 <html:base />
 
-</head>
+    <script src="<%= request.getContextPath() %>/js/global.js"></script>
 
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script> -->
 
-    <script type="text/javascript">
+    <script src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" integrity="sha256-VSu9DD6vJurraXgjxQJv9BuzedGfJm7XEgPQQehKBlw=" crossorigin="anonymous"></script> -->
+
+    <script>
 	    jQuery(document).ready( function () {
 	        jQuery('#tblDiscs').DataTable({
             "order": [],
@@ -70,149 +80,189 @@
 	    });
     </script>
 
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
+    <style type="text/css" media="print">
+         .DoNotPrint {
+	        display:none;
+         }
+     </style>
+</head>
+<body
 	onload="window.focus();">
 <html:errors />
-<html:form action="/oscarEncounter/oscarMeasurements/DeleteData">
-	<table>
-		<tr>
-			<td>
-			<table>
+<html:form action="/oscarEncounter/oscarMeasurements/DeleteData" >
 
-				<tr>
-					<logic:present name="messages">
-						<logic:iterate id="msg" name="messages">
+<table style="border-width: 2px; width: 100%; border-spacing: 0px; ">
+        <logic:present name="messages">
+            <tr>
+                <td>
+                    <logic:iterate id="msg" name="messages">
+                        <div class="alert">
 							<bean:write name="msg" />
-							<br>
-						</logic:iterate>
-					</logic:present>
-				</tr>
-				<td class="Header" colspan="9"><oscar:nameage
-					demographicNo="<%=demo%>" /></td>
-				<tr>
-				</tr>
-				<tr>
-					<td>
-			</table>
-			<table name="tblDiscs" id="tblDiscs" class= "table table-condensed table-striped">
-                <thead>
-				<tr>
-					<logic:present name="data" property="canPlot">
-						<th align="left" class="Header" width="5"></th>
-						<th align="left" class="Header" width="5"><bean:message
+						</div>
+                    </logic:iterate>
+				</td>
+            </tr>
+        </logic:present>
+	<tr>
+		<td>
+
+		<table style="border-width: 1px; width: 100%; border-spacing: 0px; border-color:black; border-style: solid; ">
+			<tr>
+				<td style="width: 100%; text-align: center;" class="Cell">
+				<div class="Field2"><bean:message
+					key="oscarMDS.segmentDisplay.formDetailResults" /></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+						<table style="width: 100%; border-spacing: 0px;">
+							<tr>
+								<td>
+
+								<table style="width: 66%; border-spacing: 0px;">
+									<tr>
+										<td>
+										<div class="FieldData"><strong><bean:message
+											key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=Encode.forHtml(demographic.getFormattedName())%></div>
+
+										</td>
+										<td>
+										<div class="FieldData"><strong><bean:message
+											key="oscarMDS.segmentDisplay.formSex" />: </strong><%=Encode.forHtml(demographic.getSex())%>
+										</div>
+										</td>
+									</tr>
+									<tr>
+										<td >
+										<div class="FieldData"><strong><bean:message
+											key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=Encode.forHtml(demographic.getFormattedDob())%>
+										</div>
+										</td>
+										<td >
+										<div class="FieldData"><strong><bean:message
+											key="oscarMDS.segmentDisplay.formAge" />: </strong><%=Encode.forHtml(demographic.getAge())%>
+										</div>
+										</td>
+									</tr>
+								</table>
+
+								</td>
+								<td style="width: 33%;"></td>
+							</tr>
+						</table>
+
+						</td>
+					</tr>
+				</table>
+
+				</td>
+			</tr>
+            <tr>
+                <td>
+
+    <table id="tblDiscs" class= "table table-condensed table-striped">
+        <thead>
+			<tr>
+					<th class="Header" ><bean:message
 							key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
-						</th>
-					</logic:present>
-					<logic:notPresent name="data" property="canPlot">
-						<th colspan="2" align="left" class="Header" width="5"><bean:message
-							key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
-						</th>
-					</logic:notPresent>
-					<th align="left" class="Header" ><bean:message
+					</th>
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingProvider" />
 					</th>
-					<th align="left" class="Header" width="200"><bean:message
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingMeasuringInstruction" />
 					</th>
-					<th align="left" class="Header" width="10"><bean:message
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingData" />
 					</th>
-					<th align="left" class="Header" width="300"><bean:message
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingComments" />
 					</th>
-					<th align="left" class="Header" width="150"><bean:message
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingObservationDate" />
 					</th>
-					<th align="left" class="Header" width="150"><bean:message
+					<th class="Header" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingDateEntered" />
 					</th>
 					<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-					<th align="left" class="Header" width="10"><bean:message
+					<th class="Header DoNotPrint" ><bean:message
 						key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete" />
 					</th>
 					</security:oscarSec>
 
-				</tr>
-                </thead>
-				<logic:iterate id="data" name="measurementsData" property="measurementsDataVector" indexId="ctr">
-					<logic:present name="data" property="remoteFacility">
-						<tr class="data" style="background-color:#ffcccc" >
-					</logic:present>
-					<logic:notPresent name="data" property="remoteFacility">
-					    <tr class="data" >
-					</logic:notPresent>
-						<logic:present name="data" property="canPlot">
-							<td width="5">
-
-							</td>
-							<td width="5">
-								<a title="<bean:write name="data" property="typeDescription" />"><bean:write name="data" property="type" /></a>
-							</td>
-						</logic:present>
-						<logic:notPresent name="data" property="canPlot">
-							<td width="5" colspan=2>
-								<a title="<bean:write name="data" property="typeDescription" />">
-								<bean:write name="data" property="type" /></a>
-							</td>
-						</logic:notPresent>
-							<td>
+			</tr>
+        </thead>
+        <tbody>
+			<logic:iterate id="data" name="measurementsData" property="measurementsDataVector" indexId="ctr">
+				<logic:present name="data" property="remoteFacility">
+					<tr class="data" style="background-color:#ffcccc" >
+				</logic:present>
+				<logic:notPresent name="data" property="remoteFacility">
+					<tr class="data" >
+				</logic:notPresent>
+						<td><a title="<bean:write name="data" property="typeDescription" />"><bean:write name="data" property="type" /></a></td>
+						<td>
 								<bean:write name="data" property="providerFirstName" />
 								<bean:write name="data" property="providerLastName" />
 								<logic:present name="data" property="remoteFacility">
 									<br /><span style="color:#990000"> @: <bean:write name="data" property="remoteFacility" /><span>
 								</logic:present>
-							</td>
-							<td width="200"><logic:match name="data" property="measuringInstrc" value="NULL" ></logic:match><logic:notMatch name="data" property="measuringInstrc" value="NULL" ><bean:write name="data"	property="measuringInstrc" /></logic:notMatch></td>
-							<td width="10"><bean:write name="data" property="dataField" /></td>
-							<td width="300"><bean:write name="data" property="comments" /></td>
-							<td width="150"><bean:write name="data" property="dateObservedAsDate" format="yyyy-MM-dd" /></td>
-							<td width="150"><bean:write name="data" property="dateEnteredAsDate" format="yyyy-MM-dd"/></td>
-							<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-							<td width="10">
-							<logic:present name="data" property="remoteFacility">
-					    		&nbsp;
-							</logic:present>
-							<logic:notPresent name="data" property="remoteFacility">
-					    		<input type="checkbox" name="deleteCheckbox" value="<bean:write name="data" property="id" />">
-							</logic:notPresent>
-
-                            </td>
-                            </security:oscarSec>
-						</tr>
-					</logic:iterate>
-				</td>
-				</tr>
-			</table>
+						</td>
+						<td>
+                            <logic:match name="data" property="measuringInstrc" value="NULL" >&nbsp;</logic:match>
+                            <logic:notMatch name="data" property="measuringInstrc" value="NULL" ><bean:write name="data" property="measuringInstrc" /></logic:notMatch>
+                        </td>
+						<td><bean:write name="data" property="dataField" /></td>
+						<td><bean:write name="data" property="comments" /></td>
+						<td><bean:write name="data" property="dateObservedAsDate" format="yyyy-MM-dd" /></td>
+						<td><bean:write name="data" property="dateEnteredAsDate" format="yyyy-MM-dd"/></td>
+						<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
+						<td class="DoNotPrint" >
+						    <logic:present name="data" property="remoteFacility">
+                                &nbsp;
+                            </logic:present>
+						    <logic:notPresent name="data" property="remoteFacility">
+					    	    <input type="checkbox" name="deleteCheckbox" value="<bean:write name="data" property="id" />">
+						    </logic:notPresent>
+                        </td>
+                        </security:oscarSec>
+					</tr>
+				</logic:iterate>
+			</tbody>
+    </table>
+<tr><td>
 			<table>
 				<tr>
-					<td><input type="button" name="Button" class="btn"
-						value="List Old Measurements Index"
+					<td><input type="button" name="Button" class="btn DoNotPrint"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>"
 						onClick="javascript: popupPage(300,800,'SetupHistoryIndex.do')"></td>
-					<td><input type="button" name="Button" class="btn"
+					<td><input type="button" name="Button" class="btn DoNotPrint"
 						value="<bean:message key="global.btnPrint"/>"
 						onClick="window.print()"></td>
-					<td><input type="button" name="Button" class="btn"
+					<td><input type="button" name="Button" class="btn DoNotPrint"
 						value="<bean:message key="global.btnClose"/>"
 						onClick="window.close()"></td>
 					<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-					<td><input type="button" name="Button" class="btn"
+					<td><input type="button" name="Button" class="btn DoNotPrint"
 						value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
-						onclick="submit();" /></td>
+						onclick="submit();" ></td>
 					</security:oscarSec>
 					<logic:present name="data" property="canPlot">
-						<td><input type="button" name="Button" class="btn" value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
-							onClick="javascript: popupPage(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=<bean:write name="type" />')" />
+						<td><input type="button" name="Button" class="btn DoNotPrint" value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
+							onClick="javascript: popupPage(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=<bean:write name="type" />')" >
 						</td>
-					</logic:present>
-					<logic:present name="type">
-						<input type="hidden" name="type"
-							value="<bean:write name="type" />" />
 					</logic:present>
 				</tr>
 			</table>
-			</td>
-		</tr>
-	</table>
+
+</td>
+</tr>
+   </tbody>
+</table>
+    <logic:present name="type">
+	    <input type="hidden" name="type"
+		    value="<bean:write name="type" />" >
+    </logic:present>
 </html:form>
 </body>
 </html:html>
