@@ -71,11 +71,21 @@
     <!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" integrity="sha256-VSu9DD6vJurraXgjxQJv9BuzedGfJm7XEgPQQehKBlw=" crossorigin="anonymous"></script> -->
 
     <script>
+    // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
+    // NOTE
+    // DataTables 1.13.4 language plugin is tested compatible with 1.10.11
+    // and allows for specific use of tag global.i18nLanguagecode=fr-FR  pt-BR
+    // if 404 eg offline, no translation available at data tables eg en-CA, no properties file entry for this langauge, etc
+    // the english default will automatically be used
+
 	    jQuery(document).ready( function () {
 	        jQuery('#tblDiscs').DataTable({
             "order": [],
 	        "bPaginate": false,
-            "searching": false
+            "searching": false,
+            "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
             });
 	    });
     </script>
