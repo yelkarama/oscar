@@ -497,7 +497,7 @@
     <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
     <!--Data Tables-->
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/library/bootstrap/3.0.0/assets/js/DT_bootstrap.js"></script>
 
 	<script>
