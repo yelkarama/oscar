@@ -64,11 +64,8 @@
 
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-    <script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script> -->
-
-    <script src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
-    <!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" integrity="sha256-VSu9DD6vJurraXgjxQJv9BuzedGfJm7XEgPQQehKBlw=" crossorigin="anonymous"></script> -->
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"> //DataTables 1.13.4 </script>
 
     <script>
     // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
