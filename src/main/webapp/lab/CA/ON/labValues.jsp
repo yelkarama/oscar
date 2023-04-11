@@ -100,10 +100,11 @@ if (! (demographicNo == null || "null".equals(demographicNo) || "undefined".equa
 <html:base />
 <title><bean:message key="oscarMDS.segmentDisplay.title" /></title>
     <script src="<%= request.getContextPath() %>/js/global.js"></script>
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
     <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"> //DataTables 1.13.4 </script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
     <script>
     // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
@@ -176,16 +177,16 @@ window.close();
 	<tr>
 		<td>
 
-		<table style="border-width: 1px; width: 100%; border-spacing: 0px; border-color:black; border-style: solid; ">
-			<tr>
+		<table style="width: 100%; border-spacing: 0px; border-collapse: collapse;">
+			<tr style= "border-width: 1px; border-color:black; border-style: solid;">
 				<td style="width: 100%; text-align: center;" class="Cell">
 				<div class="Field2"><bean:message
 					key="oscarMDS.segmentDisplay.formDetailResults" /></div>
 				</td>
 			</tr>
-			<tr>
+			<tr style="border-width: 1px; border-color:black; border-style: solid;">
 				<td>
-						<table style="width: 100%; border-spacing: 0px;">
+						<table style="width: 100%; border-spacing: 0px; ">
 							<tr>
 								<td>
 
@@ -222,6 +223,11 @@ window.close();
 						</table>
 						</td>
 					</tr>
+			<tr style= "border-width: 1px; border-color:black; border-style: solid; ">
+				<td style="width: 100%; text-align: center;" class="Cell">
+				<div class="Field2">&nbsp;</div>
+				</td>
+			</tr>
 				</table>
 				</td>
 
@@ -308,7 +314,7 @@ window.close();
 		<table style="width: 100%;"
 			class="MainTableBottomRowRightColumn" >
 			<tr>
-				<td><input type="button" class="btn DoNotPrint"
+				<td><input type="button" class="btn DoNotPrint btn-primary"
 					value=" <bean:message key="global.btnClose"/> "
 					onClick="window.close()"> <input type="button" class="btn DoNotPrint"
 					value=" <bean:message key="global.btnPrint"/> "
@@ -318,7 +324,6 @@ window.close();
                                 --%>
                                <input type="button" value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>" class="btn DoNotPrint"
                                 onclick="window.location = 'labValuesGraph.jsp?demographic_no=<%=demographicNo%>&labType=<%=labType%>&identifier=<%=identifier%>&testName=<%=testName%>';"/>
-
                                 </td>
 			</tr>
 		</table>
