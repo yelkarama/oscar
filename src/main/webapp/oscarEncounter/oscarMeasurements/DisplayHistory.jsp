@@ -62,10 +62,10 @@
 
     <script src="<%= request.getContextPath() %>/js/global.js"></script>
 
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
     <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"> //DataTables 1.13.4 </script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
     <script>
     // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
@@ -113,18 +113,18 @@
 	<tr>
 		<td>
 
-		<table style="border-width: 1px; width: 100%; border-spacing: 0px; border-color:black; border-style: solid; ">
-			<tr>
+		<table style="width: 100%; border-spacing: 0px; border-collapse: collapse;">
+			<tr style="border-width: 1px; border-color:black; border-style: solid;">
 				<td style="width: 100%; text-align: center;" class="Cell">
 				<div class="Field2"><bean:message
 					key="oscarMDS.segmentDisplay.formDetailResults" /></div>
 				</td>
 			</tr>
-			<tr>
+			<tr style="border-width: 1px; border-color:black; border-style: solid;">
 				<td>
-						<table style="width: 100%; border-spacing: 0px;">
-							<tr>
-								<td>
+                    <table style="width: 100%; border-spacing: 0px;">
+                        <tr>
+						    <td>
 
 								<table style="width: 66%; border-spacing: 0px;">
 									<tr>
@@ -153,23 +153,28 @@
 									</tr>
 								</table>
 
-								</td>
-								<td style="width: 33%;"></td>
-							</tr>
-						</table>
-
-						</td>
-					</tr>
-				</table>
+							</td>
+							<td style="width: 33%;"></td>
+						</tr>
+                    </table>
 
 				</td>
 			</tr>
-            <tr>
-                <td>
+			<tr style= "border-width: 1px; border-color:black; border-style: solid; ">
+				<td style="width: 100%; text-align: center;" class="Cell">
+				<div class="Field2">&nbsp;</div>
+				</td>
+			</tr>
+		</table>
 
-    <table id="tblDiscs" class= "table table-condensed table-striped">
-        <thead>
-			<tr>
+	    </td>
+	</tr>
+    <tr>
+        <td>
+
+        <table id="tblDiscs" class= "table table-condensed table-striped">
+            <thead>
+			    <tr>
 					<th class="Header" ><bean:message
 							key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
 					</th>
@@ -197,9 +202,9 @@
 					</th>
 					</security:oscarSec>
 
-			</tr>
-        </thead>
-        <tbody>
+			    </tr>
+            </thead>
+            <tbody>
 			<logic:iterate id="data" name="measurementsData" property="measurementsDataVector" indexId="ctr">
 				<logic:present name="data" property="remoteFacility">
 					<tr class="data" style="background-color:#ffcccc" >
@@ -235,9 +240,9 @@
                         </security:oscarSec>
 					</tr>
 				</logic:iterate>
-			</tbody>
-    </table>
-<tr><td>
+			    </tbody>
+            </table>
+        <tr><td>
 			<table>
 				<tr>
 					<td><input type="button" name="Button" class="btn DoNotPrint"
@@ -262,8 +267,8 @@
 				</tr>
 			</table>
 
-</td>
-</tr>
+        </td>
+    </tr>
    </tbody>
 </table>
     <logic:present name="type">
