@@ -38,7 +38,7 @@
 <link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 <link href="<%=request.getContextPath()%>/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/library/DataTables/datatables.min.js"></script>
 <style>
 	body { background-color:#f5f5f5; }
 </style>
