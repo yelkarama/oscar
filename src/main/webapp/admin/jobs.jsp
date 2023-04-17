@@ -57,24 +57,26 @@
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Jobs</title>
 
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+    <script src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
+    <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <%
 java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = org.oscarehr.common.jobs.OscarJobExecutingManager.getFutures();
 %>
-<style>
-.red{color:red}
 
-</style>
+    <style>
+        .red{color:red}
+        .lightblue{color:lightblue}
+    </style>
 
 <script>
 	function cancelJob(jobId) {
@@ -188,6 +190,11 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 	}
 
 	function listJobs() {
+        if ( $.fn.DataTable.isDataTable('#jobTable') ) {
+            var table = $('#jobTable').DataTable();
+            table.destroy();
+            $('#jobTable tbody').empty();
+        }
 		jQuery.getJSON("../ws/rs/jobs/all", {},
         function(xml) {
 			clearJobs();
@@ -202,9 +209,9 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 
 				for(var i=0;i<arr.length;i++) {
 					var job = arr[i];
-					var extraClass = (job.cronExpression != undefined)?"blue":"red";
+					var extraClass = (job.cronExpression != undefined)?"lightblue":"red";
 					var html = '<tr>';
-					html += '<td><a onclick="scheduleJob('+job.id+');"><i class="icon-calendar ' + extraClass + '"></i></a></td>';
+					html += '<td><a onclick="scheduleJob('+job.id+');" style="background-color: ' + extraClass + ';"><i class="icon-calendar"></i></a></td>';
 					html += '<td><u><a href="javascript:void();" onclick="editJob('+job.id+');">'+job.name+'</a></u></td>';
 					html += '<td><a onclick="cancelJob('+job.id+');">Cancel</a></td>';
 					html += '<td>'+((job.enabled==true)?"Enabled (<a onclick='updateJobStatus("+job.id+",false)'>Disable</a>)":"<span color='red'>Disabled</span> (<a onclick='updateJobStatus("+job.id+",true)'>Enable</a>)") +'</td>';
@@ -214,11 +221,22 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 
 					jQuery('#jobTable tbody').append(html);
 				}
+                initiate();
 			} else {
         		alert('error retrieving jobs');
 			}
         });
 	}
+
+    function initiate(){
+	    $('#jobTable').DataTable({
+             "order": [],
+            "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+        });
+        return;
+    }
 
 	function getJobTypes() {
 		jQuery.getJSON("../ws/rs/jobs/types/all",{async:false},
@@ -371,13 +389,13 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 			<div class="control-group">
 				<label class="control-label" for="jobName">Name:*</label>
 				<div class="controls">
-					<input type="text" name="job.name" id="jobName" value=""/>
+					<input class="input-block-level" type="text" name="job.name" id="jobName" value=""/>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="jobType">Type:*</label>
 				<div class="controls">
-					<select name="job.oscarJobTypeId" id="jobType">
+					<select class="input-block-level" name="job.oscarJobTypeId" id="jobType">
 						<option value="">&nbsp;</option>
 					</select>
 				</div>
@@ -385,7 +403,7 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 			<div class="control-group">
 				<label class="control-label" for="jobDescription">Description:</label>
 				<div class="controls">
-					<textarea rows="5" name="job.description" id="jobDescription"></textarea>
+					<textarea class="input-block-level" rows="5" name="job.description" id="jobDescription"></textarea>
 				</div>
 			</div>
 			<div class="control-group">
