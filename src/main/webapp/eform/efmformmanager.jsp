@@ -25,6 +25,8 @@
 --%>
 <!DOCTYPE html>
 <%@ page import="oscar.eform.data.*, oscar.eform.*, java.util.*"%>
+<%@ page import="org.owasp.encoder.Encode"%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%
@@ -37,10 +39,10 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 %>
 <html:html locale="true">
 <head>
-
+<html:base />
+<title><bean:message key="eform.uploadhtml.msgLibrary" /></title>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-</head>
 <script language="javascript">
   function checkFormAndDisable(){
     if(document.forms[0].formHtml.value==""){
@@ -103,7 +105,35 @@ $(function ()  {
 });
 
 </script>
+<script>
+    $('#eformOptions a').click(function (e) {
+    e.preventDefault();
+    if(this.href.indexOf('download') != -1) {
+    	document.getElementById("downloadFrame").src = document.getElementById("downloadFrame").src;
+    }
+    $(this).tab('show');
+    });
 
+	function downloadFrameLoaded() {
+		var iFrame = document.getElementById('downloadFrame');
+		if(iFrame) {
+            iFrame.height = "";
+            iFrame.height = iFrame.contentWindow.document.body.scrollHeight + "px";
+      	}
+  	}
+
+registerFormSubmit('eformImportForm', 'dynamic-content');
+
+$('#eformTbl').DataTable({
+	"bPaginate": false,
+    "columnDefs": [
+        { orderable: false, targets: [ 0,-1 ] }
+      ],
+     "order": [[1, 'asc']]
+});
+
+</script>
+</head>
 <body>
 
 
@@ -154,12 +184,10 @@ $(function ()  {
 <table class="table table-condensed table-striped" id="eformTbl">
 <thead>
     <tr>
-        <th></th>
-
-        <th><a href="<%= request.getContextPath() %>/eform/efmformmanager.jsp?orderby=form_name" class="contentLink"><bean:message key="eform.uploadhtml.btnFormName" /></a></th>
-        <th><a href="<%= request.getContextPath() %>/eform/efmformmanager.jsp?orderby=form_subject" class="contentLink"><bean:message key="eform.uploadhtml.btnSubject" /></a></th>
-
-        <th><a href="<%= request.getContextPath() %>/eform/efmformmanager.jsp?" class="contentLink"><bean:message key="eform.uploadhtml.btnDate" /></a></th>
+        <th>&nbsp;</th>
+        <th><bean:message key="eform.uploadhtml.btnFormName" /></th>
+        <th><bean:message key="eform.uploadhtml.btnSubject" /></th>
+        <th><bean:message key="eform.uploadhtml.btnDate" /></th>
         <th><bean:message key="eform.uploadhtml.btnTime" /></th>
         <th><bean:message key="eform.uploadhtml.btnRoleType"/></th>
         <th><bean:message key="eform.uploadhtml.msgAction" /></th>
@@ -173,11 +201,11 @@ $(function ()  {
 	  HashMap<String, ? extends Object> curForm = eForms.get(i);
 %>
     <tr>
-        <td><%if(curForm.get("formFileName") != null && curForm.get("formFileName").toString().length()!=0){%><i class="icon-file" title="<%=curForm.get("formFileName").toString()%>"></i><%}%></td>
+        <td><%if(curForm.get("formFileName") != null && curForm.get("formFileName").toString().length()!=0){%><i class="icon-file" title="<%=Encode.forHtmlAttribute(curForm.get("formFileName").toString())%>"></i><%}%>&nbsp;</td>
         <td title="<%=curForm.get("formName")%>">
-        <a href="#" onclick="newWindow('<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=curForm.get("fid")%>', '<%="Form"+i%>'); return false;"><%=curForm.get("formName")%></a>
+        <a href="#" onclick="newWindow('<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=curForm.get("fid")%>', '<%="Form"+i%>'); return false;"><%=Encode.forHtmlAttribute(curForm.get("formName").toString())%></a>
         </td>
-        <td><%=curForm.get("formSubject")%></td>
+        <td><%=Encode.forHtmlAttribute(curForm.get("formSubject").toString())%></td>
         <td><%=curForm.get("formDate")%></td>
         <td><%=curForm.get("formTime")%></td>
         <td><%=curForm.get("roleType")%></td>
@@ -201,29 +229,6 @@ $(function ()  {
 </div>
 <%@ include file="efmFooter.jspf"%>
 
-<script>
-    $('#eformOptions a').click(function (e) {
-    e.preventDefault();
-    if(this.href.indexOf('download') != -1) {
-    	document.getElementById("downloadFrame").src = document.getElementById("downloadFrame").src;
-    }
-    $(this).tab('show');
-    });
 
-	function downloadFrameLoaded() {
-		var iFrame = document.getElementById('downloadFrame');
-		if(iFrame) {
-            iFrame.height = "";
-            iFrame.height = iFrame.contentWindow.document.body.scrollHeight + "px";
-      	}
-  	}
-
-registerFormSubmit('eformImportForm', 'dynamic-content');
-
-$('#eformTbl').dataTable({
-	"bPaginate": false,
-	"aoColumnDefs": [{"bSortable":false, "aTargets":[0]}]
-});
-</script>
 </body>
 </html:html>
