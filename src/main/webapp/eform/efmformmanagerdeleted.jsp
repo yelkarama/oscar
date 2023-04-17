@@ -37,31 +37,46 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 <!DOCTYPE html>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="eform.uploadhtml.title" /></title>
+<script>
 
-</head>
+
+	    jQuery(document).ready( function () {
+	        jQuery('#tblDeletedEforms').DataTable({
+            "order": [],
+	        "bPaginate": false,
+            "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+
+</script>
+
 <script language="javascript">
   function checkFormAndDisable(){
-    if(document.forms[0].formHtml.value==""){ 
+    if(document.forms[0].formHtml.value==""){
       alert("<bean:message key="eform.uploadhtml.msgFileMissing"/>");
     } else {
       document.forms[0].subm.value = "<bean:message key="eform.uploadimages.processing"/>";
       document.forms[0].subm.disabled = true;
       document.forms[0].submit();
-    } 
+    }
   }
 
   function newWindow(url, id) {
         Popup = window.open(url,id,'toolbar=no,location=no,status=yes,menubar=no, scrollbars=yes,resizable=yes,width=700,height=600,left=200,top=0');
   }
-  
+
   function confirmNRestore(url) {
     if (confirm("<bean:message key="eform.calldeletedformdata.confirmRestore"/>")) {
         document.location = url;
     }
   }
 </script>
+</head>
 <body>
 
 
@@ -71,14 +86,17 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 
 
 <table class="table table-condensed table-striped table-hover" id="tblDeletedEforms">
+<thead>
 	<tr>
-		<th><a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp?orderby=form_name" class="contentLink"><bean:message	key="eform.uploadhtml.btnFormName" /></a></th>
-		<th><a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp?orderby=form_subject" class="contentLink"><bean:message key="eform.uploadhtml.btnSubject" /></a></th>
-		<th><a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp?orderby=file_name" class="contentLink"><bean:message key="eform.uploadhtml.btnFile" /></a></th>
-		<th><a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp?" class="contentLink"><bean:message key="eform.uploadhtml.btnDate" /></a></th>
+		<th><bean:message key="eform.uploadhtml.btnFormName" /></th>
+		<th><bean:message key="eform.uploadhtml.btnSubject" /></th>
+		<th><bean:message key="eform.uploadhtml.btnFile" /></th>
+		<th><bean:message key="eform.uploadhtml.btnDate" /></th>
 		<th><bean:message key="eform.uploadhtml.btnTime" /></th>
 		<th><bean:message key="eform.uploadhtml.msgAction" /></th>
 	</tr>
+</thead>
+<tbody>
 	<%
 	ArrayList<HashMap<String, ? extends Object>> eForms = EFormUtil.listEForms(orderBy, EFormUtil.DELETED);
   for (int i=0; i<eForms.size(); i++) {
@@ -88,27 +106,19 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 		<td><a href="#" class="viewEform" onclick="newWindow('<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=curForm.get("fid")%>', '<%="FormD"+i%>'); return false;"><%=curForm.get("formName")%></a></td>
 		<td><%=curForm.get("formSubject")%>&nbsp;</td>
 		<td><%=curForm.get("formFileName")%></td>
-		<td ><%=curForm.get("formDate")%></td>
+		<td><%=curForm.get("formDate")%></td>
 		<td><%=curForm.get("formTime")%></td>
 		<td><a href='<%= request.getContextPath() %>/eform/restoreEForm.do?fid=<%=curForm.get("fid")%>' class="contentLink">
-			<bean:message key="eform.calldeletedformdata.btnRestore" />
-	           </a>
+			    <bean:message key="eform.calldeletedformdata.btnRestore" />
+	        </a>
 		</td>
 	</tr>
 	<% } %>
+</tbody>
 </table>
 
 <%@ include file="efmFooter.jspf"%>
 
-<script>
-$('#tblDeletedEforms').dataTable({
-	"aaSorting" : [ [ 0, "asc" ] ],
-	"fnDrawCallback": bindLinks
-});
 
-function bindLinks(oSettings){
-	registerHref('click', 'a.viewEform', '#dynamic-content');
-}
-</script>
 </body>
 </html:html>
