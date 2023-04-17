@@ -111,6 +111,11 @@
 	}
 
 	function getJobTypes() {
+        if ( $.fn.DataTable.isDataTable('#jobTypeTable') ) {
+            var table = $('#jobTypeTable').DataTable();
+            table.destroy();
+            $('#jobTypeTable tbody').empty();
+        }
 		jQuery.getJSON("../ws/rs/jobs/types/all",{async:false},
         function(xml) {
 			if(xml.types) {
@@ -142,12 +147,16 @@
         });
 	}
     function initiate(){
-	    $('#jobTypeTable').DataTable({
-             "order": [],
-            "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
-                    }
-        });
+        if ( ! $.fn.DataTable.isDataTable('#jobTypeTable') ) {
+	        $('#jobTypeTable').DataTable({
+                 "order": [],
+                "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        }
+            });
+        } else {
+            console.log("DataTable already exists, skipping initiation");
+        }
         return;
     }
 
