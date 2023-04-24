@@ -131,7 +131,7 @@ $('#eformTbl').DataTable({
       ],
     "order": [[1, 'asc']],
     "language": {
-        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
         }
 });
 
