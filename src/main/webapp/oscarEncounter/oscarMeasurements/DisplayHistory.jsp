@@ -68,7 +68,6 @@
     <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
     <script>
-    // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
     // NOTE
     // DataTables 1.13.4 language plugin is tested compatible with 1.10.11
     // and allows for specific use of tag global.i18nLanguagecode=fr-FR  pt-BR
@@ -81,7 +80,7 @@
 	        "bPaginate": false,
             "searching": false,
             "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
             });
 	    });
