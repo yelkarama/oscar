@@ -48,7 +48,7 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
             "order": [],
 	        "bPaginate": false,
             "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
             });
 	    });
