@@ -27,7 +27,7 @@
  String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF" ;
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String providerNo=loggedInInfo.getLoggedInProviderNo();
-   			
+
 
   String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
@@ -62,17 +62,17 @@
 <%
 	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
 
-    
-    UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO"); 
-%>
 
+    UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+%>
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="provider.providerpreference.title" /></title>
-<!-- <script type="text/javascript" src="../share/javascript/prototype.js"></script> -->
+<!-- <script src="../share/javascript/prototype.js"></script> -->
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,9 +81,9 @@
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
-<script language="JavaScript">
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+<script>
 
 function setfocus() {
   this.focus();
@@ -203,8 +203,8 @@ window.opener.location.reload();
 	if (providerPreference == null) {
 	    providerPreference = new ProviderPreference();
 	}
-	
-	String startHour = request.getParameter("start_hour")!=null?request.getParameter("start_hour"):providerPreference.getStartHour().toString();	
+
+	String startHour = request.getParameter("start_hour")!=null?request.getParameter("start_hour"):providerPreference.getStartHour().toString();
 	String endHour = request.getParameter("end_hour")!=null?request.getParameter("end_hour"):providerPreference.getEndHour().toString();
 	String everyMin = request.getParameter("every_min")!=null?request.getParameter("every_min"):providerPreference.getEveryMin().toString();
 	String myGroupNo = request.getParameter("mygroup_no")!=null?request.getParameter("mygroup_no"):providerPreference.getMyGroupNo();
@@ -212,18 +212,18 @@ window.opener.location.reload();
 	String ticklerProviderNo = request.getParameter("tklerproviderno");
 	String defaultPMM = request.getParameter("default_pmm")!=null?request.getParameter("default_pmm"):providerPreference.getDefaultCaisiPmm();
 	String caisiBillingNotDelete = request.getParameter("caisiBillingPreferenceNotDelete")!=null?request.getParameter("caisiBillingPreferenceNotDelete"):String.valueOf(providerPreference.getDefaultDoNotDeleteBilling());
-	
+
 %>
 
-<body bgproperties="fixed"  onLoad="setfocus();showHideBillPref();showHideERxPref();" topmargin="0"leftmargin="0" rightmargin="0" style="font-family:sans-serif">
+<body onLoad="setfocus();showHideBillPref();showHideERxPref();" style="font-family:sans-serif">
 	<FORM NAME = "UPDATEPRE" METHOD="post" ACTION="providerupdatepreference.jsp" onSubmit="return(checkTypeInAll())">
 
-<table class="preferenceTable" width="100%">
+<table class="preferenceTable" style="width: 100%;">
     <tr>
         <td class="preferenceLabel">
 		    <H4>&nbsp;<i class="icon-cogs"></i>&nbsp;<bean:message key="provider.providerpreference.title"/></H4>
         </td>
-        <td style="text-align: right">	&nbsp;	
+        <td style="text-align: right">	&nbsp;
 			<INPUT TYPE="submit" class="btn btn-primary" VALUE='<bean:message key="provider.providerpreference.btnSubmit"/>' SIZE="7">
 			<INPUT TYPE = "RESET" class="btn" VALUE ='<bean:message key="global.btnClose"/>' onClick="window.close();">
         </td>
@@ -294,30 +294,30 @@ window.opener.location.reload();
 								myCheck2 = "checked";
 							}
 						%>
-						
-						<script type="text/javascript">
+
+						<script>
 						function ticklerwarningchange(){
 							var tickRadios = document.getElementsByName("new_tickler_warning_window");
 							for (var i=0;i<tickRadios.length;i++) {
 								if (tickRadios[i].checked==true) {
 									if (tickRadios[i].value=="enabled") {
-										// hidden ticklerforprovider row 
+										// hidden ticklerforprovider row
 										document.getElementById("ticklerProvider").style.display="table-row";
 									} else {
 										// show ticklerforprovider row
 										document.getElementById("ticklerProvider").style.display="none";
 									}
-								}									
+								}
 							}
 						}
 						</script>
-			            
+
 			            <input type="radio" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %> onchange="ticklerwarningchange()"> Enabled </input>
 			            <br>
 						<input type="radio" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %> onchange="ticklerwarningchange()"> Disabled </input>
 					</td>
 				</tr>
-				
+
 				<tr id="ticklerProvider" style=<%=myCheck1=="checked"?"display:table-row;":"display:none" %>>
 					<td class="preferenceLabel">
 						Tickler Warning Window for which provider?
@@ -333,7 +333,7 @@ window.opener.location.reload();
 								List<Provider> listProvider = new ArrayList<Provider>();
 								if (providerDao != null) {
 									listProvider = providerDao.getProviders();
-								}							
+								}
 								for (Provider provider : listProvider) {
 									String selected = "";
 									if (ticklerforproviderNo.equals(provider.getProviderNo())) {
@@ -371,7 +371,7 @@ window.opener.location.reload();
 						<input type="radio" name="default_pmm" value="disabled" <%= myCheck4 %>> Disabled
 					</td>
 				</tr>
-				
+
 				 <tr>
 		            <td class="preferenceLabel">
 		            <bean:message key="provider.btnCaisiBillPreferenceNotDelete"/>
@@ -436,7 +436,7 @@ window.opener.location.reload();
 							String checkedString=(checkedEncounterFormNames.contains(encounterForm.getFormName())?"checked=\"checked\"":"");
 							%>
 								<input type="checkbox" name="encounterFormName" value="<%=nameEscaped%>" <%=checkedString%> /> <%=nameEscaped%>
-								<br />
+								<br>
 							<%
 						}
 	            	%>
@@ -457,7 +457,7 @@ window.opener.location.reload();
 							String checkedString=(checkedEFormIds.contains(eform.getId())?"checked=\"checked\"":"");
 							%>
 								<input type="checkbox" name="eformId" value="<%=eform.getId()%>" <%=checkedString%> /> <%=StringEscapeUtils.escapeHtml(eform.getFormName())%>
-								<br />
+								<br>
 							<%
 						}
 	            	%>
@@ -477,7 +477,7 @@ window.opener.location.reload();
 							%>
 								<input type="button" class="btn" value="<bean:message key="REMOVE"/>" onclick="document.location='providerPreferenceQuickLinksAction.jsp?action=remove&name='+escape('<%=StringEscapeUtils.escapeHtml(quickLink.getName())%>')" />
 								<%=StringEscapeUtils.escapeHtml(quickLink.getName())%> : <%=StringEscapeUtils.escapeHtml(quickLink.getUrl())%>
-								<br />
+								<br>
 							<%
 						}
 	            	%>
@@ -497,7 +497,7 @@ window.opener.location.reload();
 						<tr>
 							<td style="border:none"></td>
 							<td style="border:none">
-								<script type="text/javascript">
+								<script>
 									function addQuickLink()
 									{
 										name=escape(document.UPDATEPRE.quickLinkName.value);
@@ -561,10 +561,10 @@ $('#rxInteractionWarningLevel').bind( 'change', function(event) {
      %>
         <td class="preferenceLabel">
             Select when you want to receive Review Messages
-            
+
          </td>
-         <td preferenceValue>
-             <select id="reviewMsg" name="reviewMsg">                 
+         <td>
+             <select id="reviewMsg" name="reviewMsg">
                  <%
                      for( int hr = 0; hr < 24; ++hr ) {
                          for( int min = 0; min < 60; min+=30 ) {
@@ -574,7 +574,7 @@ $('#rxInteractionWarningLevel').bind( 'change', function(event) {
                         }
                     }
                  %>
-             </select>                          
+             </select>
          </td>
         </tr>
         <script>
@@ -593,9 +593,9 @@ alert(value);
         </script>
     <tr>
         <td class="preferenceLabel">
-		    
+
         </td>
-        <td style="text-align: right">	
+        <td style="text-align: right">
 			<INPUT TYPE="submit" class="btn btn-primary" VALUE='<bean:message key="provider.providerpreference.btnSubmit"/>' SIZE="7">
 			<INPUT TYPE = "RESET" class="btn" VALUE ='<bean:message key="global.btnClose"/>' onClick="window.close();">
         </td>
@@ -620,48 +620,48 @@ alert(value);
   <!-- individual option for OSCAR markdown rendering -->
   <oscar:oscarPropertiesCheck property="encounter.render_markdown" value="true">
 	  <tr>
-		  <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=markdown');return false;"><bean:message key="provider.providerpreference.markdown" /></a></td>
+		  <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=markdown');return false;"><bean:message key="provider.providerpreference.markdown" /></a></td>
 	  </tr>
   </oscar:oscarPropertiesCheck>
   <!-- individual option for OSCAR in Tabs setting, if not set globally in oscar.proterties -->
   <oscar:oscarPropertiesCheck property="open_in_tabs" value="optional">
 	  <tr>
-		  <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewInTabs');return false;"><bean:message key="provider.providerpreference.openInTabs" /></a></td>
+		  <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewInTabs');return false;"><bean:message key="provider.providerpreference.openInTabs" /></a></td>
 	  </tr>
   </oscar:oscarPropertiesCheck>
 <caisi:isModuleLoad moduleName="NEW_CME_SWITCH">
   <oscar:oscarPropertiesCheck property="TORONTO_RFQ" value="no">
 	<tr>
-    <TD align="center"><a href=# onClick ="popupPage(230,600,'../casemgmt/newCaseManagementEnable.jsp');return false;">Enable OSCAR CME UI</a> &nbsp;&nbsp;&nbsp;
+    <td><a href=# onClick ="popupPage(230,600,'../casemgmt/newCaseManagementEnable.jsp');return false;">Enable OSCAR CME UI</a> &nbsp;&nbsp;&nbsp;
     </tr>
   </oscar:oscarPropertiesCheck>
   </caisi:isModuleLoad>
 
   <tr>
-	<td align="center"><a href=# onClick ="popupPage(230,600,'providerDefaultDxCode.jsp?provider_no=<%=request.getParameter("provider_no") %>');return false;">Edit Default Billing Diagnostic Code</a>&nbsp;&nbsp;&nbsp; </td>
+	<td><a href=# onClick ="popupPage(230,600,'providerDefaultDxCode.jsp?provider_no=<%=request.getParameter("provider_no") %>');return false;">Edit Default Billing Diagnostic Code</a>&nbsp;&nbsp;&nbsp; </td>
 	</tr>
   <tr>
 
-    <TD align="center"><a href=# onClick ="popupPage(370,700,'providerchangepassword.jsp');return false;"><bean:message key="provider.btnChangePassword"/></a> &nbsp;&nbsp;&nbsp;</td>
+    <td><a href=# onClick ="popupPage(370,700,'providerchangepassword.jsp');return false;"><bean:message key="provider.btnChangePassword"/></a> &nbsp;&nbsp;&nbsp;</td>
   </tr>
   <tr>
-      <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultSex');return false;"><bean:message key="provider.btnSetDefaultSex" /></a></td>
+      <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultSex');return false;"><bean:message key="provider.btnSetDefaultSex" /></a></td>
       </tr>
   <tr>
-    <td align="center"><a href=# onClick ="popupPage(230,860,'providerSignature.jsp');return false;"><bean:message key="provider.btnEditSignature"/></a>
+    <td><a href=# onClick ="popupPage(230,860,'providerSignature.jsp');return false;"><bean:message key="provider.btnEditSignature"/></a>
     </td>
   </tr>
   <tr>
-    <td align="center">
+    <td>
       <a href=# onClick ="popupPage(430,860,'providerConsultSignature.jsp');return false;"><bean:message key="provider.consultSignatureStamp.title"/></a>
     </td>
   </tr>
-  
-  
+
+
   <oscar:oscarPropertiesCheck property="TORONTO_RFQ" value="no" defaultVal="true">
   <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="r">
   <tr>
-    <td align="center">
+    <td>
 <% String br = OscarProperties.getInstance().getProperty("billregion");
    if (br.equals("BC")) { %>
 	<a href=# onClick ="popupPage(230,400,'../billing/CA/BC/viewBillingPreferencesAction.do?providerNo=<%=providerNo%>');return false;"><bean:message key="provider.btnBillPreference"/></a>
@@ -698,174 +698,174 @@ alert(value);
 
 </security:oscarSec>
 	  <tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'providerAddress.jsp');return false;"><bean:message key="provider.btnEditAddress"/></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'providerAddress.jsp');return false;"><bean:message key="provider.btnEditAddress"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'providerPhone.jsp');return false;"><bean:message key="provider.btnEditPhoneNumber"/></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'providerPhone.jsp');return false;"><bean:message key="provider.btnEditPhoneNumber"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'providerFax.jsp');return false;"><bean:message key="provider.btnEditFaxNumber"/></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'providerFax.jsp');return false;"><bean:message key="provider.btnEditFaxNumber"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'providerColourPicker.jsp');return false;"><bean:message key="provider.btnEditColour"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'providerColourPicker.jsp');return false;"><bean:message key="provider.btnEditColour"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(500,860,'providerPrinter.jsp');return false;"><bean:message key="provider.btnSetDefaultPrinter"/></a></td>
+          <td><a href=# onClick ="popupPage(500,860,'providerPrinter.jsp');return false;"><bean:message key="provider.btnSetDefaultPrinter"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxPageSize');return false;"><bean:message key="provider.btnSetRxPageSize"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxPageSize');return false;"><bean:message key="provider.btnSetRxPageSize"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseRx3');return false;"><bean:message key="provider.btnSetRx3"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseRx3');return false;"><bean:message key="provider.btnSetRx3"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,960,'../setProviderStaleDate.do?method=viewRxProfileView');return false;"><bean:message key="provider.setRxProfileView.title"/></a></td>
+          <td><a href=# onClick ="popupPage(230,960,'../setProviderStaleDate.do?method=viewRxProfileView');return false;"><bean:message key="provider.setRxProfileView.title"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCppSingleLine');return false;"><bean:message key="provider.btnSetCppSingleLine"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCppSingleLine');return false;"><bean:message key="provider.btnSetCppSingleLine"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewShowPatientDOB');return false;"><bean:message key="provider.btnSetShowPatientDOB"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewShowPatientDOB');return false;"><bean:message key="provider.btnSetShowPatientDOB"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultQuantity');return false;"><bean:message key="provider.SetDefaultPrescriptionQuantity"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultQuantity');return false;"><bean:message key="provider.SetDefaultPrescriptionQuantity"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><bean:message key="provider.btnEditStaleDate"/></a></td>
-      </tr>
-
-      <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewMyDrugrefId');return false;"><bean:message key="provider.btnSetmyDrugrefID"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><bean:message key="provider.btnEditStaleDate"/></a></td>
       </tr>
 
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestCuffOffDate');return false;"><bean:message key="provider.btnSetConsultationCutoffTimePeriod"/></a></td>
-      </tr>
-      <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestTeamWarning');return false;"><bean:message key="provider.btnSetConsultationTeam"/></a></td>
-      </tr>
-      <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewWorkLoadManagement');return false;"><bean:message key="provider.btnSetWorkLoadManagement"/></a></td>
-      </tr>
-      <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultPasteFmt');return false;"><bean:message key="provider.btnSetConsultPasteFmt"/></a></td>
-      </tr>
-      <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setViewConsultsPreferences.do?method=viewConsultsFilter');return false;"><bean:message key="provider.btnViewConsultationsDefaultFilter"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewMyDrugrefId');return false;"><bean:message key="provider.btnSetmyDrugrefID"/></a></td>
       </tr>
 
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewFavouriteEformGroup');return false;"><bean:message key="provider.btnSetEformGroup"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestCuffOffDate');return false;"><bean:message key="provider.btnSetConsultationCutoffTimePeriod"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewHCType');return false;"><bean:message key="provider.btnSetHCType" /></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestTeamWarning');return false;"><bean:message key="provider.btnSetConsultationTeam"/></a></td>
+      </tr>
+      <tr>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewWorkLoadManagement');return false;"><bean:message key="provider.btnSetWorkLoadManagement"/></a></td>
+      </tr>
+      <tr>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultPasteFmt');return false;"><bean:message key="provider.btnSetConsultPasteFmt"/></a></td>
+      </tr>
+      <tr>
+          <td><a href=# onClick ="popupPage(230,860,'../setViewConsultsPreferences.do?method=viewConsultsFilter');return false;"><bean:message key="provider.btnViewConsultationsDefaultFilter"/></a></td>
+      </tr>
+
+      <tr>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewFavouriteEformGroup');return false;"><bean:message key="provider.btnSetEformGroup"/></a></td>
+      </tr>
+      <tr>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewHCType');return false;"><bean:message key="provider.btnSetHCType" /></a></td>
       </tr>
       <% if(OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")){%>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewOntarioMDId');return false;"><bean:message key="provider.btnSetmyOntarioMD"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewOntarioMDId');return false;"><bean:message key="provider.btnSetmyOntarioMD"/></a></td>
       </tr>
       <%}%>
   </oscar:oscarPropertiesCheck>
         <tr>
-            <td align="center"><a href=# onClick ="popupPage(230,860,'providerIndivoIdSetter.jsp');return false;"><bean:message key="provider.btnSetIndivoId"/></a></td>
+            <td><a href=# onClick ="popupPage(230,860,'providerIndivoIdSetter.jsp');return false;"><bean:message key="provider.btnSetIndivoId"/></a></td>
         </tr>
         <tr>
-            <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseMyMeds');return false;"><bean:message key="provider.btnSetUseMyMeds"/></a></td>
+            <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseMyMeds');return false;"><bean:message key="provider.btnSetUseMyMeds"/></a></td>
         </tr>
-  
+
   		<tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'../provider/CppPreferences.do');return false;"><bean:message key="provider.cppPrefs" /></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'../provider/CppPreferences.do');return false;"><bean:message key="provider.cppPrefs" /></a></td>
       	</tr>
 
       	<tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'../provider/OlisPreferences.do');return false;"><bean:message key="provider.olisPrefs" /></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'../provider/OlisPreferences.do');return false;"><bean:message key="provider.olisPrefs" /></a></td>
       	</tr>
       	<security:oscarSec roleName="<%=roleName$%>" rights="r" objectName="_dashboardDisplay">
       	<tr>
-          <td align="center"><a href=# onClick ="popupPage(400,860,'../provider/DashboardUserPreference.do');return false;"><bean:message key="provider.dashboardUserPrefs" /></a></td>
+          <td><a href=# onClick ="popupPage(400,860,'../provider/DashboardUserPreference.do');return false;"><bean:message key="provider.dashboardUserPrefs" /></a></td>
       	</tr>
       	 	<tr>
-    	<td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDashboardPrefs');return false;"><bean:message key="provider.btnViewDashboardPrefs"/></a></td>
+    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDashboardPrefs');return false;"><bean:message key="provider.btnViewDashboardPrefs"/></a></td>
     	</tr>
       	</security:oscarSec>
       	<tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCommentLab');return false;"><bean:message key="provider.btnDisableAckCommentLab"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCommentLab');return false;"><bean:message key="provider.btnDisableAckCommentLab"/></a></td>
         </tr>
         <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewLabRecall');return false;"><bean:message key="provider.btnLabRecallSettings"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewLabRecall');return false;"><bean:message key="provider.btnLabRecallSettings"/></a></td>
         </tr>
        <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEncounterWindowSize');return false;"><bean:message key="provider.btnEditDefaultEncounterWindowSize"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEncounterWindowSize');return false;"><bean:message key="provider.btnEditDefaultEncounterWindowSize"/></a></td>
       </tr>
        <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewQuickChartSize');return false;"><bean:message key="provider.btnEditDefaultQuickChartSize"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewQuickChartSize');return false;"><bean:message key="provider.btnEditDefaultQuickChartSize"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInDocumentReport');return false;"><bean:message key="provider.btnSetEDocBrowserInDocumentReport"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInDocumentReport');return false;"><bean:message key="provider.btnSetEDocBrowserInDocumentReport"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInMasterFile');return false;"><bean:message key="provider.btnSetEDocBrowserInMasterFile"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInMasterFile');return false;"><bean:message key="provider.btnSetEDocBrowserInMasterFile"/></a></td>
       </tr>
       <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewPatientNameLength');return false;"><bean:message key="provider.btnEditSetPatientNameLength"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewPatientNameLength');return false;"><bean:message key="provider.btnEditSetPatientNameLength"/></a></td>
       </tr>
        <tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../admin/displayDocumentDescriptionTemplate.jsp');return false;"><bean:message key="provider.btnSetDocumentDescriptionTemplate"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../admin/displayDocumentDescriptionTemplate.jsp');return false;"><bean:message key="provider.btnSetDocumentDescriptionTemplate"/></a></td>
       </tr>
 	  <tr>
-          <td align="center"><a href=# onClick ="popupPage(500,900,'clients.jsp');return false;"><bean:message key="provider.btnEditClients"/></a></td>
+          <td><a href=# onClick ="popupPage(500,900,'clients.jsp');return false;"><bean:message key="provider.btnEditClients"/></a></td>
       </tr>
     <tr>
-        <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDisplayDocumentAs');return false;"><bean:message key="provider.btnSetDisplayDocumentAs"/></a></td>
+        <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDisplayDocumentAs');return false;"><bean:message key="provider.btnSetDisplayDocumentAs"/></a></td>
     </tr>
      <tr>
-        <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCobalt');return false;"><bean:message key="provider.btnSetCobalt"/></a></td>
+        <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCobalt');return false;"><bean:message key="provider.btnSetCobalt"/></a></td>
     </tr>
     <% if(OscarProperties.getInstance().isPropertyActive("SINGLE_PAGE_CHART")){%>
     <tr>
-    	<td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewHideOldEchartLinkInAppt');return false;"><bean:message key="provider.btnHideOldEchartLinkInAppt"/></a></td>
+    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewHideOldEchartLinkInAppt');return false;"><bean:message key="provider.btnHideOldEchartLinkInAppt"/></a></td>
     </tr>
     <% } %>
     <tr>
-    	<td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewBornPrefs');return false;"><bean:message key="provider.btnViewBornPrefs"/></a></td>
+    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewBornPrefs');return false;"><bean:message key="provider.btnViewBornPrefs"/></a></td>
     </tr>
 	<tr>
-          <td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewAppointmentCardPrefs');return false;"><bean:message key="provider.btnEditSetAppointmentCardPrefs"/></a></td>
+          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewAppointmentCardPrefs');return false;"><bean:message key="provider.btnEditSetAppointmentCardPrefs"/></a></td>
       </tr>
-     
+
 	 <oscar:oscarPropertiesCheck property="util.erx.enabled" value="true">
 	 	<security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r">
         <tr>
-        	<td align="center">
+        	<td>
             	<a href=# onClick ="showHideERxPref();return false;"><bean:message key="provider.eRx.btnPrefLink"/></a>
             </td>
         </tr>
         <tr>
-			<td align="center">
+			<td>
             	<div id="eRxPref">
-                <%  
+                <%
             	String eRxEnabledChecked="unchecked";
                 String eRxTrainingModeChecked="unchecked";
-                                        
+
 				boolean eRxEnabled = false;
                 String eRx_SSO_URL = "";
                 String eRxUsername = "";
                 String eRxPassword = "";
                 String eRxFacility = "";
                 boolean eRxTrainingMode = false;
-                                                        
-                if (providerPreference != null){                                       
+
+                if (providerPreference != null){
                 	eRxEnabled = providerPreference.isERxEnabled();
                     if(eRxEnabled) eRxEnabledChecked = "checked";
-                                
+
                     eRx_SSO_URL = providerPreference.getERx_SSO_URL();
                     eRxUsername = providerPreference.getERxUsername();
                     eRxPassword = providerPreference.getERxPassword();
                     eRxFacility = providerPreference.getERxFacility();
-                                
+
                     eRxTrainingMode = providerPreference.isERxTrainingMode();
                     if(eRxTrainingMode) eRxTrainingModeChecked = "checked";
-                                
+
                     if(eRx_SSO_URL==null || "null".equalsIgnoreCase(eRx_SSO_URL)) eRx_SSO_URL=OscarProperties.getInstance().getProperty("util.erx.oscarerx_sso_url");
                     if(eRxUsername==null || "null".equalsIgnoreCase(eRxUsername)) eRxUsername="";
                     if(eRxPassword==null || "null".equalsIgnoreCase(eRxPassword)) eRxPassword="";
@@ -897,7 +897,7 @@ alert(value);
                           	<td><bean:message key="provider.eRx.labelURL"/>:</td>
                           	<td><input name="erx_sso_url" type="text" value="<%=eRx_SSO_URL%>" title="The URL to access the Web Interface from OSCAR Rx" /></td>
                         </tr>
-                        
+
                      </table>
                   </div>
               </td>
@@ -906,18 +906,18 @@ alert(value);
   </oscar:oscarPropertiesCheck>
 
  	<tr>
-    	<td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewPreventionPrefs');return false;"><bean:message key="provider.btnViewPreventionPrefs"/></a></td>
-    </tr>
-    
-    <tr>
-    	<td align="center"><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewClinicalConnectPrefs');return false;"><bean:message key="provider.btnViewClinicalConnectPrefs"/></a></td>
+    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewPreventionPrefs');return false;"><bean:message key="provider.btnViewPreventionPrefs"/></a></td>
     </tr>
 
     <tr>
-    	<td align="center"><a href=# onClick ="popupPage(700,860,'../setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><bean:message key="provider.btnViewLabMacroPrefs"/></a></td>
+    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewClinicalConnectPrefs');return false;"><bean:message key="provider.btnViewClinicalConnectPrefs"/></a></td>
+    </tr>
+
+    <tr>
+    	<td><a href=# onClick ="popupPage(700,860,'../setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><bean:message key="provider.btnViewLabMacroPrefs"/></a></td>
     </tr>
    <tr>
-    	<td align="center"><a href=# onClick ="popupPage(280,730,'../setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><bean:message key="provider.btnViewTicklerPreferences"/></a></td>
+    	<td><a href=# onClick ="popupPage(280,730,'../setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><bean:message key="provider.btnViewTicklerPreferences"/></a></td>
     </tr>
 </table>
 
@@ -925,10 +925,22 @@ alert(value);
 </div>
 </FORM>
 <script>
-$('#prefTbl').dataTable({
-    "order": [],
-	"bPaginate": false
-});
+    // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
+    // NOTE
+    // DataTables 1.13.4 language plugin is tested compatible with 1.10.11
+    // and allows for specific use of tag global.i18nLanguagecode=fr-FR  pt-BR
+    // if 404 eg offline, no translation available at data tables eg en-CA, no properties file entry for this langauge, etc
+    // the english default will automatically be used
+
+	    $(document).ready( function () {
+	        $('#prefTbl').DataTable({
+            "order": [],
+	        "bPaginate": false,
+            "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
 </script>
 </body>
 </html:html>

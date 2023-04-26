@@ -36,14 +36,13 @@
 <%@ page import="oscar.oscarMessenger.util.Msgxml"%>
 <%@ page import="oscar.oscarDemographic.data.*"%>
 <%@ page import="oscar.oscarMessenger.data.MsgProviderData" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@ page import="org.oscarehr.common.model.UserProperty"%>
 
 <%@ page import="org.w3c.dom.*"%>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ResourceBundle" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -164,10 +163,13 @@ if ( markdownProp == null ) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
-<% if (renderMarkdown) { %>
+<% if (renderMarkdown) { 
+	ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+	String lowercasei18n = oscarRec.getString("global.i18nLanguagecode").toLowerCase();
+%>
 <link rel="stylesheet" href="<%=request.getContextPath() %>/library/toastui/toastui-editor.min.css" />
 <script src="<%=request.getContextPath() %>/library/toastui/toastui-editor-all.min.js"></script>
-<script src="<%=request.getContextPath() %>/library/toastui/i18n/<bean:message key="global.i18nLanguagecode" />.js"></script>
+<script src="<%=request.getContextPath() %>/library/toastui/i18n/<%=lowercasei18n %>.js"></script>
 <% } %>
 
 <style type="text/css">

@@ -46,6 +46,8 @@
 	if(!authed) {
 		return;
 	}
+OscarProperties oscarProps = OscarProperties.getInstance();
+String help_url = (oscarProps.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
 %>
 
 <html:html locale="true">
@@ -362,14 +364,14 @@ function viewPharmacy(id){
 
 
 function returnToRx(){
-	var rx_enhance = <%=OscarProperties.getInstance().getProperty("rx_enhance")%>;
+	//var rx_enhance = <%=OscarProperties.getInstance().getProperty("rx_enhance")%>;
 
-	if(rx_enhance){
-	    opener.window.refresh();
-	    window.close();
-	} else {
+	//if(rx_enhance){
+	//    opener.window.refresh();
+	//    window.close();
+	//} else {
         window.location.href="SearchDrug3.jsp";
-	}
+	//}
 }
 
 </script>
@@ -396,7 +398,7 @@ function returnToRx(){
 
 				<td valign="top" colspan="1" style="text-align:right;">
 				<div class="DivCCBreadCrumbs">
-				<a style="color:black;" href="https://worldoscar.org/knowledge-base/pharmacies/" target="_blank">Help</a> | 
+				<a style="color:black;" href="<%=help_url%>pharmacies/" target="_blank">Help</a> | 
                  		<a style="color:black;" href="<%=request.getContextPath() %>/oscarEncounter/About.jsp" target="_new">About</a>
             			</td>
 			</tr>

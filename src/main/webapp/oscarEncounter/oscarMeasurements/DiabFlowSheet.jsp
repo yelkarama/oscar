@@ -119,7 +119,7 @@ ArrayList<String> recomendations = mi.getRecommendations();
     		$('.xsparkline').sparkline(vals2,{type:"line", lineColor:"#f00", fillColor:"", spotRadius:"0", spotColor:"", composite:"true"});
     	});
     </script>
-    
+
 <script>
 	function getDemographicNo() {
 		return '<%=demographic_no%>';
@@ -222,17 +222,17 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 		$("#measurement-view-message").html(msg);
 		$("#measurement-view").show();
-		
+
 		});
 
 	    $("#deleteButton").click(function(){
 		var link = "<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/DeleteData2.do";
-		
+
 		var deletevalue = "id="+$("#deleteId").val()+"&deleteCheckbox="+$("#deleteId").val();
 
 	    	//get scroll position
 	    	var ycoord = $('input[name=ycoord]').val();
-	    	
+
 		$.ajax({
 		    url: link,
 		    method: 'POST',
@@ -244,7 +244,7 @@ ArrayList<String> recomendations = mi.getRecommendations();
 		});
 
     	});
-	    
+
 	});
 
 
@@ -281,7 +281,7 @@ ArrayList<String> recomendations = mi.getRecommendations();
         // All characters are numbers.
         return true;
     }
-	
+
     function wtEnglish2Metric(obj) {
 		if(isNumber(obj) ) {
 			weight = obj.value;
@@ -933,10 +933,10 @@ String date = year+"-"+month+"-"+day;
 			            			break;
 			            		}
 			            	}
-			            	
+
 			            	String onclick="";
 			            	if(!differentInstr) {
-			            		onclick="onclick=\"popup(465,635,'../../servlet/oscar.oscarEncounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet?type="+h2.get("measurement_type")+"&mInstrc="+mInstr+"&demographicNo="+demographic_no+"');\"";
+			            		onclick="onclick=\"popup(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no="+demographic_no+"&type="+h2.get("measurement_type")+"');\"";
 			            	}
 			            %>
 			               	<span  <%=onclick %> class="inlinesparkline" values="
@@ -963,7 +963,7 @@ String date = year+"-"+month+"-"+day;
 		           		}
 		           	} else if (name.equals("BP")) {
 		           		if (alist != null && alist.size() > 1) {
-		           			
+
 		           			String mInstr = null;
 			            	boolean differentInstr=false;
 			            	for(int x=0;x<alist.size();x++) {
@@ -975,12 +975,12 @@ String date = year+"-"+month+"-"+day;
 			            			break;
 			            		}
 			            	}
-			            	
+
 			            	String onclick="";
 			            	if(!differentInstr) {
-			            		onclick="onclick=\"popup(465,635,'../../servlet/oscar.oscarEncounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet?type="+h2.get("measurement_type")+"&mInstrc="+mInstr+"&demographicNo="+demographic_no+"');\"";
+			            		onclick="onclick=\"popup(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no="+demographic_no+"&type="+h2.get("measurement_type")+"');\"";
 			            	}
-		           			
+
 		           			List<String> first = new ArrayList<String>();
 		           			List<String> second = new ArrayList<String>();
 		           			for (int x=alist.size()-1; x>=0; x--){
@@ -1030,13 +1030,13 @@ String date = year+"-"+month+"-"+day;
 					<%=hdata.get("comments")%>
 					</b>
 					</div>
-					
+
 					<div id="mMessage-<%=hdata.get("id")%>" style="display:none;">
-					
+
 					<h1><%=name%>: <%=hdata.get("data")%></h1>
 					Date Observed: <%=hdata.get("prevention_date")%><br>
 					<%=hdata.get("comments")%><br>
-					
+
 
 					</div>
 					<%
@@ -1067,7 +1067,7 @@ String date = year+"-"+month+"-"+day;
 			                <%}else{ %>
 			                <%=hdata.get("prevention_date")%><br>
 			                <%}%>
-			                
+
 			              	<%
 			              	if (hdata.get("comments")!= null) {
 
@@ -1082,13 +1082,13 @@ String date = year+"-"+month+"-"+day;
 			              	}
 			              	%>
 			          </div>
-			          
+
 			        <div id="mMessage-<%=hdata.get("id")%>" style="display:none;">
-					
+
 					<h1><%=name%>: <%=hdata.get("data")%></h1>
 					Date Observed: <%=hdata.get("prevention_date")%><br>
 					<%=hdata.get("comments")%><br>
-					
+
 					</div>
 		            <%}
 		 			if (increaseHeight) {
@@ -1103,7 +1103,7 @@ String date = year+"-"+month+"-"+day;
     	<%	}
 
     	}%>
-    	
+
     	<tr id="<%=header.getDisplayName()%>_update">
     	<td><input style="font-size:12;" type="submit" name="submit" value="Add" /></td>
     	<td></td>

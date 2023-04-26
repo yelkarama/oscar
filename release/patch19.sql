@@ -2396,3 +2396,13 @@ CALL CreateIndex('eform_values','','idx_eform_values_demo_varname_varvalue','`de
 CALL CreateIndex('eform_values','','idx_eform_values_fdid_varname','`fdid`, `var_name`');
 CALL DeleteIndex('eform_values','fdidIndex');
 CALL DeleteIndex('eform_values','eform_values_varname_varvalue');
+
+-- update-2023-03-01.sql
+-- add diagnostic codes
+INSERT INTO `diagnosticcode`(`diagnostic_code`, `description`, `status`, `region`) VALUES ('80', 'Coronavirus suspected or confirmed', 'A', 'ON') ON DUPLICATE KEY UPDATE region='ON';
+INSERT INTO `diagnosticcode`(`diagnostic_code`, `description`, `status`, `region`) VALUES ('81', 'Long COVID post COVID condition PCC', 'A', 'ON') ON DUPLICATE KEY UPDATE region='ON';
+
+-- upgrade jquery from 1.4.2 to 1.12.3 to restore  eform pdf and printing functions.  
+-- Note that the update for eform_data will be database intensive in older installations and may not be benign
+UPDATE eform SET form_html = REPLACE(form_html, "${oscar_javascript_path}jquery/jquery-1.4.2.js", "../js/jquery-1.12.3.js");
+-- UPDATE eform_data SET form_data = REPLACE(form_data, "${oscar_javascript_path}jquery/jquery-1.4.2.js", "../js/jquery-1.12.3.js");

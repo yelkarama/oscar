@@ -123,7 +123,7 @@
 
 <div style="text-align:right">
 		<i class=" icon-question-sign"></i> 
-	    <a href="https://worldoscar.org/knowledge-base/search/" target="_blank"><bean:message key="app.top1"/></a>
+	    <a href="https://oscargalaxy.org/knowledge-base/search/" target="_blank"><bean:message key="app.top1"/></a>
 	    <i class=" icon-info-sign" style="margin-left:10px;"></i> 
         <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>
 </div>

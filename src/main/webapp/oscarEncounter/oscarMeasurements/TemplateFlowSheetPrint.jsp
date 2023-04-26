@@ -899,7 +899,7 @@ String noPrint2 = "";
 <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script> 
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>	
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script> 
 
 <script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>

@@ -278,15 +278,25 @@
       </dependency>
       <!-- pdf / jpedal -->
       <dependency>
-         <groupId>org</groupId>
-         <artifactId>jpedal</artifactId>
-         <version>lgpl</version>
+         <groupId>com.github.Lonzak</groupId>
+         <artifactId>JPedal</artifactId>
+         <version>4.92-p13</version>
       </dependency>
       <!--  pdfbox -->
       <dependency>
          <groupId>org.apache.pdfbox</groupId>
          <artifactId>pdfbox</artifactId>
-         <version>1.2.1</version>
+         <version>2.0.27</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.pdfbox</groupId>
+         <artifactId>jbig2-imageio</artifactId>
+         <version>3.0.4</version>
+      </dependency>
+      <dependency>
+         <groupId>com.twelvemonkeys.imageio</groupId>
+         <artifactId>imageio-jpeg</artifactId>
+         <version>3.3.1</version>
       </dependency>
       <!-- google collections lib -->
       <dependency>
@@ -463,12 +473,6 @@
          <artifactId>macplus_client_stubs</artifactId>
          <version>SNAPSHOT</version>
       </dependency>
-      <!-- apache xmlgraphics batik -->
-      <dependency>
-         <groupId>org.apache.xmlgraphics</groupId>
-         <artifactId>batik-dom</artifactId>
-         <version>1.7</version>
-      </dependency>
       <!-- apache commons codec -->
       <dependency>
          <groupId>commons-codec</groupId>
@@ -490,12 +494,6 @@
          <groupId>org.indivo</groupId>
          <artifactId>indivo-model-phr-jackson</artifactId>
          <version>3.1-SNAPSHOT</version>
-      </dependency>
-      <!-- jcharts -->
-      <dependency>
-         <groupId>net.sf.jcharts</groupId>
-         <artifactId>krysalis-jCharts</artifactId>
-         <version>0.7.5</version>
       </dependency>
       <dependency>
          <groupId>batik</groupId>
@@ -615,11 +613,11 @@
          <artifactId>commons-email</artifactId>
          <version>1.1</version>
       </dependency>
-      <!-- jfree charts -->
+      <!-- jfree charts https://mvnrepository.com/artifact/org.jfree/jfreechart -->
       <dependency>
-         <groupId>jfree</groupId>
+         <groupId>org.jfree</groupId>
          <artifactId>jfreechart</artifactId>
-         <version>1.0.12</version>
+         <version>1.5.4</version>
       </dependency>
       <!-- ocan.jar , suspect this is generated classes and should be removed as a jar in the future -->
       <dependency>

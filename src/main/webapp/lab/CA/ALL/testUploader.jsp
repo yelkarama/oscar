@@ -72,7 +72,7 @@ String outcome = (String) request.getAttribute("outcome");
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script> 
 
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>

@@ -40,8 +40,10 @@ if(!authed) {
 %>
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page
-    import="java.util.*,oscar.oscarLab.ca.on.*,oscar.oscarDemographic.data.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="oscar.oscarLab.ca.on.*"%>
+<%@ page import="oscar.oscarDemographic.data.*"%>
+<%@ page import="org.owasp.encoder.Encode"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -78,28 +80,23 @@ if(!authed) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@page import="org.oscarehr.util.MiscUtils"%><html>
     <head>
-        <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <html:base />
-        <title><%=""/*lab.pLastName*/%>, <%=""/*lab.pFirstName*/%> <bean:message
+        <title><%=Encode.forHtml(demographic.getLastName())%>, <%=Encode.forHtml(demographic.getFirstName())%> <bean:message
             key="oscarMDS.segmentDisplay.title" /></title>
-        <link rel="stylesheet" type="text/css"
-              href="../../../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+
+        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+
+
+        <style type="text/css" media="print">
+         .DoNotPrint {
+	        display:none;
+         }
+
+        </style>
     </head>
 
-    <script language="JavaScript">
-        function getComment() {
-            var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', '');
-            document.acknowledgeForm.comment.value = commentVal;
-            return true;
-        }
-
-        function popupStart(vheight,vwidth,varpage,windowname) {
-            var page = varpage;
-            windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-            var popup=window.open(varpage, windowname, windowprops);
-        }
-    </script>
 
     <body>
             <table width="100%" height="100%" border="0" cellspacing="0"
@@ -107,7 +104,7 @@ if(!authed) {
                 <tr>
                     <td valign="top">
 
-                        <table width="100%" border="1" cellspacing="0" cellpadding="3"
+                        <table width="100%" class="DoNotPrint" border="1" cellspacing="0" cellpadding="3"
                                bgcolor="#9999CC" bordercolordark="#bfcbe3">
                             <tr>
                                 <td width="66%" align="middle" class="Cell">
@@ -127,25 +124,25 @@ if(!authed) {
                                                                 <tr>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=demographic.getLastName()%>,
-                                                                        <%=demographic.getFirstName()%></div>
+                                                                                key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=Encode.forHtml(demographic.getLastName())%>,
+                                                                        <%=Encode.forHtml(demographic.getFirstName())%></div>
 
                                                                     </td>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData" nowrap="nowrap"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formSex" />: </strong><%=demographic.getSex()%>
+                                                                                key="oscarMDS.segmentDisplay.formSex" />: </strong><%=Encode.forHtml(demographic.getSex())%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=DemographicData.getDob(demographic,"-")%>
+                                                                                key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=Encode.forHtml(DemographicData.getDob(demographic,"-"))%>
                                                                         </div>
                                                                     </td>
                                                                     <td colspan="2" nowrap>
                                                                         <div class="FieldData" nowrap="nowrap"><strong><bean:message
-                                                                                key="oscarMDS.segmentDisplay.formAge" />: </strong><%=demographic.getAge()%>
+                                                                                key="oscarMDS.segmentDisplay.formAge" />: </strong><%=Encode.forHtml(demographic.getAge())%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -206,7 +203,7 @@ if(!authed) {
 
 
                         <table width="100%" border="0" cellspacing="0" cellpadding="3"
-                               class="MainTableBottomRowRightColumn" bgcolor="#003399">
+                               class="DoNotPrint MainTableBottomRowRightColumn" bgcolor="#003399">
                             <tr>
                                 <td align="left"><input type="button"
                                                             value=" <bean:message key="global.btnClose"/> "
@@ -241,18 +238,24 @@ if(!authed) {
                             }
 
                             String styleColor = "";
+                            String titleText = "title=\"Outdated\"";
                             if (drug.isCurrent() && (drug.getEndDate().getTime() - now <= month)) {
-                                styleColor="style=\"color:orange;font-weight:bold;\"";
+                                styleColor="style=\"color:blue;\"";
+                                titleText="title=\"Longterm\"";
                             }else if (drug.isCurrent() )  {
-                                styleColor="style=\"color:red;\"";
+                                styleColor="style=\"color:blue;font-weight:bold;\"";
+                                titleText="title=\"Current\"";
                             }
                             %>
-                            <li><input type="checkbox"  <%=getChecked( h,drug.getRegionalIdentifier())%> name="drug" value="<%=drug.getRegionalIdentifier()%>" /> <%=drug.getFullOutLine().replaceAll(";", " ")%> </li>
+                            <br/><input type="checkbox"
+<%=(drug.getRegionalIdentifier() != null ? "" : "disabled")%> <%=getChecked( h,drug.getRegionalIdentifier())%> name="drug" value="<%=drug.getRegionalIdentifier()%>" /><span <%=styleColor%> <%=titleText%>> <%=drug.getFullOutLine().replaceAll(";", " ")%></span>
                             <%
                          }
                         %>
                         </ul>
-                        <input type="submit" value="Add Meds to Graph"/>
+                        <div class="DoNotPrint">
+                            <input type="submit" value="Add Meds to Graph"/>
+                        </div>
                         </form>
 
                     </td>

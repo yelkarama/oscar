@@ -53,7 +53,7 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
   }
 
   function newWindow(url, id) {
-        Popup = window.open(url,id,'toolbar=no,location=no,status=yes,menubar=no, scrollbars=yes,resizable=yes,width=900,height=600,left=200,top=0');
+        Popup = window.open(url,id,'toolbar=no,location=no,status=yes,menubar=no, scrollbars=yes,resizable=yes,width=1200,height=900,left=200,top=0');
   }
   function confirmNDelete(url) {
     if (confirm("<bean:message key="eform.uploadhtml.confirmDelete"/>")) {
@@ -81,7 +81,7 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
       document.getElementById("importHeading").className = activeStyle;
       document.getElementById("importDiv").style.display = 'block';
   }
-  
+
   function openDownload() {
       closeInputs();
       document.getElementById("downloadHeading").className = activeStyle;
@@ -96,9 +96,9 @@ else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
     <%}%>
   }
 
-$(function ()  { 
+$(function ()  {
 
-	  $("[rel=popover]").popover(); 
+	  $("[rel=popover]").popover();
 
 });
 
@@ -108,23 +108,23 @@ $(function ()  {
 
 
 <%@ include file="efmTopNav.jspf"%>
-    
-<h3 style='display:inline;padding-right:10px'><bean:message key="eform.uploadhtml.msgLibrary" /></h3> <a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp" class="contentLink">View Deleted<!--<bean:message key="eform.uploadhtml.btnDeleted" />--> </a> 
 
-    
+<h3 style='display:inline;padding-right:10px'><bean:message key="eform.uploadhtml.msgLibrary" /></h3> <a href="<%= request.getContextPath() %>/eform/efmformmanagerdeleted.jsp" class="contentLink">View Deleted<!--<bean:message key="eform.uploadhtml.btnDeleted" />--> </a>
+
+
 <ul class="nav nav-pills" id="eformOptions">
 <li><a href="#upload" >Upload</a></li>
 <li><a href="#import">Import</a></li>
 <li><a href="#download">Download</a></li>
 </ul>
- 
+
 <div class="tab-content">
 <div class="tab-pane" id="upload">
 	<div class="row-fluid">
 		<div class="well">
-		
+
 		<iframe id="uploadFrame" name="uploadFrame" frameborder="0" width="100%" height="auto" scrolling="no" src="<%=request.getContextPath()%>/eform/partials/upload.jsp"></iframe>
-		
+
 		</div>
 	</div>
 </div>
@@ -132,9 +132,9 @@ $(function ()  {
 <div class="tab-pane" id="import">
 	<div class="row-fluid">
 		<div class="well">
-		                        
+
 		<iframe id="importFrame" name="importFrame" frameborder="0" width="100%" height="auto" src="<%=request.getContextPath()%>/eform/partials/import.jsp"></iframe>
-		
+
 		</div>
 	</div>
 </div>
@@ -142,9 +142,9 @@ $(function ()  {
 <div class="tab-pane" id="download">
 	<div class="row-fluid">
 		<div class="well">
-		                        
+
 		<iframe id="downloadFrame" name="downloadFrame" onload="downloadFrameLoaded()" frameborder="0" width="100%" height="auto" scrolling="no" src="<%=request.getContextPath()%>/eform/partials/download.jsp"></iframe>
-		
+
 		</div>
 	</div>
 </div>
@@ -182,18 +182,18 @@ $(function ()  {
         <td><%=curForm.get("formTime")%></td>
         <td><%=curForm.get("roleType")%></td>
         <td>
-                    
-        <div  class="btn-group">        
-				<a class="btn btn-link" href="<%= request.getContextPath() %>/eform/efmformmanageredit.jsp?fid=<%= curForm.get("fid")%>" class="contentLink" title='<bean:message key="eform.uploadhtml.editform" /><%=curForm.get("formName")%>'><i class="icon-pencil" title="<bean:message key="eform.uploadhtml.editform" />"></i></a>
-				
-				                 
+
+        <div  class="btn-group">
+				<a class="btn btn-link contentLink" href="<%= request.getContextPath() %>/eform/efmformmanageredit.jsp?fid=<%= curForm.get("fid")%>" title='<bean:message key="eform.uploadhtml.editform" /><%=curForm.get("formName")%>'><i class="icon-pencil" title="<bean:message key="eform.uploadhtml.editform" />"></i></a>
+
+
 				<a class="btn btn-link" href='<%= request.getContextPath() %>/eform/manageEForm.do?method=exportEForm&fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnExport" /> <%=curForm.get("formName")%>' ><i class="icon-download-alt" title="<bean:message key="eform.uploadhtml.btnExport" />"></i></a>
-				                    
-				
-				<a class="btn btn-link" href='<%= request.getContextPath() %>/eform/delEForm.do?fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnDelete" /> <%=curForm.get("formName")%>' class="contentLink"><i class="icon-trash" title="<bean:message key="eform.uploadhtml.btnDelete" />"></i></a>
+
+
+				<a class="btn btn-link contentLink" href='<%= request.getContextPath() %>/eform/delEForm.do?fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnDelete" /> <%=curForm.get("formName")%>' ><i class="icon-trash" title="<bean:message key="eform.uploadhtml.btnDelete" />"></i></a>
 		</div>
-		</td>			
-		
+		</td>
+
     </tr>
     <% } %>
 </tbody>
@@ -215,9 +215,9 @@ $(function ()  {
 		if(iFrame) {
             iFrame.height = "";
             iFrame.height = iFrame.contentWindow.document.body.scrollHeight + "px";
-      	}   
+      	}
   	}
-  
+
 registerFormSubmit('eformImportForm', 'dynamic-content');
 
 $('#eformTbl').dataTable({

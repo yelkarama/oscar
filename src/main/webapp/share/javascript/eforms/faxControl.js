@@ -7,8 +7,8 @@ var faxControlMemoryInput = "<input value='false' name='faxEForm' id='faxEForm' 
 var faxControl = {
 	initialize: function () {
 		var placeholder = jQuery("#faxControl");
-		if (placeholder == null || placeholder.size() == 0) { 
-			if (jQuery(".DoNotPrint").size() > 0) { 
+		if (placeholder == null || placeholder.length == 0) { 
+			if (jQuery(".DoNotPrint").length > 0) { 
 				placeholder = jQuery("<div id='faxControl'>&nbsp;</div>");
 				jQuery(".DoNotPrint").append(placeholder);				
 			}
@@ -35,15 +35,15 @@ var faxControl = {
 				else { 
 					placeholder.html(data);					
 					var buttonLocation = jQuery("input[name='SubmitButton']");
-					if (buttonLocation.size() != 0) { 
-						buttonLocation = jQuery(buttonLocation[buttonLocation.size() -1]);
+					if (buttonLocation.length != 0) { 
+						buttonLocation = jQuery(buttonLocation[buttonLocation.length -1]);
 						jQuery(faxControlFaxButton).insertAfter(buttonLocation);
 						jQuery(faxControlFaxSaveButton).insertAfter(buttonLocation);
 						jQuery(faxControlMemoryInput).insertAfter(buttonLocation);
 					}
 					else {
 						buttonLocation = jQuery(".DoNotPrint");
-						if (buttonLocation == null || buttonLocation.size() == 0) {			
+						if (buttonLocation == null || buttonLocation.length == 0) {			
 							buttonLocation = jQuery(jQuery("form")[0]);
 						}
 						if (buttonLocation != null) {
@@ -180,12 +180,12 @@ function updateFaxButton() {
 }
 
 function hasFaxNumber() {
-	return jQuery("#faxRecipients").children().size() > 0; 
+	return jQuery("#faxRecipients").children().length > 0; 
 }
 
 function submitFaxButtonAjax(save) {
 	var ticklerFlag = $("#tickler_send_to");
-    if (ticklerFlag.size() >0) { 
+    if (ticklerFlag.length >0) { 
         $.when(setTickler()).then(function( data, textStatus, jqXHR ) {
             console.log("faxControl.js reports tickler "+textStatus);
             if ( jqXHR.status != 200 ){ alert("ERROR ("+jqXHR.status+") automatic tickler FAILED to be set");}
@@ -199,14 +199,14 @@ function submitFaxButtonAjax(save) {
 function finishFax(save) {
 	document.getElementById('faxEForm').value=true;
 	var saveHolder = jQuery("#saveHolder");
-	if (saveHolder == null || saveHolder.size() == 0) {
+	if (saveHolder == null || saveHolder.length == 0) {
 		jQuery("form").append("<input id='saveHolder' type='hidden' name='skipSave' value='"+!save+"' >");
 	}
 	saveHolder = jQuery("#saveHolder");
 	saveHolder.val(!save);
 	needToConfirm=false;
 	if (document.getElementById('Letter') == null) {
-		jQuery("form").submit();
+		jQuery("form").trigger('submit');
 	}
 	else {
 		var form = $("form[name='RichTextLetter']");

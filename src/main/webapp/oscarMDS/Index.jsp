@@ -37,10 +37,11 @@ if(!authed) {
 %>
 
 <%
-oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+            oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+            String help_url = (props.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
             UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
             String providerNo = request.getParameter("providerNo");
-String curUser_no = (String) session.getAttribute("user");
+            String curUser_no = (String) session.getAttribute("user");
             UserProperty  getRecallDelegate = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_DELEGATE);
             UserProperty  getRecallTicklerAssignee = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_ASSIGNEE);
             UserProperty  getRecallTicklerPriority = userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_PRIORITY);
@@ -741,7 +742,7 @@ contextpath='<%=request.getContextPath()%>';
 
                             <td align="right" valign="center" width="40%">
 								<span class="HelpAboutLogout">
-									<a href="https://worldoscar.org/knowledge-base/inbox/" target="_blank"><bean:message key="app.top1" /></a>
+									<a href="<%=help_url%>inbox/" target="_blank"><bean:message key="app.top1" /></a>
                                 	| <a href="javascript:popupStart(300,400,'<%=request.getContextPath()%>/oscarEncounter/About.jsp')" ><bean:message key="global.about"/></a>
 								</span>
                                 | <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/oscarMDS/ForwardingRules.jsp?providerNo=<%= providerNo %>');"  >Forwarding Rules</a>

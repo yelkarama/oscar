@@ -62,7 +62,6 @@
 <p><i>Make sure you trust the online booking vendor, as once you give them the credentials to your OSCAR system, they have full access and can remove any users or do anything they want on your system. Be very careful and always make sure credentials are secure.</i></p>
 
 <hr>
-<p>Online booking apps that integrate with OSCAR are convenient because they save time for both patients and clinics, and lead to a better efficiency in the workflow. When choosing an online booking app, one that includes online booking, reminders, check-in kiosk as well as a configurable booking page with the clinic's notices is recommended. <a href="https://www.cortico.health/?utm_source=aditechviaoscar" target="_blank" style="color:#5A6CE2 !important;font-weight:bold;text-decoration:underline;">Cortico</a> is a nice option for a full booking integration that offers this reliably.</p>
 
 </body>
 </html>
