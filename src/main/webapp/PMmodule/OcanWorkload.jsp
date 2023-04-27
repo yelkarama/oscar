@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ include file="/taglibs.jsp"%>
@@ -41,6 +40,7 @@
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
 <%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%
 	OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao)SpringUtils.getBean("ocanStaffFormDataDao");
 	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
@@ -50,17 +50,15 @@
 %>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js" type="text/javascript"></script>
-
+<html:base />
 <title>OCAN Workload</title>
-<link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
 
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" >
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" >
 
-<style title="currentStyle" type="text/css">
-			@import "../css/demo_page.css";
-			@import "../css/demo_table.css";
-</style>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
 
 <style>
 body
@@ -78,7 +76,7 @@ div#demo
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#ocanTable').dataTable({
+		$('#ocanTable').DataTable({
 	        "aaSorting": [[ 1, "desc" ]]
 	    });
 	} );
@@ -106,12 +104,12 @@ div#demo
 
 <body>
 
-<Br/>
+<br>
 <h2 style="text-align:center">OCAN Workload View</h2>
-<br/>
+<br>
 
 <div id="demo">
-			<table id="ocanTable" cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+			<table id="ocanTable" class="display" style="width: 100%;">
 				<thead>
 					<tr>
 						<th>Assessment ID</th>
@@ -183,8 +181,8 @@ div#demo
 					<tr class="gradeB">
 						<td style="text-align:right"><%=ocan.getAssessmentId() %></td>
 						<td style="text-align:right"><a href="<%=request.getContextPath()%>/PMmodule/ClientManager.do?id=<%=ocan.getClientId()%>"><%=ocan.getClientId() %></a></td>
-						<td><%=ocan.getLastName() %></td>
-						<td><%=ocan.getFirstName() %></td>
+						<td><%=Encode.forHtml(ocan.getLastName()) %></td>
+						<td><%=Encode.forHtml(ocan.getFirstName()) %></td>
 						<td style="text-align:center"><%=ocan.getAssessmentStatus() %></td>
 						<td style="text-align:center"><%=startDateStr %></td>
 						<td style="text-align:center"><%=completionDateStr %></td>
@@ -192,7 +190,7 @@ div#demo
 						<td style="text-align:center"><%=(ocanLead)?"Yes":"No" %></td>
 						<td style="text-align:center"><%=reassessmentTimeFrame %></td>
 						<td nowrap="nowrap">
-							<a href="javascript:void(0);" onClick="beginReassign('<%=ocan.getAssessmentId()%>','<%=ocan.getClientId()%>')"><%=p.getFormattedName() %></a>
+							<a href="javascript:void(0);" onClick="beginReassign('<%=ocan.getAssessmentId()%>','<%=ocan.getClientId()%>')"><%=Encode.forHtmlContent(p.getFormattedName())%></a>
 						</td>
 					</tr>
 					<%
@@ -202,7 +200,7 @@ div#demo
 			</table>
 </div>
 
-<br/><br/>
+<br><br>
 
 <div id="reassign_div" style="display:none">
 
@@ -214,7 +212,7 @@ div#demo
 		<select name="reassign_new_provider" id="reassign_new_provider">
 		<%
 			for(Provider p:providers) {
-				%><option value="<%=p.getProviderNo()%>" <%=(p.getProviderNo().equals(provider.getProviderNo()))?" selected=\"selected\" ":"" %> ><%=p.getFormattedName()%></option><%
+				%><option value="<%=p.getProviderNo()%>" <%=(p.getProviderNo().equals(provider.getProviderNo()))?" selected=\"selected\" ":"" %> ><%=Encode.forHtmlContent(p.getFormattedName())%></option><%
 			}
 		%>
 		</select>
