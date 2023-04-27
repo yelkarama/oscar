@@ -89,7 +89,7 @@
             			x++;
             		}
                 	%>
-
+                    if (data.length < 1) { alert("no data to display"); }
                 	var plot1 = $.jqplot ('chart1', data,{
                 		title:'<%=indicatorTemplate.getName()%>',
                 		  axes:{
