@@ -47,10 +47,10 @@
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
 
 	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+	 <!-- migrate needed for 3.0.0/js/bootstrap.min.js to support at least jQuery.fn.focus() but manages quietly without it -->
 	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
-	<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
 	<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script>
-
+	<!--<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>-->
 	<script src="${ pageContext.request.contextPath }/web/dashboard/admin/dashboardManagerController.js"></script>
 
 </head>
