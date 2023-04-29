@@ -2783,7 +2783,7 @@ THEME 2*/
                 //var el = jQuery( this );
                 //medTermCheckOne(randId, el);
             });
-            setTimeout("document.getElementById('<%=defaultView%>').trigger( "click" );console.log('default view setting');", 3000);
+            setTimeout("document.getElementById('<%=defaultView%>').click();console.log('default view setting');", 3000);
             console.log("Timeout running");
         });
     </script>
