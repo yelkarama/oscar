@@ -136,7 +136,8 @@ String pSize        = request.getParameter("pSize");
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Add To Intake</title>
-<script type="text/javascript" src="<html:rewrite page="/js/jquery.js"/>"></script>
+<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.12.3.js" />"></script>
+		<script type="text/javascript" src="<html:rewrite page="/library/jquery/jquery-migrate-1.4.1.js" />"></script>
 <script type="text/javascript">
 	$("document").ready(function(){		
 		$("input[name='elementType']").on("change",function(){

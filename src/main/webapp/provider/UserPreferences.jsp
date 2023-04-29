@@ -42,7 +42,8 @@
 <title><bean:message key="provider.pref.title" /></title>
 <script src="<c:out value="${ctx}/js/checkPassword.js.jsp"/>"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
+<script src="<c:out value="${ctx}/js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="${ctx}/library/jquery/jquery-migrate-1.4.1.js"/>"></script>
 <script>
 jQuery.noConflict();
 </script>

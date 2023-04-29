@@ -228,7 +228,8 @@ if(!authed) {
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
 
-   <script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
+   <script src="<c:out value="${ctx}/js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="${ctx}/library/jquery/jquery-migrate-1.4.1.js"/>"></script>
    <script>
      jQuery.noConflict();
    </script>

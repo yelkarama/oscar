@@ -74,10 +74,10 @@
 
 <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/css/print.css" media="print">
 
-<!-- 
-<script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
- -->
- <script src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
+
+<script src="<c:out value="${ctx}/js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="${ctx}/library/jquery/jquery-migrate-1.4.1.js"/>"></script>
+
 <script language="javascript">
      jQuery.noConflict();
 </script>

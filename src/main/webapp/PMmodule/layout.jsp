@@ -74,7 +74,8 @@
 <script type="text/javascript"
 	src="<html:rewrite page="/js/genericIntake.js" />"></script>
 
-<script type="text/javascript" src="<html:rewrite page="/js/jquery.js" />"></script>
+<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.12.3.js" />"></script>
+		<script type="text/javascript" src="<html:rewrite page="/library/jquery/jquery-migrate-1.4.1.js" />"></script>
 <script type="text/javascript" src="<html:rewrite page="/js/topnav.js" />"></script>
 
 <html:base />
