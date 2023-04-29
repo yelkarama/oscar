@@ -35,7 +35,8 @@
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="admin.appt.status.mgr.title" /></title>
 <link href="../css/jquery.ui.colorPicker.css" rel="stylesheet" type="text/css" />
-<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script>
+<script src="../js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="../js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
 <script src="../js/jquery.ui.colorPicker.min.js" type="text/javascript"></script>
 <oscar:customInterface section="apptStatusEdit"/>
