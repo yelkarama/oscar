@@ -44,7 +44,7 @@
 if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath()+"/logout.jsp");
 
 UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
-    		
+
 Properties oscarVariables = OscarProperties.getInstance();
 
 String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -53,7 +53,7 @@ String userfirstname = (String) session.getAttribute("userfirstname");
 String userlastname = (String) session.getAttribute("userlastname");
 String prov = (oscarVariables.getProperty("billregion","")).trim().toUpperCase();
 String help_url = (oscarVariables.getProperty("HELP_SEARCH_URL","https://oscargalaxy.org/knowledge-base/")).trim();
-   		
+
 GregorianCalendar cal = new GregorianCalendar();
 int curYear = cal.get(Calendar.YEAR);
 int curMonth = (cal.get(Calendar.MONTH)+1);
@@ -78,13 +78,13 @@ body{background-color: #fff /*#f3f3f3*/;}
 sup{
 color:#000;
 font-weight:bold;
-}  
+}
 
 #main-wrapper{margin-top:70px;}
 
 div.navbar div.dropdown:hover ul.dropdown-menu{
-    display: block;  
-    margin:0px;  
+    display: block;
+    margin:0px;
 }
 
 .navbar .dropdown-menu {
@@ -96,7 +96,7 @@ padding:10px 10px;
 }
 
 #caret-loggedIn{
-vertical-align: top; 
+vertical-align: top;
 opacity: 0.3;
 margin-top:18px;
 }
@@ -141,7 +141,7 @@ color:#0088cc;
     width: 75%;
 }
 
-.icon-chevron-right{float:right;}  
+.icon-chevron-right{float:right;}
 
 #adminNav{
 -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.065);
@@ -215,23 +215,23 @@ i[class*='icon-']:hover {color:#0088cc;}
          width:98%;
          position:static;
      }
-     
+
      #main-wrapper{margin-top:30px;}
  }
-  
-@media (min-width: 768px) { 
-	
+
+@media (min-width: 768px) {
+
 	 #side{
 	 	width: 240px;
 	 	margin-right:15px;
-	  } 
-	  
+	  }
+
 	  #dynamic-content{margin-left:260px;}
 }
 
 .visible-print {
   display: none !important;
-}  
+}
 
 @media print {
   .visible-print {
@@ -241,7 +241,7 @@ i[class*='icon-']:hover {color:#0088cc;}
     display: none !important;
   }
   #dynamic-content{margin-left:0px;}
-  
+
   /*this is so the link locatons don't display*/
   a:link:after, a:visited:after {
     content: "";
@@ -249,8 +249,12 @@ i[class*='icon-']:hover {color:#0088cc;}
 }
 </style>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-
+<!--
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+-->
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
 <oscar:customInterface section="main"/> <!--needs to be in header-->
 </head>
 
@@ -259,9 +263,9 @@ i[class*='icon-']:hover {color:#0088cc;}
 
 <div class="container-fluid">
 <div class="row-fluid hidden-print" style="text-align:right">
-<i class=" icon-question-sign"></i> 
+<i class=" icon-question-sign"></i>
 
-		<a href="<%=help_url%>administration/" target="_blank"><bean:message key="global.help" /></a> 
+		<a href="<%=help_url%>administration/" target="_blank"><bean:message key="global.help" /></a>
 
 <i class=" icon-info-sign" style="margin-left:10px;"></i> <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a></div>
 
@@ -272,7 +276,7 @@ i[class*='icon-']:hover {color:#0088cc;}
 
 
   <div class="span9" id="dynamic-content">
-    
+
     <!-- ****DYNAMIC CONTENT**** -->
 <%
 String showMenu=request.getParameter("show");
@@ -281,33 +285,33 @@ String loadPage=request.getParameter("load");
 if(showMenu==null && loadPage==null){
 %>
 <div class="row-fluid">
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.unlockAccount" rights="r">	
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.unlockAccount" rights="r">
       <div class="well quick-links">
 	    <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/unLock.jsp"><i class="icon-user icon-4x"></i>
         <h5><bean:message key="admin.admin.unlockAcct"/></h5></a>
       </div>
 	</security:oscarSec>
 
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin,_admin.provider" rights="r" reverse="<%=false%>">      
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin,_admin.provider" rights="r" reverse="<%=false%>">
       <div class="well quick-links">
-	    <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/provideraddarecordhtm.jsp"><i class="icon-user icon-4x"></i>	
+	    <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/provideraddarecordhtm.jsp"><i class="icon-user icon-4x"></i>
         <h5><bean:message key="admin.admin.btnAddProvider" /></h5></a>
       </div>
-      
+
       <div class="well quick-links">
         <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/securityaddarecord.jsp"><i class="icon-user icon-4x"></i>
         <h5><bean:message key="admin.admin.btnAddLogin" /></h5></a>
       </div>
-	</security:oscarSec>        
+	</security:oscarSec>
 
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r" reverse="<%=false%>">            
-      <div class="well quick-links">	
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r" reverse="<%=false%>">
+      <div class="well quick-links">
       	<a href="${ctx}/eform/efmformmanager.jsp" class="contentLink defaultForms"><i class="icon-file icon-4x"></i>
       	<h5><bean:message key="eform.showmyform.msgManageEFrm"/></h5></a>
       </div>
 	</security:oscarSec>
 
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.schedule" rights="r" reverse="<%=false%>">            
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.schedule" rights="r" reverse="<%=false%>">
       <div class="well quick-links">
         <a href="javascript:void(0);" class="xlink" rel="${ctx}/schedule/scheduletemplatesetting.jsp" title="<bean:message key="admin.admin.scheduleSettingTitle"/>"><i class="icon-calendar icon-4x"></i>
         <h5><bean:message key="admin.admin.scheduleSetting" /></h5></a>
@@ -315,41 +319,41 @@ if(showMenu==null && loadPage==null){
 
       <div class="well quick-links">
         <a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/admindisplaymygroup.jsp"><i class="icon-calendar icon-4x"></i>
-        <h5><bean:message key="admin.admin.btnSearchGroupNoRecords" /></h5></a>     
-      </div>      
+        <h5><bean:message key="admin.admin.btnSearchGroupNoRecords" /></h5></a>
+      </div>
 	</security:oscarSec>
 
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.encounter" rights="r" reverse="<%=false%>">      
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.encounter" rights="r" reverse="<%=false%>">
       <div class="well quick-links">
         <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/providertemplate.jsp"><i class="icon-medkit icon-4x"></i>
         <h5><bean:message key="admin.admin.btnInsertTemplate" /></h5></a>
       </div>
 	</security:oscarSec>
 
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin" rights="r" reverse="<%=false%>">      
+	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin" rights="r" reverse="<%=false%>">
       <div class="well quick-links">
         <a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/providerPrivilege.jsp"><i class="icon-wrench icon-4x"></i>
         <h5><bean:message key="admin.admin.assignRightsObject"/></h5></a>
       </div>
 	</security:oscarSec>
 
- </div>     
-              
-<%}%>             
-   
+ </div>
+
+<%}%>
+
     <!-- ****DYNAMIC CONTENT END**** -->
-    
+
     </div><!-- span8 end -->
 
 </div>
 </div>
 
-<!-- jquery-1.9.1.js - in nonPatientContextHeader.jspf --> 
+<!-- jquery-1.9.1.js - in nonPatientContextHeader.jspf -->
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
 
 
 <script type="text/javascript">
@@ -358,7 +362,7 @@ $( document ).ready(function( $ ) {
 		//alert('link click');
 		e.preventDefault();
 		//alert("You clicked the link");
-		$("#dynamic-content").load($(this).attr("href"), 
+		$("#dynamic-content").load($(this).attr("href"),
 			function(response, status, xhr) {
 		  		if (status == "error") {
 			    	var msg = "Sorry but there was an error: ";
@@ -368,7 +372,7 @@ $( document ).ready(function( $ ) {
 		  		$("html, body").animate({ scrollTop: 0 }, "slow");
 			});
 	});
-	
+
 });
 
 function registerFormSubmit(formId, divId) {
@@ -380,7 +384,7 @@ function registerFormSubmit(formId, divId) {
 		var data = $(this).serialize();
 		// post data
 		$.post($('#'+formId).attr('action'), data, function(returnData) {
-			// insert returned html 
+			// insert returned html
 			$('#'+divId).html(returnData)
 		})
 
@@ -393,7 +397,7 @@ function submitForm(formId, divId){
 	var data = $(this).serialize();
 	// post data
 	$.post($('#'+formId).attr('action'), data, function(returnData) {
-		// insert returned html 
+		// insert returned html
 		$('#'+divId).html(returnData)
 	})
 }
@@ -446,11 +450,11 @@ function parseDate(date, format, separator) {
 function validDate(value, format, separator){
 	try{
 		var d = parseDate(value, format, separator);
-		
+
 		return d!=null;
 	} catch(e){
 		return false;
-	}			
+	}
 }
 
 function resizeIframe(newHgt)
@@ -460,30 +464,30 @@ function resizeIframe(newHgt)
 }
 
 $(document).ready(function() {
-	
+
 	// set validation defaults
-	jQuery.validator.setDefaults({ 
+	jQuery.validator.setDefaults({
 		debug: true,
 		highlight: function(element) {
 		    $(element).closest('.control-group').removeClass('success').addClass('error');
 		},
 		success: function(element) {
 		    element.closest('.control-group').removeClass('error').addClass('success');
-		} 
+		}
 	});
-	
-	
-	jQuery.validator.addMethod("oscarDate", function(value, element) { 
+
+
+	jQuery.validator.addMethod("oscarDate", function(value, element) {
 	    return validDate(value, "yyyy-mm-dd", "-");
 	},
     "Date format should be yyyy-mm-dd.");
-	
-	jQuery.validator.addMethod("oscarMonth", function(value, element) { 
+
+	jQuery.validator.addMethod("oscarMonth", function(value, element) {
 	    return validDate(value, "mm/yyyy", "/");
 	},
     "Date format should be mm/yyyy.");
-	
-	
+
+
 	// initialiaze toolstips
 	$('[rel=tooltip]').tooltip();
 });

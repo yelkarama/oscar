@@ -31,27 +31,29 @@
 	<c:redirect url="securityError.jsp?type=_dashboardDrilldown" />
 </security:oscarSec>
 
-<!DOCTYPE html > 
+<!DOCTYPE html >
 <html lang="" >
 <head>
 <title>Dashboard Drilldown</title>
 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
+ 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap2-datepicker/datepicker3.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/bootstrap-timepicker.min.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-ui-1.10.2.custom.min.js"></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap2-datepicker/bootstrap-datepicker.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/bootstrap-timepicker.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/moment.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/datetime-moment.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/web/dashboard/display/drilldownDisplayController.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <!-- migrate needed untill at least 3.0.0 bootstrap.min.js and drilldownDisplayController.js are refactored -->
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-migrate-3.4.0.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/bootstrap2-datepicker/bootstrap-datepicker.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/bootstrap-timepicker.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/moment.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/datetime-moment.js" ></script>
+	<script src="${ pageContext.request.contextPath }/web/dashboard/display/drilldownDisplayController.js" ></script>
 </head>
 <body>
 
@@ -59,17 +61,17 @@
 
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
-	
+
 		<button class="btn btn-default backtoDashboardBtn" id="getDashboard_${ drilldown.dashboardId }" type="button">
 			<span class="glyphicon glyphicon-circle-arrow-left text-center" aria-hidden="true"></span>
 			Dashboard
 		</button>
-		
+
 		 <button class="btn btn-default" type="button" onclick="window.print();" >
 		 	<span class="glyphicon glyphicon-print text-center" aria-hidden="true"></span>
 		 	Print
-		 </button>	
-		 
+		 </button>
+
 		<form action="${ pageContext.request.contextPath }/web/dashboard/display/ExportResults.do" method="POST" class="inlineForm">
 			<input type="hidden" name="indicatorId" value="${ drilldown.id }">
 			<button class="btn btn-default exportResults" type="submit" id="exportResults_${ drilldown.id }" >
@@ -87,8 +89,8 @@
 </nav>
 
 <div class="row content">
- 
-	<h3> 
+
+	<h3>
 		<c:out value="${ drilldown.name }" />
 		<c:out value="${ drilldown.metricLabel }" />
 		<c:if test="${not empty preferredProvider}">
@@ -96,19 +98,19 @@
 		</c:if>
 	</h3>
 	<hr />
-	
+
 	<c:set scope="page" value="" var="primaryDataType" />
-		
+
 	<c:forEach items="${ drilldown.displayColumns }" var="column" >
 		<c:if test="${ column.primary }">
 			<c:set scope="page" value="${ column.name }" var="primaryDataType" />
-		</c:if>	
+		</c:if>
 	</c:forEach>
-	
+
 	<!-- Filter customization. Javascript will integrate this into the DataTable. -->
 	<form id="datatableFilterGroup" class="form-inline" style="display:none;">
 	<div id="datatableFilterGroupBody" >
-	<div class="form-group">		
+	<div class="form-group">
 		<select class="form-control" id="datatableFilterColumnSelector" >
 			<option value="0">All</option>
 		</select>
@@ -128,17 +130,17 @@
 	<div class="form-group andcondition lessthancondition" style="display:none;">
 		<div class="input-group">
 	  		<span class="input-group-addon andcondition" >and</span>
-			<input type="text" class="form-control andcondition lessthancondition" 
+			<input type="text" class="form-control andcondition lessthancondition"
 				placeholder="Parameter" id="datatableFilterConditionLessThan" />
 		</div>
 	</div>
-	<div class="form-group">	
+	<div class="form-group">
 		<button class="btn btn-default" type="button" id="datatableFilterExecuteButton" >
 			<span class="glyphicon glyphicon-filter text-center" aria-hidden="true"></span>
 			Filter
 		</button>
 	</div>
-	<div class="form-group">	
+	<div class="form-group">
 		<button class="btn btn-default" type="button" id="datatableFilterResetButton" >
 			<span class="glyphicon glyphicon-refresh text-center" aria-hidden="true"></span>
 			Reset
@@ -147,7 +149,7 @@
 	</div>
 	</form>
 
-	<table class="table table-striped table-condensed" id="drilldownTable" >		
+	<table class="table table-striped table-condensed" id="drilldownTable" >
 		<c:forEach items="${ drilldown.table }" var="row" varStatus="rowCount">
 			<c:choose>
 				<c:when test="${ rowCount.index eq 0 }">
@@ -155,7 +157,7 @@
 						<tr>
 							<th class="donotprint" id="0" >
 								<div class="dropdown" id="actionMenu">
-									<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" role="button" 
+									<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" role="button"
 										aria-haspopup="true" aria-expanded="false" id="actionMenuLink">
 										<span class="glyphicon glyphicon-check"></span>
 										Actions
@@ -163,7 +165,7 @@
 									</a>
 
 									<ul class="dropdown-menu" aria-labelledby="actionMenuLink">
-										<li>									
+										<li>
 											<a href="#" class="dropdown-item" id="selectAllDrilldown" title="Select all rows in the current view." >
 												Select All in View
 											</a>
@@ -174,13 +176,13 @@
 											</a>
 										</li>
 										<li role="separator" class="divider"></li>
-										<li> 
-									    	<a href="/web/dashboard/display/AssignTickler.do" class="dropdown-item"  
+										<li>
+									    	<a href="/web/dashboard/display/AssignTickler.do" class="dropdown-item"
 									    		title="Assign Tickler to Checked Rows." id="assignTicklerChecked" >
 												Assign Tickler
 											</a>
 										</li>
-										
+
 										<c:if test="${fn:contains(drilldown.actionIds, 'dxUpdate')}">
 											<li>
 												<a href="${ pageContext.request.contextPath }/web/dashboard/display/BulkPatientAction.do?method=getICD9Description&dxUpdateICD9Code=${ drilldown.dxUpdateICD9Code }"
@@ -190,7 +192,7 @@
 												</a>
 											</li>
 										</c:if>
-										
+
 										<c:if test="${fn:contains(drilldown.actionIds, 'demoExcl')}">
 											<li>
 												<a href="#"
@@ -200,7 +202,7 @@
 												</a>
 											</li>
 										</c:if>
-										
+
 										<c:if test="${fn:contains(drilldown.actionIds, 'patientStatusUpdate')}">
 											<li>
 												<a href="#"
@@ -210,7 +212,7 @@
 												</a>
 											</li>
 										</c:if>
-									</ul>						 
+									</ul>
 							    </div>
 							</th>
 							<th  class="placeholder" id="1" >&nbsp;</th>
@@ -230,20 +232,20 @@
 								<th class="filter" id="${ columnCount.index + 2 }" ></th>
 							</c:forEach>
 						</tr>
-					</tfoot>		
+					</tfoot>
 					<tbody>
 				</c:when>
 				<c:otherwise>
 					<tr>
 						<c:forEach items="${ row }" var="column" varStatus="columnCount" >
-						
+
 							<c:choose>
-							<c:when test="${ columnCount.index eq 0 }">	
-								<td style="text-align:center;" >&nbsp;</td>								
+							<c:when test="${ columnCount.index eq 0 }">
+								<td style="text-align:center;" >&nbsp;</td>
 								<td class="donotprint">
 									<c:choose>
 									<c:when test="${ column eq 'error' }">
-										<c:out value="${ column }" />									
+										<c:out value="${ column }" />
 									</c:when>
 									<c:otherwise>
 										<input type="checkbox" id="${ column }" class="patientChecked" />
@@ -251,16 +253,16 @@
 									</c:choose>
 								</td>
 								<td>
-									
+
 									<c:choose>
 										<c:when test="${ fn:containsIgnoreCase( primaryDataType,'demographic_no' ) }" >
-											
-											<a class="donotprint" href="${ pageContext.request.contextPath }/demographic/demographiccontrol.jsp?demographic_no=${ column }&amp;displaymode=edit&amp;dboperation=search_detail" 
+
+											<a class="donotprint" href="${ pageContext.request.contextPath }/demographic/demographiccontrol.jsp?demographic_no=${ column }&amp;displaymode=edit&amp;dboperation=search_detail"
 											 target="_blank" title="Open Patient File" >
 									        	<span class="glyphicon glyphicon-folder-open" style="margin-right:10px;" ></span>
 									        	<c:out value="${ column }" />
 									   		</a>
-									   		
+
 									   		<span class="printonly">
 									   			<c:out value="${ column }" />
 									   		</span>
@@ -269,16 +271,16 @@
 								   			<c:out value="${ column }" />
 								   		</c:otherwise>
 							   		</c:choose>
-							
+
 								</td>
 							</c:when>
 							<c:otherwise>
 								<td>
 									<c:out value="${ column }" />
 								</td>
-							</c:otherwise>	
+							</c:otherwise>
 							</c:choose>
-						
+
 						</c:forEach>
 					</tr>
 				</c:otherwise>
@@ -287,26 +289,26 @@
 		</tbody>
 	</table>
 	<hr />
-	<h3> 
+	<h3>
 		&nbsp;
 	</h3>
 </div> <!--  end main content row -->
 
-<!-- modal panel for displaying this indicators details -->	
+<!-- modal panel for displaying this indicators details -->
 <div id="indicatorInfo" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
-		
-			<div class="modal-header">	
+
+			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
 				<h4 class="modal-title">
 					<c:out value="${ drilldown.name }" />
 				</h4>
 			</div>
-			
+
 			<div class="modal-body">
-			
+
 				<h4>Category</h4>
 				<p>
 					<c:out value="${ drilldown.category }" />
@@ -335,25 +337,25 @@
 				<p>
 					<c:out value="${ drilldown.notes }" />
 				</p>
-				
+
 				<c:if test="${ not empty drilldown.queryString }">
 					<h4>Query</h4>
 					<p>
 						<c:out value="${ drilldown.queryString }" />
 					</p>
-				</c:if>				
+				</c:if>
 			</div>
-			
+
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">
 					Close
 				</button>
-			</div>						
-		</div> 
-		<!-- end modal content -->								
+			</div>
+		</div>
+		<!-- end modal content -->
 	</div>
-</div> 
-<!--  end indicator modal  -->	
+</div>
+<!--  end indicator modal  -->
 
 <!-- modal panel for tickler assignment -->
 <div id="assignTickler" class="modal fade" role="dialog">
@@ -372,7 +374,7 @@
 		</div>
 	</div>
 </div>
-<!-- End Tickler assignment modal panel -->	
+<!-- End Tickler assignment modal panel -->
 
 <!-- modal panel for bulk addition to disease registry -->
 <div id="modalConfirmAddToDiseaseRegistry" class="modal fade" role="dialog">
@@ -457,7 +459,7 @@
 </div>	<!-- end container -->
 <style type="text/css"><!--
 .yesprint {
-	display: none;        
+	display: none;
 }
 @media print {
 	.yesprint {

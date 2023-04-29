@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -60,7 +60,7 @@ if (boxType == null || boxType.equals("")){
 }else if (boxType.equals("2")){
     pageType = 2;
 }else if (boxType.equals("3")){
-    pageType = 3;    
+    pageType = 3;
 }else{
     pageType = 0;
 }   //messageid
@@ -69,7 +69,7 @@ String demographic_no = request.getParameter("demographic_no");
 String demographic_name = "";
 if ( demographic_no != null ) {
     DemographicData demographic_data = new DemographicData();
-    org.oscarehr.common.model.Demographic demographic = demographic_data.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);    
+    org.oscarehr.common.model.Demographic demographic = demographic_data.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
     if (demographic != null){
        demographic_name = demographic.getLastName() + ", " + demographic.getFirstName();
     }
@@ -80,7 +80,7 @@ pageContext.setAttribute("pageType",""+pageType);
 
 if (request.getParameter("orderby") != null){
     String orderby = request.getParameter("orderby");
-    String sessionOrderby = (String) session.getAttribute("orderby");     
+    String sessionOrderby = (String) session.getAttribute("orderby");
     if (sessionOrderby != null && sessionOrderby.equals(orderby)){
         orderby = "!"+orderby;
     }
@@ -118,50 +118,16 @@ bean.nullAttachment();
 <title>
 <bean:message key="oscarMessenger.DisplayMessages.title"/>
 </title>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js" ></script> 
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
+
+<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" >
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<!--
-<style type="text/css">
-td.messengerButtonsA{
-    /*background-color: #6666ff;*/
-    /*background-color: #6699cc;*/
-    background-color: #003399;
-}
-td.messengerButtonsD{
-    /*background-color: #84c0f4;*/
-    background-color: #555599;
-}
-a.messengerButtons{
-    color: #ffffff;
-    font-size: 9pt;
-    text-decoration: none;
-}
 
-
-table.messButtonsA{
-border-top: 2px solid #cfcfcf;
-border-left: 2px solid #cfcfcf;
-border-bottom: 2px solid #333333;
-border-right: 2px solid #333333;
-}
-
-table.messButtonsD{
-border-top: 2px solid #333333;
-border-left: 2px solid #333333;
-border-bottom: 2px solid #cfcfcf;
-border-right: 2px solid #cfcfcf;
-}
-
-tr.newMessage {
-
-}
--->
-<style type="text/css">
+<style>
 tr.newMessage td {
      font-weight: bold;
 }
@@ -175,12 +141,6 @@ width:100% !important;
 	color: black;
 }
 
-.normalMessage {
-	//background-color: #EEEEFF;
-	//color: black;
-}
-
-
 span.recipientList:hover{
 	position: relative;
     text-overflow:clip;
@@ -191,7 +151,7 @@ span.recipientList:hover{
 
 </style>
 
-<script type="text/javascript">
+<script>
 function BackToOscar()
 {
     if (opener.callRefreshTabAlerts) {
@@ -220,11 +180,11 @@ function checkAll(formId){
 }
 
 $(document).ready(function(){
-	
+
 	var lengthText = 30;
 	const recipientLists = $('.recipientList');
-	
-	$.each(recipientLists, function(key, value){		
+
+	$.each(recipientLists, function(key, value){
 		var text = $(value).text();
         var shortText = $.trim(text).substring(0, lengthText);
         var names = shortText.split(",");
@@ -239,12 +199,11 @@ $(document).ready(function(){
 </script>
 </head>
 
-<body class="BodyStyle" vlink="#0000FF" onload="window.focus()" onunload="return uload()">
+<body class="BodyStyle" onload="window.focus()" onunload="return uload()">
 <div id="pop-up"><p></p></div>
-
-<table width=100%>
+<table style="width: 100%;">
   <tr>
-    <td valign="top">
+    <td>
 			<h4>&nbsp;<i class="icon-envelope" title="<bean:message key="oscarMessenger.DisplayMessages.msgMessenger"/>"></i>&nbsp;
                         <% String inbxStyle = "messengerButtonsA";
                            String sentStyle = "messengerButtonsA";
@@ -263,11 +222,11 @@ $(document).ready(function(){
                         <%      delStyle =  "messengerButtonsD";
                             break;
                             case 3: %>
-                                Messages related to <%=demographic_name%> 
+                                Messages related to <%=demographic_name%>
                         <%      delStyle =  "messengerButtonsD";
                             break;
                         }%>
-        </h4>  	
+        </h4>
     </td>
 <td>
 
@@ -277,57 +236,58 @@ $(document).ready(function(){
                             <input name="btnSearch" type="submit" class="btn" style="margin-bottom:10px;" value="<bean:message key="oscarMessenger.DisplayMessages.btnSearch"/>">
                             <input name="btnClearSearch" type="submit" class="btn" style="margin-bottom:10px;" value="<bean:message key="oscarMessenger.DisplayMessages.btnClearSearch"/>">
                             </html:form>
-                           
+
 </td>
-    <td align="right" >
-		<i class=" icon-question-sign"></i> 
+    <td style="text-align: right;" >
+		<i class=" icon-question-sign"></i>
 	                        <a href="<%=help_url%>messenger/" target="_blank"><bean:message key="app.top1"/></a>
-	                        <i class=" icon-info-sign" style="margin-left:10px;"></i> 
+	                        <i class=" icon-info-sign" style="margin-left:10px;"></i>
                             <a href="javascript:void(0)"  onClick="window.open('<%=request.getContextPath()%>/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>
     </td>
 </tr>
 </table>
-
-    <table  class="MainTable" id="scrollNumber1" name="encounterTable" width=100%>
-        <tr>           
-            <td class="MainTableRightColumn" >
-                <table width="100%">
-
-                    <tr>
-                        <td>
-                            <ul class="nav nav-tabs"><li>                                        
-                                        <html:link page="/oscarMessenger/CreateMessage.jsp" styleClass="messengerButtons">
-                                         <bean:message key="oscarMessenger.DisplayMessages.btnCompose"/>
-                                        </html:link>                                        
-                                    </li>
-                                    <li <% if (pageType == 0) { %>class="active"<% } %>>                                        
-                                        <html:link page="/oscarMessenger/DisplayMessages.jsp" styleClass="messengerButtons">
-                                         <bean:message key="oscarMessenger.DisplayMessages.btnRefresh"/>
-                                        </html:link>                                        
-                                    </li>
-                                    <li <% if (pageType == 1) { %>class="active"<% } %> >                                        
-                                        <html:link page="/oscarMessenger/DisplayMessages.jsp?boxType=1" styleClass="messengerButtons">
-                                         <bean:message key="oscarMessenger.DisplayMessages.btnSent"/><!--sentMessage--link-->
-                                        </html:link>                                        
-                                    </li>
-                                    <li <% if (pageType == 2) { %>class="active"<% } %>>                                        
-                                        <html:link page="/oscarMessenger/DisplayMessages.jsp?boxType=2" styleClass="messengerButtons">
-                                         <bean:message key="oscarMessenger.DisplayMessages.btnDeletedMessage"/><!--deletedMessage--link-->
-                                        </html:link>                                        
-                                    </li>
-                                    <li >                                        
-                                        <a href="javascript:BackToOscar()" class="messengerButtons"><bean:message key="oscarMessenger.DisplayMessages.btnExit"/></a>                                       
-                                    </li>
-                                    </ul>
-                        </td>
-                    </tr>
                     <%String strutsAction = "/oscarMessenger/DisplayMessages";
                         if (pageType == 2){
                             strutsAction = "/oscarMessenger/ReDisplayMessages";
                         }
                     %>
+<html:form action="<%=strutsAction%>" styleId="msgList" >
+    <table  class="MainTable" id="scrollNumber1" style="width: 100%;">
+        <tr>
+            <td class="MainTableRightColumn" >
+                <table style="width: 100%;">
 
-                         <html:form action="<%=strutsAction%>" styleId="msgList" >
+                    <tr>
+                        <td>
+                            <ul class="nav nav-tabs"><li>
+                                        <html:link page="/oscarMessenger/CreateMessage.jsp" styleClass="messengerButtons">
+                                         <bean:message key="oscarMessenger.DisplayMessages.btnCompose"/>
+                                        </html:link>
+                                    </li>
+                                    <li <% if (pageType == 0) { %>class="active"<% } %>>
+                                        <html:link page="/oscarMessenger/DisplayMessages.jsp" styleClass="messengerButtons">
+                                         <bean:message key="oscarMessenger.DisplayMessages.btnRefresh"/>
+                                        </html:link>
+                                    </li>
+                                    <li <% if (pageType == 1) { %>class="active"<% } %> >
+                                        <html:link page="/oscarMessenger/DisplayMessages.jsp?boxType=1" styleClass="messengerButtons">
+                                         <bean:message key="oscarMessenger.DisplayMessages.btnSent"/><!-- sentMessage link-->
+                                        </html:link>
+                                    </li>
+                                    <li <% if (pageType == 2) { %>class="active"<% } %>>
+                                        <html:link page="/oscarMessenger/DisplayMessages.jsp?boxType=2" styleClass="messengerButtons">
+                                         <bean:message key="oscarMessenger.DisplayMessages.btnDeletedMessage"/><!--deletedMessage link-->
+                                        </html:link>
+                                    </li>
+                                    <li >
+                                        <a href="javascript:BackToOscar()" class="messengerButtons"><bean:message key="oscarMessenger.DisplayMessages.btnExit"/></a>
+                                    </li>
+                                    </ul>
+                        </td>
+                    </tr>
+
+
+
                     <%
                            java.util.Vector theMessages2 = new java.util.Vector() ;
                         switch(pageType){
@@ -358,7 +318,7 @@ $(document).ready(function(){
                         <span class="pull-right">
 		                    <%
 		                    int recordsToDisplay = 25;
-		                    
+
 		                    String previous = "";
 		                    String next = "";
 		                    String path = request.getContextPath()+"/oscarMessenger/DisplayMessages.jsp?boxType=" + pageType + "&page=";
@@ -366,18 +326,18 @@ $(document).ready(function(){
 		                    if(request.getParameter("searchString")!=null){
 		                    	search = true;
 		                    }
-		                    
+
 		                    if (pageType != 3){
-		                    
+
 		                    int totalMsgs = DisplayMessagesBeanId.getTotalMessages(pageType);
-		                    
+
 		                    int totalPages = totalMsgs / recordsToDisplay + (totalMsgs % recordsToDisplay == 0 ? 0 : 1);
 
 		                    if(pageNum>1){
 		                    	previous = "<a href='" + path + (pageNum-1) + "' title='previous page'><< Previous</a> ";
 		                    	out.print(previous);
 							}
-		                    
+
 		                    if(pageNum<totalPages){
 		                    	next = "<a href='" + path + (pageNum+1) + "' title='next page'>Next >></a>";
 		                    	out.print(next);
@@ -387,21 +347,21 @@ $(document).ready(function(){
                    </tr>
                     <tr>
                         <td>
-                            <table border="0" width="90%" cellspacing="1" class="table table-condensed table-striped">
+                            <table class="table table-condensed table-striped">
 
-                   
+
                                 <tr>
-                                    <th align="left">
+                                    <th style="text-align: left;">
                                     <%if( pageType!=1 ) {%>
                                        <input type="checkbox" name="checkAll2" onclick="checkAll('msgList')" id="checkA" />
-                                    <%} %>   
+                                    <%} %>
                                     </th>
-                                    <th align="left" >
+                                    <th style="text-align: left;">
                                         <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=status"  paramId="boxType" paramName="pageType">
                                         <bean:message key="oscarMessenger.DisplayMessages.msgStatus"/>
                                         </html:link>
                                     </th>
-                                    <th align="left" >
+                                    <th style="text-align: left;">
                                       <%if( pageType == 1 ) {%>
                                                 <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=sentto" paramId="boxType" paramName="pageType">
                                                 <bean:message key="oscarMessenger.DisplayMessages.msgTo"/>
@@ -410,47 +370,47 @@ $(document).ready(function(){
                                                 <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=from" paramId="boxType" paramName="pageType">
                                                 <bean:message key="oscarMessenger.DisplayMessages.msgFrom"/>
                                                 </html:link>
-                                       <% } %>   
+                                       <% } %>
                                     </th>
-                                    <th align="left" 
+                                    <th style="text-align: left;">
                                             <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=subject" paramId="boxType" paramName="pageType">
                                             <bean:message key="oscarMessenger.DisplayMessages.msgSubject"/>
                                             </html:link>
                                     </th>
-                                    <th align="left">
+                                    <th style="text-align: left;">
                                             <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=date" paramId="boxType" paramName="pageType">
                                             <bean:message key="oscarMessenger.DisplayMessages.msgDate"/>
                                             </html:link>
                                     </th>
-                                    <th align="left" >
+                                    <th style="text-align: left;" >
                                             <html:link page="/oscarMessenger/DisplayMessages.jsp?orderby=linked" paramId="boxType" paramName="pageType">
                                             <bean:message key="oscarMessenger.DisplayMessages.msgLinked"/>
                                             </html:link>
                                     </th>
                                 </tr>
-                                
-                               
+
+
                                 <!--   for loop Control Initiliation variabe changed to nextMessage   -->
-                            <% 
+                            <%
                                     for (int i = 0; i < theMessages2.size() ; i++) {
                                         oscar.oscarMessenger.data.MsgDisplayMessage dm;
                                         dm = (oscar.oscarMessenger.data.MsgDisplayMessage) theMessages2.get(i);
-                                        String key = "oscarMessenger.DisplayMessages.msgStatus"+dm.getStatus().substring(0,1).toUpperCase()+dm.getStatus().substring(1); 
+                                        String key = "oscarMessenger.DisplayMessages.msgStatus"+dm.getStatus().substring(0,1).toUpperCase()+dm.getStatus().substring(1);
                                         %>
-                                        
-                                <% if ("oscarMessenger.DisplayMessages.msgStatusNew".equals(key) || "oscarMessenger.DisplayMessages.msgStatusUnread".equals(key)){%>         
+
+                                <% if ("oscarMessenger.DisplayMessages.msgStatusNew".equals(key) || "oscarMessenger.DisplayMessages.msgStatusUnread".equals(key)){%>
                                 <tr class="newMessage">
                                 <%}else{%>
                                 <tr>
                                 <%}%>
-                                    <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>'  width="25">
+                                    <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>' style="width:25px;">
                                     <%if (pageType != 1){%>
                                         <html:checkbox property="messageNo" value="<%=dm.getMessageId() %>" />
                                      <% } %>
                                     &nbsp;
-                                    <% 
+                                    <%
                                        String atta = dm.getAttach();
-                                       String pdfAtta = dm.getPdfAttach(); 
+                                       String pdfAtta = dm.getPdfAttach();
                                        if (atta.equals("1") || pdfAtta.equals("1") ){ %>
                                             <img src="img/clip4.jpg">
                                     <% } %>
@@ -461,23 +421,23 @@ $(document).ready(function(){
                                      <bean:message key="<%= key %>"/>
                                     </td>
                                     <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>'>
-                                        
+
                                         <%
-                                            if( pageType == 1 ) { 
+                                            if( pageType == 1 ) {
 %>
 <span class="recipientList">
-<%                      
+<%
                                                 out.print(Encode.forHtml(dm.getSentto()));
 %>
 </span>
-<% 
+<%
                                             }
-                                            else 
+                                            else
                                             {
                                                 out.print(Encode.forHtml(dm.getSentby()));
                                             }
                                         %>
-                                    	
+
                                     </td>
                                     <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>'>
                                     <a href="<%=request.getContextPath()%>/oscarMessenger/ViewMessage.do?messageID=<%=dm.getMessageId()%>&boxType=<%=pageType%>">
@@ -487,18 +447,18 @@ $(document).ready(function(){
                                     </td>
                                     <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>' title="<%= dm.getThedate() %>&nbsp;&nbsp;<%= dm.getThetime() %>">
                                     	<%=Encode.forHtml(dm.getThedate())%>
-                               
+
                                     </td>
                                     <td class='<%= dm.getType() == 3 ? "integratedMessage" : "normalMessage" %>'>
-                                                                       
-                                    <%if(dm.getDemographic_no() != null  && !dm.getDemographic_no().equalsIgnoreCase("null")) {%>                                        
+
+                                    <%if(dm.getDemographic_no() != null  && !dm.getDemographic_no().equalsIgnoreCase("null")) {%>
                                         <oscar:nameage demographicNo="<%=dm.getDemographic_no()%>"></oscar:nameage>
                                     <%} %>
 
                                     </td>
                                 </tr>
                             <%}%>
-                            
+
                             <tr><td colspan="6">
                         <span>
                             <%if (pageType == 0){%>
@@ -510,31 +470,31 @@ $(document).ready(function(){
                             <%}%>
                             &nbsp;</span>
                         <span class="pull-right">
-	
-                                    <%                                    	
+
+                                    <%
                                     if(pageType!=3){
                                     	out.print(previous + next);
                                     }
-                                    %>    
-
+                                    %>
+</span>
                             </td></tr>
-                            </table>  
+                            </table>
 
-                                    
-                         </html:form>
+
+
                         </td>
                     </tr>
                 </table>
+
             </td>
         </tr>
         <tr>
             <td class="MainTableBottomRowLeftColumn">
 
             </td>
-            <td class="MainTableBottomRowRightColumn">
 
-            </td>
         </tr>
     </table>
+</html:form>
 </body>
 </html:html>

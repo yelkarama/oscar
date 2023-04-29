@@ -32,7 +32,7 @@
 	<c:redirect url="securityError.jsp?type=_admin.dashboardManager" />
 </security:oscarSec>
 
-<!DOCTYPE html > 
+<!DOCTYPE html >
 <html:html locale="true" >
 <head>
 <meta charset="utf-8">
@@ -42,26 +42,28 @@
 <bean:message key="dashboard.dashboardmanager.title" />
 </title>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
+ 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/web/dashboard/admin/dashboardManagerController.js"></script>
-	
+
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+	 <!-- migrate needed for 3.0.0/js/bootstrap.min.js to support at least jQuery.fn.focus() but manages quietly without it -->
+	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script>
+	<!--<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>-->
+	<script src="${ pageContext.request.contextPath }/web/dashboard/admin/dashboardManagerController.js"></script>
+
 </head>
 <body>
 <div>
 <div class="col-sm-12">
-	
+
 	<nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 
-	<html:form styleClass="form-inline" styleId="importForm" 
+	<html:form styleClass="form-inline" styleId="importForm"
 		method="POST" action="/web/dashboard/admin/DashboardManager.do" enctype="multipart/form-data" >
-			
+
 		<c:if test="${ not empty param.dashboardId }">
 		<div class="form-group">
 			<button class="btn btn-default backtoDashboardBtn" id="getDashboard_${ param.dashboardId }" type="button">
@@ -69,55 +71,55 @@
 				Dashboard
 			</button>
 		</div>
-		</c:if>	
-		
+		</c:if>
+
 		<!-- Upload Indicator Buttons -->
 		<div class="form-group">
 			<div class="input-group" id="import">
-					
+
 				<input type="hidden" value="importTemplate" name="method" />
-											
+
 				<div class="input-group-btn">
 					<button class="btn btn-default" type="button" id="importbutton">
 						<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
 						<bean:message key="dashboard.dashboardmanager.import.button" />
 					</button>
 				</div>
-				
+
 				<input type="text" class="form-control" id="importxmltemplate"
 					placeholder="<bean:message key='dashboard.dashboardmanager.import.title' />"  />
-				
+
 				<div class="input-group-btn">
 					<label class="btn btn-default btn-file" id="browsebutton" >
 						<bean:message key="dashboard.dashboardmanager.import.browse" />
 						<input style="display:none;" type="file" name="indicatorTemplateFile" />
-					</label>					
-				</div>					
-			    	
-			</div>		    
+					</label>
+				</div>
+
+			</div>
 		</div>
-		
+
 		<!-- Create Dashboard Buttons -->
 		<div class="form-group">
 			<div class="btn-group" >
-		    	<button type="button" class="btn btn-default btn-md" data-toggle="modal" 
+		    	<button type="button" class="btn btn-default btn-md" data-toggle="modal"
 		    		data-target="#newDashboard" id="createDashboard" >
-		    		<span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>	    		
+		    		<span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
 		    		<bean:message key="dashboard.dashboardmanager.dashboard.create" />
 		    	</button>
 			</div>
 		</div>
-		
+
 		<!-- Edit Dashboard Buttons -->
 		<div class="form-group">
 			<div class="dropdown btn-group" id="editDashboardButtonContainer">
 				<button class="btn btn-default dropdown-toggle btn-md" type="button"
 					id="editDashboardMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-					<bean:message key="dashboard.dashboardmanager.dashboard.edit" /> 
+					<bean:message key="dashboard.dashboardmanager.dashboard.edit" />
 					<span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" aria-labelledby="editDashboardMenu">			
+				<ul class="dropdown-menu" aria-labelledby="editDashboardMenu">
 					<c:forEach items="${ dashboards }" var="dashboard" varStatus="loop">
 						<li>
 							<a href="#" id="dashboard_${ dashboard.id }" class="editDashboardSelect" >
@@ -130,16 +132,16 @@
 					</c:forEach>
 				</ul>
 			</div>
-		</div>		
-	</html:form>	
-		<span ${ message['status'] eq 'success' ? 'style="color: green;"' : 'style="color: red;"' } >			
+		</div>
+	</html:form>
+		<span ${ message['status'] eq 'success' ? 'style="color: green;"' : 'style="color: red;"' } >
 			<c:out value="${ message['message'] }" />
 		</span>
-	</div>  
+	</div>
 	</nav><!-- end top nav row -->
-	
+
 	<div class="table-responsive" id="libraryTableContainer">
-	<h3> 
+	<h3>
 		Indicator Library
 	</h3>
 	<hr />
@@ -160,7 +162,7 @@
 				<th>Framework Version</th>
 			</tr>
 			</thead>
-		
+
 			<tfoot>
 			<tr>
 				<th></th>
@@ -184,9 +186,9 @@
 							<span style="color:red" class="glyphicon glyphicon-remove"</span>
 						</a>
 					</td>
-					<td>					
+					<td>
 						<label class="switch">
-						  <input class="form-control toggleActive" type="checkbox" name="IndicatorTemplate_${ indicator.id }" 
+						  <input class="form-control toggleActive" type="checkbox" name="IndicatorTemplate_${ indicator.id }"
 								id="toggleActive_${ indicator.id }" ${ indicator.active ? 'checked="checked"' : '' } />
 						  	<div class="slider round"></div>
 						</label>
@@ -204,20 +206,20 @@
 					</td>
 
 					<td>
-						<select class="form-control assignDashboard" name="assignDashboard_${ indicator.id }" 
+						<select class="form-control assignDashboard" name="assignDashboard_${ indicator.id }"
 							id="assignDashboard_${ indicator.id }" >
-							
+
 							<option value="0" selected="selected" ></option>
 							<c:forEach items="${ dashboards }" var="dashboard" varStatus="loop" >
 							<c:if test="${ dashboard.active }" >
-								<option ${ indicator.dashboardId eq dashboard.id ? 'selected="selected"' : '' } 
+								<option ${ indicator.dashboardId eq dashboard.id ? 'selected="selected"' : '' }
 									value="${ dashboard.id }"  >
-									<c:out value="${ dashboard.name }" />	
-								</option>									
-							</c:if>		
+									<c:out value="${ dashboard.name }" />
+								</option>
+							</c:if>
 							</c:forEach>
 						</select>
-						
+
 					</td>
 					<td><c:out value="${ indicator.shared }" /></td>
 					<td><c:out value="${ indicator.name }" /></td>
@@ -232,7 +234,7 @@
 			</tbody>
 		</table>
 		<hr />
-		<h3> 
+		<h3>
 			&nbsp;
 		</h3>
 	</div>
@@ -248,31 +250,31 @@
 					<bean:message key="dashboard.dashboardmanager.dashboard.create" />
 				</h4>
 			</div>
-			
-			<form action="${ pageContext.request.contextPath }/web/dashboard/admin/DashboardManager.do"  
+
+			<form action="${ pageContext.request.contextPath }/web/dashboard/admin/DashboardManager.do"
 				method="POST" id="addEditDashboardForm" >
-			
+
 			<input type="hidden" name="method" value="saveDashboard" />
 			<input type="hidden" name="dashboardId" class="editDashboard" value="" />
-					
+
 			<div class="modal-body">
-			
+
 				<div class="row">
 					<label><bean:message key="dashboard.dashboardmanager.dashboard.name" /></label>
-					<input class="form-control editDashboard" type="text" name="dashboardName" />				
+					<input class="form-control editDashboard" type="text" name="dashboardName" />
 				</div>
-				
+
 				<div class="row">
 					<label><bean:message key="dashboard.dashboardmanager.dashboard.description" /></label>
-					<textarea class="form-control editDashboard" name="dashboardDescription" ></textarea>	
+					<textarea class="form-control editDashboard" name="dashboardDescription" ></textarea>
 				</div>
-				
+
 				<div class="checkbox" id="dashboardActiveRow" style="display:none;" >
 					<label class="pull-right">
-					<input type="checkbox" class="editDashboard" name="dashboardActive" 
+					<input type="checkbox" class="editDashboard" name="dashboardActive"
 						id="dashboardActive"  />
-						
-					<bean:message key="dashboard.dashboardmanager.dashboard.active" /></label>	
+
+					<bean:message key="dashboard.dashboardmanager.dashboard.active" /></label>
 				</div>
 
 			</div>
@@ -290,7 +292,7 @@
 	</div>
 </div> <!-- end modal window -->
 
-</div>	
+</div>
 </div> <!-- end container -->
 </body>
 </html:html>

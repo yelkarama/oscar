@@ -33,9 +33,10 @@
 	<c:redirect url="securityError.jsp?type=_dashboardDisplay" />
 </security:oscarSec>
 
-<!DOCTYPE html > 
-<html lang="" >
+<!DOCTYPE html >
+<html:html locale="true">
 <head>
+<html:base />
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,26 +47,30 @@
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/js/jqplot/jquery.jqplot2.min.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>		
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/web/dashboard/display/dashboardDisplayController.js?rand=<%=(int)(Math.random() * 10000) %>" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/jquery.jqplot2.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.pieRenderer.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.barRenderer.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.categoryAxisRenderer.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.highlighter.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.canvasTextRenderer.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.json2.js" ></script>
-	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/checkLoginStatus.js"></script>
+
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <!-- migrate needed until jqplot and dashboardDisplayController.js are refactored -->
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-migrate-3.4.0.js"></script>
+
+	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/web/dashboard/display/dashboardDisplayController.js?rand=<%=(int)(Math.random() * 10000) %>" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/jquery.jqplot2.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.pieRenderer.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.barRenderer.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.categoryAxisRenderer.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.highlighter.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.canvasTextRenderer.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.js" ></script>
+	<script src="${ pageContext.request.contextPath }/js/jqplot/plugins/jqplot.json2.js" ></script>
+
+	<script src="${ pageContext.request.contextPath }/js/checkLoginStatus.js"></script>
 	<script>
 		startCheckLoginStatus('${ pageContext.request.contextPath }');
-		
+
 		<c:if test="${not empty indicatorRefreshRate}">
 			setupRefreshIndicators(${indicatorRefreshRate});
 		</c:if>
-		
+
 	</script>
 </head>
 
@@ -132,20 +137,20 @@
 		</center>--%>
 	<div class="row dashboardSubHeading" >
 		<div class="col-md-6">
-			Last loaded: 
+			Last loaded:
 			<c:out value="${ dashboard.lastChecked }" />
 			<a href="#" title="Refresh Dashboard" class="reloadDashboardBtn" id="getDashboard_${ dashboard.id }" >
 				<span class="glyphicon glyphicon-refresh"></span>
 			</a>
 			&nbsp;&nbsp;
-			Indicator Refresh Rate: 
+			Indicator Refresh Rate:
 			<c:if test="${empty indicatorRefreshRate}">
 				<span style="color:red">Never</span>
 			</c:if>
 			<c:if test="${not empty indicatorRefreshRate}">
 				${indicatorRefreshRate} minutes
 			</c:if>
-			
+
 		</div>
 		<div class="col-md-6">
 			<a href="#" title="Dashboard Manager" class="pull-right dashboardManagerBtn" id="${ dashboard.id }" >
@@ -155,60 +160,60 @@
 	</div>
 	</div>
 	<!-- end Dashboard Heading -->
-	
-	<div class="row dashboardBody">	
-	
+
+	<div class="row dashboardBody">
+
 		<!-- dashboardPanels - by category.  -->
 		<c:forEach items="${ dashboard.panelBeans }" var="panelBean" >
-		
+
 			<div class="panel panel-primary categoryPanel" >
-	
-				<div class="panel-heading">				
-					<strong><c:out value="${ panelBean.category }" /></strong>				
+
+				<div class="panel-heading">
+					<strong><c:out value="${ panelBean.category }" /></strong>
 				</div>
-				
+
 				<div class="panel-body" >
-				
+
 				<c:forEach items="${ panelBean.indicatorPanelBeans }" var="indicatorPanel" >
-					
+
 					<!-- Begin display of Indicator Panel -->
 					<div class="panel panel-default indicatorPanel" >
-		
+
 						<!-- Indicator panel heading - by sub category -->
-						<div class="panel-heading">									
-							<c:out value="${ indicatorPanel.category }" />						
+						<div class="panel-heading">
+							<c:out value="${ indicatorPanel.category }" />
 						</div>
-	
-						<div class="panel-body" >							
-							<c:forEach items="${ indicatorPanel.indicatorIdList }" var="indicatorId" >																
-								<div class="col-md-3 indicatorWrapper" id="indicatorId_${ indicatorId }">				
+
+						<div class="panel-body" >
+							<c:forEach items="${ indicatorPanel.indicatorIdList }" var="indicatorId" >
+								<div class="col-md-3 indicatorWrapper" id="indicatorId_${ indicatorId }">
 									<div>
-										<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> 
+										<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 										Loading...
 									</div>
 								</div>
 							</c:forEach>
 							<!-- end indicator loop -->
-						</div> 
+						</div>
 						<!-- end indicatorPanel body -->
-					</div>	
+					</div>
 					<!-- end indicatorPanel -->
-					
-				</c:forEach> 
+
+				</c:forEach>
 				<!-- end indicatorPanel loop -->
-				</div>			
-			</div> 	
-			<!--  end dashboardPanels -->	
-		</c:forEach> 
+				</div>
+			</div>
+			<!--  end dashboardPanels -->
+		</c:forEach>
 		<!-- end Dashboard Panel loop -->
-		
+
 	</div>
 	<!-- End dashboard body -->
 
-</div>	
-</div> 	
-</div> 
+</div>
+</div>
+</div>
 <!-- end container -->
 
 </body>
-</html>
+</html:html>
