@@ -268,7 +268,7 @@ if(!authed) {
 <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
 <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1" />
 
-<script type="text/javascript" src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="../share/calendar/calendar.js" ></script>
 <script type="text/javascript" src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>" ></script>

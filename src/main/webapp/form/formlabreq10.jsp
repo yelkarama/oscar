@@ -66,7 +66,7 @@
 	href="labReq07Style.css">
 <link rel="stylesheet" type="text/css" media="print" href="print.css">
 <script src="../share/javascript/prototype.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+<script src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 </head>

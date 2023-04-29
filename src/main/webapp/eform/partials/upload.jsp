@@ -112,7 +112,7 @@ body{background-color:#f5f5f5;}
 
 <div style="font-size:0%; line-height:0%">&nbsp;</div>
 
-<script src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>  
 
 <script>

@@ -59,7 +59,7 @@
 	href="../share/css/OscarStandardLayout.css">
 <link rel="stylesheet" type="text/css"
 	href="../share/css/eformStyle.css">
-<script type="text/javascript" src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.fileDownload.js"></script>
 <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>

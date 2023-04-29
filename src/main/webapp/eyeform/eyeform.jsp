@@ -82,7 +82,7 @@ try {
 <script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/calendar.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.autogrow-textarea.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery-ui-1.8.15.custom.draggable.slider.min.js"></script>

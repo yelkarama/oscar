@@ -171,7 +171,7 @@ String date = UtilDateUtilities.getToday("yyyy-MM-dd");
 	
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-	<script src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>   
 	
 	<script>

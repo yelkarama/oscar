@@ -88,7 +88,7 @@ body.modal-open {margin-right: 0px} /*needed hack when using the new modal becau
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>

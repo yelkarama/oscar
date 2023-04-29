@@ -84,7 +84,7 @@ if(appDef != null && appDef.getConsentTypeId() != null) {
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<c:out value="${ctx}"/>>/js/jquery-1.12.3.js"></script>
+<script type="text/javascript" src="<c:out value="${ctx}"/>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript">
 	function checkLevel(level) {

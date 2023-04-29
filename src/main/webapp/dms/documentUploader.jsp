@@ -246,7 +246,7 @@ if (isFirefox > 0) {
         {{/if}}
     </tr>
 </script>
-<script src="<%=context%>>/js/jquery-1.12.3.js"></script>
+<script src="<%=context%>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=context%>/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script src="<%=resourcePath%>jquery.tmpl.min.js"></script>

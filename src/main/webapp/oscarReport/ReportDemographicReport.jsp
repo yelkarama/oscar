@@ -47,7 +47,7 @@ if(!authed) {
 
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
-<script src ="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+<script src ="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script>
 	$(document).ready(function(){

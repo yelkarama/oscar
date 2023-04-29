@@ -167,7 +167,7 @@ input.righty {
 
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
 
-<script type="text/javascript" src="<c:out value="${ctx}"/>>/js/jquery-1.12.3.js"></script>
+<script type="text/javascript" src="<c:out value="${ctx}"/>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="js/optiontransfer.js"></script>
 <script type="text/javascript" language=javascript>
