@@ -127,7 +127,7 @@
 
             document.getElementById("preview2Form").action = "../form/createcustomedpdf?__title=Rx&__method=" + method;
             document.getElementById("preview2Form").target="_blank";
-            document.getElementById("preview2Form").trigger( "submit" );
+            document.getElementById("preview2Form").submit();
        return true;
     }
 </script>

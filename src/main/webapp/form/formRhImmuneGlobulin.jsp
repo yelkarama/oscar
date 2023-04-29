@@ -163,7 +163,7 @@
            //alert('hidding');
         }else{                    
            showItem('providerName');
-           document.getElementById('providerName').trigger( "focus" );
+           document.getElementById('providerName').focus();
            //alert('showing');
         }                       
       }
@@ -611,7 +611,7 @@ sample drawn?</label></fieldset>
                deleteCall();
                
                //alert(delId.value);
-               //document.getElementById('deleteForm').trigger( "submit" );
+               //document.getElementById('deleteForm').submit();
                
             }
                 

@@ -1787,13 +1787,13 @@ String strLocation ="";
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
-												onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												ondblclick="onDblClickServiceCode(this)"><%=serviceCode%></span>
 											</td>
 											<td
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );"><%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();"><%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 													<!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 												</div>
 											</td>
@@ -1860,14 +1860,14 @@ String strLocation ="";
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
-												onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												onDblClick="onDblClickServiceCode(this)"><%=serviceCode%></span>
 
 											</td>
 											<td
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );">
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();">
 													<%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 												</div> <!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 											</td>
@@ -1935,13 +1935,13 @@ String strLocation ="";
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
-												onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												onDblClick="onDblClickServiceCode(this)"><%=serviceCode%></span>
 											</td>
 											<td
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div onclick="getElementById('xml_<%=serviceCode%>').trigger( "click" );">
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();">
 													<%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 													<!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 												</div>

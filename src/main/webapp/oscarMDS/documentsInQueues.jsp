@@ -1808,7 +1808,7 @@ function focusFirstDocLab(){
             var doc_lab=checkType(current_first_doclab);
             if(doc_lab=='DOC'){
                 //oscarLog('docDesc_'+current_first_doclab);
-                $('docDesc_'+current_first_doclab).trigger( "focus" );
+                $('docDesc_'+current_first_doclab).focus();
             }
             else if(doc_lab=='HL7'){
                 //do nothing

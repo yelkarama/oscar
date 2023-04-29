@@ -71,7 +71,7 @@
 		<% }else{%>
 			document.getElementById('growth').action="../form/createpdf?__cfgGraphicFile=<%=request.getParameter("__cfgGraphicFile")%>";
 		<% }%>
-			document.getElementById('growth').trigger( "submit" );
+			document.getElementById('growth').submit();
 		}
 //	        document.growth.action="../form/createpdf";
 //	        document.growth.submit();

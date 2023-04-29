@@ -144,7 +144,7 @@
            //alert('hidding');
         }else{                    
            showItem('providerName');
-           document.getElementById('providerName').trigger( "focus" );
+           document.getElementById('providerName').focus();
            //alert('showing');
         }                       
       }

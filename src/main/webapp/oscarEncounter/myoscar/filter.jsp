@@ -34,7 +34,7 @@
 function setToFrom(dateFrom, dateTo){
 	document.getElementById('from').value = dateFrom;
 	document.getElementById('to').value = dateTo;
-	document.getElementById('tofromForm').trigger( "submit" );
+	document.getElementById('tofromForm').submit();
 }
 </script>
 <%

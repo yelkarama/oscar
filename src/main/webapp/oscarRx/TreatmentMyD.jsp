@@ -83,7 +83,7 @@ if ( bean == null ){
 if (ht.get("drugs") != null){
     Vector<Hashtable> drugs = (Vector) ht.get("drugs");
     for(Hashtable drug :drugs){%>
-<%=DrugLing((String)drug.get("label"))%>  <a href="javascript:void(0);" onclick="$('searchString').value ='<%=drug.get("tc_atc")%>';$('treatmentsMyD').toggle();$('searchString').trigger( "focus" );"><%=drug.get("tc_atc")%></a>  <%=drug.get("tc_atc_number")%> <br/>
+<%=DrugLing((String)drug.get("label"))%>  <a href="javascript:void(0);" onclick="$('searchString').value ='<%=drug.get("tc_atc")%>';$('treatmentsMyD').toggle();$('searchString').focus();"><%=drug.get("tc_atc")%></a>  <%=drug.get("tc_atc_number")%> <br/>
   <%}
 }          
 if(content.length()<100){%>

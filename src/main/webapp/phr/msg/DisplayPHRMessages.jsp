@@ -243,7 +243,7 @@ request.setAttribute("pageMethod",pageMethod);
         } 
         function setFocus() {
             if (document.getElementById('phrPassword'))
-                document.getElementById('phrPassword').trigger( "focus" );
+                document.getElementById('phrPassword').focus();
         }
         function reloadWindow() {
             window.location = "../../phr/PhrMessage.do?method=<%=request.getParameter("method")%>";

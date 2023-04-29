@@ -686,7 +686,7 @@ function resetAll(){
 	TempData = new Array();
 
 	SetSwitchOn('Text');
-	document.getElementById('Text').trigger( "click" );
+	document.getElementById('Text').click();
 
 	document.getElementById('inputValue').value = "";
 	document.getElementById('inputName').value = "";
@@ -1027,10 +1027,10 @@ function GetTextTop(){
 	if (document.getElementById('includeTicklerControl').checked){
 	textTop += "\t$.when(setAtickler()).then(function( data, textStatus, jqXHR ) {\n"
 		textTop += "\t\tif ( jqXHR.status != 200 ){ alert('ERROR ('+jqXHR.status+') automatic tickler FAILED to be set');}\n"
-		textTop += "\t\tdocument.getElementById('FormName').trigger( "submit" )\n"
+		textTop += "\t\tdocument.getElementById('FormName').submit()\n"
 		textTop += "\t});\n"
 	} else {
-	textTop += "\tdocument.getElementById('FormName').trigger( "submit" )\n"
+	textTop += "\tdocument.getElementById('FormName').submit()\n"
 	}
 	textTop += "}\n"
 	textTop += "window.onbeforeunload = confirmExit;\n"
@@ -1688,7 +1688,7 @@ return unescape(text);
 function injectHtml(){
     document.getElementById('formHtmlG').value = popUp();
     document.getElementById('formHtmlName').value = document.getElementById('eFormName').value;
-    document.getElementById('toSave').trigger( "submit" );
+    document.getElementById('toSave').submit();
 }
 
 </script>
@@ -1922,12 +1922,12 @@ show('classic');
 								<table>
 					<tr>
 						<td><span><b><bean:message key="eFormGenerator.parentLabel"/></b>: </span></td>
-						<td><input name="Parent" id="Parent" type="button" value='<bean:message key="eFormGenerator.parentButton"/>' onclick="parentcounter += 1; document.getElementById('Checkbox').trigger( "click" ); document.getElementById('inputClass').value = 'parent-field'; document.generator.InputNameType[1].checked=true; document.getElementById('inputName').value ='parent' + parentcounter; document.getElementById('inputParentclass').value ='';" ></td>
+						<td><input name="Parent" id="Parent" type="button" value='<bean:message key="eFormGenerator.parentButton"/>' onclick="parentcounter += 1; document.getElementById('Checkbox').click(); document.getElementById('inputClass').value = 'parent-field'; document.generator.InputNameType[1].checked=true; document.getElementById('inputName').value ='parent' + parentcounter; document.getElementById('inputParentclass').value ='';" ></td>
 
 					</tr>
 					<tr>
 						<td><span><b><bean:message key="eFormGenerator.childLabel"/></b>: </span></td>
-						<td><input name="Child" id="Child" type="button" value='<bean:message key="eFormGenerator.childButton"/>' onclick=" document.getElementById('inputClass').value = 'child-'; document.getElementById('inputParentclass').value ='parent' + parentcounter; document.getElementById('InputNameAuto').trigger( "click" );"></td>
+						<td><input name="Child" id="Child" type="button" value='<bean:message key="eFormGenerator.childButton"/>' onclick=" document.getElementById('inputClass').value = 'child-'; document.getElementById('inputParentclass').value ='parent' + parentcounter; document.getElementById('InputNameAuto').click();"></td>
 
 					</tr>
 				</table>
@@ -2602,7 +2602,7 @@ function DrawCheckbox(canvas,x0,y0,inputName,preCheck,inputClass,inputParentclas
 	}
 	if ((inputName == "Male")||(inputName == "Female")){
 		SetSwitchOn('Text');
-		document.getElementById('Text').trigger( "click" );
+		document.getElementById('Text').click();
 	}
 }
 
@@ -2634,7 +2634,7 @@ function DrawXbox(canvas,x0,y0,width,height,inputName,fontFamily,fontStyle,fontW
 	}
 	if ((inputName == "Male")||(inputName == "Female")){
 		SetSwitchOn('Text');
-		document.getElementById('Text').trigger( "click" );
+		document.getElementById('Text').click();
 	}
 
 }
@@ -2694,7 +2694,7 @@ function DrawSignatureBox(canvas,x0,y0, width, height, inputName){
 
 	//reset to default input of text input
 	SetSwitchOn('Text');
-	document.getElementById('Text').trigger( "click" );
+	document.getElementById('Text').click();
 }
 
 function DrawStamp(canvas,x0,y0, width, height, inputName){
@@ -2722,7 +2722,7 @@ function DrawStamp(canvas,x0,y0, width, height, inputName){
 
 	//reset to default input of text input
 	SetSwitchOn('Text');
-	document.getElementById('Text').trigger( "click" );
+	document.getElementById('Text').click();
 }
 
 var inputName="";

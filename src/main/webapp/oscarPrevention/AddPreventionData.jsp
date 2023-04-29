@@ -421,7 +421,7 @@ clear: left;
     }else{
        showItem('providerName');
        showItem('providerNameFormat');
-       document.getElementById('providerName').trigger( "focus" );
+       document.getElementById('providerName').focus();
        //alert('showing');
     }
   }
@@ -438,7 +438,7 @@ clear: left;
    {
 	    document.getElementById('lot').value = "";
    		showItem('lot');
-      	document.getElementById('lot').trigger( "focus" );
+      	document.getElementById('lot').focus();
    }
   }
   </script>

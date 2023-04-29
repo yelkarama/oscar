@@ -266,7 +266,6 @@
             if(!checkFormTypeIn()) return false;
 
             if( !ignoreDuplicates() ) return false;
-            //document.getElementById("adddemographic").trigger( "submit" );
 
   
   			var rosterStatus = document.adddemographic.roster_status.value;

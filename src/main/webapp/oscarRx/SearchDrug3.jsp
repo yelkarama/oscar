@@ -1648,7 +1648,7 @@ THEME 2*/
 
         function focusTo(elementId) {
             $(elementId).contentEditable = 'true';
-            $(elementId).trigger( "focus" );
+            $(elementId).focus();
             //IE 6/7 bug..will this call onfocus twice?? may need to do browser check.
             document.getElementById(elementId).onfocus();
         }
@@ -1717,7 +1717,7 @@ THEME 2*/
                 }
             });
             $('rxText').innerHTML = "";//make pending prescriptions disappear.
-            $("searchString").trigger( "focus" );
+            $("searchString").focus();
         }
 
         function iterateStash() {

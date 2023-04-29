@@ -135,7 +135,7 @@ if (wPhoneExt != null)
                 document.getElementById("submitButton").disabled = true;
                 document.getElementById("closeButton").disabled = false;
                 document.getElementById("submitButton").value = "Creating user...";
-                document.getElementById("registrationForm").trigger( "submit" );
+                document.getElementById("registrationForm").submit();
             }
             function enableSubmit() {
                 document.getElementById("submitButton").disabled = false;

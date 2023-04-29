@@ -125,7 +125,7 @@ request.setAttribute("forwardto", request.getRequestURI());
         } 
         function setFocus() {
             if (document.getElementById('phrPassword'))
-                document.getElementById('phrPassword').trigger( "focus" );
+                document.getElementById('phrPassword').focus();
         }
         </script>
     </head>

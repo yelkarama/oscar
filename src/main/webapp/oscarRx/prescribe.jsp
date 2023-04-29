@@ -675,10 +675,10 @@ if(listRxDrugs!=null){
             //oscarLog("counterRx="+counterRx);
            var gcn_val=<%=gcn%>;
            if(gcn_val==0){
-               $('drugName_<%=rand%>').trigger( "focus" );
+               $('drugName_<%=rand%>').focus();
            } else if(counterRx==listRxDrugSize){
                //oscarLog("counterRx="+counterRx+"--listRxDrugSize="+listRxDrugSize);
-               $('instructions_<%=rand%>').trigger( "focus" );
+               $('instructions_<%=rand%>').focus();
            }
         </script>
                 <%}%>

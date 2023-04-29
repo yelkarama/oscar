@@ -46,7 +46,7 @@ function onSubmit(){
 			document.all.form1.submit();
 		}else{
 			document.getElementById('form1').action="../../../servlet/oscar.DocumentUploadServlet";
-			document.getElementById('form1').trigger( "submit" );
+			document.getElementById('form1').submit();
 		}
 	}else{
 		if (document.all){
@@ -54,7 +54,7 @@ function onSubmit(){
 			document.all.form1.submit();
 		}else{
 			document.getElementById('form1').action="/<%=props.getProperty("project_home", "")%>/oscarBilling/DocumentErrorReportUpload.do";
-			document.getElementById('form1').trigger( "submit" );
+			document.getElementById('form1').submit();
 		}
 	}
 	return false;

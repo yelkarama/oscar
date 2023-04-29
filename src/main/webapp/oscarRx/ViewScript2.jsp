@@ -241,7 +241,7 @@ if (userAgent != null) {
                             updateCurrentInteractions();
                 }});
                parent.document.getElementById('rxText').innerHTML="";//make pending prescriptions disappear.
-               parent.document.getElementById('searchString').trigger( "focus" );
+               parent.document.getElementById('searchString').focus();
     }
     function resetReRxDrugList(){
         var url="<c:out value="${ctx}"/>" + "/oscarRx/deleteRx.do?parameterValue=clearReRxDrugList";
@@ -285,7 +285,7 @@ if (userAgent != null) {
             //if (method!="oscarRxFax"){
              document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target="_blank";
             //}
-            document.getElementById("preview").contentWindow.document.getElementById("preview2Form").trigger( "submit" );
+            document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
        return true;
     }
 
