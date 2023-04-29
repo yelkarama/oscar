@@ -310,7 +310,7 @@
 function grabEnter(id, event) {
     var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
     if (keyCode == 13) {
-        $(id).trigger( "click" );
+        $(id).click();
         return false;
     }
 
@@ -326,7 +326,7 @@ function setupNotes(){
     adjustCaseNote();
     setCaretPosition($(caseNote), $(caseNote).value.length);
 
-    $(caseNote).trigger( "focus" );
+    $(caseNote).focus();
     let autosaveNoteId = document.forms['caseManagementEntryForm'].noteId.value;
     let autosaveProgramId = document.forms['caseManagementEntryForm']['caseNote.program_no'].value;
     let autosaveDemographicNo = document.forms['caseManagementEntryForm'].demographicNo.value;
@@ -795,7 +795,7 @@ function showIntegratedNote(title, note, location, providerName, obsDate){
     
 	$("showIntegratedNote").style.display = "block";
 	
-	$("integratedNoteTxt").trigger( "focus" );
+	$("integratedNoteTxt").focus();
 }
 
 //display in place editor
@@ -947,7 +947,7 @@ function showEdit(e,title, noteId, editors, date, revision, note, url, container
     }
 
 
-    $("noteEditTxt").trigger( "focus" );
+    $("noteEditTxt").focus();
 
     return false;
 }
@@ -1386,7 +1386,7 @@ function loadDiv(div,url,limit) {
         $(caseNote).value += text;
 
         //setTimeout("$(caseNote).scrollTop="+scrollHeight, 0);  // setTimeout is needed to allow browser to realize that text field has been updated
-        $(caseNote).trigger( "focus" );
+        $(caseNote).focus();
         adjustCaseNote();
         //if (typeof chartNoteAutosave !== 'undefined') {
         //        chartNoteAutosave.setChanged();
@@ -1419,10 +1419,8 @@ function loadDiv(div,url,limit) {
         var func = autoCompleted[name];
         eval(func);
         smartTmpl.init($(caseNote));
-        // blur deprecated in jQuery 3.3 
-        //$(caseNote).blur();
-        $(caseNote).trigger('blur');
-        $(caseNote).trigger( "focus" );
+        $(caseNote).blur();
+        $(caseNote).focus();
         $("autosaveTime").update(name);
     }
 
@@ -1847,7 +1845,7 @@ function fetchNote(nId) {
                         onSuccess: function(response) {
                             $(noteTxtArea).update(response.responseText.trim());
                             adjustCaseNote();
-                                $(noteTxtArea).trigger( "focus" );
+                                $(noteTxtArea).focus();
                             setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
                             origCaseNote = $F(noteTxtArea);
                             $(fullId).value = "true";
@@ -1859,10 +1857,10 @@ function fetchNote(nId) {
 
 function toggleFullViewForAll(f) {
 	jQuery('[name="fullViewTrigger"]').each(function(){
-		$(this).trigger( "click" );
+		$(this).click();
 	});
 	jQuery('[name="expandViewTrigger"]').each(function(){
-		$(this).trigger( "click" );
+		$(this).click();
 	});
 }
 
@@ -2012,7 +2010,7 @@ function unlockNote(e) {
     new Insertion.Bottom(txt, lockForm);
 
     $(txt).style.height = "auto";
-    $(passwd).trigger( "focus" );
+    $(passwd).focus();
     Element.stopObserving(txt, 'click', unlockNote);
 }
 
@@ -2097,7 +2095,7 @@ function editNote(e) {
     //if we have an edit textarea already open, close it
     if($(caseNote) !=null && $(caseNote).parentNode.id != $(txt).id) {
         if( !changeToView(caseNote) ) {
-            $(caseNote).trigger( "focus" );
+            $(caseNote).focus();
             return;
         }
     }
@@ -2164,7 +2162,7 @@ function editNote(e) {
         //position cursor at end of text
         adjustCaseNote();
         setCaretPosition($(caseNote),$(caseNote).value.length);
-        $(caseNote).trigger( "focus" );
+        $(caseNote).focus();
         origCaseNote = $F(caseNote);
         
     }
@@ -2262,10 +2260,10 @@ function showIssues(e) {
 
     if( showIssue ) {
         $("noteIssues").scrollIntoView(false);
-        $("issueAutocomplete").trigger( "focus" );
+        $("issueAutocomplete").focus();
     }
     else {
-        $(caseNote).trigger( "focus" );
+        $(caseNote).focus();
     }
 
     return false;
@@ -2293,9 +2291,9 @@ function showHideIssues(e, issueType) {
 			$("noteIssues").scrollIntoView(false);
 		}
 				
-		$("issueAutocomplete").trigger( "focus" );
+		$("issueAutocomplete").focus();
 	} else {
-		$(caseNote).trigger( "focus" );
+		$(caseNote).focus();
 	}
 				
 	return false;
@@ -2904,7 +2902,7 @@ function savePage(method, chain) {
 
         Element.stopObserving('asgnIssues', 'click', addIssueFunc);
         Element.observe('asgnIssues', 'click', changeIssueFunc);
-        $("issueAutocomplete").trigger( "focus" );
+        $("issueAutocomplete").focus();
         return false;
     }
 
@@ -2919,7 +2917,7 @@ function changeDiagnosisResolved(issueId) {
 		
 	Element.stopObserving('asgnIssues', 'click', addIssueFunc);
 	Element.observe('asgnIssues', 'click', changeIssueFunc);
-	$("issueAutocomplete").trigger( "focus" );
+	$("issueAutocomplete").focus();
 	return false;
 }
 
@@ -2934,7 +2932,7 @@ function changeDiagnosisUnresolved(issueId) {
 				
 	Element.stopObserving('asgnIssues', 'click', addIssueFunc);
 	Element.observe('asgnIssues', 'click', changeIssueFunc);
-	$("issueAutocomplete").trigger( "focus" );
+	$("issueAutocomplete").focus();
 	return false;
 }
 			
@@ -3061,7 +3059,7 @@ function submitIssue(event) {
     var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
     if (keyCode == 13 ) {
         if( submitIssues)
-            $("asgnIssues").trigger( "click" );
+            $("asgnIssues").click();
 
         return false;
     }
@@ -3151,7 +3149,7 @@ function newNote(e) {
         new Insertion.Bottom("encMainDiv", div);
         $(sigId).addClassName("sig");
         Rounded("div#"+id,"all","transparent","#CCCCCC","big border #000000");
-        $(caseNote).trigger( "focus" );
+        $(caseNote).focus();
         adjustCaseNote();
         if( reason.length > 0 )
             setCaretPosition($(caseNote),$(caseNote).value.length);
@@ -3178,7 +3176,7 @@ function newNote(e) {
         //setTimer();
     }
     else
-        $(caseNote).trigger( "focus" );
+        $(caseNote).focus();
 
     //need delay..something else going on
     setTimeout(scrollDownInnerBar,1500);
