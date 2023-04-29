@@ -353,23 +353,23 @@ width: 100%;
 		rhogamWarning();
 		
 		/*
-		$("select[name='pg1_labRh']").bind('change',function(){
+		$("select[name='pg1_labRh']").on('change',function(){
 			rhWarning();
 		});
 		
-		$("select[name='pg1_labRubella']").bind('change',function(){			
+		$("select[name='pg1_labRubella']").on('change',function(){			
 			rubellaWarning();
 		});	
 		
-		$("select[name='pg1_labHBsAg']").bind('change',function(){
+		$("select[name='pg1_labHBsAg']").on('change',function(){
 			hbsagWarning();
 		});
 		
-		$("input[name='pg1_geneticA'],input[name='pg1_geneticB'],input[name='pg1_geneticC'],input[name='pg1_labCustom3Result']").bind('blur',function(){
+		$("input[name='pg1_geneticA'],input[name='pg1_geneticB'],input[name='pg1_geneticC'],input[name='pg1_labCustom3Result']").on('blur',function(){
 			geneticWarning();
 		});
 				
-		$("input[name='c_bmi']").bind('blur',function(){
+		$("input[name='c_bmi']").on('blur',function(){
 			bmiWarning();
 		});
 			
@@ -414,11 +414,11 @@ width: 100%;
 				$("#mcv_abn_prompt").show();
 		}
 		
-		$("input[name='pg1_ht']").bind('keypress',function(){
+		$("input[name='pg1_ht']").on('keypress',function(){
 			$("input[name='c_bmi']").val('');
 			bmiWarning();
 		});
-		$("input[name='pg1_wt']").bind('keypress',function(){
+		$("input[name='pg1_wt']").on('keypress',function(){
 			$("input[name='c_bmi']").val('');
 			bmiWarning();
 		});
@@ -886,10 +886,10 @@ function updatePageLock(lock) {
 }
 
 $(document).ready(function() {
-	$("input[name='pg1_geneticD1']").bind('change',function(){
+	$("input[name='pg1_geneticD1']").on('change',function(){
 		updateGeneticD();
 	});
-	$("input[name='pg1_geneticD2']").bind('change',function(){
+	$("input[name='pg1_geneticD2']").on('change',function(){
 		updateGeneticD();
 	});
 		
@@ -902,13 +902,13 @@ $(document).ready(function() {
 			$("input[name='pg1_geneticD2']").attr('checked',true);		
 	}
 	
-	$("input[name='pg1_psCertN']").bind('click',function(){
+	$("input[name='pg1_psCertN']").on('click',function(){
 		if($("input[name='pg1_psCertN']").attr('checked') == 'checked') {
 			$( "#dating-us-form" ).dialog( "open" );
 		}
 	});
 	
-	$("#print_log_menu").bind('click',function(){
+	$("#print_log_menu").on('click',function(){
 		jQuery.ajax({type:"POST",url:'<%=request.getContextPath()%>/Pregnancy.do?method=getPrintData',data: {resourceName:'ONAREnhanced',resourceId:$('#episodeId').val()},dataType:'json',async:true, success:function(data) {
 			$("#print_log_table tbody").html("");
 			$.each(data, function(key, val) {
@@ -1406,9 +1406,9 @@ function pullVitals() {
 	jQuery.ajax({url:'<%=request.getContextPath()%>/Pregnancy.do?method=getMeasurementsAjax&demographicNo=<%=demoNo%>&type=BP',async:false, dataType:'json',success:function(data) {
 		if(data.length>0) {
 			$('#bp_chart').val(data[0].dataField);
-			$('#moveToForm_bp').unbind("click").bind('click',function(){moveToForm('bp','pg1_BP');});
+			$('#moveToForm_bp').off("click").on('click',function(){moveToForm('bp','pg1_BP');});
 		} else {
-			$('#moveToForm_bp').unbind("click").bind('click',function(){alert('No Available values in E-Chart');});
+			$('#moveToForm_bp').off("click").on('click',function(){alert('No Available values in E-Chart');});
 		}
 	}});
 	$('#bp_form').val($('input[name="pg1_BP"]').val());
@@ -1416,9 +1416,9 @@ function pullVitals() {
 	jQuery.ajax({url:'<%=request.getContextPath()%>/Pregnancy.do?method=getMeasurementsAjax&demographicNo=<%=demoNo%>&type=HT',async:false, dataType:'json',success:function(data) {
 		if(data.length>0) {
 			$('#height_chart').val(data[0].dataField);	
-			$('#moveToForm_height').unbind("click").bind('click',function(){moveToForm('height','pg1_ht');});
+			$('#moveToForm_height').off("click").on('click',function(){moveToForm('height','pg1_ht');});
 		} else {			
-			$('#moveToForm_height').unbind("click").bind('click',function(){alert('No Available values in E-Chart');});
+			$('#moveToForm_height').off("click").on('click',function(){alert('No Available values in E-Chart');});
 		}	
 	}});
 	$('#height_form').val($('input[name="pg1_ht"]').val());
@@ -1426,9 +1426,9 @@ function pullVitals() {
 	jQuery.ajax({url:'<%=request.getContextPath()%>/Pregnancy.do?method=getMeasurementsAjax&demographicNo=<%=demoNo%>&type=WT',async:false, dataType:'json',success:function(data) {
 		if(data.length>0) {
 			$('#weight_chart').val(data[0].dataField);	
-			$('#moveToForm_weight').unbind("click").bind('click',function(){moveToForm('weight','pg1_wt');});
+			$('#moveToForm_weight').off("click").on('click',function(){moveToForm('weight','pg1_wt');});
 		} else {
-			$('#moveToForm_weight').unbind("click").bind('click',function(){alert('No Available values in E-Chart');});
+			$('#moveToForm_weight').off("click").on('click',function(){alert('No Available values in E-Chart');});
 		}		
 	}});
 	$('#weight_form').val($('input[name="pg1_wt"]').val());
@@ -1700,7 +1700,7 @@ $(document).ready(function(){
 		        	}
 		        	//go to it
 		        	document.forms[0].action=url;
-		        	$("#printBtn").click();
+		        	$("#printBtn").trigger( "click" );
 		        }
 				
 			},
@@ -1756,23 +1756,23 @@ function wk16VisitTool() {
 			showSpeed: 400 
 		});
 		
-		//$('#lab_menu').bind('click',function(){});
-		$('#mcv_menu').bind('click',function(){mcvReq();});
-		$('#vitals_pull_menu').bind('click',function(){pullVitals();});
-		$('#lab_pull_menu').bind('click',function(){alert('Not yet implemented');});
+		//$('#lab_menu').on('click',function(){});
+		$('#mcv_menu').on('click',function(){mcvReq();});
+		$('#vitals_pull_menu').on('click',function(){pullVitals();});
+		$('#lab_pull_menu').on('click',function(){alert('Not yet implemented');});
 		
-		$("#credit_valley_genetic_btn").bind('click',function(e){
+		$("#credit_valley_genetic_btn").on('click',function(e){
 			e.preventDefault();
 			popPage('<%=request.getContextPath()%>/Pregnancy.do?method=loadEformByName&name=Prenatal Screening (IPS) Credit Valley&demographicNo=<%=demoNo%>','credit_valley_lab_req');
 		});
 		
-		$("#north_york_genetic_btn").bind('click',function(e){
+		$("#north_york_genetic_btn").on('click',function(e){
 			e.preventDefault();
 			popPage('<%=request.getContextPath()%>/Pregnancy.do?method=loadEformByName&name=1Prenatal Screening - North York&demographicNo=<%=demoNo%>','north_york_lab_req');
 		});
 		
-		$("#1st_visit_menu").bind('click',function(){firstVisitTool();});
-		$("#16wk_visit_menu").bind('click',function(){wk16VisitTool();});
+		$("#1st_visit_menu").on('click',function(){firstVisitTool();});
+		$("#16wk_visit_menu").on('click',function(){wk16VisitTool();});
     });
 </script>
 <% } %>
@@ -1843,16 +1843,16 @@ function wk16VisitTool() {
 			</tr>
 
 			<tr id="weight_warn" style="display:none">
-				<td onClick="$('#pg1_wt').focus();">No Weight Entered</td>
+				<td onClick="$('#pg1_wt').trigger( "focus" );">No Weight Entered</td>
 				
 			</tr>
 			
 			<tr id="height_warn" style="display:none">
-				<td onClick="$('#pg1_ht').focus();">No Height Entered</td>
+				<td onClick="$('#pg1_ht').trigger( "focus" );">No Height Entered</td>
 			</tr>
 			
 			<tr id="bmi_warn" style="display:none">
-				<td onClick="$('#c_bmi').focus();$('#c_bmi').dblclick();">No BMI Entered</td>
+				<td onClick="$('#c_bmi').trigger( "focus" );$('#c_bmi').trigger( "dblclick" );">No BMI Entered</td>
 			</tr>
 			<tr>
 				<td>
@@ -3573,7 +3573,7 @@ $(document).ready(function(){
 		limitCharacters($(this),mlength,msg,disableNewLine);
 		});
 
-		$(".limit-text").bind('paste', function(e){ 
+		$(".limit-text").on('paste', function(e){ 
 		var pasteData = e.originalEvent.clipboardData.getData('text');
 		pasteLength = pasteData.length;
 		textLength = $(this).val().length;

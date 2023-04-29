@@ -139,7 +139,7 @@ String pSize        = request.getParameter("pSize");
 <script type="text/javascript" src="<html:rewrite page="/js/jquery.js"/>"></script>
 <script type="text/javascript">
 	$("document").ready(function(){		
-		$("input[name='elementType']").change(function(){
+		$("input[name='elementType']").on("change",function(){
 			if($(this).val() == 8) {			
 				//repeating on
 				//$("input[name='repeating']").attr("checked","checked");
@@ -158,7 +158,7 @@ String pSize        = request.getParameter("pSize");
 			*/
 		});
 
-		$("input[name='elementType']").change(function(){
+		$("input[name='elementType']").on("change",function(){
 			var val = $(this).val();
 			if(val == 8) {
 				$("#validations").html('<option value="">Choose</option><option value="integer">Integer</option>');

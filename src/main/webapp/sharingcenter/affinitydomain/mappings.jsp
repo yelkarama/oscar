@@ -181,7 +181,7 @@
 
                 // click events
                 $("#saveButton").on("click", function() {
-                    $("#mappingform").submit();
+                    $("#mappingform").trigger( "submit" );
                 });
             });
 

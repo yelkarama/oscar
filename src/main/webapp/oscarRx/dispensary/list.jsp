@@ -186,7 +186,8 @@ function doSubmit() {
 
 $(document).ready(function(){
 	
-	$("input[name='remove']").live('click',function(){
+	//$("input[name='remove']").live('click',function(){ deprecated in 1.9
+	$( document ).on( "click", "input[name='remove']",function(){
 		clearErrors();
 		
 		var hash = $(this).attr('id').substring("remove_".length);
@@ -201,7 +202,8 @@ $(document).ready(function(){
 		}
 	}); 
 	
-	$("input[name='add']").live('click',function(){
+	//$("input[name='add']").live('click',function(){ deprecated in 1.9
+	$( document ).on( "click", "input[name='add']", function() {
 		clearErrors();
 		
 		var hash = $(this).attr('id').substring("add_".length);
@@ -230,7 +232,7 @@ $(document).ready(function(){
 		
 	}); 
 	
-	$("#quantity,#product").bind('change',function(){
+	$("#quantity,#product").on('change',function(){
 		if($("#product").val() == '' || $("#quantity").val() == '0') {
 			$("#td_lots").html("");
 			return;

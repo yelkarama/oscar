@@ -86,7 +86,7 @@
 	<script type="text/javascript" >
 		jQuery(document).ready( function($) {		
 			//--> Popup effects
-			jQuery(".hovereffect").bind( "mouseover", function(){
+			jQuery(".hovereffect").on( "mouseover", function(){
 				nhpup.popup( jQuery('#healthCareTeamMemberDetail_' + this.id).html(), { 'width':250 } );			
 			});
 		})
@@ -99,11 +99,11 @@
 	<script type="text/javascript">
 		jQuery(document).ready( function($) {		
 			//--> Popup effects
-			$(".hovereffect").mouseover(function(){
+			$(".hovereffect").on( "mouseover", function(){
 				$('#healthCareTeamMemberDetail_' + this.id).toggle();
 				$(this).css("fontWeight", "bold");
 			});
-			$(".hovereffect").mouseout(function(){
+			$(".hovereffect").on( "mouseout", function(){
 				$('#healthCareTeamMemberDetail_' + this.id).toggle();
 				$(this).css("fontWeight", "inherit");
 			});

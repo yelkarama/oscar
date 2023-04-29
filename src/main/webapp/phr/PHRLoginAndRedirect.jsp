@@ -85,7 +85,7 @@ pageContext.setAttribute("forwardToOnSuccess",request.getAttribute("forwardToOnS
                 window.location.href = url;
             }
             function onloadd() {
-                document.getElementById("phrPassword").focus();
+                document.getElementById("phrPassword").trigger( "focus" );
             }
         </script>
         <style type="text/css">

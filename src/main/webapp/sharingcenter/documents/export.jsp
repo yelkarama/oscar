@@ -187,7 +187,7 @@
                 // send button
                 $("#sendButton").on("click", function() {
                     // make sure the user selected a policy
-                    if ($("#policySelect option:selected").size() == 0) {
+                    if ($("#policySelect option:selected").length == 0) {
                         alert("You must select at least 1 consent policy to continue.");
                         return false;
                     }
@@ -215,7 +215,8 @@
                             data: consentData,
                             success: function(data) {
                                 // grab the policy info and create the dynamic policies section in the consent confirmation modal
-                                var policy = jQuery.parseJSON(data);
+                                // jQuery.parseJSON is deprecated in jQuery 3; use native JSON.parse
+                                var policy = JSON.parse(data);
 
                                 var policyLink = "<a href=\"#\" onclick=\"window.open('" + policy.url + "','View Policy: " + policy.name + "','width='+popupWidth+', height='+popupHeight+', top='+popupTop+', left='+popupLeft); return false;\">" + policy.name + "</a>";
                                 $("#policyViewAndConfirmation").append('<span class="glyphicon glyphicon-eye-close"></span>');
@@ -238,7 +239,7 @@
                 // confirm button
                 $("#confirmButton").on("click", function() {
                     if ($("#consentGiven").is(':checked')) {
-                        $("#documentexportform").submit();
+                        $("#documentexportform").trigger( "submit" );
                     } else {
                         alert("You must give consent to all consent/privacy policies to continue");
                         return false;

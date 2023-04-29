@@ -276,7 +276,7 @@ clear: left;
        //alert('hidding');
     }else{
        showItem('providerName');
-       document.getElementById('providerName').focus();
+       document.getElementById('providerName').trigger( "focus" );
        //alert('showing');
     }
   }
@@ -535,11 +535,11 @@ custom_html = `<div style="width:100%;padding:10px 0 10px 20px; font-size:16px;"
 
 jQuery(custom_html).insertBefore( jQuery('#measurementForm') );
 
-jQuery(wt_input).bind('keyup change', function(){
+jQuery(wt_input).on('keyup change', function(){
   calcBMI();
 });
 
-jQuery(ht_input).bind('keyup change', function(){
+jQuery(ht_input).on('keyup change', function(){
   calcBMI();
 });
 
@@ -552,7 +552,7 @@ w = jQuery(wt_input).val();
 h = jQuery(ht_input).val();
 b = '';
 
-if ( jQuery.isNumeric(w) && jQuery.isNumeric(h) && h!=="" && w!=="" ) {
+if ( !isNaN(parseFloat(w)) && !isNaN(parseFloat(h)) && h!=="" && w!=="" ) {
   if (h > 0) {
     b = (w/Math.pow(h/100,2)).toFixed(1);
     jQuery(bmi_input).val(b);

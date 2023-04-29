@@ -96,7 +96,7 @@
         <script type="text/javascript" >
             jQuery(document).ready( function($) {
                 //--> Popup effects
-                jQuery(".contactHover").bind( "mouseover", function(){
+                jQuery(".contactHover").on( "mouseover", function(){
                     nhpup.popup( jQuery('#contactDetail_' + this.id).html(), { 'width':250 } );
                 });
             })
@@ -109,11 +109,11 @@
         <script type="text/javascript">
             jQuery(document).ready( function($) {
                 //--> Popup effects
-                $(".contactHover").mouseover(function(){
+                $(".contactHover").on( "mouseover", function(){
                     $('#contactDetail_' + this.id).show();
                     $(this).css("fontWeight", "bold");
                 });
-                $(".contactHover").mouseout(function(){
+                $(".contactHover").on( "mouseout", function(){
                     $('#contactDetail_' + this.id).hide();
                     $(this).css("fontWeight", "inherit");
                 });

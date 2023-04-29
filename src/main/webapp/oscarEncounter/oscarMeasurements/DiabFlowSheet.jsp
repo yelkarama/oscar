@@ -207,13 +207,13 @@ ArrayList<String> recomendations = mi.getRecommendations();
 		$("#highlightSliderLength").text(Object.keys(dateRange)[0]);
 
 
-		$("#close-message").click(function() {
+		$("#close-message").on( "click", function() {
 			$("#measurement-view").hide();
 			$("#deleteId").val("");
 		});
 
 
-		$("[id^=mView]").click(function() {
+		$("[id^=mView]").on( "click", function() {
 
 		id=this.id;
 		measId=id.replace('mView-','');
@@ -226,7 +226,7 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 		});
 
-	    $("#deleteButton").click(function(){
+	    $("#deleteButton").on( "click", function(){
 		var link = "<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/DeleteData2.do";
 
 		var deletevalue = "id="+$("#deleteId").val()+"&deleteCheckbox="+$("#deleteId").val();

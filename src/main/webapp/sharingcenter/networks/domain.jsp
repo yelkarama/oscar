@@ -106,19 +106,19 @@
                 // register button
                 $("#enableViaRegisterButton").on("click", function() {
                     $("#sharing_action").val("register-patient");
-                    $("#sharedomainform").submit();
+                    $("#sharedomainform").trigger( "submit" );
                 });
 
                 // update button
                 $("#updatePatientButton").on("click", function() {
                     $("#sharing_action").val("update-patient");
-                    $("#sharedomainform").submit();
+                    $("#sharedomainform").trigger( "submit" );
                 });
 
                 // disable sharing button
                 $("#disableSharingButton").on("click", function() {
                     $("#sharing_action").val("disable-sharing");
-                    $("#sharedomainform").submit();
+                    $("#sharedomainform").trigger( "submit" );
                 });
 
                 // enable sharing (sharing key)
@@ -127,7 +127,7 @@
                     if ($("#sharingKey").val() != "") {
                         // all is good
                         $("#sharing_action").val("register-sharing-key");
-                        $("#sharedomainform").submit();
+                        $("#sharedomainform").trigger( "submit" );
 
                     } else {
                         alert("You must type your Sharing Key to enable sharing");
@@ -141,7 +141,7 @@
                     if ($("#sharingKey").val() != "") {
                         // all is good
                         $("#sharing_action").val("update-sharing-key");
-                        $("#sharedomainform").submit();
+                        $("#sharedomainform").trigger( "submit" );
 
                     } else {
                         alert("You must type your Sharing Key to enable sharing");

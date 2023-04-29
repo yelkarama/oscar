@@ -1648,7 +1648,7 @@ THEME 2*/
 
         function focusTo(elementId) {
             $(elementId).contentEditable = 'true';
-            $(elementId).focus();
+            $(elementId).trigger( "focus" );
             //IE 6/7 bug..will this call onfocus twice?? may need to do browser check.
             document.getElementById(elementId).onfocus();
         }
@@ -1717,7 +1717,7 @@ THEME 2*/
                 }
             });
             $('rxText').innerHTML = "";//make pending prescriptions disappear.
-            $("searchString").focus();
+            $("searchString").trigger( "focus" );
         }
 
         function iterateStash() {
@@ -2538,14 +2538,14 @@ THEME 2*/
                 var str1 = jQuery(this).val();
                 var dt = str1.split("-");
                 if (dt.length > 3) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Start Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
                     x = false;
                     return;
                 }
                 var dt1 = 1, mon1 = 0, yr1 = parseInt(dt[0], 10);
                 if (isNaN(yr1) || yr1 < 0 || yr1 > 9999) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Invalid Start Date! Please check the year');
                     x = false;
                     return;
@@ -2553,7 +2553,7 @@ THEME 2*/
                 if (dt.length > 1) {
                     mon1 = parseInt(dt[1], 10) - 1;
                     if (isNaN(mon1) || mon1 < 0 || mon1 > 11) {
-                        jQuery(this).focus();
+                        jQuery(this).trigger( "focus" );
                         alert('Invalid Start Date! Please check the month');
                         x = false;
                         return;
@@ -2562,7 +2562,7 @@ THEME 2*/
                 if (dt.length > 2) {
                     dt1 = parseInt(dt[2], 10);
                     if (isNaN(dt1) || dt1 < 1 || dt1 > 31) {
-                        jQuery(this).focus();
+                        jQuery(this).trigger( "focus" );
                         alert('Invalid Start Date! Please check the day');
                         x = false;
                         return;
@@ -2571,7 +2571,7 @@ THEME 2*/
                 var date1 = new Date(yr1, mon1, dt1);
                 var now = new Date();
                 if (date1 > now) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Start Date cannot be in the future. (' + str1 + ')');
                     x = false;
                     return;
@@ -2585,7 +2585,7 @@ THEME 2*/
             jQuery('input[name^="quantity_"]').each(function () {
                 var str1 = jQuery(this).val();
                 if ((str1.length == 0) || (parseFloat(str1) == 0) || (isNaN(parseFloat(str1)))) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     x = confirm('WARNING no quantity entered.\nProceed anyway?');
                     return;
                 }
@@ -2599,14 +2599,14 @@ THEME 2*/
                 var str1 = jQuery(this).val();
                 var dt = str1.split("-");
                 if (dt.length > 3) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Written Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
                     x = false;
                     return;
                 }
                 var dt1 = 1, mon1 = 0, yr1 = parseInt(dt[0], 10);
                 if (isNaN(yr1) || yr1 < 0 || yr1 > 9999) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Invalid Written Date! Please check the year');
                     x = false;
                     return;
@@ -2614,7 +2614,7 @@ THEME 2*/
                 if (dt.length > 1) {
                     mon1 = parseInt(dt[1], 10) - 1;
                     if (isNaN(mon1) || mon1 < 0 || mon1 > 11) {
-                        jQuery(this).focus();
+                        jQuery(this).trigger( "focus" );
                         alert('Invalid Written Date! Please check the month');
                         x = false;
                         return;
@@ -2623,7 +2623,7 @@ THEME 2*/
                 if (dt.length > 2) {
                     dt1 = parseInt(dt[2], 10);
                     if (isNaN(dt1) || dt1 < 1 || dt1 > 31) {
-                        jQuery(this).focus();
+                        jQuery(this).trigger( "focus" );
                         alert('Invalid Written Date! Please check the day');
                         x = false;
                         return;
@@ -2632,7 +2632,7 @@ THEME 2*/
                 var date1 = new Date(yr1, mon1, dt1);
                 var now = new Date();
                 if (date1 > now) {
-                    jQuery(this).focus();
+                    jQuery(this).trigger( "focus" );
                     alert('Written Date cannot be in the future. (' + str1 + ')');
                     x = false;
                     return;
@@ -2783,7 +2783,7 @@ THEME 2*/
                 //var el = jQuery( this );
                 //medTermCheckOne(randId, el);
             });
-            setTimeout("document.getElementById('<%=defaultView%>').click();console.log('default view setting');", 3000);
+            setTimeout("document.getElementById('<%=defaultView%>').trigger( "click" );console.log('default view setting');", 3000);
             console.log("Timeout running");
         });
     </script>

@@ -94,7 +94,7 @@ com.quatro.service.security.SecurityManager securityManager = new com.quatro.ser
 <script type="text/javascript">
 
 function submitSearchForm() {
-	$("#searchStringButton").click();
+	$("#searchStringButton").trigger( "click" );
 	return false;
 }
 
@@ -103,13 +103,13 @@ $(document).ready( function() {
 	$.fn.bindActionEvents = function() {
 
 		//--> unbind first to avoid multiple binds.
-		$(".deleteAllergyLink").unbind("click");
-		$(".modifyAllergyLink").unbind("click");
-		$("#searchResultsContainer a").unbind("click");
-		$(".DivContentSectionHead a img").unbind("click");
+		$(".deleteAllergyLink").off("click");
+		$(".modifyAllergyLink").off("click");
+		$("#searchResultsContainer a").off("click");
+		$(".DivContentSectionHead a img").off("click");
 
 		//--> action for selecting from search results.
-		$("#searchResultsContainer div[id $= '_content'] a").bind("click", function(event){
+		$("#searchResultsContainer div[id $= '_content'] a").on("click", function(event){
 			event.preventDefault();
 			// override the old addReaction.do with the new addReaction2.do
 			var path = "${ pageContext.servletContext.contextPath }/oscarRx/addReaction2.do"
@@ -120,7 +120,7 @@ $(document).ready( function() {
 		});
 		
 		//--> delete allergy.
-		$(".deleteAllergyLink").bind("click", function(event){
+		$(".deleteAllergyLink").on("click", function(event){
 			var ids = this.id.split("_");
 			var action = ids[0].split(":")[1];
 			var param = ids[1].trim();
@@ -136,7 +136,7 @@ $(document).ready( function() {
 		});
 		
 		//--> modify allergy.
-		$(".modifyAllergyLink").bind("click", function(event){
+		$(".modifyAllergyLink").on("click", function(event){
 			var ids = this.id.split("_");
 			var param = ids[1].trim();
 			sendSearchRequest("${ pageContext.servletContext.contextPath }/oscarRx/addReaction2.do",
@@ -156,7 +156,7 @@ $(document).ready( function() {
 		}
 
 		//--> Toggle search results listing.
-		$(".DivContentSectionHead a img").bind("click", function(event){
+		$(".DivContentSectionHead a img").on("click", function(event){
 			event.preventDefault();
 			var typecode = this.id.split("_")[0];
 			var imgsrc = document.getElementById(typecode+"_img").src;
@@ -178,7 +178,7 @@ $(document).ready( function() {
 	}
 	
 	//--> Send allergy search to server
-	$("#searchStringButton").click( function(){
+	$("#searchStringButton").on( "click", function(){
 
 		if( isEmpty() ) {
 			$(".highLightButton").removeClass("highLightButton");
@@ -202,7 +202,7 @@ $(document).ready( function() {
 
 
 	//--> Toggle checkboxes all or none
-	$("#typeSelectAll").change( function(){
+	$("#typeSelectAll").on("change", function(){
 		if(this.checked) {
 			typeSelect();
 			//$("label[for='" + this.id + "']").text("None");
@@ -213,7 +213,7 @@ $(document).ready( function() {
 	});
 
 	//--> Cancel add allergy dialogue 
-	$("#cancelAddReactionButton").click(function(event){
+	$("#cancelAddReactionButton").on( "click", function(event){
 		event.preventDefault();
 		document.forms.RxAddAllergyForm.reactionDescription.value='';
 		document.forms.RxAddAllergyForm.startDate.value='';
@@ -222,7 +222,7 @@ $(document).ready( function() {
 	})
 
 	//--> Actions after allergy has been added.
-	$("input[value='Add Allergy'], .ControlPushButton").click(function() {
+	$("input[value='Add Allergy'], .ControlPushButton").on( "click", function() {
 		$(".ControlPushButton").removeClass("highLightButton");
 	})
 

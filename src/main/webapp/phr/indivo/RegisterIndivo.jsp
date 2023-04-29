@@ -108,7 +108,7 @@ if (wPhoneExt != null)
 	            if ($("#username").val() == '') {
 	            	$("#username-group").addClass('error');
 	            	$("#username-required").show();
-	                $("#username").focus();
+	                $("#username").trigger( "focus" );
 	                error = true;
 	            } 
 	            
@@ -117,7 +117,7 @@ if (wPhoneExt != null)
 		            if (!usernameRegex.test($("#username").val())) {
 		            	$("#username-group").addClass('error');
 		            	$("#username-invalid").show();
-		                $("#username").focus();
+		                $("#username").trigger( "focus" );
 		                error = true;
 		            } 
             	}	                   
@@ -125,7 +125,7 @@ if (wPhoneExt != null)
                 if ($("#password").val().length < 8) {
 	            	$("#password-group").addClass('error');
 	            	$("#pwd-help").show();
-	            	$("#password").focus();
+	            	$("#password").trigger( "focus" );
 	            	error = true;
 	            }        
                 
@@ -135,7 +135,7 @@ if (wPhoneExt != null)
                 document.getElementById("submitButton").disabled = true;
                 document.getElementById("closeButton").disabled = false;
                 document.getElementById("submitButton").value = "Creating user...";
-                document.getElementById("registrationForm").submit();
+                document.getElementById("registrationForm").trigger( "submit" );
             }
             function enableSubmit() {
                 document.getElementById("submitButton").disabled = false;

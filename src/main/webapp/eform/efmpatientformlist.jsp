@@ -142,11 +142,11 @@
 		var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
 		
 		// Share button click event
-		$("#SendToAffinityDomain").click(function() {
+		$("#SendToAffinityDomain").on( "click", function() {
 			// change the form's action (share page) then submit (only if forms are selected)
-                        if ($("input:checkbox[name='sendToPhr']:checked").size() > 0) {
+                        if ($("input:checkbox[name='sendToPhr']:checked").length > 0) {
                             $("#sendToPhrForm").attr('action', shareDocumentsTarget);
-                            $("#sendToPhrForm").submit();
+                            $("#sendToPhrForm").trigger( "submit" );
                         } else {
                             alert('No forms selected');
                             return false;
@@ -166,20 +166,20 @@
 	
      $("#pageSize").val('<%=pageSize%>');
 
-     $("#prev").bind('click',function(event){
+     $("#prev").on('click',function(event){
     	 var page = $("#pageEl").val();
     	 var prevPage = parseInt(page) - 1;    	
     	 if(prevPage < 1) {return false;}
     	 location.href='<%=reloadUrl%>' + '&page=' + prevPage + '&pageSize=' + $("#pageSize").val();
      });
 		
-     $("#next").bind('click',function(event){
+     $("#next").on('click',function(event){
     	 var page = $("#pageEl").val();
     	 var nextPage = parseInt(page) + 1;    	 
     	 location.href='<%=reloadUrl%>' + '&page=' + nextPage + '&pageSize=' + $("#pageSize").val();
      });
      
-     $("#pageSize").bind('change',function(event){
+     $("#pageSize").on('change',function(event){
     	 location.href='<%=reloadUrl%>' + '&page=1&pageSize=' + $("#pageSize").val();
      });
      

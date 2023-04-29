@@ -55,7 +55,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js"></script>
 <script>
 $(function() {
@@ -178,7 +179,7 @@ $(function() {
 </c:if>
 
 <script type="text/javascript">
-	jQuery("#xmltext").keyup(function() {
+	jQuery("#xmltext").on( "keyup", function() {
 		jQuery(".alert").hide();
 	});
 </script>

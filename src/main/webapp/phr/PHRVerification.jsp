@@ -227,7 +227,7 @@ br {
 						    		}
 							});
 							
-						jQuery("#phrConsent").click(function() {
+						jQuery("#phrConsent").on( "click", function() {
 					  		jQuery.ajax({
 					  			type: "POST",
 						        url: "<%=request.getContextPath()%>/ws/rs/app/PHRActive/consentGiven/<%=demographicNo%>",

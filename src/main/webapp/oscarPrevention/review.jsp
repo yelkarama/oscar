@@ -475,7 +475,7 @@ clear: left;
 <script>
 function refuse() {
 	$("#action").val("refuse");
-	$("#theForm").submit();
+	$("#theForm").trigger( "submit" );
 	return true;
 	
 }

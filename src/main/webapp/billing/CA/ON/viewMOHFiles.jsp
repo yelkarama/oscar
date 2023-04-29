@@ -57,7 +57,7 @@ function toggleCheckboxes(el) {
 }
 
 function checkForm() {
-	if (jQuery("input[name='mohFile']:checked").size() > 0) { return true; }
+	if (jQuery("input[name='mohFile']:checked").length > 0) { return true; }
 	alert("Please select a file first.");
 	return false;
 }

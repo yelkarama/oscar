@@ -47,22 +47,22 @@ List<FlowSheetUserCreated> flowsheets = flowSheetUserCreatedDao.getAllUserCreate
         	      
         	      if (displayName === ""){
         	    	  alert("Display Name can not be blank.");
-        	    	  document.getElementById("displayName").focus();        	    	  
+        	    	  document.getElementById("displayName").trigger( "focus" );        	    	  
         	    	  return false;
         	      }        	      
         	      if (dxcodeTriggers === ""){
         	    	  alert("Dxcode Triggers can not be blank.");
-        	    	  document.getElementById("dxcodeTriggers").focus();
+        	    	  document.getElementById("dxcodeTriggers").trigger( "focus" );
         	    	  return false;
         	      }        	      
         	      if (warningColour === ""){
         	    	  alert("Warning colour can not be blank.");
-        	    	  document.getElementById("warningColour").focus();
+        	    	  document.getElementById("warningColour").trigger( "focus" );
         	    	  return false;
         	      }        	             	      
         	      if (recommendationColour === ""){
         	    	  alert("Recommendation Colour can not be blank.");
-        	    	  document.getElementById("recommendationColour").focus();
+        	    	  document.getElementById("recommendationColour").trigger( "focus" );
         	    	  return false;
         	      }
         	      

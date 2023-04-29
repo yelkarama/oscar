@@ -67,7 +67,7 @@ function removeRecipientFromDocument(el) {
 }
 
 function hasFaxNumber() {
-    return jQuery("#faxRecipients").children().size() > 0;
+    return jQuery("#faxRecipients").children().length > 0;
 }
 function updateFaxButton() {
     var disabled = !hasFaxNumber();

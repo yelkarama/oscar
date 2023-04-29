@@ -78,7 +78,7 @@
             function confirmUpload() {
                 var answer = confirm("Are you sure you want to upload \n this Affinity Domain Configuration?");
                 if (answer) {
-                    $("#configform").submit();
+                    $("#configform").trigger( "submit" );
                 }
             }
         </script>
@@ -116,13 +116,13 @@
 
                             <div class="input-group-btn btn-group">
                                 <span class="input-group-btn"> <a class="btn btn-default"
-                                                                  onclick="$('input[id=file]').click();">Browse</a>
+                                                                  onclick="$('input[id=file]').trigger( "click" );">Browse</a>
                                 </span> <span class="input-group-btn"> <a class="btn btn-primary"
                                                                           onclick="confirmUpload()">Upload</a>
                                 </span>
                             </div>
                             <script type="text/javascript">
-                                $('input[id=file]').change(function() {
+                                $('input[id=file]').on("change",function() {
                                     $('#photoCover').val($(this).val());
                                 });
                             </script>

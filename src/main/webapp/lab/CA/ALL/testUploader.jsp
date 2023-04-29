@@ -159,7 +159,7 @@ $(function() {
 var pageTitle = $(document).attr('title');
 $(document).attr('title', 'Administration Panel | <bean:message key="lab.ca.all.testUploader.labUploadUtility" />');
 
-$("#uploadForm").submit(function() {
+$("#uploadForm").on( "submit",function() {
 
 	var lab = $('#importFile').val();
 	var ext = lab.substring((lab.length - 3), lab.length).toLowerCase();

@@ -260,14 +260,15 @@
     
     <script type="text/javascript">
     $("document").ready(function() {
-    	$("a.repeat_remove").live('click',function(e) {
+    	//$("a.repeat_remove").live('click',function(e) { // deprecated in 1.9
+    	$( document ).on( "click", "a.repeat_remove",function(e) {
     		e.preventDefault();
     		$(this).parent().parent().remove();
     	});
     });
 
 	$("document").ready(function() {
-    	$("form").submit(function(e){    		
+    	$("form").on( "submit",function(e){    		
     		    		
     		$("table").each(function(){			
     			var repeats = $(this).find("input[repeat='true']");

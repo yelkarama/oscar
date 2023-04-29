@@ -51,7 +51,7 @@ if(!authed) {
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script>
 	$(document).ready(function(){
-		$("#demographicNoCheckbox").bind('change',function(){
+		$("#demographicNoCheckbox").on('change',function(){
 			updateSetBox();
 			//alert('test');
 		});

@@ -1445,13 +1445,13 @@ java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.stru
 		function getK2AStatus(){
 			jQuery.get( "<%=request.getContextPath()%>/ws/rs/resources/notifications/number", function( data ) {
 				  if(data === "-"){ //If user is not logged in
-					  jQuery("#K2ALink").click(function() {
+					  jQuery("#K2ALink").on( "click", function() {
 						var win = window.open('<%=request.getContextPath()%>/apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');
 						win.focus();
 					  });
 				   }else{
 					  jQuery("#k2a_new_notifications").text(data); 
-					  jQuery("#K2ALink").click(function() {
+					  jQuery("#K2ALink").on( "click", function() {
 						var win = window.open('<%=request.getContextPath()%>/apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');
 						win.focus();
 					  });
@@ -2936,7 +2936,7 @@ document.onkeydown=function(e){
 </script>
 <script>
 jQuery(document).ready(function(){
-	jQuery('.ds-btn').click(function(){
+	jQuery('.ds-btn').on( "click", function(){
 		//var provider_no = '<%=curUser_no%>';
 		var provider_no = jQuery(this).attr('data-provider_no');
 		var y = '<%=request.getParameter("year")%>';

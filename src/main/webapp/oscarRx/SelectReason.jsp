@@ -152,9 +152,9 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		$('#' + id).toggle();
 	}
 	$(document).ready(function() {
-		$("#saveRxReason").click(function(event){
+		$("#saveRxReason").on( "click", function(event){
 			event.preventDefault();
-			$("#rxReasonForm").submit();
+			$("#rxReasonForm").trigger( "submit" );
 			opener.location.reload();
 		})
 		

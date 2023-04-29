@@ -255,8 +255,8 @@ function moveAppt() {
 	var determinator = 0;
 	determinator = localStorage.getItem('copyPaste');
 	if (determinator == 1) {  //This means we are moving an appt
-	$("#pasteButton").click();
-	$("#addButton").click();
+	$("#pasteButton").trigger( "click" );
+	$("#addButton").trigger( "click" );
 	localStorage.setItem('copyPaste','0');  //reset
 	}
 }
@@ -557,10 +557,10 @@ LocalDateTime apptd=apptDate.toInstant().atZone(ZoneId.systemDefault()).toLocalD
         var timers = new Array();
 
 	$(document).ready(function(){
-           $(window).bind('beforeunload',function(){cancelPageLock();
+           $(window).on('beforeunload',function(){cancelPageLock();
            });
            //cancel any page view/locks held by provider on clicking 'X'
-           $("form#addappt").submit(function() {$(window).unbind('beforeunload');
+           $("form#addappt").on( "submit",function() {$(window).off('beforeunload');
            });
 
            calculateEndTime();

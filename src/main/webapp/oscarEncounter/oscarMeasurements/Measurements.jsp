@@ -326,11 +326,11 @@ $( document ).ready(function() {
 //if WT, HT and BMI exists then allow the link
 if($('#row-WT').length && $('#row-HT').length && $('#row-BMI').length){
 
-$('#row-WT td:eq(2) input').keyup(function(){
+$('#row-WT td:eq(2) input').on( "keyup", function(){
   calcBMI( $(this).val(),$('#row-HT td:eq(2) input').val() );
 });
 
-$('#row-HT td:eq(2) input').keyup(function(){
+$('#row-HT td:eq(2) input').on( "keyup", function(){
   calcBMI( $('#row-WT td:eq(2) input').val(),$(this).val() );
 });  
 }
@@ -343,7 +343,7 @@ $("[id^=date-]").val(utc);
 function calcBMI(w,h) {
 b = '';
 
-if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
+if ( !isNaN(parseFloat(w)) && !isNaN(parseFloat(h)) && h!=="" && w!=="" ) {
   if (h > 0) {
     b = (w/Math.pow(h/100,2)).toFixed(1);
     $('#row-BMI td:eq(2) input').val(b);

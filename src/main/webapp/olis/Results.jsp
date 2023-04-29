@@ -291,7 +291,7 @@ function openPatient(demographicNo) {
 jQuery(document).ready(function(){
 	alternate(document.getElementById("resultsTable"));
 	
-	jQuery("input[name^='remove_']").bind('change',function(){
+	jQuery("input[name^='remove_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='addToInbox_"+uuid+"']").attr("checked","");
@@ -299,7 +299,7 @@ jQuery(document).ready(function(){
 		}
 	});
 	
-	jQuery("input[name^='addToInbox_']").bind('change',function(){
+	jQuery("input[name^='addToInbox_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='remove_"+uuid+"']").attr("checked","");
@@ -307,7 +307,7 @@ jQuery(document).ready(function(){
 		}
 	});
 	
-	jQuery("input[name^='acknowledge_']").bind('change',function(){
+	jQuery("input[name^='acknowledge_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='remove_"+uuid+"']").attr("checked","");

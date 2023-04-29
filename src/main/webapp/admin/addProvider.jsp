@@ -167,7 +167,7 @@ YAHOO.example.BasicRemote = function() {
     };
 }();
 
-$("autocompleteprov").focus();
+$("autocompleteprov").trigger( "focus" );
 
 function removeProvider(selectObj) {
 	selectObj.remove(selectObj.selectedIndex);

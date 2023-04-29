@@ -89,7 +89,7 @@ $(document).ready(function() {
 		$("#visitDate").attr("disabled", "disabled");
 
 		//set focus back to patient name after each entry.
-		$("#ptName").focus();
+		$("#ptName").trigger( "focus" );
 	}
    
 	if(<c:out value="${not empty requestScope.saved}" />) {
@@ -105,13 +105,13 @@ $(document).ready(function() {
 					
 					//$(this).datepicker( "hide" )
 					alert("Select Billing Physician");
-					 $("#provider").focus();
+					 $("#provider").trigger( "focus" );
 					 
 				} else if ($("#visitLocation :selected").val() == "empty") {
 					
 					//$(this).datepicker( "hide" )
 					alert("Select Service Location");
-					$("#visitLocation").focus();
+					$("#visitLocation").trigger( "focus" );
 				} 
 			},
 			onClose: function(input, inst) {
@@ -123,7 +123,7 @@ $(document).ready(function() {
 					$("#saved").slideUp("fast");
 				}
 				
-				$("#ptName").focus();
+				$("#ptName").trigger( "focus" );
 				
 			}
 	});
@@ -148,25 +148,25 @@ $(document).ready(function() {
 	
 	
 	// for adding patient to billing list. Also does error checking.
-	$("#addDemo").click( 
+	$("#addDemo").on( "click", 
 		function() {
 
 		   if(($("#ptNumber").val() == "")||($("#ptNumber").val() == null)) { 
 			   
 			   alert("Patient not in database.");
-			   $("#ptName").focus();
+			   $("#ptName").trigger( "focus" );
 			   return;
 			   
 		   } else if(($("#billingCode").val() == "")||($("#billingCode").val() == null)) {
 				  
 			   alert("Billing Code missing.");
-			   $("#billingCode").focus();
+			   $("#billingCode").trigger( "focus" );
 			   return;
 			   
 		   } else if(($("#dxCode1").val() == "")||($("#dxCode1").val() == null)) {
 				  
 			   alert("DX code missing");
-			   $("#dxCode1").focus();
+			   $("#dxCode1").trigger( "focus" );
 			   return;
 			   
 		   } else if (
@@ -177,7 +177,7 @@ $(document).ready(function() {
 		   ) { 
 			   
 			   alert("Check unit value for accuracy.");
-			   $("#halfBilling").focus();
+			   $("#halfBilling").trigger( "focus" );
 			   return;
 			   
 		   } else { 
@@ -186,7 +186,7 @@ $(document).ready(function() {
 			   var data = JSON.stringify($(document.quickBillingForm).serializeObject()); 
 			   
 			   $("#quickBillingForm").attr("action", path + "?data=" + encodeURIComponent(data));
-			   $("#quickBillingForm").submit();
+			   $("#quickBillingForm").trigger( "submit" );
 
 		   }
 		       
@@ -243,7 +243,7 @@ function removeBill(bill) {
 	   var data = "?remove=" + bill; 
 	   
 	   $("#quickBillingForm").attr("action", path + data);
-	   $("#quickBillingForm").submit();
+	   $("#quickBillingForm").trigger( "submit" );
 	
 }
 

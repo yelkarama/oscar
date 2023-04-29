@@ -65,7 +65,7 @@
 		$(document).ready(function() {
 			loadValues();
 
-			$("#saveBtn").click(function(){
+			$("#saveBtn").on( "click", function(){
 				saveValues();
 			});
 

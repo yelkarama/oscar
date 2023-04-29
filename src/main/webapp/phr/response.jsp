@@ -80,7 +80,7 @@ providerData.setProviderNo(providerNo);
             }
             function onloadd() {
                 if(document.getElementById("phrPassword"))
-                    document.getElementById("phrPassword").focus();
+                    document.getElementById("phrPassword").trigger( "focus" );
             }
         </script>
         <style type="text/css">

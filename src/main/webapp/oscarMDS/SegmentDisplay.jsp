@@ -82,7 +82,7 @@ String AbnFlag = "";
        <script  type="text/javascript" charset="utf-8">
        jQuery.noConflict();
         jQuery(function() {
-        	jQuery("#createLabel").click(function() {
+        	jQuery("#createLabel").on( "click", function() {
         		jQuery.ajax( {
       	      		type: "POST",      
       	      		url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",

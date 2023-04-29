@@ -173,7 +173,7 @@ function anyChecks(){
     }
 }
 
-$('#groupForm').submit(anyChecks);
+$('#groupForm').on( "submit",anyChecks);
 
 
 $( document ).ready(function() {

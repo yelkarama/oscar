@@ -173,14 +173,14 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>    
 
 
-    jQuery("input[name='reviewed']").change(function() {
+    jQuery("input[name='reviewed']").on("change",function() {
             
             if( jQuery("input[name='reviewed']:checked").val() == "true") {                
                 if( jQuery(".supervisor").is(":visible") ) {
                     jQuery(".supervisor").slideUp(300);                    
                 }
                 jQuery(".reviewer").slideDown(600);
-                jQuery("#reviewer").focus();
+                jQuery("#reviewer").trigger( "focus" );
                
             }
             else {
@@ -188,7 +188,7 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
                     jQuery(".reviewer").slideUp(300);
                 }
                 jQuery(".supervisor").slideDown(600);
-                jQuery("#supervisor").focus();
+                jQuery("#supervisor").trigger( "focus" );
             }
         }
     

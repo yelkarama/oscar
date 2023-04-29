@@ -358,7 +358,7 @@ if(showMenu==null && loadPage==null){
 
 <script type="text/javascript">
 $( document ).ready(function( $ ) {
-	$("a.contentLink").click(function(e) {
+	$("a.contentLink").on( "click", function(e) {
 		//alert('link click');
 		e.preventDefault();
 		//alert("You clicked the link");
@@ -376,7 +376,7 @@ $( document ).ready(function( $ ) {
 });
 
 function registerFormSubmit(formId, divId) {
-	$('#'+formId).submit(function() {
+	$('#'+formId).on( "submit",function() {
 		if(!$('#'+formId).valid()){
 			return false;
 		}

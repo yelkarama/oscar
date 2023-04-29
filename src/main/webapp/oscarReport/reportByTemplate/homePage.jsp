@@ -132,7 +132,7 @@ String value = "";
 
 <script type="text/javascript">
 //Table Display
-jQuery("#viewSelect").change(function() {
+jQuery("#viewSelect").on("change",function() {
 	updateTableDisplay();
 });
 
@@ -176,7 +176,7 @@ function inGroup(element){
 	return bool;
 }
 
-// Search
+// Search  NB .context is a jQuery 1.3 - 2.4 property
 jQuery(document).ready(function() {
 	jQuery("#userSearch").on("keyup", function() {
 		var value = jQuery(this).val().toLowerCase();

@@ -533,7 +533,7 @@ window.opener.location.reload();
 					</select>
 	            </td>
         <script>
-$('#rxInteractionWarningLevel').bind( 'change', function(event) {
+$('#rxInteractionWarningLevel').on( 'change', function(event) {
 	var value = $('#rxInteractionWarningLevel').val();
 
     $.ajax({
@@ -578,7 +578,7 @@ $('#rxInteractionWarningLevel').bind( 'change', function(event) {
          </td>
         </tr>
         <script>
-        $('#reviewMsg').bind('change', function(event) {
+        $('#reviewMsg').on('change', function(event) {
 	var value = $('#reviewMsg').val();
 alert(value);
     $.ajax({

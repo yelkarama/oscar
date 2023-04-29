@@ -69,7 +69,7 @@
 		}
 
  		jQuery(document).ready( function($) { 			
-			$("#editFamilyDr").click(function(){
+			$("#editFamilyDr").on( "click", function(){
 				var familyDrContactId = $("#familyDrContactId").val();
 				var demographicNo = '${ bpmh.demographic.demographicNo }';
 				var source = "${ pageContext.request.contextPath }/demographic/manageHealthCareTeam.jsp?" +

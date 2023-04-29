@@ -56,7 +56,7 @@ $('a[data-confirm]').on("click", function(e) {
         return false;
 });
 
-$("#dataConfirmed").click(function(){
+$("#dataConfirmed").on( "click", function(){
 	$('#confirmModal').modal('hide');
 });
 

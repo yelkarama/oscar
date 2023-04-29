@@ -856,7 +856,7 @@ input[id^='acklabel_']{
         <script type="text/javascript">
 
         jQuery(function() {
-      	  jQuery("#createLabel_<%=segmentID%>").click(function() {
+      	  jQuery("#createLabel_<%=segmentID%>").on( "click", function() {
       	    jQuery.ajax( {
       	      type: "POST",
       	      url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",

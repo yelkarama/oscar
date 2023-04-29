@@ -588,7 +588,7 @@ if(listRxDrugs!=null){
 
 		<%--   Removed during OMD Re-Evaluation.  This function auto set the LongTerm field
 		if number of refills more than 0.  This is not a definitive Long Term drug.
-			jQuery("input[id^='repeats_']").keyup(function(){
+			jQuery("input[id^='repeats_']").on( "keyup", function(){
             	var rand = <%=rand%>;
             	var repeatsVal = this.value;
             	if(repeatsVal>0){
@@ -675,10 +675,10 @@ if(listRxDrugs!=null){
             //oscarLog("counterRx="+counterRx);
            var gcn_val=<%=gcn%>;
            if(gcn_val==0){
-               $('drugName_<%=rand%>').focus();
+               $('drugName_<%=rand%>').trigger( "focus" );
            } else if(counterRx==listRxDrugSize){
                //oscarLog("counterRx="+counterRx+"--listRxDrugSize="+listRxDrugSize);
-               $('instructions_<%=rand%>').focus();
+               $('instructions_<%=rand%>').trigger( "focus" );
            }
         </script>
                 <%}%>

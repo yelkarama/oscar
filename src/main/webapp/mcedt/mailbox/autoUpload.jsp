@@ -166,7 +166,7 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 		 //the click on dialog button
 		 $(document).ready(function ()
         {
-            $("#btnDone").click(function (e)
+            $("#btnDone").on( "click", function (e)
             {
             	return submitForm('cancelUpload', null);
                 //ShowDoneDialog(true);
@@ -181,11 +181,11 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 
             if (modal)
             {
-                $("#donescreen").unbind("click");
+                $("#donescreen").off("click");
             }
             else
             {
-                $("#donescreen").click(function (e)
+                $("#donescreen").on( "click", function (e)
                 {
                     HideDialog();
                 });

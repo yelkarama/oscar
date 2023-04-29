@@ -92,7 +92,7 @@ div#demo
 	function submitReassign() {
 		var c = confirm("Are you sure you would like to reassign. All OCANs for this consumer will be reassigned as well.");
 		if(c) {
-			$("#reassign_form").submit();
+			$("#reassign_form").trigger( "submit" );
 		} else {
 			$("#reassign_div").hide();
 			$("#reassign_text").remove();

@@ -428,7 +428,7 @@ function popupPage(vheight,vwidth,varpage) {
 }
 
 
-$(".xlink").click(function(e) {
+$(".xlink").on( "click", function(e) {
 	var source = $(this).attr('rel');
 
 	$("#dynamic-content").html('<iframe id="myFrame" name="myFrame" frameborder="0" width="950" height="1000" src="'+source+'">');

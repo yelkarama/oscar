@@ -1112,7 +1112,7 @@ function popupPage(vheight,vwidth,varpage) { //open a new popup window
 }
 
 $(document).ready(function(){
-	$(".accordion-heading").click(function(e) {
+	$(".accordion-heading").on( "click", function(e) {
 		if($(this).hasClass('selected-heading')) {
 			$('.accordion-heading ').removeClass('selected-heading');
 		}else{
@@ -1121,7 +1121,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".xlink").click(function(e) {
+	$(".xlink").on( "click", function(e) {
 		var source = $(this).attr('rel');
 		$("#dynamic-content").addClass("dynamic-iframe-content");
 		$("#dynamic-content").html('<iframe id="myFrame" name="myFrame" frameborder="0" src="'+source+'">');

@@ -89,7 +89,7 @@
 	<script type="text/javascript">
 		var ctx = '${pageContext.request.contextPath}';
 	
-		$("input:checkbox").change(function(){
+		$("input:checkbox").on("change",function(){
 			if(this.checked) 
 			{
 				addMember(this.value, 0);
@@ -100,7 +100,7 @@
 			}
 		});
 		
-		$(".add-member-btn").click(function(){
+		$(".add-member-btn").on( "click", function(){
 			var groupId = this.id;
 			groupId = groupId.replace("add-", '');
 			var memberId = $("#add-member-id-" + groupId).val(); 
@@ -111,7 +111,7 @@
 			}
 		});
 		
-		$("i.group-member").click(function(){
+		$("i.group-member").on( "click", function(){
 			var memberId = this.id;
 			if(memberId)
 			{
@@ -120,14 +120,14 @@
 			}
 		});
 		
-		$("#add-group-btn").click(function(){
+		$("#add-group-btn").on( "click", function(){
 			var groupName = $("#new-group-name").val();
 			if(groupName){
 				createGroup(groupName);
 			}
 		});
 		
-		$(".delete-group-btn").click(function(){
+		$(".delete-group-btn").on( "click", function(){
 			var groupId = this.id;
 			if(groupId)
 			{

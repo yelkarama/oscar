@@ -63,7 +63,7 @@
 			//else if (tab == 'sent') tabContainers.hide().filter('#sent').show();
 			//else tabContainers.hide().filter('#first').show();
 			
-			$('div.tabs ul.tabNavigation a').click(function () {
+			$('div.tabs ul.tabNavigation a').on( "click", function () {
 				tabContainers.hide();
 				tabContainers.filter(this.hash).show();
 				$('div.tabs ul.tabNavigation a').removeClass('selected');

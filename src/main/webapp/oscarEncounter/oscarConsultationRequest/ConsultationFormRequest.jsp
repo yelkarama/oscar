@@ -496,7 +496,7 @@ function K( serviceNumber, service ){
 <script type="text/javascript" >
 // btnReminders
 jQuery(document).ready(function(){
-	jQuery(".clinicalData").click(function(){
+	jQuery(".clinicalData").on( "click", function(){
 		var data = new Object();
 		var target = "#" + this.id.split("_")[1];		
 		data.method = this.id.split("_")[0];
@@ -533,7 +533,7 @@ return result;
 
 }//end find consultant by location
 
-jQuery("input#consultant-by-location-input").keyup(function(){
+jQuery("input#consultant-by-location-input").on( "keyup", function(){
 
 if(jQuery(this).val().length>=3){
 jQuery('#consultant-by-location-dropdown').slideDown();
@@ -543,7 +543,8 @@ jQuery("#consultant-by-location-display").html( findConsultantByLocation(jQuery(
 });
 
 
-jQuery('.populate-specialist').live('click',function(){
+//jQuery('.populate-specialist').live('click',function(){ deprecated in 1.9
+jQuery( document ).on( "click", '.populate-specialist', function() {
 
 spec_num = jQuery(this).attr('data-specnum');
 spec_name = jQuery(this).attr('data-specname');
@@ -560,7 +561,7 @@ jQuery('#consultant-by-location-input').val('');
 
 });
 
-jQuery('#consultant-by-location-dropdown a').click(function(e){
+jQuery('#consultant-by-location-dropdown a').on( "click", function(e){
 e.preventDefault();
 jQuery('#consultant-by-location-dropdown').slideUp();
 jQuery('#consultant-by-location-input').val('');
@@ -1498,7 +1499,7 @@ function removeRecipient(el) {
 }
 
 function hasFaxNumber() {
-	return specialistFaxNumber.length > 0 || jQuery("#faxRecipients").children().size() > 0;
+	return specialistFaxNumber.length > 0 || jQuery("#faxRecipients").children().length > 0;
 }
 function updateFaxButton() {
 	var disabled = !hasFaxNumber();

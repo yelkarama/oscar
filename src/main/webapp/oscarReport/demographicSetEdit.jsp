@@ -230,7 +230,7 @@ function disableifchecked(ele,nextDate){
 	function onDeleteConfirm(){
 		$('#delete-set-confirm').modal('hide');
     	$('#deleteSet').val('deleteSet');
-    	$('form[name="DemographicSetEditForm"]').submit();
+    	$('form[name="DemographicSetEditForm"]').trigger( "submit" );
 	}
 	
 

@@ -71,7 +71,7 @@ List<ORNPreImplementationReportLog> reports = oRNPreImplementationReportLogDao.g
 
 <script>
 $(document).ready(function() {
-	$("#runReport").bind("click",function(){
+	$("#runReport").on("click",function(){
 		$.get("<%=request.getContextPath()%>/renal/Renal.do?method=submitPreimplementationReport");
 		
 	});

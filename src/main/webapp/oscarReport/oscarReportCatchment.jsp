@@ -163,7 +163,7 @@ if(!authed) {
 
 <script>
 	$(document).ready(function() {
-		$("a.contentLink").click(function(e) {
+		$("a.contentLink").on( "click", function(e) {
 			//alert('link click')
 			e.preventDefault();
 			//alert("You clicked the link");

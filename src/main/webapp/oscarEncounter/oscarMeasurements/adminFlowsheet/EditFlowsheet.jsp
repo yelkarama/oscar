@@ -595,7 +595,7 @@ $(document).ready(function () {
 	
 	$('html, body', window.parent.document).animate({scrollTop:0}, 'slow');
 	
-$(".measurement-select").change(function(){
+$(".measurement-select").on("change",function(){
 	$("#display_name").val($(".measurement-select").val());
 	$("#value_name").val($(".measurement-select").val());
 	
@@ -606,7 +606,7 @@ $(".measurement-select").change(function(){
 $('#myTab a[href="#add"]').tab('show');
 <%}%>
 	
-	$(document).scroll(function () {
+	$(document).on( "scroll", function () {
 	    var y = $(this).scrollTop();
 	    if (y > 60) {
 	        $('#scrollToTop').fadeIn();
@@ -617,11 +617,11 @@ $('#myTab a[href="#add"]').tab('show');
 	
 	//$('<a href="#" class="btn" id="add-new" title="Add Measurement" style="margin-left:15px"><i class="icon-plus"></i> Add</a>').appendTo('div.dataTables_filter label');	
 
-	$("#add-new").click(function(){
+	$("#add-new").on( "click", function(){
 		$('#addModal').modal('show');		
 	});
 
-	$("#measurement-select").click(function(){
+	$("#measurement-select").on( "click", function(){
 		$("#measurement-details").show();
 	});	
 

@@ -293,7 +293,7 @@ function isCanadian(){
 
 
 function setProvince(sdCode) {
-	jQuery("#country").bind('change',function(){
+	jQuery("#country").on('change',function(){
 		updateProvinces('');
 	});
 	
@@ -351,7 +351,7 @@ function updateProvinces(province) {
 
 
 function setResidentialProvince(sdCode) {
-	jQuery("#residentialCountry").bind('change',function(){
+	jQuery("#residentialCountry").on('change',function(){
 		updateResidentialProvinces('');
 	});
 	

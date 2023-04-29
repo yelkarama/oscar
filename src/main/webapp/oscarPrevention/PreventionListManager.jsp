@@ -205,7 +205,7 @@ if (!authed) {
 		src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript">
-$(".prevention-item").click(function () {
+$(".prevention-item").on( "click", function () {
     var id = $(this).attr("id");
     var name = $(this).attr("prevention-data");
     bin = $("#prevention-bin");
@@ -320,7 +320,7 @@ function setModalItems(){
 
 
 
-$("#btnConfirm").click(function () {
+$("#btnConfirm").on( "click", function () {
 	$('html, body', window.parent.document).animate({scrollTop:230}, 'slow');
 	setModalItems();
 });

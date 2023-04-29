@@ -249,7 +249,7 @@ $(document).attr('title', 'Administration Panel | Lab Forwarding Rules');
 
 registerFormSubmit('ForwardRulesForm', 'dynamic-content');
 
-$("#provider-selection").change(function(e) {
+$("#provider-selection").on("change",function(e) {
 	e.preventDefault();
 	$("#dynamic-content").load('${ctx}/admin/labforwardingrules.jsp?providerNo='+$("#provider-selection").val(), 
 		function(response, status, xhr) {

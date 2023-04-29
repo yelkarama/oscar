@@ -58,7 +58,8 @@
 <title><bean:message key="provider.btnSetIntegratorPreferences" /></title>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
@@ -70,7 +71,7 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	$("input[type='radio']").change(function() {
+	$("input[type='radio']").on("change",function() {
 		switch ($(this).attr("name")) {
 		case "integrator_demographic_drugs":
 			if ($(this).val() == "0") {

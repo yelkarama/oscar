@@ -373,7 +373,7 @@ jQuery( document ).ready( function() {
 
 
 
-  jQuery('#cell_check').change(function() 
+  jQuery('#cell_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -385,7 +385,7 @@ jQuery( document ).ready( function() {
 	jQuery('#phone_check').prop('checked', false);
     }
   }); 
-  jQuery('#phone_check').change(function() 
+  jQuery('#phone_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -397,7 +397,7 @@ jQuery( document ).ready( function() {
 	jQuery('#cell_check').prop('checked', false);
     }
   });
-  jQuery('#phone2_check').change(function() 
+  jQuery('#phone2_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -454,7 +454,7 @@ function getPhoneNum(phone) {
 
 
 jQuery(function(){
-    jQuery('form').submit(function(){
+    jQuery('form').on( "submit",function(){
 	    if (preferredPhone=="C") {jQuery("#cell").val(function(i, val) {
 		    return val + "*";
 	    });}
@@ -927,7 +927,7 @@ function checkRosterStatus2(){
 }
 
 jQuery(document).ready(function($) {
-	jQuery("a.popup").click(function() {
+	jQuery("a.popup").on( "click", function() {
 		var $me = jQuery(this);
 		var name = $me.attr("title");
 		var rel = $me.attr("rel");
@@ -4538,7 +4538,7 @@ jQuery(document).ready(function(){
 		jQuery("#usSigned").show();
 	}
 	
-	jQuery("#countryOfOrigin").change(function () {
+	jQuery("#countryOfOrigin").on("change",function () {
 		var countryOfOrigin = jQuery("#countryOfOrigin").val();
 		if("US" == countryOfOrigin){
 		   	jQuery("#usSigned").show();
@@ -4582,7 +4582,7 @@ jQuery(document).ready(function(){
 		}
 	});
 		
-	jQuery("#phrConsent").click(function() {
+	jQuery("#phrConsent").on( "click", function() {
   		jQuery.ajax({
   			type: "POST",
 	        url: "<%=request.getContextPath() %>/ws/rs/app/PHRActive/consentGiven/<%=demographic_no%>",

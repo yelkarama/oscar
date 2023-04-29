@@ -254,12 +254,12 @@
 	
 	$( document ).ready(function() {
 	
- 		$("#templateToGroup-btn").click(function(){
- 			$("#templateToGroupForm").submit();
+ 		$("#templateToGroup-btn").on( "click", function(){
+ 			$("#templateToGroupForm").trigger( "submit" );
 		    $('#selectTemplatesModal').modal('hide');
 		}); 
 
-		$(".check").change(validate).keyup(validate);
+		$(".check").on("change",validate).keyup(validate);
 	
 	});
 	

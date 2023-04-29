@@ -1307,13 +1307,13 @@ function getGA() {
 }
 
 $(document).ready(function() {
-	$("input[name='ar2_lab2GTT1']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT1']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT2']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT2']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT3']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT3']").on('keyup',function(){
 		updateGtt();
 	});
 	
@@ -1336,7 +1336,7 @@ $(document).ready(function(){
 		$("#rhNegSpan").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_rhNeg']").bind('change',function(){
+	$("input[name='ar2_rhNeg']").on('change',function(){
 		if($("input[name='ar2_rhNeg']").attr('checked') == 'checked') {
 			$("#rhNegSpan").css('background-color','red');
 		} else {
@@ -1352,7 +1352,7 @@ $(document).ready(function(){
 		$("#hepbSpan2").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_hepBIG']").bind('change',function(){
+	$("input[name='ar2_hepBIG']").on('change',function(){
 		if($("input[name='ar2_hepBIG']").attr('checked') == 'checked') {
 			$("#hepbSpan").css('background-color','red');
 		} else {
@@ -1360,7 +1360,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("input[name='ar2_hepBVac']").bind('change',function(){
+	$("input[name='ar2_hepBVac']").on('change',function(){
 		if($("input[name='ar2_hepBVac']").attr('checked') == 'checked') {
 			$("#hepbSpan2").css('background-color','red');
 		} else {
@@ -1373,7 +1373,7 @@ $(document).ready(function(){
 		$("#rubellaSpan").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_rubella']").bind('change',function(){
+	$("input[name='ar2_rubella']").on('change',function(){
 		if($("input[name='ar2_rubella']").attr('checked') == 'checked') {
 			$("#rubellaSpan").css('background-color','red');
 		} else {
@@ -1553,7 +1553,7 @@ $(document).ready(function(){
 		        	}
 		        	//go to it
 		        	document.forms[0].action=url;
-		        	$("#printBtn").click();
+		        	$("#printBtn").trigger( "click" );
 		        }
 				
 			},
@@ -1586,11 +1586,11 @@ $(document).ready(function(){
     $(function(){
 
 <% if(!bView) { %>     			
-		$('#gbs_menu').bind('click',function(){gbsReq();});
-		$("#gd_menu").bind('click',function(){popPage('http://www.diabetes.ca/diabetes-and-you/what/gestational/','resource')});
-		$("#gct_menu").bind('click',function(){gctReq();});
-		$("#gtt_menu").bind('click',function(){gttReq();});
-		$("#edb_menu").bind('click',function(){
+		$('#gbs_menu').on('click',function(){gbsReq();});
+		$("#gd_menu").on('click',function(){popPage('http://www.diabetes.ca/diabetes-and-you/what/gestational/','resource')});
+		$("#gct_menu").on('click',function(){gctReq();});
+		$("#gtt_menu").on('click',function(){gttReq();});
+		$("#edb_menu").on('click',function(){
 			var usNum = checkSOGCGuidelineForEDB();
 			if(usNum > 0) {
 				var usDate = $("#ar2_uDate"+usNum).val();
@@ -1600,7 +1600,7 @@ $(document).ready(function(){
 			}			
 		});
 		
-		$("#print_log_menu").bind('click',function(){
+		$("#print_log_menu").on('click',function(){
 			jQuery.ajax({type:"POST",url:'<%=ctx%>/Pregnancy.do?method=getPrintData',data: {resourceName:'ONAREnhanced',resourceId:$('#episodeId').val()},dataType:'json',async:true, success:function(data) {
 				$("#print_log_table tbody").html("");
 				$.each(data, function(key, val) {
@@ -1622,14 +1622,14 @@ $(document).ready(function(){
 
 <% } %>
 
-		$('#graph_menu').bind('click',function(){
+		$('#graph_menu').on('click',function(){
 			fancyBoxFundal();
 		});
 		
 		function fancyBoxFundal(){
 			$("#fundal_link").attr('href',getFundalImageUrl('1'));
 			$("#fundal_link").fancybox({type:'image'});
-			$("#fundal_link").click();	
+			$("#fundal_link").trigger( "click" );	
 		}
 		
 		function getFundalImageUrl(c){
@@ -1681,7 +1681,7 @@ $(document).ready(function(){
 			return n;
 		}
 		
-		$("#fundalImageLink").click(function(){
+		$("#fundalImageLink").on( "click", function(){
 			getFundalImageUrl();
 			fancyBoxFundal();
 		});
@@ -1707,9 +1707,9 @@ $(document).ready(function(){
 	
 	$(function(){
 		
-		$("#24wk_visit_menu").bind('click',function(){wk24VisitTool();});
-		$("#35wk_visit_menu").bind('click',function(){wk35VisitTool();});
-		$("#dd_visit_menu").bind('click',function(){ddVisitTool();});
+		$("#24wk_visit_menu").on('click',function(){wk24VisitTool();});
+		$("#35wk_visit_menu").on('click',function(){wk35VisitTool();});
+		$("#dd_visit_menu").on('click',function(){ddVisitTool();});
 		
 		var ga = getGA();
 		if(ga != 'NaNw+undefined')
@@ -1956,7 +1956,7 @@ $(document).ready(function(){
 		
 		$("#edb-update-form").dialog('close');
 		
-		$("#saveBtn").click();
+		$("#saveBtn").trigger( "click" );
 		
 		return false;
 	}

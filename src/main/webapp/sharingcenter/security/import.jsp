@@ -100,7 +100,7 @@
                 var answer = confirm("Are you sure you want to delete \n this infrastructure?");
                 if (answer) {
                     $("#action").val("delete");
-                    $("#formsubmit").submit();
+                    $("#formsubmit").trigger( "submit" );
                 }
             }
 
@@ -155,7 +155,7 @@
                     data: csrRequestObj,
                     success: function(data) {
                         $("#csr_pre").text(data);
-                        $("#download-button").click(function(event) {
+                        $("#download-button").on( "click", function(event) {
                             var blob = new Blob([data], {
                                 type: "text/plain;charset=utf-8"
                             });
@@ -171,11 +171,11 @@
 
             $(document).ready(function() {
 
-                $("#importButton").submit(function() {
+                $("#importButton").on( "submit",function() {
                     var answer = confirm("Are you sure you want to import \n this certificate?");
                     if (answer) {
                         $("#certform").append('<input type="hidden" name="id" value="<%=infrastructure.getId()%>" />');
-                        $("#certform").submit();
+                        $("#certform").trigger( "submit" );
                     }
                 });
 
@@ -248,14 +248,14 @@ $(function() {
                                     <div class="input-group-btn btn-group">
                                         <span class="input-group-btn"> <a
                                                 class="btn btn-default"
-                                                onclick="$('input[id=file]').click();">Browse</a>
+                                                onclick="$('input[id=file]').trigger( "click" );">Browse</a>
                                         </span>
                                         <span class="input-group-btn">
                                             <button id="importButton" type="submit" class="btn btn-primary">Import</button>
                                         </span>
                                     </div>
                                     <script type="text/javascript">
-                                        $('input[id=file]').change(function() {
+                                        $('input[id=file]').on("change",function() {
                                             $('#photoCover').val($(this).val());
                                         });
                                     </script>

@@ -100,12 +100,12 @@
 	<script>
 		function changeGroup() {
 			$("#method").val('setGroupNo');
-			$("#myform").submit();
+			$("#myform").trigger( "submit" );
 		}
 		
 		function save_acl() {
 			$("#method").val('save');
-			$("#myform").submit();
+			$("#myform").trigger( "submit" );
 		}
 	</script>
 </head>

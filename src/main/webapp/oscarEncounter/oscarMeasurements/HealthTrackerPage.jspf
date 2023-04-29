@@ -1685,7 +1685,7 @@ function createAddAll(d,t){
 
 
 <script>
-$(".preventionSection").hover(function(){
+$(".preventionSection").on( "hover", function(){
 	  $(".carousel-control",this).show();
 	   
 	  m = $(this).attr("rel")
@@ -1738,11 +1738,11 @@ $(document).ready(function () {
         //checkWidth();
         
         // Bind event listener
-        //$(window).resize(checkWidth);
+        //$(window).on("resize", checkWidth);
 	}
 
 	//TODO:these will change generic so this function can be re-used
-	$("input:radio[name=SmokingStatus]").click(function() {
+	$("input:radio[name=SmokingStatus]").on( "click", function() {
 	    var value = $(this).val().toLowerCase();
 	    if(value=="yes"){
 			$('#wrap-POSK').show();
@@ -1753,7 +1753,7 @@ $(document).ready(function () {
 		}
 	});
 	
-	$(document).scroll(function () {
+	$(document).on( "scroll", function () {
 	    var y = $(this).scrollTop();
 	    if (y > 60) {
 	        $('#scrollToTop').fadeIn();
@@ -1764,7 +1764,7 @@ $(document).ready(function () {
 	
     $("[rel=tooltip]").tooltip();
 
-    $("[id^=dxlink]").click(function(){
+    $("[id^=dxlink]").on( "click", function(){
         var link = "<%=request.getContextPath()%>/oscarResearch/oscarDxResearch/dxResearch.do";
         //alert(link);
         $.ajax({
@@ -1778,7 +1778,7 @@ $(document).ready(function () {
 
     });
 
-    $("#numEle").change(function(){
+    $("#numEle").on("change",function(){
 		var v=$(this).val();
 		
 		  if(v=="All"){
@@ -1792,7 +1792,7 @@ $(document).ready(function () {
 		  } 
     });    
     
-    $("#deleteButton").click(function(){
+    $("#deleteButton").on( "click", function(){
         var link = "<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/DeleteData2.do";
         var deletevalue = "id="+$("#deleteId").val()+"&deleteCheckbox="+$("#deleteCheck").val();
 
@@ -1811,7 +1811,7 @@ $(document).ready(function () {
 
     });
 
-    $("input[type='text']").bind('focus keyup', function() {
+    $("input[type='text']").on('focus keyup', function() {
 		
     	var error = false;
 		var id=$(this).attr('id');
@@ -1850,7 +1850,7 @@ $(document).ready(function () {
 			}
 
             }else if(pattern==null && max!=null){
-				if(value>iMax || !$.isNumeric(value)){
+				if(value>iMax || !isNaN(parseFloat(value)) ){
     			error=true;
 				}
     			
@@ -1859,7 +1859,7 @@ $(document).ready(function () {
         			error=true;
                 	}
           			}else if(rel=='greaterThanZero'){
-        				if(!$.isNumeric(value) && !value>=0){
+        				if(!isNaN(parseFloat(value)) && !value>=0){
         	    			error=true;
         					}
               			}
@@ -1886,7 +1886,7 @@ $(document).ready(function () {
     }); 
         
 //save - validation
-	$("[id^=save_]").click(function(){
+	$("[id^=save_]").on( "click", function(){
 	var type=$(this).attr('id');
 	var type = type.substring(5, type.length);	
 
@@ -1947,7 +1947,7 @@ $(document).ready(function () {
 	 
 	});
 
-	$("#trackerForm").submit(function() {
+	$("#trackerForm").on( "submit",function() {
 		var err1 = $('#trackerForm').find('.input-error').length;
 		var err2 = $('#trackerForm').find('.options-error').length;
 
@@ -1996,7 +1996,7 @@ $('#deleteModal').on('hidden', function () {
 });
 
 <%if(temp.toUpperCase().equals("PHV")){%>
-$("#AssessmentFollowupplans-REVIEWED").click(function(){
+$("#AssessmentFollowupplans-REVIEWED").on( "click", function(){
 	if ($('#AssessmentFollowupplans-REVIEWED').is(':checked')) {
 		$("#AssessmentFollowupplans_note").prop( 'checked', true );
 	}else{
@@ -2005,24 +2005,24 @@ $("#AssessmentFollowupplans-REVIEWED").click(function(){
 });
 <%}%>
 
-$("#expand_all").click(function(){
+$("#expand_all").on( "click", function(){
 	$("[id^=add-box-]").slideDown("slow"); 
 	$('#collapse-all').show();
 	$('#expand-all').hide();
 });
 
-$("#collapse_all").click(function(){
+$("#collapse_all").on( "click", function(){
 		$("[id^=add-box-]").hide(); 
 		$('#collapse-all').hide();
 		$('#expand-all').show();
 });
 
-$('.closeGraph').click(function(){
+$('.closeGraph').on( "click", function(){
 	var rel = $(this).attr("rel");
 	$('.graphView-' + rel).hide();
 });
 
-$(".graphClick").click(function(){
+$(".graphClick").on( "click", function(){
 	var rel = $(this).attr("rel");	
 	var name = $(this).attr("data-name");
 	$('.graphView-' + rel).show();
@@ -2113,13 +2113,13 @@ var plot1 = $.jqplot('chart-' + rel, lines,{
 });
 
 
-$("#add_overdue").click(function(){
+$("#add_overdue").on( "click", function(){
 	$('#plus-overdue').toggle();
 	$('#minus-overdue').toggle();
 	<%=recListBuffer.toString()%>
 });
 
-$("#add_renal").click(function(){
+$("#add_renal").on( "click", function(){
 	$('#plus-renal').toggle();
 	$('#minus-renal').toggle();
 	<%=recListBuffer.toString()%>
@@ -2130,10 +2130,10 @@ $('.carousel').carousel({
     })
 
 function saveAll(){
-	//$("#trackerForm").submit();
+	//$("#trackerForm").trigger( "submit" );
 	alert("tracker save");
-	$("#trackerForm").submit();
-	//$("form[name='trackerForm']").submit();
+	$("#trackerForm").trigger( "submit" );
+	//$("form[name='trackerForm']").trigger( "submit" );
 	//document.forms["trackerForm"].submit();
 }    
     

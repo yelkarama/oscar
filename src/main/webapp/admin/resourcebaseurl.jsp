@@ -212,7 +212,7 @@
 
 	helpOptionCheck();
 	 
-	$(".helpOption").click(function(){
+	$(".helpOption").on( "click", function(){
 		helpOptionCheck();
 	});
 

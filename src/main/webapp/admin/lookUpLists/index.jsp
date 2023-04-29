@@ -36,11 +36,11 @@
 <script type="text/javascript" >
 	$.fn.bindEvents = function() {
 
-		$(".addLookupListItemButton").unbind("click");
-		$(".removeLookupListItem").unbind("click");
-		$(".showHideEdit").unbind( "click");
+		$(".addLookupListItemButton").off("click");
+		$(".removeLookupListItem").off("click");
+		$(".showHideEdit").off( "click");
 		
-		$(".addLookupListItemButton").bind("click", function(){
+		$(".addLookupListItemButton").on("click", function(){
 			var data = new Object();
 			data.lookupListId = this.id.split("_")[1];
 			data.lookupListItemLabel = $( "#lookupListItemLabel_" + data.lookupListId ).val();
@@ -48,7 +48,7 @@
 			postData( data, "#lookupListItems_" + data.lookupListId );
 		});
 	
-		$(".removeLookupListItem").bind("click", function(){
+		$(".removeLookupListItem").on("click", function(){
 			var lookupListId = this.id.split("_")[2];
 			var data = new Object();
 			data.lookupListItemId = this.id.split("_")[1];
@@ -56,7 +56,7 @@
 			postData( data, "#lookupListItems_" + lookupListId );
 		});
 	
-		$(".showHideEdit").bind( "click", function(){		
+		$(".showHideEdit").on( "click", function(){		
 			var lookupListId = this.id.split("_")[1];
 			var showId = "#lookupListItemWrapper_" + lookupListId;
 			var cancel = "#cancel_" + lookupListId; 

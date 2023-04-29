@@ -70,11 +70,11 @@ function ShowSpin(locked)
 
     if (locked)
     {
-        $("#screen").unbind("click");
+        $("#screen").off("click");
     }
     else
     {
-        $("#screen").click(function (e)
+        $("#screen").on( "click", function (e)
         {
             HideSpin();
         });

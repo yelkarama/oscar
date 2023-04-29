@@ -72,7 +72,8 @@ if(!authed) {
 	var ctx = '<%=request.getContextPath()%>';
 </script>
 
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script>
 	function generateIndividualNeedRatingOverTimeReport() {
 		//check to make sure a client is selected
@@ -105,7 +106,7 @@ if(!authed) {
 
 
 		$("#ocanForm input[name='method']").val("generateIndividualNeedRatingOverTimeReport");
-		$("#ocanForm").submit();
+		$("#ocanForm").trigger( "submit" );
 	}
 
 
@@ -148,7 +149,7 @@ if(!authed) {
 		alert('Loading Need Rating over Time Report...');
 
 		$("#ocanForm input[name='method']").val("generateNeedRatingOverTimeReport");
-		$("#ocanForm").submit();
+		$("#ocanForm").trigger( "submit" );
 
 	}
 
@@ -189,7 +190,7 @@ if(!authed) {
 		alert('Loading Summary of Actions and Comments Report...');
 
 		$("#ocanForm input[name='method']").val("generateSummaryOfActionsAndCommentsReport");
-		$("#ocanForm").submit();
+		$("#ocanForm").trigger( "submit" );
 
 	}
 

@@ -50,7 +50,8 @@ if(!authed) {
 <head>
 <title>CBI Upload Administration Panel</title>
 
-<!-- <script type="text/javascript" src="../js/jquery-1.9.1.js"></script> -->
+<!-- <script type="text/javascript" src="../js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script> -->
 <script type="text/javascript" language="JavaScript" src="..>/js/jquery-1.12.3.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="../js/jquery.treeview.js"></script>

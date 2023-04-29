@@ -60,7 +60,8 @@
 <title><bean:message key="oscarLearning.courseManager.title" /></title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -68,8 +69,8 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-	$("#new_course_link").click(function() {newCourseEvent(); return false;});	
-	$("#new_course_btn").click(function() {createGroup();});
+	$("#new_course_link").on( "click", function() {newCourseEvent(); return false;});	
+	$("#new_course_btn").on( "click", function() {createGroup();});
 });
 
 $(document).ready(function() {
@@ -161,7 +162,8 @@ function updateCourseDetails(data) {
 	   	html += "</table>";
 	   	html += "<input type=\"submit\" value=\"Save Changes\" id=\"save_course_details\"></form>";
 	detailDiv.html(html);
-	$("#course_detail_form").live('submit',submitCourseDetails);
+	//$("#course_detail_form").live('submit',submitCourseDetails); deprecated in 1.9
+	$( document ).on( "submit", "#course_detail_form", submitCourseDetails);
 	detailDiv.show();
 }
 

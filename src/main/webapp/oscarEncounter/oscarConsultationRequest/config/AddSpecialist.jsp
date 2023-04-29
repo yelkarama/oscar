@@ -146,7 +146,7 @@ function formatPhone(obj) {
 
 
 	$(document).ready(function(){
-		$('#institution').change(function(){
+		$('#institution').on("change",function(){
 			changeInstitution();
 		});
 

@@ -59,7 +59,7 @@ if(myOscarLoggedInInfo !=null && myOscarLoggedInInfo.isLoggedIn() && myOscarUser
 <%}%>	      
 <script type="text/javascript">
 $(function() {
-  $("#relationshipAdder").click(function() {
+  $("#relationshipAdder").on( "click", function() {
     $(this).attr("disabled", "true");
     $.ajax({
       url: '<c:out value="${ctx}"/>/phr/UserManagement.do?method=addPatientRelationship&demoNo=<%=demographic%>&myOscarUserName=<%=myOscarUserName%>',

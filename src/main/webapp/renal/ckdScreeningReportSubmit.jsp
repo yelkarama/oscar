@@ -71,7 +71,7 @@ List<ORNCkdScreeningReportLog> reports = logDao.getAllReports();
 
 <script>
 $(document).ready(function() {
-	$("#runReport").bind("click",function(){
+	$("#runReport").on("click",function(){
 		$.get("<%=request.getContextPath()%>/renal/Renal.do?method=submitCkdScreeningReport");
 		
 	});

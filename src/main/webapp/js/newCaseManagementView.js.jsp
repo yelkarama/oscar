@@ -310,7 +310,7 @@
 function grabEnter(id, event) {
     var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
     if (keyCode == 13) {
-        $(id).click();
+        $(id).trigger( "click" );
         return false;
     }
 
@@ -326,7 +326,7 @@ function setupNotes(){
     adjustCaseNote();
     setCaretPosition($(caseNote), $(caseNote).value.length);
 
-    $(caseNote).focus();
+    $(caseNote).trigger( "focus" );
     let autosaveNoteId = document.forms['caseManagementEntryForm'].noteId.value;
     let autosaveProgramId = document.forms['caseManagementEntryForm']['caseNote.program_no'].value;
     let autosaveDemographicNo = document.forms['caseManagementEntryForm'].demographicNo.value;
@@ -795,7 +795,7 @@ function showIntegratedNote(title, note, location, providerName, obsDate){
     
 	$("showIntegratedNote").style.display = "block";
 	
-	$("integratedNoteTxt").focus();
+	$("integratedNoteTxt").trigger( "focus" );
 }
 
 //display in place editor
@@ -947,7 +947,7 @@ function showEdit(e,title, noteId, editors, date, revision, note, url, container
     }
 
 
-    $("noteEditTxt").focus();
+    $("noteEditTxt").trigger( "focus" );
 
     return false;
 }
@@ -1386,7 +1386,7 @@ function loadDiv(div,url,limit) {
         $(caseNote).value += text;
 
         //setTimeout("$(caseNote).scrollTop="+scrollHeight, 0);  // setTimeout is needed to allow browser to realize that text field has been updated
-        $(caseNote).focus();
+        $(caseNote).trigger( "focus" );
         adjustCaseNote();
         //if (typeof chartNoteAutosave !== 'undefined') {
         //        chartNoteAutosave.setChanged();
@@ -1419,8 +1419,10 @@ function loadDiv(div,url,limit) {
         var func = autoCompleted[name];
         eval(func);
         smartTmpl.init($(caseNote));
-        $(caseNote).blur();
-        $(caseNote).focus();
+        // blur deprecated in jQuery 3.3 
+        //$(caseNote).blur();
+        $(caseNote).trigger('blur');
+        $(caseNote).trigger( "focus" );
         $("autosaveTime").update(name);
     }
 
@@ -1845,7 +1847,7 @@ function fetchNote(nId) {
                         onSuccess: function(response) {
                             $(noteTxtArea).update(response.responseText.trim());
                             adjustCaseNote();
-                                $(noteTxtArea).focus();
+                                $(noteTxtArea).trigger( "focus" );
                             setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
                             origCaseNote = $F(noteTxtArea);
                             $(fullId).value = "true";
@@ -1857,10 +1859,10 @@ function fetchNote(nId) {
 
 function toggleFullViewForAll(f) {
 	jQuery('[name="fullViewTrigger"]').each(function(){
-		$(this).click();
+		$(this).trigger( "click" );
 	});
 	jQuery('[name="expandViewTrigger"]').each(function(){
-		$(this).click();
+		$(this).trigger( "click" );
 	});
 }
 
@@ -2010,7 +2012,7 @@ function unlockNote(e) {
     new Insertion.Bottom(txt, lockForm);
 
     $(txt).style.height = "auto";
-    $(passwd).focus();
+    $(passwd).trigger( "focus" );
     Element.stopObserving(txt, 'click', unlockNote);
 }
 
@@ -2095,7 +2097,7 @@ function editNote(e) {
     //if we have an edit textarea already open, close it
     if($(caseNote) !=null && $(caseNote).parentNode.id != $(txt).id) {
         if( !changeToView(caseNote) ) {
-            $(caseNote).focus();
+            $(caseNote).trigger( "focus" );
             return;
         }
     }
@@ -2162,7 +2164,7 @@ function editNote(e) {
         //position cursor at end of text
         adjustCaseNote();
         setCaretPosition($(caseNote),$(caseNote).value.length);
-        $(caseNote).focus();
+        $(caseNote).trigger( "focus" );
         origCaseNote = $F(caseNote);
         
     }
@@ -2260,10 +2262,10 @@ function showIssues(e) {
 
     if( showIssue ) {
         $("noteIssues").scrollIntoView(false);
-        $("issueAutocomplete").focus();
+        $("issueAutocomplete").trigger( "focus" );
     }
     else {
-        $(caseNote).focus();
+        $(caseNote).trigger( "focus" );
     }
 
     return false;
@@ -2291,9 +2293,9 @@ function showHideIssues(e, issueType) {
 			$("noteIssues").scrollIntoView(false);
 		}
 				
-		$("issueAutocomplete").focus();
+		$("issueAutocomplete").trigger( "focus" );
 	} else {
-		$(caseNote).focus();
+		$(caseNote).trigger( "focus" );
 	}
 				
 	return false;
@@ -2757,7 +2759,7 @@ function savePage(method, chain) {
             jQuery("#residentMethod").val(method);
             jQuery("#showResident").css('z-index',1);
             jQuery("#showResident").fadeIn(2000);
-            jQuery("#reviewed").focus();
+            jQuery("#reviewed").trigger( "focus" );
             return false;
         }
 
@@ -2862,7 +2864,7 @@ function savePage(method, chain) {
 
 	jQuery("[submit_addon]").each(function()
     		   {
-    		     jQuery("#"+jQuery(this).attr('submit_addon')).click();
+    		     jQuery("#"+jQuery(this).attr('submit_addon')).trigger( "click" );
     		   }
     		 );
 
@@ -2902,7 +2904,7 @@ function savePage(method, chain) {
 
         Element.stopObserving('asgnIssues', 'click', addIssueFunc);
         Element.observe('asgnIssues', 'click', changeIssueFunc);
-        $("issueAutocomplete").focus();
+        $("issueAutocomplete").trigger( "focus" );
         return false;
     }
 
@@ -2917,7 +2919,7 @@ function changeDiagnosisResolved(issueId) {
 		
 	Element.stopObserving('asgnIssues', 'click', addIssueFunc);
 	Element.observe('asgnIssues', 'click', changeIssueFunc);
-	$("issueAutocomplete").focus();
+	$("issueAutocomplete").trigger( "focus" );
 	return false;
 }
 
@@ -2932,7 +2934,7 @@ function changeDiagnosisUnresolved(issueId) {
 				
 	Element.stopObserving('asgnIssues', 'click', addIssueFunc);
 	Element.observe('asgnIssues', 'click', changeIssueFunc);
-	$("issueAutocomplete").focus();
+	$("issueAutocomplete").trigger( "focus" );
 	return false;
 }
 			
@@ -3059,7 +3061,7 @@ function submitIssue(event) {
     var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
     if (keyCode == 13 ) {
         if( submitIssues)
-            $("asgnIssues").click();
+            $("asgnIssues").trigger( "click" );
 
         return false;
     }
@@ -3149,7 +3151,7 @@ function newNote(e) {
         new Insertion.Bottom("encMainDiv", div);
         $(sigId).addClassName("sig");
         Rounded("div#"+id,"all","transparent","#CCCCCC","big border #000000");
-        $(caseNote).focus();
+        $(caseNote).trigger( "focus" );
         adjustCaseNote();
         if( reason.length > 0 )
             setCaretPosition($(caseNote),$(caseNote).value.length);
@@ -3176,7 +3178,7 @@ function newNote(e) {
         //setTimer();
     }
     else
-        $(caseNote).focus();
+        $(caseNote).trigger( "focus" );
 
     //need delay..something else going on
     setTimeout(scrollDownInnerBar,1500);

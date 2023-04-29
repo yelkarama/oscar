@@ -102,7 +102,7 @@ if(!authed) {
 	function getProviders() {
 		var programId = $("#programId").val();
 		//alert(programId);
-		$("#theForm").submit();
+		$("#theForm").trigger( "submit" );
 	}
 	
 	function edit() {
@@ -113,7 +113,7 @@ if(!authed) {
 	
 	function save() {
 		$("#method").val('save');
-		$("#theForm").submit();
+		$("#theForm").trigger( "submit" );
 	}
 	
 	function cancel() {

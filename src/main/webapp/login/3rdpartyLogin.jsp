@@ -99,7 +99,7 @@
             <script>
             	function deny() {
             		$("#oauthDecision").val('deny');
-            		$("#scopeForm").submit();
+            		$("#scopeForm").trigger( "submit" );
             	}
             	
             	function submitCredentials() {

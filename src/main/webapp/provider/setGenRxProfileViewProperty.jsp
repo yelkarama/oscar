@@ -56,7 +56,7 @@ $(document).ready(function() {
 
     $('input[type="checkbox"]').addClass("only-one-");
 
-	$('[class^="only-one-"]').click(function() {
+	$('[class^="only-one-"]').on( "click", function() {
 		if ( $(this).is('input:checkbox') ){
 			$('.'+$(this).attr('class')).prop('checked', false);
 			$(this).prop('checked', true);

@@ -573,26 +573,26 @@ EMR / DHIR View
 		        format : "yyyy-mm-dd"
 		    });
 		
-			$("#startDate").bind('change',function(){
+			$("#startDate").on('change',function(){
 				getDHIRData();
 			});
-			$("#endDate").bind('change',function(){
+			$("#endDate").on('change',function(){
 				getDHIRData();
 			});
-			$("#dobDate").bind('click',function(){
+			$("#dobDate").on('click',function(){
 				getDHIRData();
 			});
 			
-			$("#emrStartDate").bind('change',function(){
+			$("#emrStartDate").on('change',function(){
 				getEMRData();
 			});
-			$("#emrEndDate").bind('change',function(){
+			$("#emrEndDate").on('change',function(){
 				getEMRData();
 			});
 		
 			$('.btn').button();
 			
-			$('.showing').bind('change',function(){
+			$('.showing').on('change',function(){
 				console.log('testing');
 				if($("#showDHIR").is(":checked")) {
 					$("#dhirDiv").show();
@@ -617,7 +617,7 @@ EMR / DHIR View
 				
 			});
 		
-			$("#disclaimerDismiss").bind("click",function(){
+			$("#disclaimerDismiss").on("click",function(){
 				//update preference on server
 				hideDisclaimer = true;
 				

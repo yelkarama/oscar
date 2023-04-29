@@ -686,7 +686,7 @@ function resetAll(){
 	TempData = new Array();
 
 	SetSwitchOn('Text');
-	document.getElementById('Text').click();
+	document.getElementById('Text').trigger( "click" );
 
 	document.getElementById('inputValue').value = "";
 	document.getElementById('inputName').value = "";
@@ -774,11 +774,11 @@ function GetTextTop(){
 //        textTop += "\n&lt;!-- jQuery for parent-child and radio fields --&gt;\n"
 //        textTop += "&lt;script&gt;\n";
 //        textTop += "$(document).ready(function() {\n\t$('[class^=\"child-\"]').hide();";
-//        textTop += "\n\t$('.parent-field').click(function() {\n\t\t$('[class^=\"child-\"]').hide();\n\t\t$('.parent-field').each(function() {"
+//        textTop += "\n\t$('.parent-field').on( "click", function() {\n\t\t$('[class^=\"child-\"]').hide();\n\t\t$('.parent-field').each(function() {"
 //        textTop += "\n\t\t\tif ( $(this).is('input:checkbox') ){\n\t\t\t\tif(this.checked){\n\t\t\t\t\t$('.child-' +  $(this).prop('id')).show();\n\t\t\t\t}else{\n\t\t\t\t$('.child-' + $(this).val()).show();\n\t\t\t\t}\n\t\t\t}"
 //        textTop += "\n\t\t\tif ( $(this).is('input:text') ){\n\t\t\t\tif($(this).val()=='X'){\n\t\t\t\t\t$('.child-' +  $(this).prop('id')).show();\n\t\t\t\t}else{\n\t\t\t\t$('.child-' + $(this).val()).show();\n\t\t\t\t}\n\t\t\t}"
 //        textTop += "\n\t\t});\n\t});";
-//        textTop += "\n\t$('[class^=\"only-one-\"]').click(function() {\n\t\tif ( $(this).is('input:checkbox') ){";
+//        textTop += "\n\t$('[class^=\"only-one-\"]').on( "click", function() {\n\t\tif ( $(this).is('input:checkbox') ){";
 //        textTop += "\n\t\t\t$('.'+$(this).attr('class')).prop('checked', false);\n\t\t\t$(this).prop('checked', true);\n\t\t}\n";
 //        textTop += "\n\t\tif ( $(this).is('input:text') ){";
 //        textTop += "\n\t\t\t$('.'+$(this).attr('class')).val('');";
@@ -883,13 +883,13 @@ function GetTextTop(){
 		}
 		textTop += "\tvar pdf = jQuery(&quot;input[name='pdfButton']&quot;);\n"
 		textTop += "\tif (pdf.size() != 0) {\n"
-		textTop += "\t\tpdf.attr('onclick', '').unbind('click');\n"
+		textTop += "\t\tpdf.attr('onclick', '').off('click');\n"
 		textTop += "\t\tpdf.attr('value', 'PDF');\n"
 		textTop += "\t\tpdf.click(function(){saveSig();submitPrintButton(false);});\n"
 		textTop += "\t\t}\n"
 		textTop += "\tvar pdfSave = jQuery(&quot;input[name='pdfSaveButton']&quot;);\n"
 		textTop += "\tif (pdfSave.size() != 0) {\n"
-		textTop += "\t\tpdfSave.attr('onclick', '').unbind('click');\n"
+		textTop += "\t\tpdfSave.attr('onclick', '').off('click');\n"
 		textTop += "\t\tpdfSave.attr('value', 'Submit & PDF');\n"
 		textTop += "\t\tpdfSave.click(function(){saveSig();submitPrintButton(true);});\n"
 		textTop += "\t\t}\n"
@@ -1027,10 +1027,10 @@ function GetTextTop(){
 	if (document.getElementById('includeTicklerControl').checked){
 	textTop += "\t$.when(setAtickler()).then(function( data, textStatus, jqXHR ) {\n"
 		textTop += "\t\tif ( jqXHR.status != 200 ){ alert('ERROR ('+jqXHR.status+') automatic tickler FAILED to be set');}\n"
-		textTop += "\t\tdocument.getElementById('FormName').submit()\n"
+		textTop += "\t\tdocument.getElementById('FormName').trigger( "submit" )\n"
 		textTop += "\t});\n"
 	} else {
-	textTop += "\tdocument.getElementById('FormName').submit()\n"
+	textTop += "\tdocument.getElementById('FormName').trigger( "submit" )\n"
 	}
 	textTop += "}\n"
 	textTop += "window.onbeforeunload = confirmExit;\n"
@@ -1688,7 +1688,7 @@ return unescape(text);
 function injectHtml(){
     document.getElementById('formHtmlG').value = popUp();
     document.getElementById('formHtmlName').value = document.getElementById('eFormName').value;
-    document.getElementById('toSave').submit();
+    document.getElementById('toSave').trigger( "submit" );
 }
 
 </script>
@@ -1922,12 +1922,12 @@ show('classic');
 								<table>
 					<tr>
 						<td><span><b><bean:message key="eFormGenerator.parentLabel"/></b>: </span></td>
-						<td><input name="Parent" id="Parent" type="button" value='<bean:message key="eFormGenerator.parentButton"/>' onclick="parentcounter += 1; document.getElementById('Checkbox').click(); document.getElementById('inputClass').value = 'parent-field'; document.generator.InputNameType[1].checked=true; document.getElementById('inputName').value ='parent' + parentcounter; document.getElementById('inputParentclass').value ='';" ></td>
+						<td><input name="Parent" id="Parent" type="button" value='<bean:message key="eFormGenerator.parentButton"/>' onclick="parentcounter += 1; document.getElementById('Checkbox').trigger( "click" ); document.getElementById('inputClass').value = 'parent-field'; document.generator.InputNameType[1].checked=true; document.getElementById('inputName').value ='parent' + parentcounter; document.getElementById('inputParentclass').value ='';" ></td>
 
 					</tr>
 					<tr>
 						<td><span><b><bean:message key="eFormGenerator.childLabel"/></b>: </span></td>
-						<td><input name="Child" id="Child" type="button" value='<bean:message key="eFormGenerator.childButton"/>' onclick=" document.getElementById('inputClass').value = 'child-'; document.getElementById('inputParentclass').value ='parent' + parentcounter; document.getElementById('InputNameAuto').click();"></td>
+						<td><input name="Child" id="Child" type="button" value='<bean:message key="eFormGenerator.childButton"/>' onclick=" document.getElementById('inputClass').value = 'child-'; document.getElementById('inputParentclass').value ='parent' + parentcounter; document.getElementById('InputNameAuto').trigger( "click" );"></td>
 
 					</tr>
 				</table>
@@ -2602,7 +2602,7 @@ function DrawCheckbox(canvas,x0,y0,inputName,preCheck,inputClass,inputParentclas
 	}
 	if ((inputName == "Male")||(inputName == "Female")){
 		SetSwitchOn('Text');
-		document.getElementById('Text').click();
+		document.getElementById('Text').trigger( "click" );
 	}
 }
 
@@ -2634,7 +2634,7 @@ function DrawXbox(canvas,x0,y0,width,height,inputName,fontFamily,fontStyle,fontW
 	}
 	if ((inputName == "Male")||(inputName == "Female")){
 		SetSwitchOn('Text');
-		document.getElementById('Text').click();
+		document.getElementById('Text').trigger( "click" );
 	}
 
 }
@@ -2694,7 +2694,7 @@ function DrawSignatureBox(canvas,x0,y0, width, height, inputName){
 
 	//reset to default input of text input
 	SetSwitchOn('Text');
-	document.getElementById('Text').click();
+	document.getElementById('Text').trigger( "click" );
 }
 
 function DrawStamp(canvas,x0,y0, width, height, inputName){
@@ -2722,7 +2722,7 @@ function DrawStamp(canvas,x0,y0, width, height, inputName){
 
 	//reset to default input of text input
 	SetSwitchOn('Text');
-	document.getElementById('Text').click();
+	document.getElementById('Text').trigger( "click" );
 }
 
 var inputName="";

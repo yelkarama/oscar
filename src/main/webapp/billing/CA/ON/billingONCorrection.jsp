@@ -418,7 +418,7 @@ function validateAmountNumberic(idx) {
 
 </head>
 
-<body onload="$('#billing_no').focus()">
+<body onload="$('#billing_no').trigger( "focus" )">
 <%//
     RaDetailDao raDetailDao = (RaDetailDao) SpringUtils.getBean("raDetailDao");
     BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");

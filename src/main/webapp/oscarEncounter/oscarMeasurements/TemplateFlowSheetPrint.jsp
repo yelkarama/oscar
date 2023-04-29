@@ -896,7 +896,8 @@ String noPrint2 = "";
     <strong>Oops!</strong> You need to make a selection before you can generate a print preview.
     </div>
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script> 
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script> 
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>	
 <script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
@@ -906,7 +907,7 @@ String noPrint2 = "";
 
 <script type="text/javascript">
 
-$(".preview").click(function() {
+$(".preview").on( "click", function() {
 
 	if ($('#flowsheetPrintForm :checkbox:checked').length > 0){
 			$(".alert").fadeOut('slow');
@@ -925,7 +926,7 @@ $(function (){
 
 $(document).ready(function () {
 
-	$(document).scroll(function () {
+	$(document).on( "scroll", function () {
 	    var y = $(this).scrollTop();
 	    if (y > 60) {
 	        $('#scrollToTop').fadeIn();
@@ -934,11 +935,11 @@ $(document).ready(function () {
 	    }
 	});
 
-$('.loading').click(function(){
+$('.loading').on( "click", function(){
 	$(this).button('loading');
 });
 
-$('a.back').click(function(){
+$('a.back').on( "click", function(){
 	parent.history.back();
 	return false;
 });
@@ -951,7 +952,7 @@ $("[id$=-btn]").removeClass("btn-primary active");
 	$('#all-btn').addClass("btn-primary active");
 <%}%>
 
-$('#select-all-chk').click(function(){
+$('#select-all-chk').on( "click", function(){
 
 	if($('#select-all-chk').is(':checked')){
 	$("[id^=printHP]").attr ( "checked" ,"checked" );
@@ -966,7 +967,7 @@ $('#select-all-chk').click(function(){
 });
 
 
-$("[id^=refineSelect]").change(function(){
+$("[id^=refineSelect]").on("change",function(){
 	var v = $(this).val();
 	var m = $(this).attr("rel");
 	
@@ -986,7 +987,7 @@ $("[id^=refineSelect]").change(function(){
 
 
 
-$("[id^=printHP]").click(function(){
+$("[id^=printHP]").on( "click", function(){
 	
 var v = $(this).val();
 
@@ -999,7 +1000,7 @@ $("#refine-results-"+v).hide();
 });
 
 
-$("#flowsheetPrintForm").submit(function(){
+$("#flowsheetPrintForm").on( "submit",function(){
 
 	var error=false;
 

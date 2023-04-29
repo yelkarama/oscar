@@ -147,6 +147,6 @@
 		value='<bean:message key="oscarEncounter.Index.btnUnLock"/>'>
 	</p>
 	<script type="text/javascript">      
-            $('passwd').focus();
+            $('passwd').trigger( "focus" );
         </script>
 </c:if>

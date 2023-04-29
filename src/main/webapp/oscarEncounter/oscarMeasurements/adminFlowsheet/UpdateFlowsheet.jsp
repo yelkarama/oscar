@@ -441,7 +441,8 @@ if(request.getParameter("demographic")==null){ %>
 <div id="scrollToTop"><a href="#updateFlowsheetBody"><i class="icon-arrow-up"></i>Top</a></div>
 
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script> 
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script> 
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>	
 <script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
 
@@ -452,7 +453,7 @@ $(document).ready(function () {
 	var h = $(document).height();
 	parent.parent.document.getElementById('trackerSlim').style.height = h+"px";
 	
-	$(document).scroll(function () {
+	$(document).on( "scroll", function () {
 	    var y = $(this).scrollTop();
 	    if (y > 60) {
 	        $('#scrollToTop').fadeIn();

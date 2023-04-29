@@ -326,7 +326,7 @@ function onChangeSelect(){
       }
       
       jQuery(document).ready(function(){
-    	  jQuery("input:checkbox[name ^= 'privilege']").change(function(){
+    	  jQuery("input:checkbox[name ^= 'privilege']").on("change",function(){
     			if(jQuery(this).is(":checked")) {
     				var priv  = jQuery(this).attr('name')[jQuery(this).attr('name').length-1];
     				if(priv === 'x' || priv === 'o') {

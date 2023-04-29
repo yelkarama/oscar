@@ -114,11 +114,11 @@ registerFormSubmit('selectForm', 'dynamic-content');
 
 $( document ).ready(function() {
 
-$(".function").click(function() {
+$(".function").on( "click", function() {
 $("#forward").val($(this).attr("id"));
 
 
-$("#selectForm").submit();
+$("#selectForm").trigger( "submit" );
 });
 
 });

@@ -35,7 +35,8 @@ String status = (String) request.getAttribute("status");
 <head>
 	<link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 	<style>
 	body{background-color:#f5f5f5;}
@@ -90,7 +91,7 @@ String status = (String) request.getAttribute("status");
 
 <script type="text/javascript">
 $( document ).ready(function() {
-	$(".input-file").change(validate).keyup(validate);
+	$(".input-file").on("change",validate).keyup(validate);
 });
 
 function validate() {

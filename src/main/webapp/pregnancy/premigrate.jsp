@@ -103,13 +103,13 @@ $(document).ready(function() {
 	$("select[name='ar2_bloodGroup']").val('<%= UtilMisc.htmlEscape(props.getProperty("ar2_bloodGroup", "")) %>');
 	$("select[name='ar2_rh']").val('<%=  UtilMisc.htmlEscape(props.getProperty("ar2_rh", "")) %>');
 	
-	$("input[name='ar2_lab2GTT1']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT1']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT2']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT2']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT3']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT3']").on('keyup',function(){
 		updateGtt();
 	});
 	
@@ -355,7 +355,7 @@ function updateGtt() {
 						<option value="NDE">North Ndebele</option>
 						<option value="SME">Northern Sami</option>
 						<option value="NOR">Norwegian</option>
-						<option value="NOB">Norwegian Bokmål</option>
+						<option value="NOB">Norwegian Bokmï¿½l</option>
 						<option value="NNO">Norwegian Nynorsk</option>
 						<option value="NYA">Nyanja</option>
 						<option value="OCI">Occitan (post 1500)</option>
