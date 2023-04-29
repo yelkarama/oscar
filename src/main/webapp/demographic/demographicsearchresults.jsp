@@ -145,7 +145,8 @@ session.setAttribute("labSex","");
 
 <title><bean:message key="demographic.demographicsearchresults.title" /></title>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
    <script>
      jQuery.noConflict();
    </script>

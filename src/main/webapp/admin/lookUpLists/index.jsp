@@ -31,7 +31,8 @@
 <html>
 <head>
 <title>Look-Up List Manager</title>
-<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="${ pageContext.request.contextPath }>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" >
 	$.fn.bindEvents = function() {
 

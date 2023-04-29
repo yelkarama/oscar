@@ -82,7 +82,8 @@ com.quatro.service.security.SecurityManager securityManager = new com.quatro.ser
 <head>
 <title><bean:message key="EditAllergies.title" /></title>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/allergies.css">
 <style type="text/css">

@@ -38,7 +38,8 @@
 	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<script src="${pageContext.request.contextPath}/js/jquery-1.9.1.min.js"></script>
+	<script src="${pageContext.request.contextPath}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script src="${pageContext.request.contextPath}/share/javascript/jquery/jquery.validate.js"></script>  
 	<script src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js"></script> 
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>

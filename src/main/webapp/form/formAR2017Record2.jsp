@@ -89,7 +89,8 @@ String project_home = request.getContextPath().substring(1);
        adding a calendar a matter of 1 or 2 lines of code. -->
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
 <html:base />
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 </head>
 <script type="text/javascript" language="Javascript">
 

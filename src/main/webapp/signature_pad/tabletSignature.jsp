@@ -27,7 +27,8 @@ is hosted in an IFrame and that the IFrame's parent window implements signatureH
 <meta name="apple-mobile-web-app-status-bar-style" />
 <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/TabletSignature.css" media="screen"/>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/TabletSignature.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
 
 </head>

@@ -39,7 +39,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Upload</title>
-<script src="../../js/jquery-1.7.1.min.js"></script>
+<script src="../..>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" >
 $(window).load(function(){
 	$('input[type="checkbox"]').click(function () {

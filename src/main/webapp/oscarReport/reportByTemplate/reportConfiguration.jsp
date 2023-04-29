@@ -57,7 +57,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/calendar.js"></script>	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/calendar-setup.js"></script>
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script>  
+	<script type="text/javascript" src="${pageContext.servletContext.contextPath}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>  
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
 	
 	<script type="text/javascript" >

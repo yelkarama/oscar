@@ -49,7 +49,8 @@
 <link href="<%=request.getContextPath()%>/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath()%>/css/angular-datatables.min.css" rel="stylesheet" type="text/css">
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.dataTables.1.10.11.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/library/angular.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/library/angular-datatables.min.js"></script>

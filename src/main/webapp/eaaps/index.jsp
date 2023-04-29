@@ -39,7 +39,8 @@
 	src="<%=request.getContextPath()%>/js/global.js"></script>
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery.js"></script>
+	src="<%=request.getContextPath()%>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" language="javascript">
 <!--
 	function updateExport() {

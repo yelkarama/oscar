@@ -180,7 +180,8 @@
 
 </div><!-- container fluid -->
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<script src="<%=request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/wysihtml5-0.3.0.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap-wysihtml5.js"></script>

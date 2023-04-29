@@ -215,7 +215,8 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 </script>
 <%}
 %>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
     <script language="JavaScript">
          popupStart=function(vheight,vwidth,varpage,windowname) {

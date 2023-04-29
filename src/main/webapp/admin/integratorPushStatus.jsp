@@ -39,7 +39,8 @@ String roleName$ = (String)session.getAttribute("userrole") + "," + (String)sess
 <html:html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <script type="text/JavaScript">
 function popupPage(vheight,vwidth,varpage) { //open a new popup window

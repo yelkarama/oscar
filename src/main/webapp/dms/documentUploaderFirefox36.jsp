@@ -117,7 +117,8 @@ String resourcePath = context + "/share/documentUploader/";
     </div>
 </div>
 </div>
-<script src="<%=context%>/js/jquery-1.7.1.min.js"></script>
+<script src="<%=context%>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=context%>/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script src="<%=resourcePath%>jquery.fileupload.js"></script>
 <script src="<%=resourcePath%>jquery.fileupload-ui.js"></script>

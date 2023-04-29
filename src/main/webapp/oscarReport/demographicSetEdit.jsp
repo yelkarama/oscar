@@ -135,7 +135,7 @@ function disableifchecked(ele,nextDate){
   	<section id="mainContent">
 		<% if(request.getAttribute("deleteSetSuccess")!=null && (Boolean)request.getAttribute("deleteSetSuccess")){ %>
 			<div class="alert alert-block alert-success fade in">
-				<button type="button" class="close" data-dismiss="alert">×</button>
+				<button type="button" class="close" data-dismiss="alert">ï¿½</button>
 				<h4 class="alert-heading">Success!</h4>
 				<p>Patient set "${requestScope.setname}" has been successfully deleted.</p>
 			</div>
@@ -205,7 +205,7 @@ function disableifchecked(ele,nextDate){
 
 	<div id="delete-set-confirm" class="modal hide fade" tabindex="-1" role="dialog">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">×</button>
+			<button type="button" class="close" data-dismiss="modal">ï¿½</button>
 			<h3>Delete Set</h3>
 		</div>
 		<div class="modal-body">
@@ -219,7 +219,8 @@ function disableifchecked(ele,nextDate){
 		</div>
 	</div>	
 
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>

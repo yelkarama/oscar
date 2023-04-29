@@ -97,7 +97,8 @@ a:hover {
 .smallButton { font-size: 8pt; }
 
 </style>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript">
 var popup;
 function popupStart(vheight,vwidth,varpage,windowname) {
