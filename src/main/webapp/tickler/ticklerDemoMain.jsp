@@ -120,9 +120,8 @@ if(labReqVer.equals("")) {labReqVer="07";}
 <head>
 <title><bean:message key="tickler.ticklerDemoMain.title" /></title>
  <script src="<%=request.getContextPath()%>/js/global.js"></script>
- <script src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
-    <!-- ALAS the migrate plugin needed to support the ajax method used to populate the note -->
- <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+ <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
  <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
  <script>
@@ -197,38 +196,40 @@ function openNoteDialog(demographicNo, ticklerNo) {
 	jQuery("#tickler_note_demographicNo").val(demographicNo);
 	jQuery("#tickler_note_ticklerNo").val(ticklerNo);
 
-	//is there an existing note?
+    	//is there an existing note?
 	jQuery.ajax({url:'../CaseManagementEntry.do',
 		data: { method: "ticklerGetNote", ticklerNo: jQuery('#tickler_note_ticklerNo').val()  },
-		async:false,
-		dataType: 'json',
 		success:function(data) {
-			if(data != null) {
-				jQuery("#tickler_note_noteId").val(data.noteId);
-				jQuery("#tickler_note").val(data.note);
-				jQuery("#tickler_note_revision").html(data.revision);
-				jQuery("#tickler_note_revision_url").attr('onclick','window.open(\'../CaseManagementEntry.do?method=notehistory&noteId='+data.noteId+'\');return false;');
-				jQuery("#tickler_note_editor").html(data.editor);
-				jQuery("#tickler_note_obsDate").html(data.obsDate);
-			}
-		},
-		error: function(jqXHR, textStatus, errorThrown ) {
-			alert(errorThrown);
-		}
-		});
+            //console.log(data);
+            try {
+                note = JSON.parse(data);
+			    jQuery("#tickler_note_noteId").val(note.noteId);
+			    jQuery("#tickler_note").val(note.note);
+			    jQuery("#tickler_note_revision").html(note.revision);
+			    jQuery("#tickler_note_revision_url").attr('onclick','window.open(\'../CaseManagementEntry.do?method=notehistory&noteId='+note.noteId+'\');return false;');
+			    jQuery("#tickler_note_editor").html(note.editor);
+			    jQuery("#tickler_note_obsDate").html(note.obsDate);
+            } catch(e) {
+                console.log("No data");
 
-	jQuery( "#note-form" ).dialog( "open" );
+            }
+
+		}
+
+		});
+		jQuery( "#note-form" ).dialog( "open" );
+
 }
 function closeNoteDialog() {
 	jQuery( "#note-form" ).dialog( "close" );
 }
 function saveNoteDialog() {
-	//alert('not yet implemented');
+
 	jQuery.ajax({url:'../CaseManagementEntry.do',
 		data: { method: "ticklerSaveNote", noteId: jQuery("#tickler_note_noteId").val(), value: jQuery('#tickler_note').val(), demographicNo: jQuery('#tickler_note_demographicNo').val(), ticklerNo: jQuery('#tickler_note_ticklerNo').val()  },
 		async:false,
 		success:function(data) {
-		 // alert('ok');
+		//  alert('ok');
 		},
 		error: function(jqXHR, textStatus, errorThrown ) {
 			alert(errorThrown);
@@ -669,7 +670,7 @@ function reportWindow(page) {
 				</td>
 				  <td class="<%=cellColour%> noprint">
                 	<a href="javascript:void(0)" onClick="openNoteDialog('<%=t.getDemographicNo() %>','<%=t.getId() %>');return false;">
-                		<img title="note" src="<%=request.getContextPath()%>/images/notepad.gif"/>
+                		<img title="<bean:message key="Appointment.formNotes"/>" src="<%=request.getContextPath()%>/images/notepad.gif"/>
                 	</a>
                 </td>
 			</tr>
@@ -741,44 +742,37 @@ if (nItems == 0) {
 </table>
 	</form>
 
-<div id="note-form" title="Tickler Note">
+<div id="note-form" title="<bean:message key="tickler.ticklerDemoMain.title"/>">
 	<form>
+        <input type="hidden" name="tickler_note_demographicNo" id="tickler_note_demographicNo" value="">
+		<input type="hidden" name="tickler_note_ticklerNo" id="tickler_note_ticklerNo" value="">
+		<input type="hidden" name="tickler_note_noteId" id="tickler_note_noteId" value="">
 
-			<table>
-				<tbody>
-					<textarea id="tickler_note" name="tickler_note" style="width:100%;height:180px"></textarea>
-					<input type="hidden" name="tickler_note_demographicNo" id="tickler_note_demographicNo" value=""/>
-					<input type="hidden" name="tickler_note_ticklerNo" id="tickler_note_ticklerNo" value=""/>
-					<input type="hidden" name="tickler_note_noteId" id="tickler_note_noteId" value=""/>
-				</tbody>
-			</table>
-			<br/>
-			<table>
-				<tr>
-					<td >
-						<a href="javascript:void()" onclick="saveNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/note-save.png"/>
-						</a>
-						<a href="javascript:void()" onclick="closeNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/system-log-out.png"/>
-						</a>
-					</td>
-					<td style="width:40%" nowrap="nowrap">
-					Date: <span id="tickler_note_obsDate"></span> rev <a id="tickler_note_revision_url" href="javascript:void(0)" onClick=""><span id="tickler_note_revision"></span></a><br/>
-					Editor: <span id="tickler_note_editor"></span>
-					</td>
-				</tr>
-
-			</table>
-
+		<fieldset>
+			<div class="control-group">
+				<label class="control-label" for="tickler_note"><bean:message key="Appointment.formNotes"/>:</label>
+				<div class="controls">
+					<textarea class="input-block-level" rows="5" id="tickler_note" name="tickler_note"></textarea>
+				</div>
+			</div>
+		</fieldset>
+        <input type="button" name="button"
+					value="<bean:message key="global.btnSave"/>"
+					onclick="saveNoteDialog(); return false;" class="btn btn-primary">
+        <input type="button" name="button"
+					value="<bean:message key="global.btnCancel"/>"
+					onclick="closeNoteDialog(); return false;" class="btn"><br>
+        <div style="text-align:right; font-size: 80%;">
+            <bean:message key="tickler.ticklerDemoMain.msgDate"/>: <span id="tickler_note_obsDate"></span> <bean:message key="oscarEncounter.noteRev.title"/> <a id="tickler_note_revision_url" href="javascript:void(0)" onClick=""><span id="tickler_note_revision"></span></a><br/>
+			<bean:message key="oscarEncounter.editors.title"/>: <span id="tickler_note_editor"></span>
+        </div>
 	</form>
 </div>
 
 
-<p><font face="Arial, Helvetica, sans-serif" size="2"> </font></p>
+
 <p class="noprint">
 <%@ include file="../demographic/zfooterbackclose.jsp"%>
-</p>
 
 </div>
 </body>
