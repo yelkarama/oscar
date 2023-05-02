@@ -38,8 +38,8 @@
     <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet >
-    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet" >
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
     <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
     <!--<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>-->
