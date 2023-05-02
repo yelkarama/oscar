@@ -51,7 +51,7 @@
 	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
-    <script src=${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
     <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css">
@@ -134,7 +134,7 @@ $(function() {
 	        <div class="control-group">
 	        	<label class="control-label" for="uploadReportXml">Select template</label>
 	        	<div class="controls">
-	        		<input type="file" id="uploadReportXml" class="input-file" name="templateFile" title="Upload a template file formatted in XML">
+	        		<input type="file" id="uploadReportXml" class="input-file" name="templateFile" title="Upload a formatted template file. The extension is usually xml or txt">
 	        	</div>
 	        </div>
 			<input type="hidden" name="action" value="${ action }">
