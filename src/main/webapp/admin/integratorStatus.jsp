@@ -69,61 +69,61 @@ if(!authed) {
 	boolean removeDemographicIdentity = integratorControlDao.readRemoveDemographicIdentity(facility.getId());
 	UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 	UserProperty integratorPatientConsent = userPropertyDao.getProp( UserProperty.INTEGRATOR_PATIENT_CONSENT );
-	
+
 	List<CachedFacility> facilities=null;
 	if(facility.isIntegratorEnabled()) {
 		facilities = CaisiIntegratorManager.getRemoteFacilities(LoggedInInfo.getLoggedInInfoFromSession(request), facility,false);
 	}
 	boolean allSynced = true;
-	
+
 	int secondsTillConsideredStale = Integer.parseInt(p.getProperty("seconds_till_considered_stale"));
 	try{
-		allSynced  = CaisiIntegratorManager.haveAllRemoteFacilitiesSyncedIn(LoggedInInfo.getLoggedInInfoFromSession(request), facility, secondsTillConsideredStale); 
+		allSynced  = CaisiIntegratorManager.haveAllRemoteFacilitiesSyncedIn(LoggedInInfo.getLoggedInInfoFromSession(request), facility, secondsTillConsideredStale);
 	}catch(Exception remoteFacilityException){
 		MiscUtils.getLogger().error("Error checking Remote Facilities Sync status",remoteFacilityException);
 		CaisiIntegratorManager.checkForConnectionError(request.getSession(), remoteFacilityException);
 	}
-	if(secondsTillConsideredStale == -1){  
-		allSynced = true; 
+	if(secondsTillConsideredStale == -1){
+		allSynced = true;
 	}
 	boolean offline = CaisiIntegratorManager.isIntegratorOffline(request.getSession());
 
 	java.util.Calendar timeConsideredStale = java.util.Calendar.getInstance();
 	timeConsideredStale.add(java.util.Calendar.SECOND, -secondsTillConsideredStale);
 	SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+
 	CachedFacility myCachedFacility = null;
 	if(facility.isIntegratorEnabled()) {
 		myCachedFacility = CaisiIntegratorManager.getFacilityWs(LoggedInInfo.getLoggedInInfoFromSession(request), facility).getMyFacility();
 	}
-	
+
 	IntegratorFileLogManager integratorFileLogManager = SpringUtils.getBean(IntegratorFileLogManager.class);
-	
+
 	List<IntegratorFileLog> logs = integratorFileLogManager.getFileLogHistory(LoggedInInfo.getLoggedInInfoFromSession(request));
-	
+
 %>
 <html:html locale="true">
     <head>
         <title>Integrator Status</title>
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
-	
-	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	
-	
+
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
+ 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" />
+
+	<script>var ctx = "${ pageContext.request.contextPath }"</script>
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+
+
         <script>
-           
+
         </script>
     </head>
     <body>
     <div class="container">
 <div class="row">
- 
+
  <%if(facility.isIntegratorEnabled()) { %>
  <div class="span12">
  <span><span style="font-size:24px">Integrated Community</span> &nbsp;&nbsp;&nbsp;&nbsp; <span style="background:orange">&nbsp;&nbsp;&nbsp;</span>Stale&nbsp;&nbsp;&nbsp;<span style="background:cyan">&nbsp;&nbsp;&nbsp;</span>Home</span>
@@ -145,12 +145,12 @@ if(!authed) {
 			if( lastDataUpdate == null || timeConsideredStale.after(lastDataUpdate)){
 				background = "orange";
 			}
-			
+
 			if(x.getIntegratorFacilityId().intValue() == myCachedFacility.getIntegratorFacilityId().intValue()) {
 				background="cyan";
 			}
-			
-			
+
+
 			%>
 	<tr style="border: solid black 2px; background: <%=background %>; color: gray" >
 		<td style="border: solid black 1px"><%=StringUtils.trimToEmpty(x.getName())%></td>
@@ -166,7 +166,7 @@ if(!authed) {
  </div>
 </div>
  <%} %>
- 
+
  <div class="span12">
  <span><span style="font-size:24px">File Log History</span> </span>
 <table id="fileLogTable" name="fileLogTable" class="table table-bordered table-condensed">
@@ -184,9 +184,9 @@ if(!authed) {
 		for (IntegratorFileLog log : logs)
 		{
 			String background = "white";
-			
-			
-			
+
+
+
 			%>
 	<tr style="border: solid black 2px; background: <%=background %>; color: black" >
 		<td style="border: solid black 1px"><%=log.getFilename().substring(log.getFilename().lastIndexOf("/")+1)%></td>
@@ -197,7 +197,7 @@ if(!authed) {
 	</tr>
 	<%
 		}
-	%>	
+	%>
 	</tbody>
 </table>
  </div>
@@ -207,7 +207,7 @@ if(!authed) {
   		<tbody>
   			<tr>
   				<td colspan="2"><b>Configuration Properties</b></td>
-  				
+
   			</tr>
   			<tr>
   				<td>Update Frequency:</td>
@@ -235,7 +235,7 @@ if(!authed) {
   			</tr>
   			<tr>
   				<td colspan="2"><b>Patient Consent</b></td>
-  				
+
   			</tr>
   			<tr>
   				<td>Module Enabled:</td>
@@ -247,7 +247,7 @@ if(!authed) {
   			</tr>
   			<tr>
   				<td colspan="2"><b>Facility Settings</b></td>
-  				
+
   			</tr>
   			<tr>
   				<td>Enabled:</td>
@@ -267,7 +267,7 @@ if(!authed) {
   			</tr>
   			<tr>
   				<td colspan="2"><b>Other Settings</b></td>
-  				
+
   			</tr>
   			<tr>
   				<td>Remove Demographic Identity:</td>
@@ -276,12 +276,12 @@ if(!authed) {
   		</tbody>
 	</table>
  </div>
- 
+
 
 </div>
- 
- 
- 
+
+
+
     </div>
     </body>
 </html:html>
