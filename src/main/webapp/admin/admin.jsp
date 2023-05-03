@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<%-- DEPRECATED --%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
@@ -70,8 +71,7 @@
 <link rel="stylesheet" type="text/css"
 	href="../share/css/OscarStandardLayout.css" />
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
    <script>
      jQuery.noConflict();
    </script>
@@ -199,7 +199,7 @@ div.logoutBox {
 </head>
 
 <body class="BodyStyle">
-
+<!-- DEPRECATED -->
 <div class="title"><bean:message key="admin.admin.page.title" /></div>
 
 <div class="logoutBox">
@@ -822,7 +822,7 @@ div.logoutBox {
 
 		</ul>
 		</div>
-	</security:oscarSec>
+
 <!-- #SYSTEM Management END-->
 
 <!-- #SYSTEM REPORTS-->
@@ -866,12 +866,8 @@ div.logoutBox {
 			<li><a href="#" onclick='popupPage(400, 400,&quot;<html:rewrite page="/hospitalReportManager/hrmShowMapping.jsp"/>&quot;);return false;'>Hospital Report Manager (HRM) Class Mappings</a></li>
 			<li><a href="#" onclick='popupPage(400, 400,&quot;<html:rewrite page="/hospitalReportManager/hrmCategories.jsp"/>&quot;);return false;'>Hospital Report Manager (HRM) Categories</a></li>
 
-			<%
-				String olisKeystore = OscarProperties.getInstance().getProperty("olis_keystore", "");
-				if(olisKeystore.length()>0) {
-			%>
 			<li><a href="#" onclick='popupPage(400, 400,&quot;<html:rewrite page="/olis/Preferences.jsp"/>&quot;);return false;'>OLIS Preferences</a></li>
-			<% } %>
+
 			<li><a href="#" onclick='popupPage(800, 1000,&quot;<html:rewrite page="/admin/MyoscarConfiguration.jsp"/>&quot;);return false;'><bean:message key="admin.admin.phrconfig"/></a></li>
 			<%
 				if (StringUtils.trimToNull(OscarProperties.getInstance().getProperty("oscar_myoscar_sync_component_url"))!=null)
