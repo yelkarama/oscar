@@ -38,8 +38,12 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page import="java.util.*,java.text.*,java.sql.*,java.net.*" errorPage="errorpage.jsp" %>
-<%@ page import="oscar.OscarProperties" %>
+
+<%@ page import="java.util.*"%>
+<%@ page import="java.text.*"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="java.net.*" errorPage="errorpage.jsp" %>
+<%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
@@ -72,17 +76,16 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="provider.providerpreference.title" /></title>
-<!-- <script src="../share/javascript/prototype.js"></script> -->
-
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/datepicker.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 <script>
 
 function setfocus() {
