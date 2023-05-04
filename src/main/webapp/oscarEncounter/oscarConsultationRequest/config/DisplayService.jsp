@@ -45,6 +45,8 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+
+<!DOCTYPE html>
 <html:html locale="true">
 <jsp:useBean id="displayServiceUtil" scope="request"
 	class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
@@ -59,13 +61,14 @@ String serviceDesc = Encode.forHtml(displayServiceUtil.getServiceDesc(serviceId)
 	key="oscarEncounter.oscarConsultationRequest.config.DisplayService.title" />
 </title>
 <html:base />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+
 <style>
 .dtable{
     table-layout: fixed;
@@ -77,18 +80,19 @@ String serviceDesc = Encode.forHtml(displayServiceUtil.getServiceDesc(serviceId)
 
 }
 </style>
-</head>
-<script language="javascript">
+
+<script>
 function BackToOscar()
 {
        window.close();
 }
 </script>
-
-<body class="BodyStyle" vlink="#0000FF">
+</head>
+<body class="BodyStyle">
 <html:errors />
 <!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+<html:form action="/oscarEncounter/UpdateServiceSpecialists">
+<table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn"><h4>Consultation</h4></td>
 		<td class="MainTableTopRowRightColumn">
@@ -108,9 +112,7 @@ function BackToOscar()
                  %>
 		</td>
 		<td class="MainTableRightColumn">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+		<table style="border-collapse: collapse; width: 100%; height: 100%; border-color:#111111;">
 
 			<!----Start new rows here-->
 			<tr>
@@ -119,12 +121,11 @@ function BackToOscar()
 					arg0="<%=Encode.forHtml(serviceDesc) %>" /></td>
 			</tr>
 			<tr>
-				<td><html:form
-					action="/oscarEncounter/UpdateServiceSpecialists">
+				<td>
 					<input type="hidden" name="serviceId" value="<%=serviceId %>">
 					<input type="submit" class="btn btn-primary"
 						value="<bean:message key="oscarEncounter.oscarConsultationRequest.config.DisplayService.btnUpdateServices"/>"
-onclick=" var table= $('#specialistsTbl').DataTable(); table.search('').draw();">
+onclick=" var table= $('#specialistsTbl').DataTable(); table.search('').draw();"> <!-- DataTables removes DOM elements for display, restore them prior to submit or you will loose checks on those not in view-->
 					<div class="ChooseRecipientsBox1">
 					<table class="table table-condensed table-striped dtable" id="specialistsTbl">
                         <thead>
@@ -145,7 +146,7 @@ onclick=" var table= $('#specialistsTbl').DataTable(); table.search('').draw();"
                             </tr>
                         </thead>
                         <tbody>
-						
+
 							<div class="ChooseRecipientsBox1"> <%
                                  java.util.Vector  specialistInField = displayServiceUtil.getSpecialistInField(serviceId);
                                  for(int i=0;i < displayServiceUtil.specIdVec.size(); i++){
@@ -173,15 +174,15 @@ onclick=" var table= $('#specialistsTbl').DataTable(); table.search('').draw();"
 							<td><%=phone%></td>
 							<td><%=fax%></td>
 						</tr>
-						<% }%>			
+						<% }%>
                         </tbody>
 					</table>
 					</div>
-				</html:form></td>
+				</td>
 			</tr>
 			<!----End new rows here-->
 
-			<tr height="100%">
+			<tr style="height:100%">
 				<td></td>
 			</tr>
 		</table>
@@ -192,10 +193,14 @@ onclick=" var table= $('#specialistsTbl').DataTable(); table.search('').draw();"
 		<td class="MainTableBottomRowRightColumn"></td>
 	</tr>
 </table>
+</html:form>
 <script>
 $(document).ready(function() {
     $('#specialistsTbl').DataTable({
-       "paging": false
+       "paging": false,
+        "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
     } );
 
 } );
