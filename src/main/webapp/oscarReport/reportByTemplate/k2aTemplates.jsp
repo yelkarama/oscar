@@ -43,15 +43,13 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 
 <html ng-app="k2aReportByTemplate">
-
 <head>
-<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/angular-datatables.min.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/css/jquery.dataTables.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/css/angular-datatables.min.css" rel="stylesheet">
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.dataTables.1.10.11.min.js"></script>
+<script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 <script type="text/javascript" src="<%=request.getContextPath()%>/library/angular.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/library/angular-datatables.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
@@ -66,6 +64,8 @@
 </style>
 
 <body>
+
+	<%@ include file="rbtTopNav.jspf"%>
 	<div ng-controller="k2aReportByTemplate">
 		<div data-ng-hide="k2aActive">
 			A K2A instance is unavailable for this OSCAR instance. Please authenticate a K2A instance or contact an administrator for support.
@@ -78,7 +78,7 @@
 				<h5>{{message}} {{K2A_URL}}</h5>
 			</div>
 			<h4><bean:message key="oscarReport.oscarReportByTemplate.msgDownloadFromK2A" /></h4>
-			<input type="button" value="<bean:message key="oscarReport.oscarReportByTemplate.msgK2ABrowse" />" class="btn btn-primary upload" ng-click="openK2AUrl()" />
+			<!-- broken <input type="button" value="<bean:message key="oscarReport.oscarReportByTemplate.msgK2ABrowse" />" class="btn btn-primary upload" ng-click="openK2AUrl()" /> -->
 			<input type="button" value="<bean:message key="oscarReport.oscarReportByTemplate.msgRefresh" />" class="btn btn-primary upload" onclick="location.reload();" />
 			<br/>
 			<table class="table table-condensed table-striped" id="k2aReportTbl" datatable="ng" dt-options="dtOptions">
@@ -90,7 +90,7 @@
 			            <th><bean:message key="oscarReport.oscarReportByTemplate.msgCreated" /></th>
 			        </tr>
 			   	</thead>
-			
+
 			    <tbody>
 			    	<tr ng-repeat-start="k2aReport in k2aReports">
 			            <td valign="middle">
@@ -129,10 +129,10 @@
 		</div>
 		<script>
 			var app = angular.module("k2aReportByTemplate", ['reportByTemplateServices', 'datatables']);
-			
+
 			app.controller("k2aReportByTemplate", function($scope,reportByTemplateService,DTOptionsBuilder) {
 				message = "";
-				
+
 				checkStatus = function(){
 				    reportByTemplateService.isK2AInit().then(function(data){
 				    	console.log("data coming back",data);
@@ -141,7 +141,7 @@
 					});
 				}
 			    checkStatus();
-			    
+
 			    getAllK2AReports = function(){
 			    	reportByTemplateService.getAllK2AReports().then(function(data){
 			    		console.log("data coming back",data);
@@ -150,7 +150,7 @@
 			    	});
 			    }
 			    getAllK2AReports();
-			    
+
 			    $scope.saveK2AReport = function(id){
 			    	reportByTemplateService.getK2AReportById(id).then(function(data){
 			    		$scope.message = data;
@@ -158,21 +158,23 @@
 			    		refreshParent();
 			    	});
 			    }
-			    
+
 			    $scope.openK2AUrl = function(){
 			    	reportByTemplateService.getK2AUrl().then(function(data){
 			    		window.open(data+"/#/ws/rs/posts/browse/Report");
 			    	});
 			    }
-			    
+
 			    window.onunload = refreshParent;
 				function refreshParent() {
 					window.opener.document.location.href = "<%=request.getContextPath()%>/oscarReport/reportByTemplate/homePage.jsp";
 				}
-				
-				$scope.dtOptions = DTOptionsBuilder.newOptions().withOption('order', [1, 'asc']);				
+
+				$scope.dtOptions = DTOptionsBuilder
+                    .newOptions()
+                    .withOption('order', [1, 'asc']);
 			});
-		
+
 		</script>
 	</div>
 </body>
