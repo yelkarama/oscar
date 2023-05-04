@@ -99,28 +99,32 @@ if (! (demographicNo == null || "null".equals(demographicNo) || "undefined".equa
 <head>
 <html:base />
 <title><bean:message key="oscarMDS.segmentDisplay.title" /></title>
-    <script src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script src="${pageContext.request.contextPath}/js/global.js"></script>
 
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
-    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
     <script>
-    // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
     // NOTE
-    // DataTables 1.13.4 language plugin is tested compatible with 1.10.11
-    // and allows for specific use of tag global.i18nLanguagecode=fr-FR  pt-BR
     // if 404 eg offline, no translation available at data tables eg en-CA, no properties file entry for this langauge, etc
     // the english default will automatically be used
+    // I am ordering by date descending (column 5)
 
 	    jQuery(document).ready( function () {
 	        jQuery('#tblDiscs').DataTable({
-            "order": [],
-	        "bPaginate": false,
+            "columnDefs": [
+                { searchable: false,
+                   orderable:false,
+                    targets: 0,
+                },],
+            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
+            "order": [5],
             "searching": false,
             "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
             });
 	    });
@@ -230,37 +234,9 @@ window.close();
 			</tr>
 				</table>
 				</td>
-
 			</tr>
-
-<%--			<tr>--%>
-<%--				<td align="center" bgcolor="white" colspan="2">--%>
-<%--				<table width="100%" height="20" border="0" cellpadding="0"--%>
-<%--					cellspacing="0">--%>
-<%--					<tr>--%>
-<%--						<td align="center" bgcolor="white">--%>
-<%--						<div class="FieldData">--%>
-<%--						<center></center>--%>
-<%--						</div>--%>
-<%--						</td>--%>
-<%--					</tr>--%>
-<%--				</table>--%>
-<%--				</td>--%>
-<%--			</tr>--%>
 		</table>
 
-
-
-<%--		<table style="page-break-inside: avoid;" bgcolor="#003399" border="0"--%>
-<%--			cellpadding="0" cellspacing="0" width="100%">--%>
-<%--			<tr>--%>
-<%--				<td colspan="4" height="7">&nbsp;</td>--%>
-<%--			</tr>--%>
-<%--			<tr>--%>
-<%--				<td colspan="4" height="7">&nbsp;</td>--%>
-<%--			</tr>--%>
-
-<%--		</table>--%>
 
 		<table style="width: 100%;"
 			id="tblDiscs" class= "table table-condensed table-striped">
