@@ -61,10 +61,11 @@ if(!authed) {
   DemographicData dd = new DemographicData();
 
 %>
-
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
+<html:base />
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Demographic Set Edit I18n</title>
     <script src="../share/javascript/Oscar.js"></script>
@@ -216,7 +217,9 @@ function disableifchecked(ele,nextDate){
                 },],
             "order": [[1,'asc']],
             "paging": false,
-            "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
     });
 
 </script>
