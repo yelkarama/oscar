@@ -330,7 +330,8 @@ public class EForm extends EFormBase {
 					"<input type='hidden' id='_oscarproviderno' name='_oscarproviderno' value='" + this.providerNo + "' />" +
 					"<input type='hidden' id='_oscarfid' name='_oscarfid' value='" + this.fid + "' />");
 
-			this.formHtml = html.insert(scriptEndLoc, "<script type='text/javascript' src='../share/javascript/jquery/jquery-1.4.2.js'></script>" +
+			this.formHtml = html.insert(scriptEndLoc, "<script type='text/javascript' src='../js/jquery-1.12.3.js'></script>" +
+			"<script type='text/javascript' src='../library/jquery/jquery-migrate-1.4.1.js'></script>" +
 			"<script type='text/javascript' src='../js/eform_highlight.js'></script>").toString();
 		}
 	}
@@ -899,7 +900,8 @@ public class EForm extends EFormBase {
 				}
 			}
 
-			String signatureCode = "<script type='text/javascript' src='${oscar_javascript_path}../jquery/jquery-1.4.2.js'></script>" +
+			String signatureCode = "<script type='text/javascript' src='../js/jquery-1.12.3.js'></script>" +
+			"<script type='text/javascript' src='../library/jquery/jquery-migrate-1.4.1.js'></script>" +
 			"<script type='text/javascript' src='${oscar_javascript_path}signature.js'></script>" +
 			"<script type='text/javascript'>\n" +
 			"var _signatureRequestId = '" + signatureRequestId + "';\n" + 
