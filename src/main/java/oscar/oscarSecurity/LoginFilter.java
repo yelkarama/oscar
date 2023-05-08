@@ -74,7 +74,6 @@ public class LoginFilter implements Filter {
 		"/EFormSignatureViewForPdfGenerationServlet",
 		"/EFormImageViewForPdfGenerationServlet",
 		"/ProxyEformNotification",
-		"/js/jquery-1.7.1.min.js",
 		"/js/bootstap",
 		"/css/bootstrap",
 		"/myoscar_login_tester.jsp",
@@ -106,7 +105,6 @@ public class LoginFilter implements Filter {
 		"/oscar/SystemMessage.do",
 		"/oscar/FacilityMessage.do",
 		"/ProxyEformNotification",
-		"/js/jquery-1.7.1.min.js",
 		"/js/bootstrap",
 		"/css/bootstrap"
 	};
