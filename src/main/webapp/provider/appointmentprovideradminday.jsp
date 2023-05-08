@@ -752,8 +752,7 @@ th, td {
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/phr/phr.js"></script>
 
-<script src="<c:out value="../js/jquery-1.12.3.js"/>"></script>
-		<script src="<c:out value="../library/jquery/jquery-migrate-1.4.1.js"/>"></script>
+<script src="<c:out value="../library/jquery/jquery-3.6.4.min.js"/>"></script>
 <script>
 	jQuery.noConflict();
 </script>
