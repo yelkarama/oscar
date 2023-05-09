@@ -209,27 +209,27 @@ function ScriptAttach() {
 	f1 = document.forms[1].xml_dig_search1.value;
 	// f2 = escape(document.serviceform.elements["File2Data"].value);
 	// fname = escape(document.Compose.elements["FName"].value);
-	awnd=rs('att','billingDigSearch.jsp?name='+f0 + '&search=' + f1,600,600,1);
+	awnd=rs('att','billingDigSearch.jsp?name='+f0 + '&search=' + f1,800,800,1);
 	awnd.focus();
 }
 function referralScriptAttach2(elementName, name2) {
      var d = elementName;
      t0 = escape("document.forms[1].elements[\'"+d+"\'].value");
      t1 = escape("document.forms[1].elements[\'"+name2+"\'].value");
-     awnd=rs('att',('searchRefDoc.jsp?param='+t0+'&param2='+t1),600,600,1);
+     awnd=rs('att',('searchRefDoc.jsp?param='+t0+'&param2='+t1),800,800,1);
      awnd.focus();
 }
 function scScriptAttach(nameF) {
 	f0 = document.forms[1].elements[nameF].value;
     f1 = escape("document.forms[1].elements[\'"+nameF+ "\'].value");
-	awnd=rs('att','billingCodeSearch.jsp?name='+f0 + '&search=&name1=&name2=&nameF='+f1,600,600,1);
+	awnd=rs('att','billingCodeSearch.jsp?name='+f0 + '&search=&name1=&name2=&nameF='+f1,800,800,1);
 	awnd.focus();
 }
 
 function search3rdParty(elementName) {
     var d = elementName;
     t0 = escape("document.forms[1].elements[\'"+d+"\'].value");
-    popupPage('600', '700', 'onSearch3rdBillAddr.jsp?param='+t0);
+    popupPage('600', '800', 'onSearch3rdBillAddr.jsp?param='+t0);
 }
 
 function validateNum(el){
