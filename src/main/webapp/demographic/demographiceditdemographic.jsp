@@ -4537,7 +4537,7 @@ jQuery(document).ready(function(){
 		jQuery("#usSigned").show();
 	}
 	
-	jQuery("#countryOfOrigin").change(function () {
+	jQuery("#countryOfOrigin").on( "change", function() {
 		var countryOfOrigin = jQuery("#countryOfOrigin").val();
 		if("US" == countryOfOrigin){
 		   	jQuery("#usSigned").show();
@@ -4581,7 +4581,7 @@ jQuery(document).ready(function(){
 		}
 	});
 		
-	jQuery("#phrConsent").click(function() {
+	jQuery("#phrConsent").on("click", function() {
   		jQuery.ajax({
   			type: "POST",
 	        url: "<%=request.getContextPath() %>/ws/rs/app/PHRActive/consentGiven/<%=demographic_no%>",
