@@ -54,7 +54,7 @@ function rs(n,u,w,h,x) {
 
 var awnd=null;
 function ScriptAttach() {
-  awnd=rs('swipe','zdemographicswipe.htm',600,600,1);
+  awnd=rs('swipe','zdemographicswipe.htm',800,800,1);
   awnd.focus();
 }
 
@@ -225,7 +225,7 @@ function referralScriptAttach2(elementName, name2) {
      var d = elementName;
      t0 = escape("document.forms[1].elements[\'"+d+"\'].value");
      t1 = escape("document.forms[1].elements[\'"+name2+"\'].value");
-     rs('att',('../billing/CA/ON/searchRefDoc.jsp?param='+t0+'&param2='+t1),600,600,1);
+     rs('att',('../billing/CA/ON/searchRefDoc.jsp?param='+t0+'&param2='+t1),800,800,1);
 }
 function removeAccents(s){
     var r=s.toLowerCase();
