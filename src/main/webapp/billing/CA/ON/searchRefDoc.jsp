@@ -31,30 +31,27 @@
 	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
 %>
 <%
-  if (session.getAttribute("user") == null) {
-    response.sendRedirect("../logout.jsp");
-  }
-  String strLimit1="0";
-  String strLimit2="10";
-  if(request.getParameter("limit1")!=null) strLimit1 = request.getParameter("limit1");
-  if(request.getParameter("limit2")!=null) strLimit2 = request.getParameter("limit2");
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect("../logout.jsp");
+    }
+    String strLimit1="0";
+    String strLimit2="10";
+    if(request.getParameter("limit1")!=null) strLimit1 = request.getParameter("limit1");
+    if(request.getParameter("limit2")!=null) strLimit2 = request.getParameter("limit2");
 
-  int nItems = 0;
+    Properties prop = null;
+    ArrayList<Properties> alist = new ArrayList<Properties>();
+    String param = request.getParameter("param")==null?"":request.getParameter("param") ;
+    String param2 = request.getParameter("param2")==null?"":request.getParameter("param2") ;
+    String toname = request.getParameter("toname")==null?"":request.getParameter("toname") ;
+    String toaddress1 = request.getParameter("toaddress1")==null?"":request.getParameter("toaddress1") ;
+    String tophone = request.getParameter("tophone")==null?"":request.getParameter("tophone") ;
+    String tofax = request.getParameter("tofax")==null?"":request.getParameter("tofax") ;
+    String keyword = request.getParameter("keyword");
 
-  ArrayList alist = new ArrayList();
-  Properties prop = null;
-  String param = request.getParameter("param")==null?"":request.getParameter("param") ;
-  String param2 = request.getParameter("param2")==null?"":request.getParameter("param2") ;
-  String toname = request.getParameter("toname")==null?"":request.getParameter("toname") ;
-  String toaddress1 = request.getParameter("toaddress1")==null?"":request.getParameter("toaddress1") ;
-  String tophone = request.getParameter("tophone")==null?"":request.getParameter("tophone") ;
-  String tofax = request.getParameter("tofax")==null?"":request.getParameter("tofax") ;
-  String keyword = request.getParameter("keyword");
-
-
-	  List<ProfessionalSpecialist> professionalSpecialists = null;
-      professionalSpecialists = professionalSpecialistDao.findAll();
-	  if (professionalSpecialists != null) {
+    List<ProfessionalSpecialist> professionalSpecialists = null;
+    professionalSpecialists = professionalSpecialistDao.findAll();
+    if (professionalSpecialists != null) {
 		 for (ProfessionalSpecialist professionalSpecialist : professionalSpecialists) {
 		  	prop = new Properties();
 		  	prop.setProperty("referral_no", (professionalSpecialist.getReferralNo() != null ? professionalSpecialist.getReferralNo() : ""));
@@ -68,8 +65,6 @@
 		  	alist.add(prop);
 		 }
 	  }
-
-
 %>
 
 <%@ page import="java.util.ArrayList"%>
@@ -91,10 +86,7 @@
     <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
     <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
-
-
     <script>
-
 		<%if(param.length()>0) {%>
 		function typeInData1(data) {
 		  self.close();
