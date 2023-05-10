@@ -107,7 +107,7 @@
     }
 
     oscar.OscarProperties props = oscar.OscarProperties.getInstance();
-	String curUser_no = (String) session.getAttribute("user"); 
+	String curUser_no = (String) session.getAttribute("user");
 	UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 	UserProperty tabViewProp = userPropertyDao.getProp(curUser_no, UserProperty.OPEN_IN_TABS);
     boolean openInTabs = false;
@@ -151,9 +151,9 @@ if (openInTabs){
 
             OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
             ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-               
 
-            UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);                        
+
+            UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
             boolean skipComment = false;
 
             if( uProp != null && uProp.getValue().equalsIgnoreCase("yes")) {
@@ -165,20 +165,20 @@ if (openInTabs){
             if( uProp != null && uProp.getValue().equals(UserProperty.PDF)) {
             	displayDocumentAs = UserProperty.PDF;
             }
-            
+
             String demoName=request.getParameter("demoName");
             String documentNo = request.getParameter("segmentID");
 
-            
+
             String searchProviderNo = request.getParameter("searchProviderNo");
             String status = request.getParameter("status");
             String inQueue=request.getParameter("inQueue");
-            
+
             boolean inQueueB=false;
             if(inQueue!=null) {
                 inQueueB=true;
             }
-            
+
             String defaultQueue = IncomingDocUtil.getAndSetIncomingDocQueue(providerNo, null);
             QueueDao queueDao = (QueueDao) ctx.getBean("queueDao");
             List<Hashtable> queues = queueDao.getQueues();
@@ -187,7 +187,7 @@ if (openInTabs){
                 defaultQueue = defaultQueue.trim();
                 queueId = Integer.parseInt(defaultQueue);
             }
-            
+
             String creator = (String) session.getAttribute("user");
             ArrayList doctypes = EDocUtil.getActiveDocTypes("demographic");
             EDoc curdoc = EDocUtil.getDoc(documentNo);
@@ -195,13 +195,13 @@ if (openInTabs){
             String demographicID = curdoc.getModuleId();
             if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")){
                 DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-                //Demographic demographic = demographicDao.getDemographic(demographicID);  
+                //Demographic demographic = demographicDao.getDemographic(demographicID);
 				//demoName = demographic.getLastName()+","+demographic.getFirstName();
 				LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(),demographicID);
             }
-            
+
             String docId = curdoc.getDocId();
-            
+
             String ackFunc;
             if( skipComment ) {
             	ackFunc = "updateStatus('acknowledgeForm_" + docId + "'," + inQueueB + ");";
@@ -231,7 +231,7 @@ if (openInTabs){
             String cp=request.getContextPath() ;
             String url = cp+"/dms/ManageDocument.do?method=viewDocPage&doc_no=" + docId+"&curPage=1";
             String url2 = cp+"/dms/ManageDocument.do?method=display&doc_no=" + docId;
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());	
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 %>
 <% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {  %>
 <html>
@@ -248,17 +248,18 @@ if (openInTabs){
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/effects.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/controls.js"></script>
 		<!-- jquery -->
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
-        <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js" ></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+        <!-- migrate needed for some of the syntax used by external scripts for autocomplete provider -->
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js" ></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
 
-        
+
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script> 
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script>
         <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
@@ -277,16 +278,16 @@ if (openInTabs){
 
         	}
 /* comment out the button style
-            input[type=button], button, input[id^='acklabel_'] { 
+            input[type=button], button, input[id^='acklabel_'] {
                 font-size:12px !important;padding:0px;
-            } 
+            }
 */
             #ticklerWrap {
                 position:relative;
                 top:0px;
                 background-color:#FF6600;
                 width:100%;
-            }         	        	
+            }
         </style>
 
 <style>
@@ -339,22 +340,22 @@ if (openInTabs){
 
 
         jQuery.noConflict();
-        
+
         function renderCalendar(id,inputFieldId){
             Calendar.setup({ inputField : inputFieldId, ifFormat : "%Y-%m-%d", showsTime :false, button : id });
-            
+
    	   }
-        
+
         window.forwardDocument = function(docId) {
         	var frm = "#reassignForm_" + docId;
     		var query = jQuery(frm).serialize();
-    		
+
     		jQuery.ajax({
     			type: "POST",
     			url:  "<%= request.getContextPath()%>/oscarMDS/ReportReassign.do",
     			data: query,
-    			success: function (data) {    				
-    				window.location.reload();    				    				
+    			success: function (data) {
+    				window.location.reload();
     			},
     			error: function(jqXHR, err, exception) {
     				alert("Error " + jqXHR.status + " " + err);
@@ -369,7 +370,7 @@ if (openInTabs){
                             if(json!=null){
                                 var success=json.isLinkedToDemographic;
                                 var demoid='';
-                            	                                       
+
                                 if(success){
                                     demoid=json.demoId;
                                     if(demoid!=null && demoid.length>0) {
@@ -386,43 +387,43 @@ if (openInTabs){
                     break;
                 case "msgLabMAM":
                     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=MAM','prevention');
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing'); 
-                <% } %>                              
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabPAP":
                     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PAP','prevention');
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing'); 
-                <% } %>                               
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabFIT":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabCOLONOSCOPY":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention'); 
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing'); 
-                <% } %>                             
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabBMD":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabPSA":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgInf":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?search=true&demographic_no='+demoid+'&snomedId=46233009&brandSnomedId=46233009','prevention');  
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q130A','billing'); 
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?search=true&demographic_no='+demoid+'&snomedId=46233009&brandSnomedId=46233009','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q130A','billing');
                 <% } %>
-                    break;               
+                    break;
                 default:
                     console.log('default');
                     break;
@@ -431,7 +432,7 @@ if (openInTabs){
 
 
 
-                   
+
                                 }
                                 else {
                                     alert("Make sure demographic is linked and document changes saved!");
@@ -459,12 +460,12 @@ if (openInTabs){
 
         var _in_window = <%=( "true".equals(request.getParameter("inWindow")) ? "true" : "false" )%>;
         var contextpath = "<%=request.getContextPath()%>";
- 
 
-     
+
+
         </script>
         <script type="text/javascript" src="showDocument.js?ver=1"></script>
-        
+
         		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
@@ -480,16 +481,16 @@ if (openInTabs){
 					}
 				}
 			}
-			
+
 			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=$(formid).serialize(true);
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-                   	            	
+
                     if(closeOnSuccess) {
 	            		//window.close();
-                        updateStatus(formid); //oscarMDSIndex.js 
+                        updateStatus(formid); //oscarMDSIndex.js
 	            	}
 	        	}});
 			}
@@ -506,16 +507,16 @@ if (openInTabs){
         	 String rptStatus = "";
         	 boolean ackedOrFiled = false;
         	 for( int idx = 0; idx < ackList.size(); ++idx ) {
-        	     reportStatus = (ReportStatus) ackList.get(idx);        	     
-        	     
+        	     reportStatus = (ReportStatus) ackList.get(idx);
+
         	     if( reportStatus.getOscarProviderNo() != null && reportStatus.getOscarProviderNo().equals(providerNo) ) {
         		 	docCommentTxt = reportStatus.getComment();
         		 	if( docCommentTxt == null ) {
         		 	    docCommentTxt = "";
         		 	}
-        		 	
+
         		 	rptStatus = reportStatus.getStatus();
-        		 
+
         		 	if( rptStatus != null ) {
         		 		ackedOrFiled = rptStatus.equalsIgnoreCase("A") ? true : rptStatus.equalsIgnoreCase("F") ? true : false;
         		 	}
@@ -531,10 +532,10 @@ if (openInTabs){
                                                         <input type="hidden" name="status" value="A"/ id="status_<%=docId%>">
                                                         <input type="hidden" name="labType" value="DOC"/>
                                                         <input type="hidden" name="ajaxcall" value="yes"/>
-                                                        <input type="hidden" name="comment" id="comment_<%=docId%>" value="<%=docCommentTxt%>">                                                        
+                                                        <input type="hidden" name="comment" id="comment_<%=docId%>" value="<%=docCommentTxt%>">
                                                     <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !ackedOrFiled ) {%>
-                                                    
-                                                    
+
+
                                                     									<%
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
@@ -552,7 +553,7 @@ if (openInTabs){
 													  		JSONObject macro = macros.getJSONObject(x);
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
-													  		
+
 													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=docId%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
@@ -560,16 +561,16 @@ if (openInTabs){
 											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
 											    }
 											  %>
-											    
+
 											  </div>
 											</div>
-									<% } %>                                                 
-                                                    
+									<% } %>
+
                                                         <input type="submit" id="ackBtn_<%=docId%>" class="btn  btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-                                                    
+
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
-                                                    
-                                                        <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
+
+                                                        <input type="button" id="fwdBtn_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');">
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
 															boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
@@ -577,20 +578,20 @@ if (openInTabs){
 														<input type="button" class="btn" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> value="<bean:message key="global.btnSendToPHR"/>" onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
                                                         <%}%>
                                                     <%}%>
-                                                                                                             
-                                                       
-                                                        <% 
+
+
+                                                        <%
                                                         boolean isLinkedToDemographic = false;
                                                         String btnDisabled = "disabled";
                                                         if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !demographicID.equals("-1") ) {
                                                         	btnDisabled = "";
                                                             isLinkedToDemographic = true;
                                                         }
-                                                        
+
                                                         %>
                                                         <!-- <input type="button" id="closeBtn_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
                                                         <input type="button" id="msgBtn_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="handleDocSave('<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
-                                                        
+
                                                 <%
                                                 if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
                                                 %>
@@ -601,13 +602,13 @@ if (openInTabs){
                                                 <% if(recall){%>
                                                         <input type="button" id="recallBtn_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
- 
+
                                                 <div class="dropdowns" id="dropdown_<%=docId%>" disabled>
                                                     <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret"></span></button>
                                                     <div class="dropdowns-content">
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
-                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabFIT'); return false;">FIT</a> 
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a>
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabFIT'); return false;">FIT</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabBMD'); return false;">BMD</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPSA'); return false;">PSA</a>
@@ -620,22 +621,22 @@ if (openInTabs){
                                                 <% } %>
                                                         <a href="#" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
                                                         <a href="#" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
-                                                       
-                                           <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                                                        <a href="#" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a> 
-                                            <% } %>     
+
+                                           <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                                        <a href="#" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
+                                            <% } %>
                                                 <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                         <a href="#" onClick="popup(700,960,'<%=url2%>','file download')"><bean:message key="global.btnPDF"/></a>
                                             <%if( !ackedOrFiled ) { %>
                                                         <a href="#" onClick="fileDoc('<%=docId%>');"><bean:message key="oscarMDS.index.btnFile"/></a>
-                                                        
-                                            <% } %>        
+
+                                            <% } %>
                                                     </div>
-                                                </div>                                                     
-                                                        
+                                                </div>
+
                                                         <input type="button" id="rxBtn_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
                                                         <input type="button" id="refileDoc_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
-                                                        <select  id="queueList_<%=docId%>" name="queueList" style="width:100px;"> 
+                                                        <select  id="queueList_<%=docId%>" name="queueList" style="width:100px;">
                                                             <%
                                                             for (Hashtable ht : queues) {
                                                                 int id = (Integer) ht.get("id");
@@ -643,8 +644,8 @@ if (openInTabs){
                                                             %>
                                                             <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%> </option>
                                                             <%}%>
-                                                        </select>                                                                                                             
-                            </form>        	            
+                                                        </select>
+                            </form>
             <table class="docTable">
                 <tr>
 
@@ -705,7 +706,7 @@ if (openInTabs){
                                 </tr>
 
                             </table>
-                                                 
+
                             <form id="forms_<%=docId%>" onsubmit="return updateDocument('forms_<%=docId%>');">
                                 <input type="hidden" name="method" value="documentUpdateAjax" />
                                 <input type="hidden" name="documentId" value="<%=docId%>" />
@@ -750,13 +751,13 @@ if (openInTabs){
                                             <% } %>
                                         <%}else{%>
                                             <input id="saved<%=docId%>" type="hidden" name="saved" value="false"/>
-                                            <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>"/>   
-                                            <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>"/>   
-                                                                                   
-                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion()">Active Only<br>  
+                                            <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>"/>
+                                            <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>"/>
+
+                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion()">Active Only<br>
                                             <input type="text" style="width:400px;" id="autocompletedemo<%=docId%>" onchange="checkSave('<%=docId%>');" name="demographicKeyword" />
                                             <div id="autocomplete_choices<%=docId%>" class="autocomplete"></div>
-                                            
+
                                             <%}%>
 											<input type="button" id="createNewDemo" value="Create New Demographic"  class="btn" onclick="popup(700,960,'<%= request.getContextPath() %>/demographic/demographicaddarecordhtm.jsp','demographic')"/>
 
@@ -800,7 +801,7 @@ if (openInTabs){
 <%}
             else{%>
 <input type="submit" class="btn" name="save" id="save<%=docId%>" value="Save" />
-<input type="button" class="btn" name="save" onclick="saveNext(<%=docId%>)" id="saveNext<%=docId%>" value='<bean:message key="inboxmanager.document.SaveAndNext"/>' /> 
+<input type="button" class="btn" name="save" onclick="saveNext(<%=docId%>)" id="saveNext<%=docId%>" value='<bean:message key="inboxmanager.document.SaveAndNext"/>' />
 <%}%>
 
                                     </tr>
@@ -833,57 +834,57 @@ if (openInTabs){
 
 							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(documentNo), Integer.valueOf(demographicID),"DOC");
-							    
+
 							    if(LabTicklers!=null && LabTicklers.size()>0){
 							    %>
 							    <div id="ticklerWrap" class="DoNotPrint">
-							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
-							    
+							    <h4 style="color:#fff; text-align:center;"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
+
 							           <div id="ticklerDisplay" style="display:none">
 							   <%
 							   String flag;
 							   String ticklerClass;
 							   String ticklerStatus;
 							   for(Tickler tickler:LabTicklers){
-							   
+
 							   ticklerStatus = tickler.getStatus().toString();
-							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){ 
+							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span style='color:red'>&#9873;</span>";
 							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span>&#9873;</span>";
-							   }else{	
+							   }else{
 							   	flag="";
 							   }
-							   
+
 							   if(ticklerStatus.equals("C")){
 							  	 ticklerClass = "completedTickler";
 							   }else{
 							  	 ticklerClass="";
 							   }
-							   %>	
+							   %>
 							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
 							   	<table width="100%">
 							   	<tr>
 							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
+							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>
 							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
 							   	</tr>
 							   	<tr>
 							   	<td colspan="4"><%=tickler.getMessage()%></td>
 							   	</tr>
 							   	</table>
-							   </div>	
+							   </div>
 							   <br>
 							   <%
 							   }
 							   %>
 							   		</div><!-- end ticklerDisplay -->
-							   </div>   
-							   <%}//no ticklers to display 
+							   </div>
+							   <%}//no ticklers to display
 
-}%> 
-                            <%                           
+}%>
+                            <%
 
                                             if (ackList.size() > 0){%>
                                             <fieldset>
@@ -903,12 +904,12 @@ if (openInTabs){
                                                                                 ackStatus = "Filed but not Acknowledged";
                                                                             }else{
                                                                                 ackStatus = "Not Acknowledged";
-                                                                            } 
+                                                                            }
                                                                         %>
-                                                                        <font color="red"><%= ackStatus %></font>                                                                        
+                                                                        <font color="red"><%= ackStatus %></font>
                                                                             <span id="timestamp_<%=docId + "_" + report.getOscarProviderNo()%>"><%= report.getTimestamp() == null ? "&nbsp;" : report.getTimestamp() + "&nbsp;"%></span>,
                                                                             comment: <span id="comment_<%=docId + "_" + report.getOscarProviderNo()%>"><%=report.getComment() == null || report.getComment().equals("") ? "no comment" : report.getComment()%></span>
-                                                                        
+
                                                                         <br>
                                                                     <% }
                                                                     if (ackList.size() == 0){
@@ -934,11 +935,11 @@ if (openInTabs){
                                 Provider prov;
                                 boolean HighlightUserAppt = false;
                                 if (!demographicID.equals("-1")) {
-                                    
+
                                     List<Appointment> appointmentList = appointmentDao.getAppointmentHistory(Integer.parseInt(demographicID), 0, iPageSize);
                                     if (appointmentList != null && appointmentList.size() > 0) {
                             %>
-                                
+
                             <table bgcolor="#c0c0c0" align="center" valign="top">
                                 <tr bgcolor="#ccccff">
                                     <th colspan="4"><bean:message key="appointment.addappointment.msgOverview" /></th>
@@ -971,14 +972,14 @@ if (openInTabs){
                                     }%>
                             <form name="reassignForm_<%=docId%>" id="reassignForm_<%=docId%>">
                                 <input type="hidden" name="flaggedLabs" value="<%= docId%>" />
-                                <input type="hidden" name="selectedProviders" value="" />                                
+                                <input type="hidden" name="selectedProviders" value="" />
                                 <input type="hidden" name="labType" value="DOC" />
                                 <input type="hidden" name="labType<%= docId%>DOC" value="imNotNull" />
                                 <input type="hidden" name="providerNo" value="<%= providerNo%>" />
                                 <input type="hidden" name="favorites" value="" />
                                 <input type="hidden" name="ajax" value="yes" />
                             </form>
-                         </fieldset> 
+                         </fieldset>
 <% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {  %>
                         <% if (!oscar.util.StringUtils.isNullOrEmpty(demographicID) && !oscar.util.StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0){ %>
                         <fieldset>
@@ -1091,7 +1092,7 @@ if (openInTabs){
                             </form>
                         </fieldset>
                         <% } %>
-                         <% } %>                                               	                                
+                         <% } %>
                     </td>
                 </tr>
                 <tr>
@@ -1106,12 +1107,12 @@ if (openInTabs){
                         </div>
                     </td>
                 	<td>&nbsp;</td>
-                </tr> 
+                </tr>
 
                 <tr><td colspan="9" >
    <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !ackedOrFiled ) {%>
-                                                    
-                                                    
+
+
                                                     									<%
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
@@ -1129,7 +1130,7 @@ if (openInTabs){
 													  		JSONObject macro = macros.getJSONObject(x);
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
-													  		
+
 													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=docId%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
@@ -1137,16 +1138,16 @@ if (openInTabs){
 											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
 											    }
 											  %>
-											    
+
 											  </div>
 											</div>
 									<% } %>
-									                                               
+
                                                         <input type="submit" id="ackBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-                                                    
+
                                                         <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" class="btn" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
-                                                   
-                                                        <input type="button" id="fwdBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');"> 
+
+                                                        <input type="button" id="fwdBtn2_<%=docId%>" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(355, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>', 'providerselect');">
 
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
@@ -1158,7 +1159,7 @@ if (openInTabs){
 
                                                         <!--<input type="button" id="closeBtn2_<%=docId%>" class="btn" value=" <bean:message key="global.btnClose"/> " onClick="window.close()"> -->
                                                         <input type="button" id="msgBtn2_<%=docId%>" class="btn" value="<bean:message key="caseload.msgMsg"/>" onClick="handleDocSave('<%=docId%>','msgLab');return false;" <%=btnDisabled %> />
-                                                        
+
                                                 <%
                                                 if(org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
                                                 %>
@@ -1169,13 +1170,13 @@ if (openInTabs){
                                                 <% if(recall){%>
                                                         <input type="button" id="recallBtn2_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
-                                                        
+
                                                 <div class="dropdowns" id="dropdown2_<%=docId%>" disabled>
                                                     <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret"></span></button>
                                                     <div class="dropdowns-content">
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
-                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabFIT'); return false;">FIT</a> 
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a>
+                                                        <a href="#" onclick="handleDocSave('<%=docId%>','msgLabFIT'); return false;">FIT</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabBMD'); return false;">BMD</a>
                                                         <a href="#" onclick="handleDocSave('<%=docId%>','msgLabPSA'); return false;">PSA</a>
@@ -1188,17 +1189,17 @@ if (openInTabs){
                                                 <% } %>
                                                         <a href="#" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
                                                         <a href="#" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
-                                            <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                                                        <a href="#" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a> 
-                                            <% } %>     
+                                            <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                                        <a href="#" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
+                                            <% } %>
                                                 <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                         <a href="#" onClick="popup(700,960,'<%=url2%>','file download')"><bean:message key="global.btnPDF"/></a>
                                             <%if( !ackedOrFiled ) { %>
                                                         <a href="#" onClick="fileDoc('<%=docId%>');"><bean:message key="oscarMDS.index.btnFile"/></a>
-                                                        
-                                            <% } %>        
+
+                                            <% } %>
                                                     </div>
-                                                </div>                                                     
+                                                </div>
                                                         <input type="button" id="rxBtn2_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
 
                                                         <input type="button" id="refileDoc2_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
@@ -1208,7 +1209,7 @@ if (openInTabs){
             <hr width="100%" color="red"></td></tr>
             </table>
 
-        </div>        
+        </div>
 <!--
 
 //-->
@@ -1217,29 +1218,29 @@ if (openInTabs){
         if($('displayDocumentAs_<%=docId%>').value=="<%=UserProperty.PDF%>") {
             showPDF('<%=docId%>',contextpath);
         }
-       
-        var tmp;      
-        
+
+        var tmp;
+
         function setupDemoAutoCompletion() {
         	if(jQuery("#autocompletedemo<%=docId%>") ){
-        		
+
         		var url;
                 if( jQuery("#activeOnly<%=docId%>").is(":checked") ) {
                 	url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=" + jQuery("#activeOnly<%=docId%>").val();
                 }
                 else {
                 	url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true";
-                } 
-                
+                }
+
 	            jQuery( "#autocompletedemo<%=docId%>" ).autocomplete({
 	              source: url,
-	              minLength: 2,  
-	              
+	              minLength: 2,
+
 	              focus: function( event, ui ) {
-	            	  jQuery( "#autocompletedemo<%=docId%>" ).val( ui.item.label );	            	 
+	            	  jQuery( "#autocompletedemo<%=docId%>" ).val( ui.item.label );
 	                  return false;
 	              },
-	              select: function(event, ui) {    	  
+	              select: function(event, ui) {
 	            	  jQuery( "#autocompletedemo<%=docId%>" ).val(ui.item.label);
 	            	  jQuery( "#demofind<%=docId%>").val(ui.item.value);
 	            	  jQuery( "#demofindName<%=docId%>" ).val(ui.item.formattedName);
@@ -1248,7 +1249,7 @@ if (openInTabs){
 	            	  if( ui.item.providerNo != undefined && ui.item.providerNo != null &&ui.item.providerNo != "" && ui.item.providerNo != "null" ) {
 	            		  addDocToList(ui.item.providerNo, ui.item.provider + " (MRP)", "<%=docId%>");
 	            	  }
-	            	  
+
 	            	  //enable Save button whenever a selection is made
 	                  jQuery('#save<%=docId%>').removeAttr('disabled');
 	                  jQuery('#saveNext<%=docId%>').removeAttr('disabled');
@@ -1260,37 +1261,37 @@ if (openInTabs){
 	                  jQuery('#mainMaster_<%=docId%>').removeAttr('disabled');
 	                  jQuery('#mainApptHistory_<%=docId%>').removeAttr('disabled');
 	                  return false;
-	              }      
+	              }
 	            });
         	}
           }
-        
-        
+
+
         jQuery(setupDemoAutoCompletion());
-        
+
         function setupProviderAutoCompletion() {
         	var url = "<%= request.getContextPath() %>/provider/SearchProvider.do?method=labSearch";
-        	
+
         	jQuery( "#autocompleteprov<%=docId%>" ).autocomplete({
 	              source: url,
-	              minLength: 2,  
-	              
+	              minLength: 2,
+
 	              focus: function( event, ui ) {
-	            	  jQuery( "#autocompleteprov<%=docId%>" ).val( ui.item.label );	            	 
+	            	  jQuery( "#autocompleteprov<%=docId%>" ).val( ui.item.label );
 	                  return false;
 	              },
-	              select: function(event, ui) {    	  
+	              select: function(event, ui) {
 	            	  jQuery( "#autocompleteprov<%=docId%>" ).val("");
 	            	  jQuery( "#provfind<%=docId%>").val(ui.item.value);
 	            	  addDocToList(ui.item.value, ui.item.label, "<%=docId%>");
-	            	  
+
 	            	  return false;
-	              }      
+	              }
 	            });
       	}
-      
+
         jQuery(setupProviderAutoCompletion());
-        
+
 
 </script>
 <% if (request.getParameter("inWindow") != null && request.getParameter("inWindow").equalsIgnoreCase("true")) {  %>
