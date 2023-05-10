@@ -36,8 +36,11 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -47,6 +50,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.lowagie.text.DocumentException;
+import org.apache.tika.io.IOUtils;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.sun.pdfview.PDFFile;
@@ -76,6 +82,11 @@ import org.oscarehr.caisi_integrator.ws.FacilityIdIntegerCompositePk;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
+import org.oscarehr.common.dao.ClinicDAO;
+import org.oscarehr.common.dao.FaxConfigDao;
+import org.oscarehr.common.dao.FaxJobDao;
+import org.oscarehr.common.model.FaxConfig;
+import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.common.dao.CtlDocumentDao;
 import org.oscarehr.common.dao.DocumentDao;
 import org.oscarehr.common.dao.PatientLabRoutingDao;
@@ -104,6 +115,7 @@ import oscar.log.LogConst;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarLab.ca.on.LabResultData;
+import oscar.OscarProperties;
 import oscar.util.UtilDateUtilities;
 
 /**
