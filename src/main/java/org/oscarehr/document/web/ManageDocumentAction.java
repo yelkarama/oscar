@@ -831,6 +831,128 @@ public class ManageDocumentAction extends DispatchAction {
 		}
 	}
 
+	public ActionForward fax(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+		String docId = request.getParameter("docId");
+		String[] tmpRecipients = request.getParameterValues("faxRecipients");
+		String provider_no = loggedInInfo.getLoggedInProviderNo();
+		Document doc = documentDao.getDocument(docId);
+		PatientLabRoutingDao patientLabRoutingDao = SpringUtils.getBean(PatientLabRoutingDao.class);
+
+		String demoNo = request.getParameter("demoNo");
+
+		for (int i = 0; tmpRecipients != null && i < tmpRecipients.length; i++) {
+			tmpRecipients[i] = tmpRecipients[i].trim().replaceAll("[^0-9]", "");
+		}
+		ArrayList<String> recipients = tmpRecipients == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(tmpRecipients));
+
+		// Removing duplicate phone numbers.
+		recipients = new ArrayList<String>(new HashSet<String>(recipients));
+
+		// Writing consultation request to disk as a pdf.
+		String path =  OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+		// File documentDir = new File(docdownload);
+
+		String faxPdf = String.format("%s%s%s", path, File.separator, doc.getDocfilename());
+
+		FileOutputStream fos = null;
+
+		String tempPath = System.getProperty("java.io.tmpdir");
+		String faxClinicId = OscarProperties.getInstance().getProperty("fax_clinic_id","1234");
+		String faxNumber = "";
+		ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
+		if(!faxClinicId.equals("") && clinicDAO.find(Integer.parseInt(faxClinicId))!=null){
+			faxNumber = clinicDAO.find(Integer.parseInt(faxClinicId)).getClinicFax();
+			faxNumber = faxNumber.replaceAll("[^0-9]", "");
+		}
+
+
+        PDDocument pdfReader = PDDocument.load(new File(faxPdf));
+		int numPages = pdfReader.getNumberOfPages();
+		pdfReader.close();
+
+
+		FaxJob faxJob = null;
+		FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
+		FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+
+		List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
+		boolean validFaxNumber = false;
+
+		for (int i = 0; i < recipients.size(); i++) {
+			String faxNo = recipients.get(i).replaceAll("\\D", "");
+			if (faxNo.length() < 7) {
+				throw new DocumentException("Document target fax number '" + faxNo + "' is invalid.");
+			}
+
+			String tempName = "DOC-" + faxClinicId + docId + "." + String.valueOf(i) + "." + System.currentTimeMillis();
+
+			String tempPdf = String.format("%s%s%s.pdf", tempPath, File.separator, tempName);
+			String tempTxt = String.format("%s%s%s.txt", tempPath, File.separator, tempName);
+
+			// Copying the fax pdf.
+			FileUtils.copyFile(new File(faxPdf), new File(tempPdf));
+
+			// Creating text file with the specialists fax number.
+			PrintWriter pw = null;
+
+			try {
+				fos = new FileOutputStream(tempTxt);
+				pw = new PrintWriter(fos);
+				pw.println(faxNo);
+			} finally {
+				IOUtils.closeQuietly(pw);
+				IOUtils.closeQuietly(fos);
+			}
+
+			// A little sanity check to ensure both files exist.
+			if (!new File(tempPdf).exists() || !new File(tempTxt).exists()) {
+				throw new DocumentException("Unable to create file for fax of document " + docId + ".");
+			}
+
+			validFaxNumber = false;
+
+			faxJob = new FaxJob();
+			faxJob.setDestination(faxNo);
+			faxJob.setFile_name(doc.getDocfilename());
+			faxJob.setNumPages(numPages);
+			faxJob.setFax_line(faxNumber);
+			faxJob.setStamp(new Date());
+			faxJob.setOscarUser(provider_no);
+			faxJob.setDemographicNo(Integer.parseInt(demoNo));
+
+			for (FaxConfig faxConfig : faxConfigs) {
+				if (faxConfig.getFaxNumber().equals(faxNumber)) {
+					faxJob.setStatus(FaxJob.STATUS.SENT);
+					faxJob.setUser(faxConfig.getFaxUser());
+					validFaxNumber = true;
+					break;
+				}
+			}
+
+			if (!validFaxNumber && faxConfigs.size() > 0) {
+				faxJob.setStatus(FaxJob.STATUS.SENT);
+				faxJob.setUser(faxConfigs.get(0).getFaxUser());
+				validFaxNumber = true;
+			}
+			
+			if( !validFaxNumber ) {
+				faxJob.setStatus(FaxJob.STATUS.ERROR);
+				log.error("PROBLEM CREATING FAX JOB", new DocumentException("There are no fax configurations setup for this clinic."));
+			}
+			else {
+				faxJob.setStatus(FaxJob.STATUS.SENT);
+			}
+
+			faxJobDao.persist(faxJob);
+		}
+
+		LogAction.addLog(provider_no, LogConst.SENT, LogConst.CON_FAX, "DOCUMENT  "+ docId);
+		request.getSession().setAttribute("faxSuccessful", validFaxNumber);
+
+		return null;
+	}
+
         public void viewDocumentInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
                 response.setContentType("text/html");
 		doViewDocumentInfo(request, response.getWriter(),true,true);
