@@ -250,8 +250,7 @@ i[class*='icon-']:hover {color:#0088cc;}
 </style>
 
 <!--
-<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+    migrate is needed to support jquery-ui-1.12.1.min.js
 -->
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
