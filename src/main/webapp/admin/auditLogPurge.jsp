@@ -150,13 +150,13 @@ function resetForm() {
 </div>
 	<br/>
 
-	<input type="submit" value="Purge"/>&nbsp;&nbsp;<input type="button" value="Reset" onclick="return resetForm();"/>
+	<input type="submit" value="Purge" class="btn btn-danger" >&nbsp;&nbsp;<input type="button" class="btn" value="Reset" onclick="return resetForm();">
 
 </form>
 
 <% } else { %>
 	<br/>
-	<p style="color:red"><%=msg %></p>
+	<div class="alert alert-danger"><%=msg %></div>
 
 <% } %>
 </div><!--span4-->
