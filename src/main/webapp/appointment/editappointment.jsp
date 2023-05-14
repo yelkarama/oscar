@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <%@page import="org.oscarehr.casemgmt.service.CaseManagementManager"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -156,15 +156,15 @@
 
     ApptData apptObj = ApptUtil.getAppointmentFromSession(request);
 
- List<BillingONCHeader1> cheader1s = null;
- if("ON".equals(OscarProperties.getInstance().getProperty("billregion", "ON"))) {
- 	cheader1s = cheader1Dao.getBillCheader1ByDemographicNo(Integer.parseInt(demographic_nox));
- }
+    List<BillingONCHeader1> cheader1s = null;
+    if("ON".equals(OscarProperties.getInstance().getProperty("billregion", "ON"))) {
+        cheader1s = cheader1Dao.getBillCheader1ByDemographicNo(Integer.parseInt(demographic_nox));
+    }
 
- BillingONExtDao billingOnExtDao = (BillingONExtDao)SpringUtils.getBean(BillingONExtDao.class);
+    BillingONExtDao billingOnExtDao = (BillingONExtDao)SpringUtils.getBean(BillingONExtDao.class);
     oscar.OscarProperties pros = oscar.OscarProperties.getInstance();
     String strEditable = pros.getProperty("ENABLE_EDIT_APPT_STATUS");
-  String apptStatusHere = pros.getProperty("appt_status_here");
+    String apptStatusHere = pros.getProperty("appt_status_here");
 
     AppointmentStatusMgr apptStatusMgr =  new AppointmentStatusMgrImpl();
     List allStatus = apptStatusMgr.getAllActiveStatus();
@@ -178,21 +178,78 @@
 
 	String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_APPOINTMENT;
 	CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+
+// multisites start ==================
+    boolean isSiteSelected = false;
+    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
+// multisites end ==================
+
+	Appointment appt = null;
+	String demono="", chartno="", phone="", rosterstatus="", alert="", doctorNo="";
+	String strApptDate = bFirstDisp?"":request.getParameter("appointment_date") ;
+
+	if (bFirstDisp) {
+		appt = appointmentDao.find(Integer.parseInt(appointment_no));
+		pageContext.setAttribute("appointment", appt);
+    }
+
+    String statusCode = request.getParameter("status");
+    String importedStatus = null;
+    if (bFirstDisp){
+        statusCode =appt.getStatus();
+        importedStatus = appt.getImportedStatus();
+    }
+
+    int curSelect =-1;
+    String signOrVerify = "";
+    if (statusCode.length() >= 2){
+        signOrVerify = statusCode.substring(1,2);
+        statusCode = statusCode.substring(0,1);
+    }
+	if (bFirstDisp) {
+		demono = String.valueOf(appt.getDemographicNo());
+	} else if (request.getParameter("demographic_no")!=null && !request.getParameter("demographic_no").equals("")) {
+		demono = request.getParameter("demographic_no");
+	}
+
+	//get chart_no from demographic table if it exists
+	if (!demono.equals("0") && !demono.equals("")) {
+		Demographic d = demographicManager.getDemographic(loggedInInfo, demono);
+		if(d != null) {
+			chartno = d.getChartNo();
+			phone = d.getPhone();
+			rosterstatus = d.getRosterStatus();
+		}
+
+		DemographicCust demographicCust = demographicCustDao.find(Integer.parseInt(demono));
+		if(demographicCust != null) {
+			alert = demographicCust.getAlert();
+		}
+
+	}
+
+        OscarProperties props = OscarProperties.getInstance();
+        String displayStyle="display:none";
+        String myGroupNo = providerPreference.getMyGroupNo();
+        boolean bMultipleSameDayGroupAppt = false;
 %>
+
 <html:html locale="true">
 <head>
 <title><bean:message key="appointment.editappointment.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/helpdetails.css" type="text/css">
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/css/datepicker.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/css/font-awesome.min.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/css/helpdetails.css" rel="stylesheet">
 
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="${ pageContext.request.contextPath }/js/global.js"></script>
 
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-<style type="text/css">
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
+<style>
 body, html {
   --color: #945;
   --size: 2rem;
@@ -207,7 +264,7 @@ body, html {
   background-position: var(--margin) 50%;
   background-repeat: no-repeat;
   background-size: var(--size) var(--size);
-  border: var(--border) ;//solid var(--color);
+  border: var(--border) ;
   border-radius: var(--borderRadius);
   color: #222;
   font-size: var(--size);
@@ -216,6 +273,27 @@ body, html {
 }
 </style>
 
+<%         if (bMultisites) { %>
+<style>
+	        <% for (Site s:sites) { %>
+.<%=s.getShortName()%> {
+    background-color:<%=s.getBgColor()%>;
+}
+	        <% } %>
+</style>
+<% } %>
+<%              if (strEditable!=null && strEditable.equalsIgnoreCase("yes")) { %>
+<style>
+	        <% for (int i = 0; i < allStatus.size(); i++) {
+                if (((AppointmentStatus)allStatus.get(i)).getStatus().equals(statusCode)) { curSelect=i;}
+
+%>
+.<%=((AppointmentStatus)allStatus.get(i)).getStatus()%> {
+    background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>;
+}
+	        <% } %>
+</style>
+<% } %>
 <script>
 function updateTime(){
     const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
@@ -246,12 +324,13 @@ console.log("minute="+minute+" minDeg ="+minuteDeg);
      jQuery.noConflict();
    </script>
 <oscar:customInterface section="editappt"/>
-<script language="javascript">
-<!-- // start javascript
+<script>
+
 function toggleView() {
     showHideItem('editAppointment');
     showHideItem('viewAppointment');
 }
+
 function demographicdetail(vheight,vwidth) {
   if(document.forms['EDITAPPT'].demographic_no.value=="") return;
   self.close();
@@ -259,6 +338,7 @@ function demographicdetail(vheight,vwidth) {
   //windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=600,screenY=200,top=0,left=0";
   var popup=window.open(page, "demographic")//, windowprops);
 }
+
 function onButRepeat() {
 	if(calculateEndTime()) {
 		document.forms[0].action = "appointmenteditrepeatbooking.jsp" ;
@@ -280,14 +360,17 @@ function onBlockFieldFocus(obj) {
   document.EDITAPPT.keyword.select();
   window.alert("<bean:message key="Appointment.msgFillNameField"/>");
 }
+
 function labelprint(vheight,vwidth,varpage) {
   var page = "" + varpage;
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=600,screenY=200,top=0,left=0";
   var popup=window.open(page, "encounterhist", windowprops);
 }
+
 function onButDelete() {
   saveTemp=1;
 }
+
 function onButUpdate() {
   saveTemp=2;
 }
@@ -303,9 +386,11 @@ function onButCancel(){
       window.location='appointmentcontrol.jsp?buttoncancel=Cancel Appt&displaymode=Update Appt&appointment_no=<%=appointment_no%>';
    }
 }
+
 function upCaseCtrl(ctrl) {
 	ctrl.value = ctrl.value.toUpperCase();
 }
+
 function onSub() {
   if( saveTemp==1 ) {
     var aptStat = document.EDITAPPT.status.value;
@@ -320,8 +405,6 @@ function onSub() {
   } else
       return true;
 }
-
-
 
 function calculateEndTime() {
   var stime = document.EDITAPPT.start_time.value;
@@ -507,7 +590,6 @@ function setType(typeSel,reasonSel,locSel,durSel,notesSel,resSel) {
   }
 }
 
-// stop javascript -->
 </script>
 
 <script>
@@ -561,10 +643,20 @@ function parseSearch() {
     }
 }
 </script>
+<script>
+var loc = document.forms['EDITAPPT'].location;
+if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
 
+jQuery(document).ready(function(){
+	var belowTbl = jQuery("#belowTbl");
+	if (belowTbl != null && belowTbl.length > 0 && belowTbl.find("tr").length == 2) {
+		jQuery(belowTbl.find("tr")[1]).remove();
+	}
+});
+
+</script>
 </head>
-<body onload="setfocus();updateTime();" bgproperties="fixed"
-      topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+<body onload="setfocus();updateTime();" >
 <!-- The mobile optimized page is split into two sections: viewing and editing an appointment
      In the mobile version, we only display the edit section first if we are returning from a search -->
 <div id="editAppointment" style="display:<%= (isMobileOptimized && bFirstDisp) ? "none":"block"%>;">
@@ -581,14 +673,8 @@ function parseSearch() {
             <% } %>
 
  <%
-	Appointment appt = null;
-	String demono="", chartno="", phone="", rosterstatus="", alert="", doctorNo="";
-	String strApptDate = bFirstDisp?"":request.getParameter("appointment_date") ;
-
 
 	if (bFirstDisp) {
-		appt = appointmentDao.find(Integer.parseInt(appointment_no));
-		pageContext.setAttribute("appointment", appt);
 
     	if(appt != null && !StringUtils.isEmpty(appt.getProviderNo())) {
      		ProviderData prov = providerDao.find(appt.getProviderNo());
@@ -609,8 +695,6 @@ function parseSearch() {
     </div>
 
 <%
-
-
 		if (appt == null) {
 %>
 <bean:message key="appointment.editappointment.msgNoSuchAppointment" />
@@ -626,34 +710,10 @@ function parseSearch() {
     </div>
 <%
     }
+%>
 
+<%
 
-	if (bFirstDisp) {
-		demono = String.valueOf(appt.getDemographicNo());
-	} else if (request.getParameter("demographic_no")!=null && !request.getParameter("demographic_no").equals("")) {
-		demono = request.getParameter("demographic_no");
-	}
-
-	//get chart_no from demographic table if it exists
-	if (!demono.equals("0") && !demono.equals("")) {
-		Demographic d = demographicManager.getDemographic(loggedInInfo, demono);
-		if(d != null) {
-			chartno = d.getChartNo();
-			phone = d.getPhone();
-			rosterstatus = d.getRosterStatus();
-		}
-
-		DemographicCust demographicCust = demographicCustDao.find(Integer.parseInt(demono));
-		if(demographicCust != null) {
-			alert = demographicCust.getAlert();
-		}
-
-	}
-
-        OscarProperties props = OscarProperties.getInstance();
-        String displayStyle="display:none";
-        String myGroupNo = providerPreference.getMyGroupNo();
-        boolean bMultipleSameDayGroupAppt = false;
         if (props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {
 
             if (!bFirstDisp && !demono.equals("0") && !demono.equals("")) {
@@ -810,8 +870,8 @@ function parseSearch() {
         </tr>
         <tr>
             <td></td><td>
-				<textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" placeholder="<bean:message key="Appointment.formReason" />"
-					cols="18"><%=Encode.forHtmlContent(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
+				<textarea id="reason" name="reason" maxlength="80" rows="8" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
+
             </td>
         </tr>
         <tr>
@@ -820,12 +880,8 @@ function parseSearch() {
             </td>
             <td>
             <%
-                        // multisites start ==================
-                boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+            // multisites start ==================
 
-
-            List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
-            // multisites end ==================
 
             boolean bMoreAddr = bMultisites? true : props.getProperty("scheduleSiteID", "").equals("") ? false : true;
 
@@ -833,17 +889,8 @@ function parseSearch() {
             String colo = bMultisites
                                         ? ApptUtil.getColorFromLocation(sites, loc)
                                         : bMoreAddr? ApptUtil.getColorFromLocation(props.getProperty("scheduleSiteID", ""), props.getProperty("scheduleSiteColor", ""),loc) : "white";
-            %>
-        <% // multisites start ==================
-        boolean isSiteSelected = false;
-        if (bMultisites) { %>
-<style>
-	        <% for (Site s:sites) { %>
-.<%=s.getShortName()%> {
-    background-color:<%=s.getBgColor()%>;
-}
-	        <% } %>
-</style>
+
+            if (bMultisites) { %>
 				        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 				<%
 					StringBuilder sb = new StringBuilder();
@@ -866,13 +913,14 @@ function parseSearch() {
         %>
 		<select name="location" >
                <%
-               String location = bFirstDisp?(appt.getLocation()):request.getParameter("location");
+               String location = Encode.forJava(bFirstDisp?(appt.getLocation()):request.getParameter("location"));
                if (programs != null && !programs.isEmpty()) {
 		       	for (Program program : programs) {
 		       	    String description = StringUtils.isBlank(program.getLocation()) ? program.getName() : program.getLocation();
 		   	%>
-		        <option value="<%=program.getId()%>" <%=(program.getId().toString().equals(location) ? "selected='selected'" : "") %>><%=StringEscapeUtils.escapeHtml(description)%></option>
-		    <%	}
+		        <option value="<%=program.getId()%>" <%=(program.getId().toString().equals(location) ? "selected='selected'" : "") %>><%=Encode.forHtmlContent(description)%></option>
+
+ 		    <%	}
                }
 		  	%>
                </select>
@@ -921,7 +969,7 @@ function parseSearch() {
                 <bean:message key="Appointment.CreateDate" />:
             </td>
             <td>
-                <INPUT TYPE="hidden" NAME="createDate" readonly	VALUE="<%=origDate%>">
+                <INPUT TYPE="hidden" NAME="createDate" VALUE="<%=origDate%>">
                 <%=dateString1%>
             </td>
         </tr>
@@ -948,30 +996,9 @@ function parseSearch() {
             </td>
             <td>
             <%
-              String statusCode = request.getParameter("status");
-			  String importedStatus = null;
-              if (bFirstDisp){
-                  statusCode =appt.getStatus();
-                  importedStatus = appt.getImportedStatus();
-              }
 
-              int curSelect =-1;
-              String signOrVerify = "";
-              if (statusCode.length() >= 2){
-                  signOrVerify = statusCode.substring(1,2);
-                  statusCode = statusCode.substring(0,1);
-              }
               if (strEditable!=null && strEditable.equalsIgnoreCase("yes")) { %>
-<style>
-	        <% for (int i = 0; i < allStatus.size(); i++) {
-                if (((AppointmentStatus)allStatus.get(i)).getStatus().equals(statusCode)) { curSelect=i;}
 
-%>
-.<%=((AppointmentStatus)allStatus.get(i)).getStatus()%> {
-    background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>;
-}
-	        <% } %>
-</style>
                 <select name="status" style="background-color:<%=((AppointmentStatus)allStatus.get(curSelect)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
 					<% for (int i = 0; i < allStatus.size(); i++) { %>
 					<option class="<%=((AppointmentStatus)allStatus.get(i)).getStatus()%>" style="background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>"
@@ -1010,7 +1037,7 @@ function parseSearch() {
         </tr>
         <tr>
             <td>
-                <a href="#"onclick="demographicdetail(550,700)" class="btn btn-link" style="padding-left:0px;">
+                <a href="#" onclick="demographicdetail(550,700)" class="btn btn-link" style="padding-left:0px;">
                     <bean:message key="global.master" /></a>
             </td>
             <td>
@@ -1034,8 +1061,7 @@ function parseSearch() {
                 <bean:message key="Appointment.formNotes" />:
             </td>
             <td>
-                <textarea name="notes" tabindex="3" rows="2" wrap="virtual"
-					cols="18" maxlength="255"><%=bFirstDisp?appt.getNotes():request.getParameter("notes")%></textarea>
+				<textarea name="notes" maxlength="80" rows="9" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getNotes():request.getParameter("notes"))%></textarea>
             </td>
         </tr>
         <tr>
@@ -1045,7 +1071,7 @@ function parseSearch() {
             <td>
                 <input type="TEXT"
 					name="resources" tabindex="5"
-					value="<%=bFirstDisp?appt.getResources():request.getParameter("resources")%>" >
+					value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getResources():request.getParameter("resources"))%>"
             </td>
         </tr>
         <tr>
@@ -1074,9 +1100,9 @@ function parseSearch() {
                 <bean:message key="Appointment.formLastTime" />:
             </td>
             <td>
-                <INPUT TYPE="hidden" NAME="lastcreatedatetime" readonly
-                    VALUE="<%=bFirstDisp?lastDateTime:request.getParameter("lastcreatedatetime")%>"
-                    > <%=dateString2%>
+                <INPUT TYPE="hidden" NAME="lastcreatedatetime"
+                    VALUE="<%=Encode.forHtmlContent(bFirstDisp?lastDateTime:request.getParameter("lastcreatedatetime"))%>"
+                    > <%=Encode.forHtmlContent(dateString2)%>
                 <INPUT TYPE="hidden" NAME="createdatetime" VALUE="<%=strDateTime%>">
 				<INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
 				<INPUT TYPE="hidden" NAME="dboperation" VALUE="">
@@ -1104,7 +1130,7 @@ function parseSearch() {
             			}
             		}
             	%>
-            	<input type="checkbox" name="urgency" value="critical" <%=urgencyChecked%>/>
+            	<input type="checkbox" name="urgency" value="critical" <%=urgencyChecked%> >
             </td>
         </tr>
             <% String emailReminder = pros.getProperty("emailApptReminder");
@@ -1131,7 +1157,7 @@ function parseSearch() {
 <table class="buttonBar deep">
 	<tr>
             <% if (!bMultipleSameDayGroupAppt) { %>
-        <td align="left"><input type="submit" class="btn btn-primary" id="updateButton"
+        <td style="text-align: left;"><input type="submit" class="btn btn-primary" id="updateButton"
 			onclick="document.forms['EDITAPPT'].displaymode.value='Update Appt'; onButUpdate();"
 			value="<bean:message key="appointment.editappointment.btnUpdateAppointment"/>">
              <% if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
@@ -1155,7 +1181,7 @@ function parseSearch() {
 			onClick="window.location='appointmentcontrol.jsp?buttoncancel=No Show&displaymode=Update Appt&appointment_no=<%=appointment_no%>'">
 		<br>
 			 <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=appointment_no%>','anwin','width=400,height=500');">
-            	<img src="<%=request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/>
+            	<img src="<%=request.getContextPath() %>/images/notes.gif" alt="Annotation" height="16" width="13" >
             </a>
             <a class="btn"
 			onClick="window.location='appointmentcontrol.jsp?displaymode=PrintCard&appointment_no=<%=appointment_no%>'">
@@ -1163,11 +1189,9 @@ function parseSearch() {
             <a class="btn"
 			onClick="window.open('<%=request.getContextPath() %>/demographic/demographiclabelprintsetting.jsp?demographic_no='+document.EDITAPPT.demographic_no.value, 'labelprint','height=550,width=700,location=no,scrollbars=yes,menubars=no,toolbars=no' )">
 			<i class="icon-print"></i>&nbsp;<bean:message key="appointment.editappointment.btnLabelPrint"/></a>
-            <a class="btn"
-			onclick="document.forms['EDITAPPT'].displaymode.value='Cut';localStorage.setItem('copyPaste','1');document.forms['EDITAPPT'].submit();"/>
+            <a class="btn" 			onclick="document.forms['EDITAPPT'].displaymode.value='Cut';localStorage.setItem('copyPaste','1');document.forms['EDITAPPT'].submit();" >
 			<i class="icon-cut"></i>&nbsp;<bean:message key="appointment.appointmentedit.cut"/></a>
-            <a class="btn" class="btn"
-			onclick="document.forms['EDITAPPT'].displaymode.value='Copy';localStorage.setItem('copyPaste','1');document.forms['EDITAPPT'].submit();" />
+            <a class="btn"  	onclick="document.forms['EDITAPPT'].displaymode.value='Copy';localStorage.setItem('copyPaste','1');document.forms['EDITAPPT'].submit();" >
 			<i class="icon-copy"></i>&nbsp;<bean:message key="appointment.appointmentedit.copy"/> </a>
 		    <% if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
                     <input type="button" id="repeatButton" class="btn"
@@ -1183,22 +1207,22 @@ function parseSearch() {
 
 </div>
 <div id="bottomInfo">
-<table width="95%" align="center">
-	<tr>
-		<td><bean:message key="Appointment.msgTelephone" />: <%= StringUtils.trimToEmpty(phone)%><br>
-		<bean:message key="Appointment.msgRosterStatus" />: <%=StringUtils.trimToEmpty(rosterstatus)%>
+<table style="width:95%;">
+	<tr >
+		<td style="padding-left:10px;"><bean:message key="Appointment.msgTelephone" />: <%= Encode.forHtmlContent(StringUtils.trimToEmpty(phone))%><br>
+		<bean:message key="Appointment.msgRosterStatus" />: <%=Encode.forHtmlContent(StringUtils.trimToEmpty(rosterstatus))%>
 		</td>
 		<% if (alert!=null && !alert.equals("")) { %>
-		<td class="alert alert-error"><%=alert%></td>
+		<td class="alert alert-error"><%=Encode.forHtmlContent(alert)%></td>
 		<% } %>
 	</tr>
 </table>
-<hr />
+<hr>
 
 <% if (isSiteSelected) { %>
-<table width="95%" align="center" id="belowTbl">
+<table style="width:95%; padding:3px;" id="belowTbl">
 	<tr>
-		<td>
+		<td colspan="4">
                      <%
                      if(bFirstDisp && apptObj!=null) {
 
@@ -1217,10 +1241,10 @@ function parseSearch() {
 	</tr>
 	<%if(cheader1s != null && cheader1s.size()>0){%>
 		<tr>
-		<th width="40%"><font color="red">Outstanding 3rd Invoices</font></th>
-		<th width="20%"><font color="red">Invoice Date</font></th>
-		<th><font color="red">Amount</font></th>
-		<th><font color="red">Balance</font></th>
+		<th style="color:red;">Outstanding 3rd Invoices</th>
+		<th style="color:red;">Invoice Date</th>
+		<th style="color:red;">Amount</th>
+		<th style="color:red;">Balance</th>
 		</tr>
 		<%
 		java.text.SimpleDateFormat fm = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1234,10 +1258,10 @@ function parseSearch() {
 
             	if(balance.compareTo(BigDecimal.ZERO) != 0) { %>
 					<tr>
-						<td align="center"><a href="javascript:void(0)" onclick="popupPage(600,800, '<%=request.getContextPath() %>/billing/CA/ON/billingONCorrection.jsp?billing_no=<%=cheader1s.get(i).getId()%>')"><font color="red">Inv #<%=cheader1s.get(i).getId() %></font></a></td>
-						<td align="center"><font color="red"><%=fm.format(cheader1s.get(i).getTimestamp()) %></font></td>
-						<td align="center"><font color="red">$<%=cheader1s.get(i).getTotal() %></font></td>
-						<td align="center"><font color="red">$<%=balance %></font></td>
+						<td style="text-align: center; color:red;"><a href="javascript:void(0)" onclick="popupPage(600,800, '<%=request.getContextPath() %>/billing/CA/ON/billingONCorrection.jsp?billing_no=<%=cheader1s.get(i).getId()%>')">Inv #<%=cheader1s.get(i).getId() %></a></td>
+						<td style="text-align: center; color:red;"><%=fm.format(cheader1s.get(i).getTimestamp()) %></td>
+						<td style="text-align: center; color:red;">$<%=cheader1s.get(i).getTotal() %></td>
+						<td style="text-align: center; color:red;">$<%=balance %></td>
 					</tr>
 				<%}
 			}
@@ -1332,7 +1356,7 @@ Currently this is only used in the mobile version -->
                     if (comma != -1)
                         apptName = apptName.substring(0, comma) + ", " + apptName.substring(comma+1);
                 %>
-                <%=apptName%>
+                <%=Encode.forHtmlContent(apptName)%>
             </a></li>
             <li><div class="label"><bean:message key="Appointment.formDate" />: </div>
                 <div class="info"><%=formatDate%></div>
@@ -1349,11 +1373,9 @@ Currently this is only used in the mobile version -->
       }
 %>
             <li><div class="label"><bean:message key="Appointment.formStatus" />: </div>
-                <div class="info">
-                <font style="background-color:<%=apptStatus.getColor()%>; font-weight:bold;">
-                    <img src="<%=request.getContextPath() %>/images/<%=apptStatus.getIcon()%>" />
-                    <%=apptStatus.getDescription()%>
-                </font>
+                <div class="info" style="background-color:<%=apptStatus.getColor()%>; font-weight:bold;">
+                    <img src="<%=request.getContextPath() %>/images/<%=apptStatus.getIcon()%>" alt="image">
+                    <%=Encode.forHtmlContent(apptStatus.getDescription())%>
                 </div>
             </li>
             <li><div class="label"><bean:message key="appointment.editappointment.msgTime" />: </div>
@@ -1361,37 +1383,26 @@ Currently this is only used in the mobile version -->
                 to <%=bFirstDisp ? ConversionUtils.toTimeStringNoSeconds(appt.getEndTime()) : request.getParameter("end_time")%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formType" />: </div>
-                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getType() : request.getParameter("type"))%></div>
+                <div class="info"><%=Encode.forHtmlContent(bFirstDisp ? appt.getType() : request.getParameter("type"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formReason" />: </div>
-                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getReason() : request.getParameter("reason"))%></div>
+                <div class="info"><%=Encode.forHtmlContent(bFirstDisp ? appt.getReason() : request.getParameter("reason"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formLocation" />: </div>
-                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getLocation() : request.getParameter("location"))%></div>
+                <div class="info"><%=Encode.forHtmlContent(bFirstDisp ? appt.getLocation() : request.getParameter("location"))%></div>
             </li>
             <li><div class="label"><bean:message key="Appointment.formResources" />: </div>
-                <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getResources() : request.getParameter("resources"))%></div>
+                <div class="info"><%=Encode.forHtmlContent(bFirstDisp ? appt.getResources() : request.getParameter("resources"))%></div>
             </li>
             <li>&nbsp;</li>
             <li class="notes">
-                <div class="label"><bean:message key="Appointment.formNotes" />: </div>
+                <div class="info"><%=Encode.forHtmlContent(bFirstDisp ? appt.getNotes() : request.getParameter("notes"))%></div>
                 <div class="info"><%=Encode.forHtml(bFirstDisp ? appt.getNotes() : request.getParameter("notes"))%></div>
             </li>
         </ul>
     </div>
 </div> <!-- end of screen to view appointment -->
 </body>
-<script type="text/javascript">
-var loc = document.forms['EDITAPPT'].location;
-if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
 
-jQuery(document).ready(function(){
-	var belowTbl = jQuery("#belowTbl");
-	if (belowTbl != null && belowTbl.length > 0 && belowTbl.find("tr").length == 2) {
-		jQuery(belowTbl.find("tr")[1]).remove();
-	}
-});
-
-</script>
 
 </html:html>
