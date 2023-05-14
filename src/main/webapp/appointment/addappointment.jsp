@@ -174,6 +174,7 @@
 <html:html locale="true">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><bean:message key="appointment.addappointment.title" /></title>
 
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
@@ -185,11 +186,7 @@
 <script src="<%= request.getContextPath() %>/js/checkDate.js"></script>
 <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-
-<title><bean:message key="appointment.addappointment.title" /></title>
-
-
-<style type="text/css">
+<style>
 body, html {
   --color: #945;
   --size: 2rem;
@@ -212,6 +209,28 @@ body, html {
   transition: backgroundImage 0.25s;
 }
 </style>
+<%
+    // multisites start ==================
+    SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
+    List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
+    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    // multisites end ==================
+    if (bMultisites) { %>
+<style>
+	        <% for (Site s:sites) { %>
+.<%=s.getShortName()%> {
+    background-color:<%=s.getBgColor()%>;
+}
+	        <% } %>
+</style>
+    <% } %>
+<style>
+	        <% for (int i = 0; i < allStatus.size(); i++) {%>
+.<%=(allStatus.get(i)).getStatus()%> {
+    background-color:<%=(allStatus.get(i)).getColor()%>;
+}
+	        <% } %>
+</style>
 
 <script>
 
@@ -231,7 +250,7 @@ console.log("minute="+minute+" minDeg ="+minuteDeg);
 
 
 <oscar:customInterface section="addappt"/>
-<script type="text/javascript">
+<script>
 
 function onAdd() {
     return calculateEndTime() ;
@@ -746,8 +765,12 @@ function parseSearch() {
          document.getElementById("search_mode").value="search_hin";
     }
 }
-</script>
 
+// add style for multisites location
+var loc = document.forms['ADDAPPT'].location;
+if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
+
+</script>
 </head>
 <body onLoad="setfocus(); moveAppt(); updateTime(); " >
  <% if (timeoutSecs >0) { %>
@@ -901,7 +924,7 @@ function parseSearch() {
         <% } %></H4>
     </div>
 </div>
-</div>
+<!-- /div -->
 <div>
 
 <div class="container-fluid well" >
@@ -909,7 +932,7 @@ function parseSearch() {
     <table>
         <tr>
             <td>
-                <bean:message key="Appointment.formDate" />&nbsp;<span style="text-color:brown;">(<%=dateString1%>)</span>:
+                <bean:message key="Appointment.formDate" />&nbsp;<span style="color:brown;">(<%=dateString1%>)</span>:
             </td>
             <td>
                 <INPUT TYPE="date" NAME="appointment_date"
@@ -927,14 +950,14 @@ function parseSearch() {
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="font-size:8pt;">
                 <bean:message key="Appointment.formDuration" />:
             </td>
             <td>
                 <INPUT TYPE="number" NAME="duration" id="duration"
                         VALUE="<%=duration%>" onChange="checkPageLock()" onblur="calculateEndTime();">
                 <INPUT TYPE="hidden" NAME="end_time"
-                        VALUE='<%=request.getParameter("end_time")%>' WIDTH="25"
+                        VALUE='<%=request.getParameter("end_time")%>'
                          onChange="checkTimeTypeIn(this)">
             </td>
         </tr>
@@ -979,16 +1002,10 @@ function parseSearch() {
         </tr>
         <tr>
             <td></td><td>
-		    <textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18" maxlength="80"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":request.getParameter("reason")%></textarea>
+		    <textarea id="reason" name="reason" tabindex="2" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18" maxlength="80"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":request.getParameter("reason")%></textarea>
             </td>
         </tr>
             <%
-				    // multisites start ==================
-				    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
-				    SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
-				    List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
-				    // multisites end ==================
-
 				    boolean bMoreAddr = bMultisites? true : props.getProperty("scheduleSiteID", "").equals("") ? false : true;
 				    String tempLoc = "";
 				    if(bFirstDisp && bMoreAddr) {
@@ -1007,13 +1024,6 @@ function parseSearch() {
             <td>
 		<% // multisites start ==================
 		if (bMultisites) { %>
-<style>
-	        <% for (Site s:sites) { %>
-.<%=s.getShortName()%> {
-    background-color:<%=s.getBgColor()%>;
-}
-	        <% } %>
-</style>
 	        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 	        <% for (Site s:sites) { %>
 	                <option value="<%=Encode.forHtmlAttribute(s.getName())%>" class="<%=s.getShortName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=Encode.forHtmlContent(s.getName())%></option>
@@ -1034,7 +1044,7 @@ function parseSearch() {
 			       	for (Program program : programs) {
 			       	    String description = StringUtils.isBlank(program.getLocation()) ? program.getName() : program.getLocation();
 			   	%>
-			        <option value="<%=program.getId()%>" <%=program.getId().toString().equals(sessionLocation) ? "selected='selected'" : ""%>><%=StringEscapeUtils.escapeHtml(description)%></option>
+			        <option value="<%=program.getId()%>" <%=program.getId().toString().equals(sessionLocation) ? "selected='selected'" : ""%>><%=Encode.forHtmlAttribute(description)%></option>
 			    <%	}
                 }
 			  	%>
@@ -1082,13 +1092,7 @@ function parseSearch() {
 				<%
             if (strEditable!=null&&strEditable.equalsIgnoreCase("yes")){
             %>
-<style>
-	        <% for (int i = 0; i < allStatus.size(); i++) {%>
-.<%=(allStatus.get(i)).getStatus()%> {
-    background-color:<%=(allStatus.get(i)).getColor()%>;
-}
-	        <% } %>
-</style>
+
 <select name="status" style="background-color:<%=(allStatus.get(0)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
                     <% for (int i = 0; i < allStatus.size(); i++) { %>
                     <option class="<%=(allStatus.get(i)).getStatus()%>" style="background-color:<%=(allStatus.get(i)).getColor()%>"
@@ -1137,7 +1141,7 @@ function parseSearch() {
                 <bean:message key="Appointment.formNotes" />:
             </td>
             <td>
-                <textarea name="notes" tabindex="3" rows="2" wrap="virtual" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
+                <textarea name="notes" tabindex="3" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
             </td>
         </tr>
         <tr>
@@ -1167,7 +1171,7 @@ function parseSearch() {
             DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(request.getLocale()).withZone(ZoneId.systemDefault());
 
 %>
-                <INPUT TYPE="hidden" NAME="createdatetime" readonly VALUE="<%=strDateTime%>" WIDTH="25" HEIGHT="20" border="0" hspace="2">
+                <INPUT TYPE="hidden" NAME="createdatetime" VALUE="<%=strDateTime%>">
                 <%=create.format(pattern)%>
                 <INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
                 <INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
@@ -1180,7 +1184,7 @@ function parseSearch() {
                 <bean:message key="Appointment.formCritical" /> <i class="icon-warning-sign"></i>:
             </td>
             <td>
-            	<input type="checkbox" name="urgency" value="critical"/><span class="checkmark"></span>
+            	<input type="checkbox" name="urgency" value="critical"><span class="checkmark"></span>
             </td>
         </tr>
             <% String emailReminder = pros.getProperty("emailApptReminder");
@@ -1219,7 +1223,7 @@ function parseSearch() {
             <INPUT TYPE="hidden" NAME="limit1" VALUE="0">
             <INPUT TYPE="hidden" NAME="limit2" VALUE="5">
             <INPUT TYPE="hidden" NAME="ptstatus" VALUE="active">
-			<input type="hidden" name="outofdomain" value="<%=OscarProperties.getInstance().getProperty("pmm.client.search.outside.of.domain.enabled","true")%>"/>
+			<input type="hidden" name="outofdomain" value="<%=OscarProperties.getInstance().getProperty("pmm.client.search.outside.of.domain.enabled","true")%>" >
             <!--input type="hidden" name="displaymode" value="Search " -->
 
 
@@ -1308,15 +1312,15 @@ function parseSearch() {
 
 </div>
 </div>
-
+</div>
 </FORM>
 
 <div class ="span12">
-<table align="center">
+<table style="margin-left:auto;">
 <tr>
-    <td valign="top">
+    <td style="vertical-align: top;">
         <%if( bFromWL && demoNo != null && demoNo.length() > 0 ) {%>
-        <table style="font-size: 9pt;background-color:#e8e8e8; text-align:center;" valign="top" cellpadding="3px">
+        <table style="font-size: 9pt; background-color:#e8e8e8; text-align:center; vertical-align: top; padding:3px;">
             <tr style="background-color:#e8e8e8;">
                 <th colspan="2">
                     <bean:message key="appointment.addappointment.msgDemgraphics"/>
@@ -1326,15 +1330,15 @@ function parseSearch() {
                 </th>
             </tr>
              <tr style="background-color:#fdfdfd">
-                <th style="padding-right: 20px" align="left"><bean:message key="appointment.addappointment.msgHin"/>:</th>
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgHin"/>:</th>
                 <td><%=hin.replace("null", "")%> </td>
             </tr>
             <tr bstyle="background-color:#f3f6f9">
-                <th style="padding-right: 20px"align="left"><bean:message key="appointment.addappointment.msgAddress"/>:</th>
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgAddress"/>:</th>
                 <td><%=StringUtils.trimToEmpty(address)%>, <%=StringUtils.trimToEmpty(city)%>, <%=StringUtils.trimToEmpty(province)%>, <%=StringUtils.trimToEmpty(postal)%></td>
             </tr>
             <tr style="background-color:#fdfdfd">
-                <th style="padding-right: 20px" align="left"><bean:message key="appointment.addappointment.msgPhone"/>:</th>
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgPhone"/>:</th>
                 <td><b><bean:message key="appointment.addappointment.msgH"/></b>:<%=StringUtils.trimToEmpty(phone)%> <b><bean:message key="appointment.addappointment.msgW"/></b>:<%=StringUtils.trimToEmpty(phone2)%> </td>
             </tr>
             <tr style="background-color:#f3f6f9; text-align:left">
@@ -1345,7 +1349,7 @@ function parseSearch() {
         </table>
         <%}%>
     </td>
-    <td valign="top">
+    <td style="vertical-align: top;">
     <%
         String formTblProp = props.getProperty("appt_formTbl","");
         String[] formTblNames = formTblProp.split(";");
@@ -1367,15 +1371,15 @@ function parseSearch() {
                     if (numForms == 1) {
 
     %>
-            <table style="font-size: 9pt;" bgcolor="#e8e8e8" align="center" valign="top" cellpadding="3px">
-                <tr bgcolor="#f3f6f9">
+            <table style="font-size: 9pt; background-color: #e8e8e8; margin-left:auto; vertical-align: top;padding:3px">
+                <tr style="background-color:#f3f6f9">
                     <th colspan="2">
                         <bean:message key="appointment.addappointment.msgFormsSaved"/>
                     </th>
                 </tr>
     <%              }%>
 
-                <tr bgcolor="#e8e8e8" align="left">
+                <tr style="background-color:#e8e8e8; text-align:left">
                     <th style="padding-right: 20px"><c:out value="${formName}:"/></th>
     <%              if (formComplete){  %>
                         <td><bean:message key="appointment.addappointment.msgFormCompleted"/></td>
@@ -1393,12 +1397,12 @@ function parseSearch() {
          </table>
     <%  }   %>
     </td>
-    <td valign="top">
-<table style="font-size: 8pt;" bgcolor="#e9e9e9" align="center" valign="top">
-	<tr bgcolor="#e8e8e8">
+    <td style="vertical-align: top;">
+<table style="font-size: 8pt; background-color:#e9e9e9; margin-left:auto; vertical-align: top;">
+	<tr style="background-color:#e8e8e8">
 		<th colspan="4"><bean:message key="appointment.addappointment.msgOverview" /></th>
 	</tr>
-	<tr bgcolor="#fdfdfd">
+	<tr style="background-color:#fdfdfd">
 		<th style="padding-right: 25px"><bean:message key="Appointment.formDate" /></th>
  		<th style="padding-right: 25px"><bean:message key="Appointment.formStartTime" /></th>
 		<th style="padding-right: 25px"><bean:message key="appointment.addappointment.msgProvider" /></th>
@@ -1425,7 +1429,7 @@ function parseSearch() {
                 iRow ++;
                 if (iRow > iPageSize) break;
     %>
-	<tr bgcolor="#e8e8e8">
+	<tr style="background-color:#e8e8e8">
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%></td>
@@ -1444,7 +1448,7 @@ function parseSearch() {
                 iRow ++;
                 if (iRow > iPageSize) break;
     %>
-	<tr bgcolor="#e8e8e8">
+	<tr style="background-color:#e8e8e8">
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
 		<td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%></td>
@@ -1461,8 +1465,5 @@ function parseSearch() {
 </div>
 
 </body>
-<script type="text/javascript">
-var loc = document.forms['ADDAPPT'].location;
-if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
-</script>
+
 </html:html>
