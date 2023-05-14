@@ -1061,7 +1061,7 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formNotes" />:
             </td>
             <td>
-				<textarea name="notes" maxlength="80" rows="9" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getNotes():request.getParameter("notes"))%></textarea>
+				<textarea name="notes" maxlength="255" rows="9" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getNotes():request.getParameter("notes"))%></textarea>
             </td>
         </tr>
         <tr>
