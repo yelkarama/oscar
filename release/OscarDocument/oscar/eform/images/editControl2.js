@@ -15,7 +15,7 @@
         NEW in 1.5 restored support for images, measurements and user template default values lost in 1.3i
         NEW in 1.6 restored button support for newest Firefox ESR 24
         NEW in 2.0 added support for page break and file attachment and font awesome
-2.01 tweaks
+        NEW in 2.02 tweaks and bugfixes
     * Requirements: DesignMode and other Dom 2 methods
     * Mozilla 1.3+ IE 5.5+ Netscape 6+ Opera 9+ Konqueror 3.5.7+ Safari 1.3+ Chrome
     * designed for and tested on Firefox 2 - 20.  Tested on Opera 10, Chromium 25 and IE 6/7
@@ -1023,7 +1023,7 @@ function getMeasures(measure, max) {
             if (!str) {
                 return;
             }
-            var myRe = /<td width="10">([\S,\d,\.]+)<\/td>/g; //for the measurement
+            var myRe = /<td title="data">([\d,\.,\/]+)<\/td>/g;  //for the measurement
             var myArray;
             measureArray = []
             measureDateArray = []
@@ -1033,7 +1033,7 @@ function getMeasures(measure, max) {
                 i = i + 1;
             }
 
-            var myRe = /<td width="150">([0-9,-]+)<\/td>\s*<td width="150">/g; //the first date is the observation date
+            var myRe = /<td title="observed date">([0-9,-]+)<\/td>/g;  //the first date is the observation date
             var myArray;
             var i = 0;
             while ((myArray = myRe.exec(str)) !== null) {
