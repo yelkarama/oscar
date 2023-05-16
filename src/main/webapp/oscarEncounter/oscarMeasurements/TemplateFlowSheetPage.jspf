@@ -531,7 +531,7 @@ div.recommendations li{
                 <td>
                 &nbsp;
                 </td>
-                <td style="text-align:right" valign="bottom">
+                <td style="text-align:right; vertical-align:bottom;">
                     <oscar:help keywords="measurement" key="app.top1"/> | <a href="javascript:popupStart(300,400,'About.jsp')" ><bean:message key="global.about" /></a> | <a href="javascript:popupStart(300,400,'License.jsp')" ><bean:message key="global.license" /></a>
                 </td>
             </tr>
@@ -539,7 +539,7 @@ div.recommendations li{
     </td>
 </tr>
 <tr>
-<td class="MainTableLeftColumn" valign="top">
+<td class="MainTableLeftColumn" style="vertical-align:top;">
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
     <% if (recList.size() > 0){ %>
     <p><a class="DoNotPrint" href="javascript: function myFunction() {return false; }"  onclick="javascript:createAddAll(<%=demographic_no%>, '<%= URLEncoder.encode(temp,"UTF-8") %>', <%=Math.abs( "ADDTHEMALL".hashCode() ) %>)" TITLE="Add all measurements.">
@@ -662,7 +662,7 @@ div.recommendations li{
 </div>
 </td>
 
-<td valign="top" class="MainTableRightColumn">
+<td class="MainTableRightColumn" style="vertical-align:top;">
 <% if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { %>
 <div class="recommendations">
     <span style="font-size:larger;"><%=flowSheet%> Recommendations</span>
@@ -1035,7 +1035,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
     <td class="MainTableBottomRowLeftColumn">
         &nbsp;
     </td>
-    <td class="MainTableBottomRowRightColumn" valign="top">
+    <td class="MainTableBottomRowRightColumn" style="vertical-align:top;">
         &nbsp;
     </td>
 </tr>
