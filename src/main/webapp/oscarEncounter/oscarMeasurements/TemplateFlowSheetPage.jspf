@@ -47,21 +47,21 @@
 <%@page import="oscar.OscarProperties"%>
 
 <%
-	if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+	if(session.getValue("user") == null) response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
     //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
+    if(session.getAttribute("userrole") == null )  response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String demographic_no = request.getParameter("demographic_no");
     String providerNo = (String) session.getAttribute("user");
     String temp = request.getParameter("template");
-     
+
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
     <security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="r" reverse="<%=true%>">
         "You have no right to access this page!"
         <%
     	LogAction.addLog((String) session.getAttribute("user"), LogConst.NORIGHT+LogConst.READ, LogConst.CON_FLOWSHEET,  temp , request.getRemoteAddr(),demographic_no);
-            response.sendRedirect("../../noRights.html");
+            response.sendRedirect("${ pageContext.request.contextPath }/noRights.html");
     %>
     </security:oscarSec>
 
@@ -110,13 +110,13 @@
     FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
     FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) SpringUtils.getBean("flowSheetDrugDao");
 	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) SpringUtils.getBean("flowSheetDxDao");
-  
+
     MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
-    
+
     MeasurementFlowSheet mFlowsheet = null;
-    
+
     mFlowsheet = templateConfig.getFlowSheet(temp,loggedInInfo.getLoggedInProviderNo(),Integer.parseInt(demographic_no));
-    
+
     MeasurementInfo mi = new MeasurementInfo(demographic_no);
     List<String> measurementLs = mFlowsheet.getMeasurementList();
     ArrayList<String> measurements = new ArrayList(measurementLs);
@@ -153,14 +153,15 @@
 
 <head>
 <title><%=flowSheet%> - <oscar:nameage demographicNo="<%=demographic_no%>"/></title><!--I18n-->
-<link rel="stylesheet" type="text/css" href="../../share/css/OscarStandardLayout.css" />
-<script type="text/javascript" src="../../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="../../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/OscarStandardLayout.css" />
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
+
+<!-- supply jquery for oscar/js/custom/renal/diab.js -->
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 <script>
 	jQuery.noConflict();
 </script>
+
 <script>
 	function getDemographicNo() {
 		return '<%=demographic_no%>';
@@ -170,11 +171,11 @@
 	}
 
 	function refreshEncounter() {
-	      self.opener.location.reload(); 
+	      self.opener.location.reload();
 	}
 </script>
 <oscar:customInterface name="renal" section="diab"/>
-			
+
 <style type="text/css">
     div.ImmSet { background-color: #ffffff;clear:left;margin-top:10px;}
     div.ImmSet h2 {  }
@@ -243,9 +244,9 @@ div.headPrevention p {
 
 </style>
 
-<link rel="stylesheet" type="text/css" href="../../share/css/niftyCorners.css" />
-<link rel="stylesheet" type="text/css" href="../../share/css/niftyPrint.css" media="print" />
-<script type="text/javascript" src="../../share/javascript/nifty.js"></script>
+<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyCorners.css" />
+<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyPrint.css" media="print" />
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/nifty.js"></script>
 
 <script type="text/javascript">
     window.onload=function(){
@@ -271,66 +272,70 @@ div.headPrevention p {
     	  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
     	  return d.toISOString().slice(0,10) === dateString;
     	}
-    
+
 
     function clearDifferentElements(){
-    	$('numEle').value = '';
-    	$('flowsheetStartDate').value = '';
-    	 $('flowsheetEndDate').value = '';
+    	document.getElementById('numEle').value = '';
+    	document.getElementById('flowsheetStartDate').value = '';
+    	document.getElementById('flowsheetEndDate').value = '';
     	 loadDifferentElements();
-    	
+
     }
    function loadDifferentElements(){
        //console.log("hapy");
-        var numEle = $('numEle').value;
-        var sdate = $('flowsheetStartDate').value;
-        var edate = $('flowsheetEndDate').value;
-        
+        var numEle = document.getElementById('numEle').value;
+        var sdate = document.getElementById('flowsheetStartDate').value;
+        var edate = document.getElementById('flowsheetEndDate').value;
+
         if(numEle.length>0 && (isNaN(numEle) || parseInt(numEle) <= 0)) {
         	alert("# of Elements needs to be a number greater than 0")
         	return;
         }
-        
+
         if(sdate.length > 0 && !isValidDate(sdate)) {
         	alert("Start Date must be a valid date in yyyy-mm-dd format");
         	return;
         }
-        
+
         if(edate.length > 0 && !isValidDate(edate)) {
         	alert("End Date must be a valid date in yyyy-mm-dd format");
         	return;
         }
-        
-        
+
+
         //get selected elements
         var selectedItems = [];
-        jQuery("input[name='selected_item']:checked").each( function () {
-      		selectedItems.push( jQuery(this).val());
-  		});
+        let elements = document.getElementsByName("selected_item");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+            if(elements[i].checked) {
+                selectedItems.push(elements[i].value);
+            }
+        }
         var selectedItemsStr = "";
-        
+
         if(selectedItems.length>0) {
         	selectedItemsStr = "&selectedItems=" + encodeURIComponent(selectedItems.join(','));
         }
-        
+
         var url = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>';
-        if( !numEle.blank()){
+        if(numEle.length > 0){
         	url = url + '&numEle='+numEle;
         }
-        if(!sdate.blank()) {
+        if(sdate.length > 0) {
         	url = url + '&sdate='+sdate;
         }
-        if(!edate.blank()) {
+        if(edate.length > 0) {
         	url = url + '&edate='+edate;
         }
         url = url + selectedItemsStr;
-        
+
         window.location = url;
         /*
-        if( !numEle.blank()){
+        if( numEle.length > 0){
             window.location = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&numEle='+numEle + selectedItemsStr;
             //console.log("one");
-        }else if (!sdate.blank() && !edate.blank()){
+        }else if (sdate.length > 0 && edate.length > 0){
             window.location = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&sdate='+sdate+'&edate='+edate + selectedItemsStr;
             //console.log("two");
         }else{
@@ -499,7 +504,7 @@ div.recommendations li{
                 <td colspan="3">
                     <oscar:nameage demographicNo="<%=demographic_no%>"/>
                     <span class="DoNotPrint">
-                    
+
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=lastOnly">Last Only</a>
                     &nbsp;
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=outOfRange">Only out of Range</a>
@@ -517,8 +522,8 @@ div.recommendations li{
                		<span class="DoNotPrint">
                     #Of Elements <input type="text" size="3" id="numEle" value="<%=request.getParameter("numEle") != null ? request.getParameter("numEle") : "" %>"/>
 
-                    Start Date <input type="text" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
-                    End Date <input type="text" size="10"id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
+                    Start Date <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
+                    End Date <input type="date" size="10"id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
                     <input type="button" value="go" onclick="javascript: loadDifferentElements()"/>
                     <input type="button" value="clear" onclick="javascript: clearDifferentElements()"/>
                     </span>
@@ -681,7 +686,7 @@ div.recommendations li{
 	out.print(mFlowsheet.getTopHTMLStream());
 %>
 <%--
-<img src="../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=INR&type2=COUM"/>
+<img src="${ pageContext.request.contextPath }/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=INR&type2=COUM"/>
 <br/>
 --%>
 <div >
@@ -689,7 +694,7 @@ div.recommendations li{
 	//set add link array
 	String[] addAllLink = new String[measurements.size()];
 	int mCount=0;
-	
+
     EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
     long startTimeToLoopAndPrint = System.currentTimeMillis();
     for (String measure:measurements){
@@ -701,7 +706,7 @@ div.recommendations li{
             hidden= "display:none;";
         }
 
-       
+
         if (h2.get("measurement_type") != null ){
             Hashtable h = new Hashtable();
             EctMeasurementTypesBean mtypeBean = mType.getMeasurementType(measure);//mFlowsheet.getMeasurementInfo(measure);
@@ -715,7 +720,7 @@ div.recommendations li{
             }
             String prevName = (String) h.get("name");
             ArrayList<EctMeasurementsDataBean> alist = mi.getMeasurementData(measure);
-            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {	
+            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
                 EctMeasurementsDataBeanHandler.addRemoteMeasurements(loggedInInfo, alist,measure,Integer.parseInt(demographic_no));
              }
             String extraColour = "";
@@ -724,20 +729,20 @@ div.recommendations li{
             }else if(mi.hasWarning(measure)){
                 extraColour = "style=\"background-color: "+mFlowsheet.getWarningColour()+"\" ";
             }
-            
+
             if (request.getParameter("show") !=null && request.getParameter("show").equals("overdue") && StringUtils.isEmpty(extraColour) ){
                 hidden= "display:none;";
             }
-            
+
             if(request.getParameter("selectedItems") !=null) {
             	String selectedItems = request.getParameter("selectedItems");
             	List<String> selectedItemsArray = Arrays.asList(selectedItems.split(","));
             	if(!selectedItemsArray.contains(prevName)) {
             		 hidden= "display:none;";
             	}
-            	
+
             }
-            
+
             //measurement_type="EDGI"
             //display_name="Autonomic Neuropathy"
             //guideline="Erectile Dysfunction, hastrointestinal disturbance"
@@ -751,7 +756,7 @@ div.recommendations li{
         <input type="checkbox" name="selected_item" value="<%= h.get("name")%>"/>
             <%if(h2.get("graphable") != null && ((String) h2.get("graphable")).equals("yes")){%>
             <%if (alist != null && alist.size() > 1) { %>
-               <img class="DoNotPrint" src="img/chart.gif" alt="Plot"  onclick="window.open('../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=<%=measure%>');"/>
+               <img class="DoNotPrint" src="img/chart.gif" alt="Plot"  onclick="window.open('${ pageContext.request.contextPath }/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=<%=measure%>');"/>
             <%}else{%>
                <img class="DoNotPrint" src="img/chart.gif" alt="Plot"/>
             <%}%>
@@ -791,7 +796,7 @@ div.recommendations li{
                 num =1;
             }
             Date itDate = mdb.getDateObservedAsDate();
-            
+
             if(sdate != null) {
             	 if (itDate.before(sdate)){
                      hider = "style=\"display:none\"";
@@ -825,9 +830,9 @@ div.recommendations li{
             }
 
     %>
-    <div class="preventionProcedure" <%=hider%>  
+    <div class="preventionProcedure" <%=hider%>
     <%if(mdb.getRemoteFacility() == null){ %>
-    onclick="javascript:fsPopup(760,670,'AddMeasurementData.jsp?measurement=<%= response.encodeURL( measure) %>&amp;id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>&amp;template=<%= URLEncoder.encode(temp,"UTF-8") %>','addMeasurementData')" 
+    onclick="javascript:fsPopup(760,670,'AddMeasurementData.jsp?measurement=<%= response.encodeURL( measure) %>&amp;id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>&amp;template=<%= URLEncoder.encode(temp,"UTF-8") %>','addMeasurementData')"
     <%}%>
     >
         <p <%=indColour%> title="fade=[on] header=[<%=hdata.get("age")%> -- Date:<%=hdata.get("prevention_date")%>] body=[<%=com%>&lt;br/&gt;Entered By:<%=mdb.getProviderFirstName()%> <%=mdb.getProviderLastName()%>]"><%=h2.get("value_name")%>: <%=hdata.get("age")%> <br/>
@@ -835,7 +840,7 @@ div.recommendations li{
             <%if (comb) {%>
             <span class="footnote"><%=comments.size()%></span>
             <%}%>
-           <%=getFromFacilityMsg(mdb) %> 
+           <%=getFromFacilityMsg(mdb) %>
         </p>
     </div>
     <%}%>
@@ -856,7 +861,7 @@ div.recommendations li{
 <div class="preventionSection" style="<%=hidden%>" >
     <div class="headPrevention">
         <p title="fade=[on] header=[<%=h2.get("display_name")%>] body=[<%=wrapWithSpanIfNotNull(mi.getWarning(measure),"red")%><%=wrapWithSpanIfNotNull(mi.getRecommendation(measure),"red")%><%=h2.get("guideline")%>]">
-            <a href="javascript: function myFunction() {return false; }"  onclick="javascript:fsPopup(465,635,'../../oscarPrevention/AddPreventionData.jsp?prevention=<%= response.encodeURL( prevType) %>&amp;demographic_no=<%=demographic_no%>','addPreventionData<%=Math.abs( prevType.hashCode() ) %>')">
+            <a href="javascript: function myFunction() {return false; }"  onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?prevention=<%= response.encodeURL( prevType) %>&amp;demographic_no=<%=demographic_no%>','addPreventionData<%=Math.abs( prevType.hashCode() ) %>')">
                 <span title="<%=h2.get("guideline")%>" style="font-weight:bold;"><%=h2.get("display_name")%></span>
             </a>
             &nbsp;
@@ -877,7 +882,7 @@ div.recommendations li{
                 com ="";
             }
     %>
-    <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'../../oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
+    <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
         <p <%=r(hdata.get("refused"))%> title="fade=[on] header=[<%=hdata.get("age")%> -- Date:<%=hdata.get("prevention_date")%>] body=[<%=com%>]" >Age: <%=hdata.get("age")%> <br/>
             <!--<%=refused(hdata.get("refused"))%>-->Date: <%=hdata.get("prevention_date")%>
             <%if (comb) {%>
@@ -958,7 +963,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 	String code = "";
 	if(temp.equals("diab2"))
 		code = "250";
-	if(temp.equals("chf")) 
+	if(temp.equals("chf"))
 		code = "428";
 	DrugReasonDao drugReasonDao = SpringUtils.getBean(DrugReasonDao.class);
 	DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
@@ -980,7 +985,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 		%>
 			<tr>
 				<td>
-					
+
 					<!-- get all drugs of this type in our list, and sort by rx date -->
 					<%
 						List<Drug> thisDrug = new ArrayList<Drug>();
@@ -1007,7 +1012,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 			</tr>
 		<%
 	}
-	
+
 	%></table><%
 %>
 </div>
@@ -1035,14 +1040,20 @@ if(temp.equals("diab2") || temp.equals("chf")) {
     </td>
 </tr>
 </table>
-<script type="text/javascript" src="../../share/javascript/boxover.js"></script>
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/boxover.js"></script>
 
 <script>
-if(jQuery('#add_custom').length){
-  //if WT, HT and BMI exists then allow the link
-  if(jQuery('#WT').length && jQuery('#HT').length && jQuery('#BMI').length){
-    jQuery('#add_custom').show();
-  }
+function idExists(id) {
+    var element = document.getElementById(id);
+    if (typeof(element) != 'undefined' && element != null) {
+        return true;
+    }
+    return false;
+}
+
+//if WT, HT and BMI exists then allow the link
+if(idExists("WT") && idExists("HT" ) && idExists("BMI")){
+    document.getElementById('add_custom').style.display = 'block'; // show
 }
 </script>
 </body>
@@ -1076,14 +1087,14 @@ if(jQuery('#add_custom').length){
             ret = "<span style='color:"+colour+"'>"+s+"</span> </br>";
         }
         return ret;
-    }    
-    
+    }
+
     public String getFromFacilityMsg(EctMeasurementsDataBean emdb){
 		if (emdb.getRemoteFacility()!=null)	return("<br /><span style=\"color:#990000\">(At facility : "+emdb.getRemoteFacility()+")<span>");
 		else return("");
 	}
-    
-    
-    
-    
+
+
+
+
     %>
