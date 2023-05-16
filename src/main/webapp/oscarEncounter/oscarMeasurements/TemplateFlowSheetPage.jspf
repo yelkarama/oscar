@@ -147,8 +147,7 @@
     ArrayList comments = new ArrayList();
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
@@ -499,7 +498,7 @@ div.recommendations li{
         <%=flowSheet%>
     </td>
     <td class="MainTableTopRowRightColumn">
-        <table class="TopStatusBar" cellpadding="2">
+        <table class="TopStatusBar">
             <tr>
                 <td colspan="3">
                     <oscar:nameage demographicNo="<%=demographic_no%>"/>
@@ -523,7 +522,7 @@ div.recommendations li{
                     #Of Elements <input type="text" size="3" id="numEle" value="<%=request.getParameter("numEle") != null ? request.getParameter("numEle") : "" %>"/>
 
                     Start Date <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
-                    End Date <input type="date" size="10"id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
+                    End Date <input type="date" size="10" id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
                     <input type="button" value="go" onclick="javascript: loadDifferentElements()"/>
                     <input type="button" value="clear" onclick="javascript: clearDifferentElements()"/>
                     </span>
@@ -749,7 +748,7 @@ div.recommendations li{
             //graphable="no"
             //value_name="Answer"
 %>
-<div class="preventionSection" id="<%=measure%>"  style="overflow: auto;<%=hidden%>" nowrap>
+<div class="preventionSection" id="<%=measure%>"  style="overflow: auto;<%=hidden%>" >
     <div class="headPrevention">
 
         <p class="noborder" <%=extraColour%> title="fade=[on] header=[<%=h2.get("display_name")%>] body=[<%=wrapWithSpanIfNotNull(mi.getWarning(measure),"red")%><%=wrapWithSpanIfNotNull(mi.getRecommendation(measure),"red")%><%=h2.get("guideline")%>]"   >
