@@ -152,14 +152,10 @@
 
 <head>
 <title><%=flowSheet%> - <oscar:nameage demographicNo="<%=demographic_no%>"/></title><!--I18n-->
-<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/OscarStandardLayout.css" />
-<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
 
-<!-- supply jquery for oscar/js/custom/renal/diab.js -->
-<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
-<script>
-	jQuery.noConflict();
-</script>
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
 
 <script>
 	function getDemographicNo() {
@@ -229,10 +225,9 @@ div.headPrevention a:link { color:black; }
 div.headPrevention a:visited { color:black; }
 
 div.headPrevention p {
-    background: #ddddff;
+    background: silver;
     font-family: verdana,tahoma,sans-serif;
     margin:0;
-
     padding: 4px 4px;
     line-height: 1.2;
 /*text-align: justify;*/
@@ -375,7 +370,7 @@ span.footnote {
 }
 
 div.leftBox h3 {
-    background-color: #ccccff;
+    background-color: silver;
 /*font-size: 1.25em;*/
     font-size: 8pt;
     font-variant:small-caps;
@@ -415,10 +410,9 @@ div.headPrevention {
 }
 
 div.headPrevention p {
-    background: #ddddff;
+    background: silver;
     font-family: verdana,tahoma,sans-serif;
     margin:0;
-
     padding: 4px 4px;
     line-height: 1.2;
 /*text-align: justify;*/
@@ -495,13 +489,13 @@ div.recommendations li{
 <table  class="MainTable" id="scrollNumber1" >
 <tr class="MainTableTopRow">
     <td class="MainTableTopRowLeftColumn"  >
-        <%=flowSheet%>
+        <h4><%=flowSheet%></h4>
     </td>
     <td class="MainTableTopRowRightColumn">
         <table class="TopStatusBar">
             <tr>
                 <td colspan="3">
-                    <oscar:nameage demographicNo="<%=demographic_no%>"/>
+                    <h4><oscar:nameage demographicNo="<%=demographic_no%>"/></h4>
                     <span class="DoNotPrint">
 
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=lastOnly">Last Only</a>
@@ -523,8 +517,8 @@ div.recommendations li{
 
                     Start Date <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
                     End Date <input type="date" size="10" id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
-                    <input type="button" value="go" onclick="javascript: loadDifferentElements()"/>
-                    <input type="button" value="clear" onclick="javascript: clearDifferentElements()"/>
+                    <input type="button" class="btn" value="go" onclick="javascript: loadDifferentElements()"/>
+                    <input type="button" class="btn" value="clear" onclick="javascript: clearDifferentElements()"/>
                     </span>
                 </td>
                 <td>
@@ -538,7 +532,7 @@ div.recommendations li{
     </td>
 </tr>
 <tr>
-<td class="MainTableLeftColumn" style="vertical-align:top;">
+<td class="MainTableLeftColumn" style="vertical-align:top; width:170px;">
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
     <% if (recList.size() > 0){ %>
     <p><a class="DoNotPrint" href="javascript: function myFunction() {return false; }"  onclick="javascript:createAddAll(<%=demographic_no%>, '<%= URLEncoder.encode(temp,"UTF-8") %>', <%=Math.abs( "ADDTHEMALL".hashCode() ) %>)" TITLE="Add all measurements.">
@@ -657,7 +651,7 @@ div.recommendations li{
     </security:oscarSec>
     <% } %>
 <div id="print_box">
-   <input type="button" class="DoNotPrint" value="<bean:message key="oscarencounter.templateflowsheet.print" />" onclick="javascript:window.print()">
+   <input type="button" class="DoNotPrint btn" value="<bean:message key="oscarencounter.templateflowsheet.print" />" onclick="javascript:window.print()">
 </div>
 </td>
 
