@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ page import="oscar.oscarResearch.oscarDxResearch.util.dxResearchCodingSystem"%>
 <%@ page
 	import="oscar.OscarProperties"%>
@@ -48,29 +48,29 @@ if(!authed) {
 }
 %>
 
-<%   
-	
+<%
+
 	//John's Question: Can't we just get rid of this to force use of the object _dx.code
 	//String disableVal = OscarProperties.getInstance().getProperty("dxResearch_disable_entry", "false");
 	//boolean disable = Boolean.valueOf(disableVal).booleanValue();
 	boolean disable;
 	SecurityManager sm = new SecurityManager();
-	
+
 	if(sm.hasWriteAccess("_dx.code",roleName$)) {
 		disable=false;
 	}else{
 		disable=true;
 	}
 	boolean showQuicklist=false;
-	
+
 	if(sm.hasWriteAccess("_dx.quicklist",roleName$)) {
 		showQuicklist=true;
 	}
-	
+
     String user_no = (String) session.getAttribute("user");
     String color ="";
-    int Count=0; 
-    
+    int Count=0;
+
     pageContext.setAttribute("showQuicklist", showQuicklist);
     pageContext.setAttribute("disable", disable);
 %>
@@ -78,9 +78,8 @@ if(!authed) {
 
 <html:html locale="true">
 <head>
-<link rel="stylesheet" type="text/css" href="dxResearch.css">
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
 <script language="JavaScript">
 //<!--
 function setfocus() {
@@ -115,17 +114,17 @@ function ResearchScriptAttach() {
 	var t4 = escape(document.forms[0].xml_research5.value);
         var codeType = document.forms[0].selectedCodingSystem.value;
         var demographicNo = escape(document.forms[0].demographicNo.value);
-        
-	awnd=rs('att','dxResearchCodeSearch.do?codeType=' + codeType + '&xml_research1='+t0 + '&xml_research2=' + t1 + '&xml_research3=' + t2 + '&xml_research4=' + t3 + '&xml_research5=' + t4 +'&demographicNo=' + demographicNo,600,600,1);
+
+	awnd=rs('att','dxResearchCodeSearch.do?codeType=' + codeType + '&xml_research1='+t0 + '&xml_research2=' + t1 + '&xml_research3=' + t2 + '&xml_research4=' + t3 + '&xml_research5=' + t4 +'&demographicNo=' + demographicNo,700,750,1);
 	awnd.focus();
 }
 
-function submitform(target,sysCode){	
+function submitform(target,sysCode){
         document.forms[0].forward.value = target;
-        
+
         if( sysCode != '' )
             document.forms[0].selectedCodingSystem.value = sysCode;
-            
+
 	document.forms[0].submit()
 }
 
@@ -134,7 +133,7 @@ function set(target) {
 }
 
 
-function openNewPage(vheight,vwidth,varpage) { 
+function openNewPage(vheight,vwidth,varpage) {
   var page = varpage;
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=no,menubars=no,toolbars=no,resizable=no,screenX=0,screenY=0,top=0,left=0";
   var popup=window.open(varpage, "<bean:message key="global.oscarComm"/>", windowprops);
@@ -152,8 +151,8 @@ function processKey(e) {
 }
 
 function showdatebox(x) {
-    document.getElementById("startdatenew"+x).show();
-    document.getElementById("startdate1st"+x).hide();
+    document.getElementById("startdatenew"+x).style.display="block";
+    document.getElementById("startdate1st"+x).style.display="none";
 }
 
 function update_date(did, demoNo, provNo) {
@@ -168,32 +167,29 @@ function update_date(did, demoNo, provNo) {
 <title><bean:message key="oscarResearch.oscarDxResearch.dxResearch.title" /></title>
 </head>
 
-<body bgcolor="#FFFFFF" text="#000000" rightmargin="0" leftmargin="0"
-	topmargin="0" marginwidth="0" marginheight="0" onLoad="setfocus();">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<body onLoad="setfocus();">
+<html:form action="/oscarResearch/oscarDxResearch/dxResearch.do">
+<table style="width:100%">
 	<tr>
 		<td>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr bgcolor="#000000">
-				<td class="subject" colspan="2">&nbsp;&nbsp;&nbsp;<bean:message key="global.disease" /></td>
-				<td align="right" valign="bottom" style="color: white;"><oscar:nameage demographicNo="<%=(String) session.getAttribute(\"demographicNo\")%>" /></td>
+		<table style="width:100%">
+			<tr>
+				<td class="subject">&nbsp;&nbsp;&nbsp;<h3><bean:message key="global.disease" /></h3></td>
+				<td style="text-align: right; vertical-align: bottom;"><oscar:nameage demographicNo="<%=(String) session.getAttribute(\"demographicNo\")%>" /></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
-		<td><html:form
-			action="/oscarResearch/oscarDxResearch/dxResearch.do">
-			<table width="100%" border="0" cellpadding="0" cellspacing="1"
-				bgcolor="#EEEEFF" height="500">
+		<td>
+			<table style="width:100%; height:500px">
 				<html:errors />
 				<tr>
-					<td width="26%" valign="top">
+					<td style="width:170px; vertical-align:top">
 
-					<table width="100%" border="0" cellspacing="0" cellpadding="2"
-						height="500" bgcolor="#FFFFFF" style="vertical-align:top;">
+					<table style="width:100%; height:500px; vertical-align:top;">
 						<tr>
-							<td class="heading"><bean:message key="oscarResearch.oscarDxResearch.codingSystem" />: <html:select
+							<td class="heading"><bean:message key="oscarResearch.oscarDxResearch.codingSystem" />:<br> <html:select
 								property="selectedCodingSystem"  disabled="<%=disable%>">
 								<logic:iterate id="codingSys" name="codingSystem" property="codingSystems">
 									<option value="<bean:write name="codingSys"/>"><bean:write name="codingSys" /></option>
@@ -220,29 +216,29 @@ function update_date(did, demoNo, provNo) {
 						</tr>
 						<tr>
 							<td>
-							<input type="hidden" name="forward" value="none" /> 
-                               <%if(!disable) { %>                             
-                               <input type="button" name="codeSearch" class=mbttn
+							<input type="hidden" name="forward" value="none" />
+                               <%if(!disable) { %>
+                               <input type="button" class="btn" name="codeSearch"
 								value="<bean:message key="oscarResearch.oscarDxResearch.btnCodeSearch"/>"
-								onClick="javascript: ResearchScriptAttach();") > 
-                                                            
-                                <input type="button" name="codeAdd" class=mbttn
+								onClick="javascript: ResearchScriptAttach();" >
+
+                                <input type="button" class="btn" name="codeAdd"
 								value="<bean:message key="ADD"/>"
 								onClick="javascript: submitform('','');">
-								
+
 								<% } else { %>
-								
-								 <input type="button" name="button" class=mbttn
+
+								 <input type="button" class="btn" name="button"
 								value="<bean:message key="oscarResearch.oscarDxResearch.btnCodeSearch"/>"
-								onClick="javascript: ResearchScriptAttach();")  disabled="<%=disable%>"> 
-                                                            
-                                <input type="button" name="button" class=mbttn
+								onClick="javascript: ResearchScriptAttach();"  disabled="<%=disable%>">
+
+                                <input type="button" class="btn" name="button"
 								value="<bean:message key="ADD"/>"
 								onClick="javascript: submitform('','');" disabled="<%=disable%>">
 								<% } %>
 								</td>
 						</tr>
-						
+
 					<%-- DX QUICK LIST - returns a table --%>
 						<logic:equal name="showQuicklist" value="true" scope="page">
 						<tr>
@@ -257,46 +253,38 @@ function update_date(did, demoNo, provNo) {
 						</tr>
 						</logic:equal>
 					<%-- DX QUICK LIST --%>
-						
-					</table>
-				
-					
-							
-					</td>
-					<td width="75%" valign="top">
 
-					<table width="100%" border="0" cellpadding="0" cellspacing="0"
-						bgcolor="#FFFFFF">
+					</table>
+
+
+
+					</td>
+					<td style="vertical-align:top">
+
+					<table style="width:100%" id="dxTbl" class="table table-striped">
+                    <thead>
 						<tr>
-							<td class="heading" width="10%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgCode" /></b></td>
-							<td class="heading" width="35%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgDiagnosis" /></b></td>
-							<td class="heading" width="15%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgFirstVisit" /></b></td>
-							<td class="heading" width="15%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgLastVisit" /></b></td>
+							<th style="width:10%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgCode" /></b></th>
+							<th style="width:35%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgDiagnosis" /></b></th>
+							<th style="width:15%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgFirstVisit" /></b></th>
+							<th style="width:15%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgLastVisit" /></b></th>
 							<% if(!disable){ %>
-							<td class="heading" width="25%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgAction" /></b></td>
-							<%} %>					
+							<th style="width:25%"><b><bean:message key="oscarResearch.oscarDxResearch.dxResearch.msgAction" /></b></th>
+							<%} %>
 						</tr>
+                    </thead>
+                    <tbody>
 						<logic:iterate id="diagnotics" name="allDiagnostics"
 							property="dxResearchBeanVector" indexId="ctr">
-							<%  
-                        if (Count == 0){
-                            Count = 1;
-                            color = "#FFFFFF";
-                        } 
-                        else {
-                            Count = 0;
-                            color="#EEEEFF";
-                        }       
-                    %>
 							<logic:equal name="diagnotics" property="status" value="A">
-								<tr bgcolor="<%=color%>">
+								<tr>
 								<td class="notResolved"> <bean:write name="diagnotics" property="dxSearchCode" /></td>
 									<td class="notResolved"><bean:write name="diagnotics" property="description" /></td>
 									<td class="notResolved">
                                                                             <a href="#" onclick="showdatebox(<bean:write name="diagnotics" property="dxResearchNo" />);">
-                                                                                <div id="startdate1st<bean:write name="diagnotics" property="dxResearchNo" />"><bean:write name="diagnotics" property="start_date" /></div>
-                                                                                <input id="startdatenew<bean:write name="diagnotics" property="dxResearchNo" />" type="text" name="start_date" size="8" value="<bean:write name="diagnotics" property="start_date" />" style="display:none" />
-                                                                            </a>
+                                                                                <div id="startdate1st<bean:write name="diagnotics" property="dxResearchNo" />"><bean:write name="diagnotics" property="start_date" /></div></a>
+                                                                                <input id="startdatenew<bean:write name="diagnotics" property="dxResearchNo" />" type="date" name="start_date" class="input-medium" value="<bean:write name="diagnotics" property="start_date" />" style="display:none" />
+
                                                                         </td>
 									<td class="notResolved">
                                                                                 <bean:write name="diagnotics" property="end_date" />
@@ -310,7 +298,7 @@ function update_date(did, demoNo, provNo) {
 									<a href='#' onclick="update_date(<bean:write name="diagnotics" property="dxResearchNo" />,<bean:write name="demographicNo" />,<bean:write name="providerNo" />);"><bean:message
 										key="oscarResearch.oscarDxResearch.dxResearch.btnUpdate" /></a>
                                     </td>
-                                     <%} %>                                   
+                                     <%} %>
 								</tr>
 							</logic:equal>
 							<logic:equal name="diagnotics" property="status" value="C">
@@ -326,6 +314,7 @@ function update_date(did, demoNo, provNo) {
 								</tr>
 							</logic:equal>
 						</logic:iterate>
+                    </tbody>
 					</table>
 
 					</td>
