@@ -1394,19 +1394,19 @@ function loadDiv(div,url,limit) {
         setCaretPosition($(caseNote),curPos);
     }
 
-     var insertTemplateError;
+     var insertTemplateError="";
      function ajaxInsertTemplate(varpage) { //fetch template
 
         if(varpage!= 'null'){
           var page = ctx + "/oscarEncounter/InsertTemplate.do";
-          var params = "templateName=" + varpage + "&version=2";
+          var params = "templateName=" + encodeURIComponent(varpage) + "&version=2";
           new Ajax.Request( page, {
                                     method: 'post',
                                     postBody: params,
                                     evalScripts: true,
                                     onSuccess:writeToEncounterNote,
                                     onFailure: function() {
-                                            alert(insertTemplateError);
+                                            alert("Inserting template " + varpage + " failed");
                                         }
                                   }
                             );
