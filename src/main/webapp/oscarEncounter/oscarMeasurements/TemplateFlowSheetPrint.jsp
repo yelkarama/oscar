@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <% long startTime = System.currentTimeMillis(); %>
 <%@ page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*,java.net.*"%>
@@ -157,7 +158,7 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
     ArrayList comments = new ArrayList();
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html:html locale="true">
 
 <head>
@@ -423,9 +424,9 @@ div.headPrevention a:visited { color:black; }
 <div class="module-block DoNotPrint">
 <%if (!printView){%>
 	<%if (request.getParameter("htracker") != null) {%>
-	<a href="HealthTrackerPage.jspf?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>"><< <%=flowSheet%></a> <br/>
+	<a href="HealthTrackerPage.jspf?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>">&lt;&lt; <%=flowSheet%></a> <br/>
 	<%}else{%>
-	<a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>"><< <%=flowSheet%></a> <br/>
+	<a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>">&lt;&lt; <%=flowSheet%></a> <br/>
 	<%} %>
 <a href="JavaScript:void(0);" class="back" title="go back to <%=flowSheet%>"></a>
 
@@ -445,17 +446,17 @@ div.headPrevention a:visited { color:black; }
 <%if (!printView){%>
 <div class="controls">
 	<input type="checkbox" name="select-all-chk" id="select-all-chk" class="css-checkbox"  value="select-all"/>
-	<label for="select-all-chk" name="select-all-lbl" class="css-label">Select All</label>
+	<label for="select-all-chk" class="css-label">Select All</label>
 </div>
 
 <div class="controls">
 		<input type="checkbox" name="print-comments-chk" id="print-comments-chk" class="css-checkbox"  value="print"/>
-		<label for="print-comments-chk" name="print-comments-lbl" class="css-label">Print Comments <a href="#comments-list"><span class="label label-info">view</span></a></label>
+		<label for="print-comments-chk" class="css-label">Print Comments <a href="#comments-list"><span class="label label-info">view</span></a></label>
 </div>
 
 <div class="controls">
 		<input  type="checkbox" name="print-recommendation-chk" id="print-recommendation-chk" class="css-checkbox"  value="print"/>
-		<label for="print-recommendation-chk" name="print-recommendation-lbl" class="css-label">Print Recommendations <a href="#recommendations-list"><span class="label label-info">view</span></a></label>
+		<label for="print-recommendation-chk" class="css-label">Print Recommendations <a href="#recommendations-list"><span class="label label-info">view</span></a></label>
 </div>
 <%}%>
 
@@ -524,7 +525,7 @@ view:
     <div style="position: relative; float: left; padding-right: 10px;" class="DoNotPrint">
 
 	<input type="checkbox" name="printHP" id="printHP<%=measure%>" class="css-checkbox"  value="<%=measure%>"  <%=setToPrint ? "checked" : ""%>/>
-	<label for="printHP<%=measure%>" name="printHP<%=measure%>" class="css-label"></label><!--needed for chkbox effect-->
+	<label for="printHP<%=measure%>" class="css-label"></label><!--needed for chkbox effect-->
 
     </div>
     <%}%>
@@ -553,12 +554,12 @@ view:
 
 
 <div class="range-<%=measure%>" style="display:none">
-	<div class="input-append date" id="dp-startDate" data-date="<%=date%>" data-date-format="yyyy-mm-dd" title="Start Date">
+	<div class="input-append date" id="dp-startDate-<%=measure%>" data-date="<%=date%>" data-date-format="yyyy-mm-dd" title="Start Date">
 	<input style="width:90px" name="sDate<%=measure%>" id="sDate-<%=measure%>" size="16" type="text" value="" placeholder="start" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$">
 	<span class="add-on"><i class="icon-calendar"></i></span>
 	</div>
 
-	<div class="input-append date" id="dp-endDate" data-date="<%=date%>" data-date-format="yyyy-mm-dd" title="End Date">
+	<div class="input-append date" id="dp-endDate-<%=measure%>" data-date="<%=date%>" data-date-format="yyyy-mm-dd" title="End Date">
 	<input style="width:90px" name="eDate<%=measure%>" id="eDate-<%=measure%>" size="16" type="text" value="" placeholder="end" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$">
 	<span class="add-on"><i class="icon-calendar"></i></span>
 	</div>
@@ -660,7 +661,7 @@ view:
     <%if (!printView){%>
     <div style="position: relative; float: left; padding-right: 10px;" class="DoNotPrint">
        	<input type="checkbox" name="printHP" id="printHP<%=measure%>" class="css-checkbox"  value="<%=measure%>"  <%=setToPrint ? "checked" : ""%>/>
-	<label for="printHP<%=measure%>" name="printHP<%=measure%>" class="css-label"></label><!--needed for chkbox effect-->
+	<label for="printHP<%=measure%>" class="css-label"></label><!--needed for chkbox effect-->
     </div>
     <%}%>
 
@@ -820,7 +821,7 @@ view:
 
 
 </div><!--MEASUREMENTS SELECTION LIST END-->
-</form>
+
 
 
 <%
@@ -888,7 +889,7 @@ String noPrint2 = "";
 <% } %>
 
 </div> <!-- wrapper-content -->
-
+</form>
 <div id="scrollToTop" class="DoNotPrint"><a href="#printFlowsheetBody" class="DoNotPrint"><i class="icon-arrow-up"></i>Top</a></div>
 
     <div class="alert">
@@ -897,16 +898,11 @@ String noPrint2 = "";
     </div>
 
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
 <script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 
 <script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<!--
-<script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
--->
+
 <script type="text/javascript">
 
 $(".preview").on( "click", function() {
