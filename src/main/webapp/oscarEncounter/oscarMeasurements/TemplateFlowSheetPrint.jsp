@@ -122,7 +122,7 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
     boolean dsProblems = false;
 
     String temp = request.getParameter("template");
-    
+
     FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
     FlowSheetDrugDao flowSheetDrugDAO = SpringUtils.getBean(FlowSheetDrugDao.class);
 
@@ -179,7 +179,7 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
                 <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
                                <link rel="shortcut icon" href="ico/favicon.png">
-                                   
+
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/DT_bootstrap.css">
 
 <style type="text/css">
@@ -197,19 +197,19 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
 body {font-size:100%}
 
 input[type=checkbox].css-checkbox {
-position: absolute; 
-overflow: hidden; 
-clip: rect(0 0 0 0); 
-height:1px; 
-width:1px; 
-margin:-1px; 
+position: absolute;
+overflow: hidden;
+clip: rect(0 0 0 0);
+height:1px;
+width:1px;
+margin:-1px;
 padding:0;
 border:0;
 }
 
 input[type=checkbox].css-checkbox + label.css-label {
 padding-left:20px;
-height:15px; 
+height:15px;
 display:inline-block;
 line-height:15px;
 background-repeat:no-repeat;
@@ -280,8 +280,8 @@ div.headPrevention p {
     display:inline;
     margin:0;
     padding: 4px 4px;
-    line-height: 1.2;  
-  
+    line-height: 1.2;
+
 }
 
 div.headPrevention a {
@@ -314,7 +314,7 @@ div.preventionSection {
     position:relative;
     width: 100%;
     margin-top:5px;
-    border-bottom:thin solid #c6c6c6;  
+    border-bottom:thin solid #c6c6c6;
 }
 
 div.preventionSet {
@@ -358,11 +358,11 @@ bottom:30px;
 right:15px;
 }
 
-.input-error{   
-    border-color: rgba(229, 103, 23, 0.8) !important; 
-    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(229, 103, 23, 0.6) !important; 
+.input-error{
+    border-color: rgba(229, 103, 23, 0.8) !important;
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(229, 103, 23, 0.6) !important;
     outline: 0 none !important;
-    
+
 }
 
 #wrapper-header{
@@ -388,7 +388,7 @@ right:4px;
 z-index:999;
 }
 
-</style> 
+</style>
 
 
 <!--PRINT CSS-->
@@ -417,12 +417,12 @@ div.headPrevention a:visited { color:black; }
     <input type="hidden" name="demographic_no" value="<%=demographic_no%>"/>
     <input type="hidden" name="template" value="<%=temp%>"/>
     <input type="hidden" name="printView" value="true"/>
-    
+
 <div id="wrapper-header">
 
 <div class="module-block DoNotPrint">
 <%if (!printView){%>
-	<%if (request.getParameter("htracker") != null) {%> 
+	<%if (request.getParameter("htracker") != null) {%>
 	<a href="HealthTrackerPage.jspf?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>"><< <%=flowSheet%></a> <br/>
 	<%}else{%>
 	<a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>" title="go back to <%=temp%>"><< <%=flowSheet%></a> <br/>
@@ -436,9 +436,9 @@ div.headPrevention a:visited { color:black; }
 </div><!-- module-block -->
 
 <div class="well" style="padding-bottom:0px;margin-bottom:0px;">
-	<h3><oscar:nameage demographicNo="<%=demographic_no%>"/></h3>				
+	<h3><oscar:nameage demographicNo="<%=demographic_no%>"/></h3>
 </div>
-                               
+
 <!-- VIEW CONTROL -->
 <div class="well DoNotPrint" style="margin:0px;padding-top:2px;padding-bottom:2px;background-color:#c6c6c6;overflow: hidden">
 
@@ -447,7 +447,7 @@ div.headPrevention a:visited { color:black; }
 	<input type="checkbox" name="select-all-chk" id="select-all-chk" class="css-checkbox"  value="select-all"/>
 	<label for="select-all-chk" name="select-all-lbl" class="css-label">Select All</label>
 </div>
-	
+
 <div class="controls">
 		<input type="checkbox" name="print-comments-chk" id="print-comments-chk" class="css-checkbox"  value="print"/>
 		<label for="print-comments-chk" name="print-comments-lbl" class="css-label">Print Comments <a href="#comments-list"><span class="label label-info">view</span></a></label>
@@ -458,13 +458,13 @@ div.headPrevention a:visited { color:black; }
 		<label for="print-recommendation-chk" name="print-recommendation-lbl" class="css-label">Print Recommendations <a href="#recommendations-list"><span class="label label-info">view</span></a></label>
 </div>
 <%}%>
-	
+
 
 	<div class="controls DoNotPrint" style="float:right">
 
 		<%if (printView){%>
-		<a href="JavaScript:void(0);" class="btn btn-small back loading" title="Cancel" data-loading-text="cancelling...">Cancel</a>			
-		<button type="button" class="btn btn-small btn-success DoNotPrint" onclick="javascript:window.print();"><i class="icon-print icon-white"></i> Print</button>	
+		<a href="JavaScript:void(0);" class="btn btn-small back loading" title="Cancel" data-loading-text="cancelling...">Cancel</a>
+		<button type="button" class="btn btn-small btn-success DoNotPrint" onclick="javascript:window.print();"><i class="icon-print icon-white"></i> Print</button>
 		<%}else{%>
 
 view:
@@ -522,7 +522,7 @@ view:
 
     <%if (!printView){%>
     <div style="position: relative; float: left; padding-right: 10px;" class="DoNotPrint">
-	
+
 	<input type="checkbox" name="printHP" id="printHP<%=measure%>" class="css-checkbox"  value="<%=measure%>"  <%=setToPrint ? "checked" : ""%>/>
 	<label for="printHP<%=measure%>" name="printHP<%=measure%>" class="css-label"></label><!--needed for chkbox effect-->
 
@@ -549,7 +549,7 @@ view:
 </select>
 
 
-<input type="text" name="numEle<%=measure%>" class="num-<%=measure%>" style="display:none;width:20px" placeholder=""/>      
+<input type="text" name="numEle<%=measure%>" class="num-<%=measure%>" style="display:none;width:20px" placeholder=""/>
 
 
 <div class="range-<%=measure%>" style="display:none">
@@ -564,7 +564,7 @@ view:
 	</div>
 </div><!--range container-->
 
- 
+
 
 </div><!--refine-results-->
 
@@ -763,7 +763,7 @@ view:
             <br/>
         </p>
     </div> <!--headPrevention-->
-   
+
  <%
         out.flush();
         int k = 0;
@@ -867,9 +867,9 @@ String noPrint2 = "";
 <!--RECOMMENDATIONS-->
 <% if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { %>
 <div class="well" id="recommendations-list" <%=noPrint2%> >
-   
+
  <h4><%=flowSheet%> Recommendations</h4>
-   
+
     <ul id="recomList">
         <% for (String warn : warnings){ %>
         <li><%=warn%></li>
@@ -883,7 +883,7 @@ String noPrint2 = "";
         <li>Decision Support Had Errors Running.</li>
         <% } %>
     </ul><!--RECOMMENDATIONS END-->
-        
+
 </div>
 <% } %>
 
@@ -896,15 +896,17 @@ String noPrint2 = "";
     <strong>Oops!</strong> You need to make a selection before you can generate a print preview.
     </div>
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script> 
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>	
+
+<script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
+<!--
 <script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script> 
-
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
 <script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-
+-->
 <script type="text/javascript">
 
 $(".preview").on( "click", function() {
@@ -920,7 +922,7 @@ $(".preview").on( "click", function() {
 
 });
 
-$(function (){ 
+$(function (){
 	$('[id^=dp-]').datepicker();
 });
 
@@ -970,10 +972,10 @@ $('#select-all-chk').on( "click", function(){
 $("[id^=refineSelect]").on("change",function(){
 	var v = $(this).val();
 	var m = $(this).attr("rel");
-	
+
 	if(v=="num"){
 		$("."+v+"-"+m).toggle();
-		
+
 		$(".range-"+m).hide();
 
 	}else if(v=="range"){
@@ -988,7 +990,7 @@ $("[id^=refineSelect]").on("change",function(){
 
 
 $("[id^=printHP]").on( "click", function(){
-	
+
 var v = $(this).val();
 
 if($(this).is(':checked')){
@@ -1005,25 +1007,25 @@ $("#flowsheetPrintForm").on( "submit",function(){
 	var error=false;
 
 	$("[id^=printHP]").each(function(){
-		
+
 
 		if($(this).is(':checked')){
 
 			var v = $(this).val();
 
-			var x = $("#refineSelect-"+v).val();	
+			var x = $("#refineSelect-"+v).val();
 
-					
+
 			if(x=="num" && $(".num-"+v).val()==""){
-				
+
 				$(".num-"+v).addClass("input-error");
 				error=true;
 
 			}else{
 
 				$(".num-"+v).removeClass("input-error");
-				
-			} 
+
+			}
 
 
 
@@ -1034,7 +1036,7 @@ $("#flowsheetPrintForm").on( "submit",function(){
 		 	}else{
 				$("#sDate-"+v).removeClass("input-error");
 
-			} 
+			}
 
 
 			if(x=="range" && $("#eDate-"+v).val()==""){
@@ -1047,7 +1049,7 @@ $("#flowsheetPrintForm").on( "submit",function(){
 
 		}
 	});
-     
+
 
 	if(error==true){
 	return false;
