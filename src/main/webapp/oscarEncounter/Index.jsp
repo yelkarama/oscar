@@ -235,7 +235,7 @@ if (request.getParameter("casetoEncounter")==null)
         //if(x) {
               if(varpage!= 'null'){
                   document.insertTemplateForm.templateSelect.options[0].selected=true;
-                  var page = "<rewrite:reWrite jspPage="InsertTemplate.do"/>?templateName=" + varpage;
+                  var page = "<rewrite:reWrite jspPage="InsertTemplate.do"/>?templateName=" + encodeURIComponent(varpage);
                   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=600,screenY=200,top=0,left=0";
                   var popup=window.open(page, "<bean:message key="oscarEncounter.Index.popupPageWindow"/>", windowprops);
                   if (popup != null) {

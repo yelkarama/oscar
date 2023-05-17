@@ -370,7 +370,7 @@ if (request.getParameter("casetoEncounter")==null)
     function ajaxInsertTemplate(varpage) { //fetch template
         if(varpage!= 'null'){
           var page = "<rewrite:reWrite jspPage="InsertTemplate.do"/>";
-          var params = "templateName=" + varpage + "&version=2";
+          var params = "templateName=" + encodeURIComponent(varpage)  + "&version=2";
           new Ajax.Request( page, {
                                     method: 'post',
                                     postBody: params,
