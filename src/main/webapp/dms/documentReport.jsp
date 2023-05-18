@@ -265,8 +265,8 @@ function checkDelete(url, docDescription){
 }
 
 function showhide(hideelement, button) {
-    var plus = "[+]";
-    var minus = "[-]";
+    var plus = '<i class="icon-plus"></i>';
+    var minus = '<i class="icon-minus"></i>';
     if (document.getElementById) { // DOM3 = IE5, NS6
         if (document.getElementById(hideelement).style.display == 'none') {
               document.getElementById(hideelement).style.display = 'block';
@@ -459,7 +459,7 @@ function popup1(height, width, url, windowName){
                           }
                           %> <a id="plusminus<%=i%>"
         href="javascript: showhide('documentsInnerDiv<%=i%>', 'plusminus<%=i%>');">
-      [-] <%= currentkey%> </a>
+      <i class="icon-minus"></i>&nbsp;</a><%= currentkey%>
       <!-- Enter the deleted code here -->
 
       &nbsp;&nbsp;
