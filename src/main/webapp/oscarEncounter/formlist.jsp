@@ -144,8 +144,8 @@ function popupPageK(page) {
 	<tr>
 		<td><a href=#
 			onClick="popupPageK('<%=frm.getFormPage()+demoNo+"&formId="+pfrm.getFormId()+"&provNo="+provNo+(pfrm.getRemoteFacilityId()!=null?"&remoteFacilityId="+pfrm.getRemoteFacilityId():"")%>'); return false;"><%=frm.getFormName()+(pfrm.getRemoteFacilityId()!=null?" (remote)":"")%></a></td>
-		<td  style='align:center'><%=pfrm.getCreated()%></td>
-		<td  style='align:center'><%=pfrm.getEdited()%></td>
+		<td  style='text-align:center'><%=pfrm.getCreated()%></td>
+		<td  style='text-align:center'><%=pfrm.getEdited()%></td>
 	</tr>
 	<%
 		}
@@ -156,7 +156,7 @@ function popupPageK(page) {
 	nLastPage=Integer.parseInt(strLimit1)-Integer.parseInt(strLimit2);
 	int intLimit2 = Integer.parseInt(strLimit2);
 	if((nLastPage >= 0 || nItems == intLimit2) && nItems != 0) {
-		out.println("<tr><td colspan=3   style='align:center'>");
+		out.println("<tr><td colspan=3   style='text-align:center'>");
 		if(nLastPage >= 0) {
 %>
 	<a
