@@ -136,9 +136,9 @@ for (String reportClass : reportClasses) {
     }
 }
 %>
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js" type="text/javascript"></script>
-<script src="${ pageContext.request.contextPath }/share/javascript/prototype.js"></script>
-<script src="${ pageContext.request.contextPath }/share/javascript/scriptaculous.js"></script>
+
 <script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
 <script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
@@ -149,14 +149,8 @@ for (String reportClass : reportClasses) {
 
 
 <script type="text/javascript" language="JavaScript">
-function onloadfunction() {
-    new Autocompleter.Local('docSubClass', 'docSubClass_list', docSubClassList);
-    new Autocompleter.Local('docSubClass2', 'docSubClass_list2', docSubClassList);
-    if(!NiftyCheck())
-        return;
 
-    Rounded("div.topplane","top","transparent","#d1d5bd","small border #d1d5bd");
-    Rounded("div.topplane","bottom","transparent","#f2f7ff","small border #d1d5bd");
+
     <%--request attribute "linkhtmlerrors" & "docerrors" is used to check if a document was just submitted --%>
     <% if (request.getAttribute("linkhtmlerrors") != null) { //Open AddLink div%>
     showhide('addLinkDiv', 'plusminusLinkA');
@@ -165,7 +159,7 @@ function onloadfunction() {
     //setFocus();
     <%}%>
 
-}
+
   function checkSel(sel){
   theForm = sel.form;
   if ((theForm.docDesc.value == "") || (theForm.docDesc.value == "<%= defaultDesc%>")) {
@@ -195,8 +189,8 @@ function setFocus() {
 }*/
 
 function showhide(hideelement, button) {
-    var plus = "+";
-    var minus = "--";
+    var plus = "[+]";
+    var minus = "[-]";
     if (document.getElementById) { // DOM3 = IE5, NS6
         if (document.getElementById(hideelement).style.display == 'none') {
               document.getElementById(hideelement).style.display = 'block';
@@ -269,18 +263,13 @@ function newDocTypeLink(){
 }
 
 
-var docSubClassList = [
-        <% for (int i=0; i<subClasses.size(); i++) { %>
-"<%=subClasses.get(i)%>"<%=(i<subClasses.size()-1)?",":""%>
-        <% } %>
-];
 </script>
 <div class="topplane">
 <div class="docHeading" style="background-color: silver;">
-    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> +<bean:message key="dms.addDocument.msgAddDocument"/></a>
-    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> +<bean:message key="dms.addDocument.msgManageUploadDocument"/></a --%>
-    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> +<bean:message key="dms.addDocument.AddLink"/> </a>
-    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')">+<bean:message key="dms.addDocument.AddHTML"/></a>
+    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> [+]<bean:message key="dms.addDocument.msgAddDocument"/></a>
+    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> [+]<bean:message key="dms.addDocument.msgManageUploadDocument"/></a --%>
+    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> [+]<bean:message key="dms.addDocument.AddLink"/> </a>
+    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')">[+]<bean:message key="dms.addDocument.AddHTML"/></a>
 </div>
 <div id="addDocDiv" class="addDocDiv"
 	style="background-color: silver; display: none;"><html:form
