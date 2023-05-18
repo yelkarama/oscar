@@ -136,9 +136,11 @@ for (String reportClass : reportClasses) {
     }
 }
 %>
- <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js" type="text/javascript"></script>
 
+ <link rel="stylesheet" href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css">
+ <link rel="stylesheet" href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js" type="text/javascript"></script>
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
 <script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
@@ -189,8 +191,8 @@ function setFocus() {
 }*/
 
 function showhide(hideelement, button) {
-    var plus = "[+]";
-    var minus = "[-]";
+    var plus = '<i class="icon-plus"></i>';
+    var minus = '<i class="icon-minus"></i>';
     if (document.getElementById) { // DOM3 = IE5, NS6
         if (document.getElementById(hideelement).style.display == 'none') {
               document.getElementById(hideelement).style.display = 'block';
@@ -266,10 +268,10 @@ function newDocTypeLink(){
 </script>
 <div class="topplane">
 <div class="docHeading" style="background-color: silver;">
-    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> [+]<bean:message key="dms.addDocument.msgAddDocument"/></a>
-    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> [+]<bean:message key="dms.addDocument.msgManageUploadDocument"/></a --%>
-    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> [+]<bean:message key="dms.addDocument.AddLink"/> </a>
-    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')">[+]<bean:message key="dms.addDocument.AddHTML"/></a>
+    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.msgAddDocument"/>
+    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.msgManageUploadDocument"/> --%>
+    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.AddLink"/>
+    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')"><i class="icon-plus"></i>&nbsp</a><bean:message key="dms.addDocument.AddHTML"/>
 </div>
 <div id="addDocDiv" class="addDocDiv"
 	style="background-color: silver; display: none;"><html:form
