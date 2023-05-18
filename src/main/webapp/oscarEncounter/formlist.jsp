@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -33,7 +34,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_eChart");%>
+	<%response.sendRedirect("${pageContext.request.contextPath/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -49,8 +50,8 @@ if(!authed) {
 	String demoNo = request.getParameter("demographic_no");
     String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF", tableTitle = "#99ccff";
 	String strLimit1="0";
-	String strLimit2="10";  
-	if(request.getParameter("limit1")!=null) strLimit1 = request.getParameter("limit1");  
+	String strLimit2="10";
+	if(request.getParameter("limit1")!=null) strLimit1 = request.getParameter("limit1");
 	if(request.getParameter("limit2")!=null) strLimit2 = request.getParameter("limit2");
 %>
 
@@ -60,9 +61,9 @@ if(!authed) {
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.formlist.title" /></title>
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <script type="text/javascript" language=javascript>
 
 function popupPageK(page) {
@@ -70,7 +71,7 @@ function popupPageK(page) {
     + "scrollbars=yes,menubars=no,toolbars=no,resizable=yes,top=0,left=0";
     var popup = window.open(page, "formhistory", windowprops);
     popup.focus();
-    
+
 }
     function urlencode(str) {
         var ns = (navigator.appName=="Netscape") ? 1 : 0;
@@ -103,23 +104,21 @@ function popupPageK(page) {
       }
     }
 </script>
-<body bgcolor="ivory" onLoad="setfocus()" topmargin="0" leftmargin="0"
-	rightmargin="0">
-<table border=0 cellspacing=0 cellpadding=0 width="100%">
-	<tr bgcolor="<%=deepcolor%>">
-		<th><font face="Helvetica"><bean:message
-			key="oscarEncounter.formlist.msgFormList" /></font></th>
+<body onLoad="setfocus()" >
+<table style="width:100%">
+	<tr>
+		<th><h3><bean:message
+			key="oscarEncounter.formlist.msgFormList" /></h3></th>
 	</tr>
 </table>
 <center>
-<table BORDER="0" CELLPADDING="2" CELLSPACING="2" WIDTH="60%"
-	BGCOLOR="white">
-	<tr BGCOLOR="<%=tableTitle%>">
-		<th width=30% nowrap><bean:message
+<table style="width:60%;" class="table table-striped table-condensed">
+	<tr>
+		<th style="width:30%;"><bean:message
 			key="oscarEncounter.formlist.formName" /></th>
-		<th width=11% nowrap><bean:message
+		<th style="width:11%;"><bean:message
 			key="oscarEncounter.formlist.formCreated" /></th>
-		<th width=11% nowrap><bean:message
+		<th style="width:11%;"><bean:message
 			key="oscarEncounter.formlist.formEditedTime" /></th>
 	</tr>
 
@@ -128,7 +127,7 @@ function popupPageK(page) {
 		EctFormData.Form frm = forms[j];
 		String table = frm.getFormTable();
                 table = org.apache.commons.lang.StringEscapeUtils.escapeSql(table);
-                                
+
 		EctFormData.PatientForm[] pforms;
                 if( table.length() == 0 ) {
                     pforms = new EctFormData.PatientForm[0];
@@ -142,12 +141,11 @@ function popupPageK(page) {
 			nItems++;
 			EctFormData.PatientForm pfrm = pforms[i];
 %>
-	<tr
-		bgcolor='<%= j%2 == 0 ? (i%2 == 0 ?weakcolor:deepcolor) : (i%2 == 0 ?"white":"#eeeeee")%>'>
+	<tr>
 		<td><a href=#
 			onClick="popupPageK('<%=frm.getFormPage()+demoNo+"&formId="+pfrm.getFormId()+"&provNo="+provNo+(pfrm.getRemoteFacilityId()!=null?"&remoteFacilityId="+pfrm.getRemoteFacilityId():"")%>'); return false;"><%=frm.getFormName()+(pfrm.getRemoteFacilityId()!=null?" (remote)":"")%></a></td>
-		<td align='center'><%=pfrm.getCreated()%></td>
-		<td align='center'><%=pfrm.getEdited()%></td>
+		<td  style='align:center'><%=pfrm.getCreated()%></td>
+		<td  style='align:center'><%=pfrm.getEdited()%></td>
 	</tr>
 	<%
 		}
@@ -158,7 +156,7 @@ function popupPageK(page) {
 	nLastPage=Integer.parseInt(strLimit1)-Integer.parseInt(strLimit2);
 	int intLimit2 = Integer.parseInt(strLimit2);
 	if((nLastPage >= 0 || nItems == intLimit2) && nItems != 0) {
-		out.println("<tr><td colspan=3  align='center'>");
+		out.println("<tr><td colspan=3   style='align:center'>");
 		if(nLastPage >= 0) {
 %>
 	<a
