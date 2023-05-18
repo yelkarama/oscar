@@ -72,6 +72,8 @@ List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.dms.*, oscar.dms.data.*, oscar.oscarProvider.data.ProviderMyOscarIdData, oscar.oscarDemographic.data.DemographicData"%>
+<%@ page import="org.oscarehr.common.dao.CtlDocClassDao"%>
+
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.util.SessionConstants"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
@@ -192,11 +194,8 @@ if ( up != null && up.getValue() != null && up.getValue().equals("yes")){
 
 <title><bean:message key="dms.documentReport.title" /></title>
 
-<script src="${ pageContext.request.contextPath }/js/global.js"></script>
 <script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
-<!--
-<script src="${ pageContext.request.contextPath }/share/javascript/prototype.js"></script>
--->
+
 
 <link href="${ pageContext.request.contextPath }/css/datepicker.css" rel="stylesheet" type="text/css">
 <link href="${ pageContext.request.contextPath }/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
@@ -204,31 +203,51 @@ if ( up != null && up.getValue() != null && up.getValue().equals("yes")){
 
     <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
     <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-    <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+    <link href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
     <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<!--
+<script src="${ pageContext.request.contextPath }/share/javascript/prototype.js"></script>
+-->
     <script src="${ pageContext.request.contextPath }/js/global.js"></script>
     <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+<%
+CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean("ctlDocClassDao");
+List<String> reportClasses = docClassDao.findUniqueReportClasses();
+ArrayList<String> subClasses = new ArrayList<String>();
+ArrayList<String> consultA = new ArrayList<String>();
+ArrayList<String> consultB = new ArrayList<String>();
+for (String reportClass : reportClasses) {
+    List<String> subClassList = docClassDao.findSubClassesByReportClass(reportClass);
+    if (reportClass.equals("Consultant ReportA")) consultA.addAll(subClassList);
+    else if (reportClass.equals("Consultant ReportB")) consultB.addAll(subClassList);
+    else subClasses.addAll(subClassList);
 
-<style type="text/css">
-    .autocomplete_style {
-        background: #fff;
-        text-align: left;
+    if (!consultA.isEmpty() && !consultB.isEmpty()) {
+        for (String partA : consultA) {
+            for (String partB : consultB) {
+                subClasses.add(partA+" "+partB);
+            }
+        }
     }
+}
+%>
 
-    .autocomplete_style ul {
-        border: 1px solid #aaa;
-        margin: 0px;
-        padding: 2px;
-        list-style: none;
-    }
+<script>
+  $( function() {
+    var docSubClassList = [
+        <% for (int i=0; i<subClasses.size(); i++) { %>
+"<%=subClasses.get(i)%>"<%=(i<subClasses.size()-1)?",":""%>
+        <% } %>
+    ];
+    $( "#docSubClass" ).autocomplete({
+      source: docSubClassList
+    });
+  } );
+</script>
 
-    .autocomplete_style ul li.selected {
-        background-color: #ffa;
-        text-decoration: underline;
-    }
-</style>
 <script type="text/javascript">
-
 
 
 var awnd=null;
@@ -246,8 +265,8 @@ function checkDelete(url, docDescription){
 }
 
 function showhide(hideelement, button) {
-    var plus = "+";
-    var minus = "--";
+    var plus = "[+]";
+    var minus = "[-]";
     if (document.getElementById) { // DOM3 = IE5, NS6
         if (document.getElementById(hideelement).style.display == 'none') {
               document.getElementById(hideelement).style.display = 'block';
@@ -440,9 +459,9 @@ function popup1(height, width, url, windowName){
                           }
                           %> <a id="plusminus<%=i%>"
         href="javascript: showhide('documentsInnerDiv<%=i%>', 'plusminus<%=i%>');">
-      -- <%= currentkey%> </a>
+      [-] <%= currentkey%> </a>
       <!-- Enter the deleted code here -->
-      <%if(DocumentBrowserLink) {%><a href="${ pageContext.request.contextPath }/dms/documentBrowser.jsp?function=<%=module%>&functionid=<%=moduleid%>&categorykey=<%=Encode.forUri(currentkey)%>"><bean:message key="dms.documentReport.msgBrowser"/></a><%}%>
+
       &nbsp;&nbsp;
       <span class="tabs"> <bean:message key="dms.documentReport.msgView"/>:
       <select id="viewdoctype<%=i%>" name="view" class="input-medium"
@@ -457,6 +476,7 @@ function popup1(height, width, url, windowName){
         <%}%>
 
       </select>
+        <%if(DocumentBrowserLink) {%>&nbsp;&nbsp;<a class="btn" href="${ pageContext.request.contextPath }/dms/documentBrowser.jsp?function=<%=module%>&functionid=<%=moduleid%>&categorykey=<%=Encode.forUri(currentkey)%>"><bean:message key="dms.documentReport.msgBrowser"/></a><%}%>
       </span>
       </div>
       </div>
