@@ -34,7 +34,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("${pageContext.request.contextPath/securityError.jsp?type=_eChart");%>
+	<%response.sendRedirect("${pageContext.request.contextPath}/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -62,9 +62,9 @@ if(!authed) {
 <html:html locale="true">
 <head>
 <title><bean:message key="oscarEncounter.formlist.title" /></title>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="${ pageContext.request.contextPath }/js/global.js"></script>
 <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
-<script type="text/javascript" language=javascript>
+<script type="text/javascript">
 
 function popupPageK(page) {
     windowprops = "height=700,width=960,location=no,"
