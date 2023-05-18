@@ -72,11 +72,11 @@
 
 	<table class="table table-striped table-condensed">
 		<tr>
-			<th style="align: left; width: 20px;" class="Header"><bean:message
+			<th style="text-align: left; width: 20px;" class="Header"><bean:message
 				key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
 			</th>
-			<th style="align: left; width: 200px;" class="Header"><bean:message key="oscarEncounter.oscarMeasurements.typedescription"/></th>
-			<th style="align: left; width: 50px;" class="Header"></th>
+			<th style="text-align: left; width: 200px;" class="Header"><bean:message key="oscarEncounter.oscarMeasurements.typedescription"/></th>
+			<th style="text-align: left; width: 50px;" class="Header"></th>
 		</tr>
 		<logic:present name="measurementsData">
 			<logic:iterate id="data" name="measurementsData"
