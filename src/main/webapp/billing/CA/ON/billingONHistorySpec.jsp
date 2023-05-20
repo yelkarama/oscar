@@ -18,6 +18,12 @@
 
 --%>
 <!DOCTYPE html>
+<%@ page
+	import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*"%>
+<%@ page import="oscar.oscarBilling.ca.on.data.*"%>
+<%@ page import="org.oscarehr.util.DateRange"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
   if(session.getAttribute("user") == null)
     response.sendRedirect("../logout.htm");
@@ -37,12 +43,7 @@
 
   String serviceCode = request.getParameter("serviceCode")!=null? request.getParameter("serviceCode") : "";
 %>
-<%@ page
-	import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*"%>
-<%@ page import="oscar.oscarBilling.ca.on.data.*"%>
-<%@ page import="org.oscarehr.util.DateRange"%>
-<%@ page import="org.owasp.encoder.Encode" %>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+
 
 <jsp:useBean id="providerBean" class="java.util.Properties"
 	scope="session" />
