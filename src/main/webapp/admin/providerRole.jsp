@@ -27,11 +27,9 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.ResourceBundle"%>
-<%@ page import="java.sql.*" %>
 <%@ page import="oscar.util.*,oscar.*" %>
 <%@ page import="oscar.login.*" %>
 <%@ page import="oscar.log.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.springframework.util.StringUtils" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.PMmodule.model.Program" %>
@@ -371,12 +369,16 @@ if(newCaseManagement) {
             }
     }
     </script>
-
+    <style>
+    select {
+        margin-bottom:0px;
+    }
+    </style>
     </head>
     <body onLoad="setfocus()">
 
-    <div id="header"><H4><i class="icon-lock"></i>&nbsp;<bean:message	key="global.update" />&nbsp;<bean:message
-			key="admin.admin.provider" />&nbsp;<bean:message key="role" /></H4>
+    <div id="header" class="navbar"><div class="navbar-inner"><div class="brand"><i class="icon-lock"></i>&nbsp;<bean:message	key="global.update" />&nbsp;<bean:message
+	    key="admin.admin.provider" />&nbsp;<bean:message key="role" /></div></div>
     </div>
 
 
@@ -388,11 +390,12 @@ if(newCaseManagement) {
         </div>
     <% } %>
     <div class="well">
-    <bean:message key="admin.securityrecord.formUserName" />
-              <input type="text" name="keyword" value="<%=Encode.forHtmlAttribute(keyword)%>" />
-              <input type="submit" class="btn btn-primary" name="search" value="<bean:message
-			key="global.search" />">
-
+     <div class="controls">
+			    <div class="input-append">
+              <input type="text" class="input" placeholder="<bean:message key="admin.securityrecord.formUserName" />" name="keyword" value="<%=Encode.forHtmlAttribute(keyword)%>" />
+              <input type="submit" class="btn btn-primary" name="search" value="<bean:message key="global.search" />" >
+			    </div>
+		    </div>
     </div>
 </form>
 
@@ -454,11 +457,11 @@ if(newCaseManagement) {
               <input type="hidden" name="providerId" value="<%=providerNo%>">
               <input type="hidden" name="roleId" value="<%= item.getProperty("role_id", "")%>">
               <input type="hidden" name="roleOld" value="<%= Encode.forHtmlAttribute(item.getProperty("role_name", ""))%>">
-              <input type="submit" name="submit" class="btn" value="<bean:message key="global.btnAdd" />">
-              -
-              <input type="submit" name="buttonUpdate" class="btn" value="<bean:message	key="global.update" />" <%= StringUtils.hasText(item.getProperty("role_id"))?"":"disabled"%>>
-              -
-              <input type="submit" name="submit" class="btn-link" value="<bean:message key="global.btnDelete" />" <%= StringUtils.hasText(item.getProperty("role_id"))?"":"disabled"%>>
+              	<div class="button-group">
+	              <input type="submit" name="submit" class="btn btn-primary" value="<bean:message key="global.btnAdd" />">
+	              <input type="submit" name="buttonUpdate" class="btn" value="<bean:message	key="global.update" />" <%= StringUtils.hasText(item.getProperty("role_id"))?"":"disabled"%>>
+	              <input type="submit" name="submit" class="btn-link" value="<bean:message key="global.btnDelete" />" <%= StringUtils.hasText(item.getProperty("role_id"))?"":"disabled"%>>
+	            </div>
             </td>
             </tr>
       </form>
