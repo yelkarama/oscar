@@ -432,7 +432,7 @@ if(newCaseManagement) {
               <td><%= providerNo %></td>
               <td><%= Encode.forHtmlContent(item.getProperty("first_name", "")) %></td>
               <td><%= Encode.forHtmlContent(item.getProperty("last_name", "")) %></td>
-              <td style="text-align: center;">
+              <td>
               <select name="roleNew">
                       <option value="-" >-</option>
 <%
@@ -447,12 +447,12 @@ if(newCaseManagement) {
             </select>
             </td>
 			<% if( newCaseManagement ) { %>
-            <td style="text-align: center;">
+            <td>
              <%=(primaries.get(i)!=null && (primaries.get(i)).booleanValue()==true)? oscarRec.getString("global.yes") : "" %>
             </td>
 			<% } %>
 
-            <td style="text-align: center;">
+            <td>
               <input type="hidden" name="keyword" value="<%=Encode.forHtmlAttribute(keyword)%>" />
               <input type="hidden" name="providerId" value="<%=providerNo%>">
               <input type="hidden" name="roleId" value="<%= item.getProperty("role_id", "")%>">
