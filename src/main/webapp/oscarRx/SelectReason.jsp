@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -54,13 +55,10 @@
 <html:html locale="true">
 <head>
 
-<%-- <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script> 
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script> --%>
 
-<script type="text/javascript" src="${ oscar_context_path }/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="${ oscar_context_path }/js/jquery-ui-1.8.18.custom.min.js" ></script>
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <script type="text/javascript" >var ctx = '${ oscar_context_path }';</script>
 <title>Drug Reason</title>
 <html:base />
@@ -113,9 +111,6 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		margin:0;
 		padding:3;
 	}
-.label {
-	width:33%;
-}
 
 	table td label {
 		width:100%;
@@ -128,7 +123,7 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		border-collapse: collapse;
 		float:left;
 		clear:both;
-		
+
 	}
 	table td {
 		padding:3px;
@@ -142,13 +137,13 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		$(".codeTxt").val(name);
 		$(".codeTxt").css('color','black')
 	}
-	
+
 	function assignQuickDxLink(id, name) {
 		$("#codeTxt").val(id);
 		$("#jsonDxSearch").val(name);
 		$("#jsonDxSearch").css('color','black')
 	}
-	
+
 	function toggleArchiveMenu(id) {
 		$('#' + id).toggle();
 	}
@@ -158,19 +153,19 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 			$("#rxReasonForm").trigger( "submit" );
 			opener.location.reload();
 		})
-		
+
 	})
-</script>	
+</script>
 </head>
 
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
+<body>
 
 <table id="AutoNumber1">
-	
+
 	<%@ include file="TopLinks.jsp"%><!-- Row One included here-->
 	<tr>
 		<td style="width:25%;vertical-align:top;"> <!-- left column -->
-	
+
 			<fieldset>
 				<legend>Patient Dx Registry</legend>
 				<table>
@@ -183,91 +178,91 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		        	}
 		        %>
 		        	<tr><td>
-		        		<a href="javascript:void(0);" onclick="assignPatientDxLink('<%=dx.getDxresearchCode()%>', '<%=idc9Desc%>')" 
-		        			title="<%=dx.getDxresearchCode()%> - <%=idc9Desc%>"  >		        			
+		        		<a href="javascript:void(0);" onclick="assignPatientDxLink('<%=dx.getDxresearchCode()%>', '<%=idc9Desc%>')"
+		        			title="<%=dx.getDxresearchCode()%> - <%=idc9Desc%>"  >
 		        			<%=dx.getDxresearchCode()%> - <%=StringUtils.maxLenString(idc9Desc, 10, 6, StringUtils.ELLIPSIS)%>
 		        		</a>
 		        	</td></tr>
 		        <%}%>
 		        </table>
-		     </fieldset>   
-		     <fieldset> 
-		     	<legend>Dx Quick List</legend> 
-		     	
+		     </fieldset>
+		     <fieldset>
+		     	<legend>Dx Quick List</legend>
+
 		     		<%
 					for(dxQuickListBean qlBean: dxQlBeanHandler.getDxQuickListBeanList()){
 							%>
-							<fieldset style="display: inline; vertical-align:top;"> 
+							<fieldset style="display: inline; vertical-align:top;">
 					     	<legend><%=qlBean.getQuickListName() %></legend>
 						     	<% dxQuickListItemsHandler dxQuickList = new dxQuickListItemsHandler(qlBean.getQuickListName());
 									for(dxCodeSearchBean code:dxQuickList.getDxQuickListBeanList()){
 									%>
 									<a href="javascript:void(0);" onclick="assignQuickDxLink('<%=code.getDxSearchCode() %>','<%=code.getDescription() %>');" ><%=code.getDxSearchCode() %> - <%=code.getDescription() %></a><br>
-									<% 
-						     		
+									<%
+
 								}
 						     	%>
 					     	</fieldset>
-						<%	
-							
+						<%
+
 						}
 			 		%>
-		       
+
         	</fieldset>
 
 		</td> <!--   Side Bar File --->
-		
-		
-		
+
+
+
 		<td style="border-left: 2px solid #A9A9A9;" >
-		
+
 		<%if (request.getAttribute("message") !=null){ %>
-			<span style="color:red;"><%=request.getAttribute("message") %></span>
+			<span class="alert alert-error"><%=request.getAttribute("message") %></span>
 		<%} %>
-		
+
 		<form action="RxReason.do" method="post" id="rxReasonForm">
-		
+
 		<fieldset>
 			<input type="hidden" name="method" value="addDrugReason"/>
 			<input type="hidden" name="demographicNo" value="<%=demoStr%>"   />
 	        <input type="hidden" name="drugId"  value="<%=drugIdStr%>"  />
-	        
+
 			<legend>Assign Indication</legend>
-			
-<%-- 	Replaced with Dx Code Search template.		
+
+<%-- 	Replaced with Dx Code Search template.
 
 			<label for="codingSystem" >Disease Code System</label>
 		 	<select name="codingSystem" id="codingSystem" >
 				<option value="icd9">icd9</option>
 				option value="limitUse">Limited Use</option
 			</select>
-			
+
 			<label for="codeTxt" >Indication</label><input type="text" name="code" id="codeTxt" /> --%>
-			
+
 			<input type="hidden" name="code" id="codeTxt" />
 			<jsp:include page="/oscarResearch/oscarDxResearch/dxJSONCodeSearch.jsp" >
 		    	<jsp:param value="true" name="enableCodeSystemSelect"/>
 		    </jsp:include>
-			
+
 			<table >
-			<tr><td class="label"><label for="comments" >Additional Comments</label> </td> 
-			<td><textarea name="comments" id="comments"></textarea></td></tr>	
-	
+			<tr><td class="label"><label for="comments" >Additional Comments</label> </td>
+			<td><textarea name="comments" id="comments"></textarea></td></tr>
+
 			<tr>
 				<td colspan="2">
 					<input type="checkbox" name="primaryReasonFlag" id="primaryReasonFlag" value="true"/>
 					Primary Indication
-				</td> 
-				
+				</td>
+
 			</tr>
 
-			<tr><td colspan="2"><input type="submit" id="saveRxReason" value="Save"/></td> </tr>
-			
+			<tr><td colspan="2"><input type="submit" class="btn btn-primary" id="saveRxReason" value="Save"/></td> </tr>
+
 			</table>
 		</fieldset>
 		</form>
-		
-		<table >		
+
+		<table>
 			<tr>
 				<td style="padding:0px;margin:0px;" >
 				<%
@@ -310,7 +305,7 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 						<td><%=drugReason.getProviderNo() %></td>
 						<td><%=drugReason.getDateCoded() %></td>
 						<td>
-							<a onclick="toggleArchiveMenu('archive<%=drugReason.getId()%>')" 
+							<a onclick="toggleArchiveMenu('archive<%=drugReason.getId()%>')"
 							href="javascript:void(0);">archive</a>
 						</td>
 					</tr>
@@ -341,14 +336,14 @@ dxQuickListBeanHandler dxQlBeanHandler = new dxQuickListBeanHandler();
 		</td>
 	</tr>
 	<tr>
-		<td height="0%" style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%" style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+		<td style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+		<td style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
 	</tr>
 	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
+		<td colspan="2">&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC" colspan="2"></td>
+		<td style="padding: 5; background-color: #DCDCDC" colspan="2"></td>
 	</tr>
 </table>
 
