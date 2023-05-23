@@ -23,9 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.common.dao.DemographicDao"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@page import="org.oscarehr.common.dao.FlowSheetUserCreatedDao"%>
