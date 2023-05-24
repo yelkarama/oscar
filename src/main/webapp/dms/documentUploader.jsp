@@ -79,20 +79,22 @@ if (isFirefox > 0) {
 <head>
 	<meta charset="utf-8">
 	<title><bean:message key="inboxmanager.document.title" /></title>
+
 	<link rel="stylesheet" href="<%=context%>/css/cupertino/jquery-ui-1.8.18.custom.css" id="theme">
 	<link rel="stylesheet" href="<%=resourcePath%>jquery.fileupload-ui.css">
 	<link rel="stylesheet" href="<%=resourcePath%>style.css">
 	<link rel="stylesheet" type="text/css" href="<%=context%>/share/css/OscarStandardLayout.css" />
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
 	<script type="text/javascript">
 	function setProvider(select){
 		jQuery("#provider").val(select.options[select.selectedIndex].value);
 	}
-	
+
 	function setQueue(select){
 		jQuery("#queue").val(select.options[select.selectedIndex].value);
 	}
-	
+
         function setDestination(select){
 		jQuery("#destination").val(select.options[select.selectedIndex].value);
                 setDropList();
@@ -122,20 +124,48 @@ if (isFirefox > 0) {
 	</script>
 	<style type="text/css">
 	body {
-		background-color: #c0c0c0;
+		background-color: #f5f5f5;
 	}
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+        color: black;
+        font-weight: normal;
+	    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	    background-repeat: repeat-x;
+        border: 1px solid black;
+
+    }
+
+    .ui-widget-content {
+        border: 1px solid black;
+        *background: lightgray;
+    }
+
+    .ui-widget-header {
+        border: 1px solid black;
+        background: lightgray;
+    }
+
+    .files .name {
+        font-size: 18px;
+        color: black;
+    }
+
 	</style>
 </head>
 <body onload="setDropList();">
 <div id="fileupload">
     <form action="<%=context%>/dms/documentUpload.do?method=executeUpload" method="POST" enctype="multipart/form-data">
         <div class="fileupload-buttonbar">
-            <label class="fileinput-button">
+            <label class="fileinput-button btn">
                 <span id="add">Add files...</span>
                 <input type="file" name="filedata" multiple>
             </label>
-            <button id="start" type="submit" class="start">Start upload</button>
-            <button itd="cancel" type="reset" class="cancel">Cancel upload</button>
+            <button id="start" type="submit" class="start btn">Start upload</button>
+            <button itd="cancel" type="reset" class="cancel btn">Cancel upload</button>
             <br>
             <span>
 				<input type="hidden" id="provider" name="provider" value="<%=provider%>" />
@@ -169,14 +199,14 @@ if (isFirefox > 0) {
 					for (Map.Entry<Integer,String> entry : queues.entrySet()) {
 					    int key = entry.getKey();
 					    String value = entry.getValue();
-					   
+
 	                %>
 					<option value="<%=key%>" <%=( (key == queueId) ? " selected" : "")%>><%= value%></option>
 					<%
 					}
 					%>
 				</select>
-				
+
 			</span>
                                 <div id="destFolderDiv">
                                 <label style="font-family:Arial; font-weight:normal; font-size:12px" for="destinationDrop" class="fields"><bean:message key="dms.documentUploader.folder" />:</label>
@@ -189,7 +219,8 @@ if (isFirefox > 0) {
                                 </div>
         </div>
     </form>
-    <div class="fileupload-content">
+    <div class="fileupload-content" style="background-color:white;">
+<span style="align:center; color:gray">drag and drop here</span>
         <table class="files"></table>
         <div class="fileupload-progressbar"></div>
     </div>
@@ -246,14 +277,21 @@ if (isFirefox > 0) {
         {{/if}}
     </tr>
 </script>
+
 <script src="<%=context%>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=context%>/js/jquery-ui-1.8.18.custom.min.js"></script>
+
+<!-- The Templates plugin is included to render the upload/download listings -->
 <script src="<%=resourcePath%>jquery.tmpl.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
 <script src="<%=resourcePath%>jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
 <script src="<%=resourcePath%>jquery.fileupload.js"></script>
+<!-- The File Upload user interface plugin -->
 <script src="<%=resourcePath%>jquery.fileupload-ui.js"></script>
 <script type="text/javascript">
+
 jQuery(function () {
     'use strict';
     jQuery('#fileupload').fileupload({
