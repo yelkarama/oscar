@@ -142,13 +142,13 @@ String resourcePath = context + "/share/documentUploader/";
         var destination=select.options[select.selectedIndex].value;
 		document.getElementById("destination").value = destination;
         setDropList();
-        jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadDestination&destination='+destination,async:false, success:function(data) {}});
+        jQuery.ajax({url:'${pageContext.request.contextPath}/dms/documentUpload.do?method=setUploadDestination&destination='+destination,async:false, success:function(data) {}});
 	}
 
     function setDestFolder(select){
         var destFolder=select.options[select.selectedIndex].value;
 		document.getElementById("destFolder").value = destFolder;
-        jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadIncomingDocumentFolder&destFolder='+destFolder,async:false, success:function(data) {}});
+        jQuery.ajax({url:'${pageContext.request.contextPath}/dms/documentUpload.do?method=setUploadIncomingDocumentFolder&destFolder='+destFolder,async:false, success:function(data) {}});
 	}
 
     function setDropList(){
@@ -200,7 +200,7 @@ String resourcePath = context + "/share/documentUploader/";
 
 
 </head>
-<body>
+<body onload="setDropList();">
     <div class="container">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -431,16 +431,24 @@ String resourcePath = context + "/share/documentUploader/";
     // display errors and clear used tr
     jQuery('#fileupload')
         .on('fileuploadalways', function (e, data) {
-            let error = data.result[0].error;
-            if (error) {
-                data.files.error = true;
-                $('#msg').show();
+           if(data.result){
+                if(data.result[0].error){
+                    data.files.error = true;
+                    $('#msg').show();
+                    let li = document.createElement('li');
+                    li.innerHTML = data.result[0].error;
+                    $('#msg').append(li);
+                }
+            }
+            console.log(data.textStatus);
+            if (data.textStatus == 'error') {
+                let error = "Server error";
                 let li = document.createElement('li');
                 li.innerHTML = error;
                 $('#msg').append(li);
+                $('#msg').show();
             }
             $("tr:first-child").remove();
-            console.log(data.textStatus);
             })
         .on('fileuploadadd', function (e, data) {
             $('#msg').hide();
