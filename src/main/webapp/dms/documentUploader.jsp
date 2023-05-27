@@ -1,20 +1,45 @@
 <%--
 
-    Copyright (c) 2008-2012 Indivica Inc.
+    Copyright (c) 2007 Peter Hutten-Czapski based on OSCAR general requirements
+    This software is published under the GPL GNU General Public License.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
 
-    This software is made available under the terms of the
-    GNU General Public License, Version 2, 1991 (GPLv2).
-    License details are available via "indivica.ca/gplv2"
-    and "gnu.org/licenses/gpl-2.0.html".
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+    This software was written for the
+    Department of Family Medicine
+    McMaster University
+    Hamilton
+    Ontario, Canada
 
 --%>
 <%@page contentType="text/html"%>
-<%@page import="oscar.dms.data.*,java.util.*,oscar.oscarLab.ca.on.CommonLabResultData,org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.QueueDao, oscar.oscarMDS.data.ProviderData" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.model.Provider" %>
-<%@page import="oscar.OscarProperties"%>
-<%@page import="org.oscarehr.common.model.UserProperty"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+
+<%@page import="org.oscarehr.common.dao.QueueDao" %>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
+<%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="org.oscarehr.common.model.UserProperty"%>
+<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="org.oscarehr.util.SpringUtils" %>
+
+<%@page import="oscar.dms.data.*" %>
+<%@page import="oscar.oscarLab.ca.on.CommonLabResultData" %>
+<%@page import="oscar.oscarMDS.data.ProviderData" %>
+<%@page import="oscar.OscarProperties"%>
+
+<%@page import="java.util.*" %>
+<%@page import="org.owasp.encoder.Encode" %>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -64,240 +89,362 @@ if (queueIdStr != null) {
 String context = request.getContextPath();
 String resourcePath = context + "/share/documentUploader/";
 
-String userAgent = request.getHeader("User-Agent");
-int isFirefox = userAgent.indexOf("Firefox");
-if (isFirefox > 0) {
-	if (Float.parseFloat(userAgent.substring(isFirefox + 8, isFirefox + 11)) < 4.0) {
-%>
-	<jsp:forward page="documentUploaderFirefox36.jsp" />
-<%
-	}
-}
+
 %>
 <!DOCTYPE HTML>
 <html lang="en" class="no-js">
 <head>
 	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><bean:message key="inboxmanager.document.title" /></title>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/share/css/OscarStandardLayout.css" />
 
-	<link rel="stylesheet" href="<%=context%>/css/cupertino/jquery-ui-1.8.18.custom.css" id="theme">
-	<link rel="stylesheet" href="<%=resourcePath%>jquery.fileupload-ui.css">
-	<link rel="stylesheet" href="<%=resourcePath%>style.css">
-	<link rel="stylesheet" type="text/css" href="<%=context%>/share/css/OscarStandardLayout.css" />
-<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+     <!-- tested with Bootstrap 2.3.1 and Bootstrap 3.0.0 -->
+    <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css">
 
-	<script type="text/javascript">
+    <!-- styles to alter add files button and adjust bootstrap 3 progress bar -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/share/documentUploader/style.css">
+
+    <!-- tested with jQuery 1.12.3 and jQuery 3.6.4 -->
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+    <!-- jQuery ui OR just the jQuery ui widget factory to match the jQuery above -->
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.tmpl.min.js"></script>
+
+    <!-- The Iframe Transport only needed to provide support for 10 year old browsers for XHR file uploads via file input selection-->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.iframe-transport.js"></script>
+
+    <!-- The basic File Upload plugin -->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.fileupload.js"></script>
+
+    <!-- The File Upload processing plugin -->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.fileupload-process.js"></script>
+
+    <!-- The File Upload validation plugin -->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.fileupload-validate.js"></script>
+
+    <!-- The File Upload user interface plugin modified from stock for OSCAR -->
+    <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.fileupload-ui.js"></script>
+
+	<script>
 	function setProvider(select){
-		jQuery("#provider").val(select.options[select.selectedIndex].value);
+		document.getElementById("provider").value = select.options[select.selectedIndex].value;
 	}
 
 	function setQueue(select){
-		jQuery("#queue").val(select.options[select.selectedIndex].value);
+		document.getElementById("queue").value = select.options[select.selectedIndex].value;
 	}
 
-        function setDestination(select){
-		jQuery("#destination").val(select.options[select.selectedIndex].value);
-                setDropList();
-                var destination=select.options[select.selectedIndex].value;
-                jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadDestination&destination='+destination,async:false, success:function(data) {}});
+    function setDestination(select){
+        var destination=select.options[select.selectedIndex].value;
+		document.getElementById("destination").value = destination;
+        setDropList();
+        jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadDestination&destination='+destination,async:false, success:function(data) {}});
 	}
 
-        function setDestFolder(select){
-                var destFolder=select.options[select.selectedIndex].value;
-		jQuery("#destFolder").val(destFolder);
-                jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadIncomingDocumentFolder&destFolder='+destFolder,async:false, success:function(data) {}});
+    function setDestFolder(select){
+        var destFolder=select.options[select.selectedIndex].value;
+		document.getElementById("destFolder").value = destFolder;
+        jQuery.ajax({url:'<%=context%>/dms/documentUpload.do?method=setUploadIncomingDocumentFolder&destFolder='+destFolder,async:false, success:function(data) {}});
 	}
 
-        function setDropList()
-        {
-            if(document.getElementById('destinationDrop').options[document.getElementById('destinationDrop').selectedIndex].value=="incomingDocs")
-                    {
-                        document.getElementById('providerDropDiv').style.display = 'none';
-                        document.getElementById('destFolderDiv').style.display = 'block';
-                    }
-                    else
-                    {
-                        document.getElementById('providerDropDiv').style.display = 'block';
-                        document.getElementById('destFolderDiv').style.display = 'none';
-                    }
+    function setDropList(){
+        if(document.getElementById('destinationDrop').options[document.getElementById('destinationDrop').selectedIndex].value=="incomingDocs"){
+            document.getElementById('providerDropDiv').style.display = 'none';
+            document.getElementById('destFolderDiv').style.display = 'block';
+        } else {
+            document.getElementById('providerDropDiv').style.display = 'block';
+            document.getElementById('destFolderDiv').style.display = 'none';
         }
+     }
 	</script>
-	<style type="text/css">
-	body {
-		background-color: #f5f5f5;
-	}
-    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-        color: black;
-        font-weight: normal;
-	    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	    background-repeat: repeat-x;
-        border: 1px solid black;
 
+
+    <!-- Generic page styles -->
+    <style>
+      #navigation {
+        margin: 10px 0;
+      }
+      @media (max-width: 767px) {
+        #title,
+        #description {
+          display: none;
+        }
+      }
+    </style>
+
+    <!-- CSS to style the file input field as button -->
+    <style>
+    .fileinput-button {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .fileinput-button input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      height: 100%;
+      opacity: 0;
+      filter: alpha(opacity=0);
+      font-size: 200px !important;
+      direction: ltr;
+      cursor: pointer;
     }
 
-    .ui-widget-content {
-        border: 1px solid black;
-        *background: lightgray;
-    }
+    </style>
 
-    .ui-widget-header {
-        border: 1px solid black;
-        background: lightgray;
-    }
 
-    .files .name {
-        font-size: 18px;
-        color: black;
-    }
-
-	</style>
 </head>
-<body onload="setDropList();">
-<div id="fileupload">
-    <form action="<%=context%>/dms/documentUpload.do?method=executeUpload" method="POST" enctype="multipart/form-data">
-        <div class="fileupload-buttonbar">
-            <label class="fileinput-button btn">
-                <span id="add">Add files...</span>
-                <input type="file" name="filedata" multiple>
-            </label>
-            <button id="start" type="submit" class="start btn">Start upload</button>
-            <button itd="cancel" type="reset" class="cancel btn">Cancel upload</button>
-            <br>
-            <span>
-				<input type="hidden" id="provider" name="provider" value="<%=provider%>" />
-				<input type="hidden" id="queue"    name="queue" value="<%=queueId%>"/>
-                                <input type="hidden" id="destination"    name="destination" value="<%=destination%>"/>
-                                <input type="hidden" id="destFolder"    name="destFolder" value="<%=destFolder%>"/>
-                                <label style="font-family:Arial; font-weight:normal; font-size:12px" for="destinationDrop" class="fields"><bean:message key="dms.documentUploader.destination" />:</label>
-                                <select onchange="javascript:setDestination(this);"  id="destinationDrop"  name="destinationDrop">
-                                    <option value="pendingDocs" <%=( destination.equals("pendingDocs") ? " selected" : "")%> ><bean:message key="inboxmanager.document.pendingDocs" /></option>
-                                    <option value="incomingDocs" <%=( destination.equals("incomingDocs") ? " selected" : "")%> ><bean:message key="inboxmanager.document.incomingDocs" /></option>
-                                </select><br>
+<body>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><bean:message key="dms.addDocument.msgManageUploadDocument" /></h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li><bean:message key="inboxmanager.document.title" /></li>
+                <li><bean:message key="dms.documentUpload.onlyPdf" /></li>
+            </ul>
+        </div>
+       </div>
+      <!-- The file upload form used as target for the file upload widget.  Enabled drag and drop anywhere here -->
+      <form
+        id="fileupload"
+        action="<%=context%>/dms/documentUpload.do?method=executeUpload"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+            <input type="hidden" id="destination" name="destination" value="<%=destination%>"/>
+            <input type="hidden" id="destFolder" name="destFolder" value="<%=destFolder%>"/>
+			<input type="hidden" id="provider" name="provider" value="<%=provider%>" />
+		    <input type="hidden" id="queue" name="queue" value="<%=queueId%>"/>
 
-                                <div id="providerDropDiv">
-                                <label style="font-family:Arial; font-weight:normal; font-size:12px" for="providerDrop" class="fields">Send to Provider:</label>
-				<select onchange="javascript:setProvider(this);" id="providerDrop" name="providerDrop">
+             <div class="form-group">
+                <label for="destinationDrop"><bean:message key="dms.documentUploader.destination" />:</label>
+                    <select onchange="javascript:setDestination(this);"  id="destinationDrop"  name="destinationDrop" class="form-control input-block-level">
+                        <option value="pendingDocs" <%=( destination.equals("pendingDocs") ? " selected" : "")%> ><bean:message key="inboxmanager.document.pendingDocs" /></option>
+                        <option value="incomingDocs" <%=( destination.equals("incomingDocs") ? " selected" : "")%> ><bean:message key="inboxmanager.document.incomingDocs" /></option>
+                    </select>
+             </div>
+             <div class="form-group" id="providerDropDiv">
+                <label for="providerDrop" class="fields">Send to Provider:</label>
+				<select onchange="javascript:setProvider(this);" id="providerDrop" name="providerDrop" class="form-control input-block-level">
 					<option value="0" <%=("0".equals(provider) ? " selected" : "")%>>None</option>
 					<%
 					for (int i = 0; i < providers.size(); i++) {
 	                	Provider h = providers.get(i);
 	                %>
-					<option value="<%= h.getProviderNo()%>" <%= (h.getProviderNo().equals(provider) ? " selected" : "")%>><%= h.getLastName()%> <%= h.getFirstName()%></option>
+					<option value="<%= h.getProviderNo()%>" <%= (h.getProviderNo().equals(provider) ? " selected" : "")%>><%= Encode.forHtml(h.getLastName())%> <%= Encode.forHtml(h.getFirstName())%></option>
 					<%
 					}
 					%>
 				</select>
-                                </div>
-				<label style="font-family:Arial; font-weight:normal; font-size:12px" for="queueDrop" class="fields">Queue:</label>
-				<select onchange="javascript:setQueue(this);" id="queueDrop" name="queueDrop">
-					<%-- option value="0" <%=("0".equals(queueId) ? " selected" : "")%>>None</option  --%>
+             </div>
+             <div class="form-group">
+				<label for="queueDrop" class="fields">Queue:</label>
+				<select onchange="javascript:setQueue(this);" id="queueDrop" name="queueDrop" class="form-control input-block-level">
 					<%
 					for (Map.Entry<Integer,String> entry : queues.entrySet()) {
 					    int key = entry.getKey();
 					    String value = entry.getValue();
 
 	                %>
-					<option value="<%=key%>" <%=( (key == queueId) ? " selected" : "")%>><%= value%></option>
+					<option value="<%=key%>" <%=( (key == queueId) ? " selected" : "")%>><%= Encode.forHtml(value)%></option>
 					<%
 					}
 					%>
 				</select>
+             </div>
+             <div class="form-group" id="destFolderDiv">
+                <label for="destinationDrop" class="fields"><bean:message key="dms.documentUploader.folder" />:</label>
+                    <select onchange="javascript:setDestFolder(this);"  id="destFolderDrop"  name="destFolderDrop" class="form-control input-block-level">
+                        <option value="Fax" <%=( destFolder.equals("Fax") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.fax" /></option>
+                        <option value="Mail" <%=( destFolder.equals("Mail") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.mail" /></option>
+                        <option value="File" <%=( destFolder.equals("File") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.file" /></option>
+                        <option value="Refile" <%=( destFolder.equals("Refile") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.refile" /></option>
+                    </select>
+              </div>
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar">
+          <div class="col-lg-7">
+            <!-- The fileinput-button span is used to style the file input field as button -->
+            <span class="btn fileinput-button btn-default">
+              <i class="glyphicon glyphicon-plus"></i>
+              <span><bean:message key="global.btnAdd" />...</span>
+              <input type="file" name="filedata" multiple />
+            </span>
+            <button type="submit" class="btn btn-primary start">
+              <i class="glyphicon glyphicon-upload"></i>
+              <span><bean:message key="dms.zadddocument.btnUpload" /></span>
+            </button>
+            <button type="reset" class="btn">
+              <i class="glyphicon glyphicon-ban-circle"></i>
+              <span><bean:message key="global.reset" /></span>
+            </button>
+            <p>
+            <ul id="msg" class="alert alert-danger" style="display:none;"></ul>
 
-			</span>
-                                <div id="destFolderDiv">
-                                <label style="font-family:Arial; font-weight:normal; font-size:12px" for="destinationDrop" class="fields"><bean:message key="dms.documentUploader.folder" />:</label>
-                                <select onchange="javascript:setDestFolder(this);"  id="destFolderDrop"  name="destFolderDrop">
-                                    <option value="Fax" <%=( destFolder.equals("Fax") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.fax" /></option>
-                                    <option value="Mail" <%=( destFolder.equals("Mail") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.mail" /></option>
-                                    <option value="File" <%=( destFolder.equals("File") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.file" /></option>
-                                    <option value="Refile" <%=( destFolder.equals("Refile") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.refile" /></option>
-                                </select>
-                                </div>
+            <!-- The global file processing state -->
+            <span class="fileupload-process"></span>
+          </div>
+          <!-- The global progress state -->
+          <div class="col-lg-5 fileupload-progress fade">
+            <!-- The global progress bar -->
+            <div
+              class="progress progress-striped active"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <div
+                class="progress-bar progress-bar-success"
+                style="width: 0%;"
+              ></div>
+            </div>
+            <p>
+            <!-- The extended global progress state -->
+            <div class="progress-extended">&nbsp;</div>
+          </div>
         </div>
-    </form>
-    <div class="fileupload-content" style="background-color:white;">
-<span style="align:center; color:gray">drag and drop here</span>
-        <table class="files"></table>
-        <div class="fileupload-progressbar"></div>
-    </div>
-</div>
-<script id="template-upload" type="text/x-jquery-tmpl">
-    <tr class="template-upload{{if error}} ui-state-error{{/if}}">
-        <td class="preview"></td>
-        <td class="name">\${name}</td>
-        <td class="size">\${sizef}</td>
-        {{if error}}
-            <td class="error" colspan="2">Error:
-                {{if error === 'maxFileSize'}}File is too big
-                {{else error === 'minFileSize'}}File is too small
-                {{else error === 'acceptFileTypes'}}Filetype not allowed
-                {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
-                {{else}}\${error}
-                {{/if}}
-            </td>
-        {{else}}
-            <td class="progress"><div></div></td>
-            <td class="start"><button>Start</button></td>
-        {{/if}}
-        <td class="cancel"><button>Cancel</button></td>
-    </tr>
-</script>
-<script id="template-download" type="text/x-jquery-tmpl">
-    <tr class="template-download{{if error}} ui-state-error{{/if}}">
-        {{if error}}
-            <td></td>
-            <td class="name">\${name}</td>
-            <td class="size">\${sizef}</td>
-            <td class="error" colspan="2">Error:
-                {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
-                {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
-                {{else error === 3}}File was only partially uploaded
-                {{else error === 4}}No File was uploaded
-                {{else error === 5}}Missing a temporary folder
-                {{else error === 6}}Failed to write file to disk
-                {{else error === 7}}File upload stopped by extension
-                {{else error === 'maxFileSize'}}File is too big
-                {{else error === 'minFileSize'}}File is too small
-                {{else error === 'acceptFileTypes'}}Filetype not allowed
-                {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
-                {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
-                {{else error === 'emptyResult'}}Empty file upload result
-                {{else}}\${error}
-                {{/if}}
-            </td>
-        {{else}}
-            <td class="preview"> </td>
-            <td class="name"> \${name} </td>
-            <td class="size"> \${sizef} </td>
-            <td colspan="2">Uploaded successfully</td>
-        {{/if}}
-    </tr>
-</script>
+        <!-- The table listing the files available for upload/download -->
+        <table role="presentation" class="table table-striped">
+          <tbody id="tbodyid" class="files"></tbody>
+        </table>
+      </form>
+</div> <!-- end container-->
 
-<script src="<%=context%>/js/jquery-1.12.3.js"></script>
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script src="<%=context%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-
-<!-- The Templates plugin is included to render the upload/download listings -->
-<script src="<%=resourcePath%>jquery.tmpl.min.js"></script>
-<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-<script src="<%=resourcePath%>jquery.iframe-transport.js"></script>
-<!-- The basic File Upload plugin -->
-<script src="<%=resourcePath%>jquery.fileupload.js"></script>
-<!-- The File Upload user interface plugin -->
-<script src="<%=resourcePath%>jquery.fileupload-ui.js"></script>
-<script type="text/javascript">
-
-jQuery(function () {
-    'use strict';
-    jQuery('#fileupload').fileupload({
-    	sequentialUploads: true
+    <!-- The template to display files available for upload -->
+    <script id="template-upload" type="text/x-tmpl">
+      {% for (var i=0, file; file=o.files[i]; i++) { %}
+          <tr class="template-upload fade">
+              <td>
+                  <span class="preview"></span>
+              </td>
+              <td>
+                  <p class="name">{%=file.name%}</p>
+                  <strong class="error text-danger"></strong>
+              </td>
+              <td>
+                  <p class="size"><bean:message key="eform.uploadimages.processing" />...</p>
+                  <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+              </td>
+              <td>
+                  {% if (!o.options.autoUpload && o.options.edit ) { %}
+                    <button class="btn btn-success edit btn-small btn-sm" data-index="{%=i%}" disabled>
+                        <i class="glyphicon glyphicon-edit"></i>
+                        <span><bean:message key="global.update" /></span>
+                    </button>
+                  {% } %}
+                  {% if (!i && !o.options.autoUpload) { %}
+                      <button class="btn btn-primary start btn-small btn-sm" disabled>
+                          <i class="glyphicon glyphicon-upload"></i>
+                          <span><bean:message key="dms.zadddocument.btnUpload" /></span>
+                      </button>
+                  {% } %}
+                  {% if (!i) { %}
+                      <button class="btn cancel btn-small btn-sm">
+                          <i class="glyphicon glyphicon-ban-circle"></i>
+                          <span><bean:message key="global.btnCancel" /></span>
+                      </button>
+                  {% } %}
+              </td>
+          </tr>
+      {% } %}
+    </script>
+    <!-- The template to display files available for download.  !IMPORTANT the template needs to exist even if we are not using it -->
+    <script id="template-download" type="text/x-tmpl">
+      {% for (var i=0, file; file=o.files[i]; i++) { %}
+          <tr class="template-download fade{%=file.thumbnailUrl?' image':''%}">
+              <td>
+                  <span class="preview">
+                      {% if (file.thumbnailUrl) { %}
+                          <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                      {% } %}
+                  </span>
+              </td>
+              <td>
+                  <p class="name">
+                      {% if (file.url) { %}
+                          <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                      {% } else { %}
+                          <span>{%=file.name%}</span>
+                      {% } %}
+                  </p>
+                  {% if (file.error) { %}
+                      <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+                  {% } %}
+              </td>
+              <td>
+                  <span class="size">{%=o.formatFileSize(file.size)%}</span>
+              </td>
+              <td>
+                  {% if (file.deleteUrl) { %}
+                      <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                          <i class="glyphicon glyphicon-trash"></i>
+                          <span>Delete</span>
+                      </button>
+                      <input type="checkbox" name="delete" value="1" class="toggle">
+                  {% } else { %}
+                      <!--<button class="btn btn-warning cancel">
+                          <i class="glyphicon glyphicon-ban-circle"></i>
+                          <span>Cancel</span>
+                      </button> -->
+                  {% } %}
+              </td>
+          </tr>
+      {% } %}
+    </script>
+   <script>
+    // Initialize the plugin
+    jQuery(function () {
+        'use strict';
+        jQuery('#fileupload').fileupload({
+        	sequentialUploads: true
+        });
+        $('#fileupload').fileupload('option', {
+          acceptFileTypes: /(\.|\/)(pdf)$/i
+        });
+    // Load existing files:
+        $('#fileupload').addClass('fileupload-processing');
+        $.ajax({
+          url: $('#fileupload').fileupload('option', 'url'),
+          dataType: 'json',
+          context: $('#fileupload')[0]
+        })
+          .always(function () {
+            $(this).removeClass('fileupload-processing');
+          })
+          .done(function (result) {
+            $(this)
+              .fileupload('option', 'done')
+              // eslint-disable-next-line new-cap
+              .call(this, $.Event('done'), { result: result });
+          });
     });
-});
-</script>
+
+    // display errors and clear used tr
+    jQuery('#fileupload')
+        .on('fileuploadalways', function (e, data) {
+            let error = data.result[0].error;
+            if (error) {
+                data.files.error = true;
+                $('#msg').show();
+                let li = document.createElement('li');
+                li.innerHTML = error;
+                $('#msg').append(li);
+            }
+            $("tr:first-child").remove();
+            console.log(data.textStatus);
+            })
+        .on('fileuploadadd', function (e, data) {
+            $('#msg').hide();
+            });
+    </script>
 </body>
 </html>
