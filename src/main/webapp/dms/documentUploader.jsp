@@ -283,7 +283,7 @@ String resourcePath = context + "/share/documentUploader/";
               <i class="glyphicon glyphicon-upload"></i>
               <span><bean:message key="dms.zadddocument.btnUpload" /></span>
             </button>
-            <button type="reset" class="btn">
+            <button type="reset" class="btn cancel">
               <i class="glyphicon glyphicon-ban-circle"></i>
               <span><bean:message key="global.reset" /></span>
             </button>
