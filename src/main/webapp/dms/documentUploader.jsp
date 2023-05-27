@@ -289,7 +289,7 @@ String resourcePath = context + "/share/documentUploader/";
             </button>
             <p>
             <ul id="msg" class="alert alert-danger" style="display:none;"></ul>
-
+            <ul id="msgU" class="alert alert-success" style="display:none;"></ul>
             <!-- The global file processing state -->
             <span class="fileupload-process"></span>
           </div>
@@ -438,21 +438,32 @@ String resourcePath = context + "/share/documentUploader/";
                     let li = document.createElement('li');
                     li.innerHTML = data.result[0].error;
                     $('#msg').append(li);
+                } else {
+                    if (data.textStatus == 'error') {
+                        let error = "Server error";
+                        let li = document.createElement('li');
+                        li.innerHTML = error;
+                        $('#msg').append(li);
+                        $('#msg').show();
+                    } else {
+                        let li = document.createElement('li');
+                        li.innerHTML = data.result[0].name;
+                        $('#msgU').append(li);
+                        $('#msgU').show();
+                        console.log(data.textStatus);
+                    }
                 }
-            }
-            console.log(data.textStatus);
-            if (data.textStatus == 'error') {
-                let error = "Server error";
-                let li = document.createElement('li');
-                li.innerHTML = error;
-                $('#msg').append(li);
-                $('#msg').show();
             }
             $("tr:first-child").remove();
             })
         .on('fileuploadadd', function (e, data) {
             $('#msg').hide();
+            $('#msgU').hide();
             });
+
+        jQuery('.alert').on('click', function () {
+            $(this).hide();
+        });
     </script>
 </body>
 </html>
