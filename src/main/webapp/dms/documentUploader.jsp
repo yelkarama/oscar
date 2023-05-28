@@ -109,7 +109,7 @@ String resourcePath = context + "/share/documentUploader/";
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 
     <!-- jQuery ui OR just the jQuery ui widget factory to match the jQuery above -->
-    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.ui.widget.js"></script> <!-- 1.12.1 -->
 
     <!-- The Templates plugin is included to render the upload/download listings -->
     <script src="${pageContext.request.contextPath}/share/documentUploader/jquery.tmpl.min.js"></script>
@@ -199,7 +199,7 @@ String resourcePath = context + "/share/documentUploader/";
     #drop-area {
       border: 2px dashed #ccc;
       border-radius: 20px;
-      width: 90%;
+      width: 100%;
       font-family: sans-serif;
       margin: 20px auto;
       padding: 10px;
