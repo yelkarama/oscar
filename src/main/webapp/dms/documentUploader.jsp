@@ -196,6 +196,18 @@ String resourcePath = context + "/share/documentUploader/";
       cursor: pointer;
     }
 
+    #drop-area {
+      border: 2px dashed #ccc;
+      border-radius: 20px;
+      width: 90%;
+      font-family: sans-serif;
+      margin: 20px auto;
+      padding: 10px;
+    }
+
+    .progress {
+        margin-bottom:10px;
+    }
     </style>
 
 
@@ -270,6 +282,7 @@ String resourcePath = context + "/share/documentUploader/";
                         <option value="Refile" <%=( destFolder.equals("Refile") ? " selected" : "")%> ><bean:message key="dms.incomingDocs.refile" /></option>
                     </select>
               </div>
+
         <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
         <div class="row fileupload-buttonbar">
           <div class="col-lg-7">
@@ -288,8 +301,6 @@ String resourcePath = context + "/share/documentUploader/";
               <span><bean:message key="global.reset" /></span>
             </button>
             <p>
-            <ul id="msg" class="alert alert-danger" style="display:none;"></ul>
-            <ul id="msgU" class="alert alert-success" style="display:none;"></ul>
             <!-- The global file processing state -->
             <span class="fileupload-process"></span>
           </div>
@@ -312,10 +323,14 @@ String resourcePath = context + "/share/documentUploader/";
             <div class="progress-extended">&nbsp;</div>
           </div>
         </div>
+        <div id="drop-area" > <span style="font-size:40px; color:lightblue;"><i class="glyphicon glyphicon-cloud-upload"></i></span>
         <!-- The table listing the files available for upload/download -->
-        <table role="presentation" class="table table-striped">
-          <tbody id="tbodyid" class="files"></tbody>
-        </table>
+            <table role="presentation" class="table table-striped table-compact">
+              <tbody id="tbodyid" class="files"></tbody>
+            </table>
+        </div>
+            <ul id="msg" class="alert alert-danger" style="display:none;"></ul>
+            <ul id="msgU" class="alert alert-success" style="display:none;"></ul>
       </form>
 </div> <!-- end container-->
 
