@@ -33,11 +33,12 @@
 <html:html locale="true">
 
 <head>
-<link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/global.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
 <script>
 $(function() {
@@ -49,12 +50,12 @@ $(function() {
 <style>
 .message div{
 font-size: 12px;
-display:inline; 
+display:inline;
 }
 
 h3{
-margin:0px; 
-display:inline; 
+margin:0px;
+display:inline;
 font-weight:normal;
 font-size: 12px;
 }
@@ -66,9 +67,9 @@ display:inline;
 }
 
 .message li{
-list-style: none; 
+list-style: none;
 margin:0px;
-display:inline;  
+display:inline;
 padding-left:6px;
 }
 
@@ -82,14 +83,14 @@ padding-left:6px;
     </div>
     <script>
 	window.top.location.href = "<%=request.getContextPath()%>/administration/?show=ImageUpload";
-	</script> 
-    
+	</script>
+
 </c:if>
 
 
 
 	<div class="row-fluid">
-		<div class="well">		
+		<div class="well">
 		<html:form action="/eform/imageUpload" enctype="multipart/form-data" method="post">
 
 		<div class="text-error message row-fluid"><html:errors /></div>
@@ -107,8 +108,6 @@ padding-left:6px;
 		</div>
 	</div>
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>  
 
 <script>
 $( document ).ready(function() {
@@ -132,7 +131,7 @@ if (formHtml!="") {
     }else{
 	    $('.upload').attr("disabled", "disabled");
 		$('.upload').removeClass("btn-success");
-    } 
+    }
 }
 
 </script>
