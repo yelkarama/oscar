@@ -66,8 +66,8 @@
     props.setProperty("c_lastVisited", "pg1");
 
     //get project_home
-    String project_home = request.getContextPath().substring(1);   
-    
+    String project_home = request.getContextPath().substring(1);
+
     //load eform groups
     List<LabelValueBean> cytologyForms = PregnancyAction.getEformsByGroup("Cytology");
     List<LabelValueBean> ultrasoundForms = PregnancyAction.getEformsByGroup("Ultrasound");
@@ -79,12 +79,12 @@
     List<LabelValueBean> customForms = PregnancyAction.getEformsByGroup(customEformGroup);
 
     if(props.getProperty("obxhx_num", "0").equals("")) {props.setProperty("obxhx_num","0");}
-    
+
     String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver","07");
     if(labReqVer.equals("")) {labReqVer="07";}
 
   	boolean bView = false;
-  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
+  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true;
 %>
 
 <html:html locale="true">
@@ -97,13 +97,14 @@
 <script type="text/javascript" src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
 
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/fg.menu.css">
 
 
@@ -2253,7 +2254,7 @@ function wk16VisitTool() {
 						<option value="NDE">North Ndebele</option>
 						<option value="SME">Northern Sami</option>
 						<option value="NOR">Norwegian</option>
-						<option value="NOB">Norwegian BokmÃ¥l</option>
+						<option value="NOB">Norwegian Bokmål</option>
 						<option value="NNO">Norwegian Nynorsk</option>
 						<option value="NYA">Nyanja</option>
 						<option value="OCI">Occitan (post 1500)</option>
