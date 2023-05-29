@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -66,32 +66,32 @@
     props.setProperty("c_lastVisited", "pg2");
 
     //get project_home
-    String project_home = ctx.substring(1);   
-    
+    String project_home = ctx.substring(1);
+
     //load eform groups
     List<LabelValueBean> cytologyForms = PregnancyAction.getEformsByGroup("Cytology");
     List<LabelValueBean> ultrasoundForms = PregnancyAction.getEformsByGroup("Ultrasound");
-    
+
     String customEformGroup = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_eform_group");
     String prenatalScreenName = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_name");
     String prenatalScreen = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_abbrv");
 
     List<LabelValueBean> customForms = PregnancyAction.getEformsByGroup(customEformGroup);
- 
+
     if(props.getProperty("rf_num", "0").equals("")) {props.setProperty("rf_num","0");}
     if(props.getProperty("sv_num", "0").equals("")) {props.setProperty("sv_num","0");}
     if(props.getProperty("us_num", "0").equals("")) {props.setProperty("us_num","0");}
-    
+
     String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver","07");
     if(labReqVer.equals("")) {labReqVer="07";}
 
 	boolean bView = false;
-  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
+  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true;
 
-    FrmAREnhancedBloodWorkTest ar1BloodWorkTest = new FrmAREnhancedBloodWorkTest(demoNo, formId); 
-    java.util.Properties ar1Props = ar1BloodWorkTest.getAr1Props(); 
-    int ar1BloodWorkTestListSize = ar1BloodWorkTest.getAr1BloodWorkTestListSize(); 
-    String ar1CompleteSignal = "AR1 labs Complete"; 
+    FrmAREnhancedBloodWorkTest ar1BloodWorkTest = new FrmAREnhancedBloodWorkTest(demoNo, formId);
+    java.util.Properties ar1Props = ar1BloodWorkTest.getAr1Props();
+    int ar1BloodWorkTestListSize = ar1BloodWorkTest.getAr1BloodWorkTestListSize();
+    String ar1CompleteSignal = "AR1 labs Complete";
 
 	String abo = "";
 	String rh ="";
@@ -119,15 +119,17 @@
 <script type="text/javascript" src="../share/calendar/calendar.js"></script>
 <script type="text/javascript" src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-<script type="text/javascript" src="..>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script src="<%=ctx%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script src="<%=ctx%>/js/fg.menu.js"></script>
+
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
 <script type="text/javascript" src="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
 
-
-<link rel="stylesheet" href="<%=ctx%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 <link rel="stylesheet" href="<%=ctx%>/css/fg.menu.css">
 
 <style type="text/css">
