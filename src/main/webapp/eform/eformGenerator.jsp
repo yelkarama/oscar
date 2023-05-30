@@ -51,6 +51,7 @@
 eForm Generator version 7.4 (C)	Peter Hutten-Czapski 2014-2023
     based on the origional stand alone eform generator by Shelter Lee
     version notes
+        7.5 Updated jQuery to refer to internal 3.6.4 failover to 1.12.3
         7.4 Removed inline CSS if its default can be specified for the page
 		7.3 upgraded jQuery support to current
 		7.2 reverted default width to 750
@@ -758,11 +759,12 @@ function GetTextTop(){
     textTop += "&lt;/style&gt;\n\n";
 
 
-		if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ) {
+    if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ) {
 		textTop += "&lt;!-- jQuery for greater functionality --&gt;\n"
-		// dependency on jquery up to version 2.2.1 for pdf and faxing
+		// dependency on jquery up to version 2.2.1 for pdf and faxing for OSCAR Pro
 		// ensure that we check the integrety of the CDN's version
-		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;https://code.jquery.com/jquery-2.2.1.min.js&quot; integrity=&quot;sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=&quot; crossorigin=&quot;anonymous&quot; &gt;&lt;/script&gt;\n";
+
+		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;../library/jquery/jquery-3.6.4.min.js&quot; &gt;&lt;/script&gt;\n";
 		// if unavailable reference the one in OSCAR
 		//textTop += "&lt;script&gt;\nwindow.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.12.3.js&quot;&gt;&lt;\/script&gt;');\n\n"
 		 textTop += "&lt;script&gt; window.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.12.3.js&quot;&gt;&lt; &#92;/script&gt;') &lt;/script&gt;\n";
