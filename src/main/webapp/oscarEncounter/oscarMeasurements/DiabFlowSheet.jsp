@@ -103,6 +103,8 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 	<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 	<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+	<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+	<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 	<!-- The following replaces textareas with div, not used -->
 	<!-- <script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.autogrow-textarea.js"></script> -->
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.sparkline.js"></script>
@@ -353,7 +355,6 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/share/css/jquery-ui-1.8.15.custom.draggable.slider.css" />
 	<style type="text/css" media="all">
 
 
