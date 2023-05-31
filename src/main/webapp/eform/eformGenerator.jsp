@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -724,7 +724,7 @@ function GetTextTop(){
     updateOptions();
 
 
-    textTop = "&lt;html&gt;\n&lt;head&gt;\n"
+    textTop = "&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n"
     textTop += "&lt;META http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;\n";
     textTop += "&lt;title&gt;"
     textTop += document.getElementById('eFormName').value;
