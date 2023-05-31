@@ -1195,7 +1195,7 @@ function GetTextTop(){
 	textTop += "&quot;&gt;\n"
 
 	//<form>
-	textTop +="&lt;form method=&quot;post&quot; action=&quot;&quot; name=&quot;FormName&quot; id=&quot;FormName&quot; &gt;\n";
+	textTop +="&lt;form method=&quot;post&quot; name=&quot;FormName&quot; id=&quot;FormName&quot; &gt;\n";
 
 }
 
@@ -1803,12 +1803,12 @@ function update(e)
 </head>
 
 <!-- resetAll() -->
-<body onload="init(); resetAll(); hide('all');
+<body style="font-family: sans-serif;" onload="init(); resetAll(); hide('all');
 <% if (eformGeneratorIndivicaSignatureEnabled) { %>
 show('classic');
 <% } %> ">
 
-<img name="BGImage" id="BGImage" style="position: absolute; left: 0px; top: 0px;"
+<img id="BGImage" src="../images/Logo.png" alt="BGImage" style="position: absolute; left: 0px; top: 0px;"
 	onmouseover="SetDrawOn();"
 	onmouseout="SetDrawOff();"
 	onmousedown="if (event.preventDefault) event.preventDefault(); SetMouseDown();SetStart();"
@@ -1816,7 +1816,7 @@ show('classic');
 	onmouseup="SetMouseUp(); DrawMarker();loadInputList();"
 	onload="finishLoadingImage()">
 
-<h1><bean:message key="eFormGenerator.title"/> 7.4</h1>
+
 
 <!-- this form  used for injecting html in to Edit E-Form  efmformmanageredit.jsp -->
 <form method="post" action="efmformmanageredit.jsp" id="toSave">
@@ -1824,10 +1824,10 @@ show('classic');
     <input type="hidden" name="formHtmlG" id="formHtmlG" />
 </form>
 
-<form method="post" action="" name="generator" id="generator">
+<form method="post" name="generator" id="generator">
 
-<div name="Wizard" id="Wizard" class="DoNotPrint" style="position: absolute; left:750px; top: 0px; width: 500px; padding:5px; height: 1010; overflow-y: scroll;" >
-
+<div id="Wizard" class="DoNotPrint" style="position: absolute; left:750px; top: 0px; width: 500px; padding:5px; height: 1010px; overflow-y: scroll;" >
+<h2><bean:message key="eFormGenerator.title"/> 7.4</h2>
 <span class="h1"><bean:message key="eFormGenerator.title"/></span>
 	<a onclick="show('all');"><bean:message key="eFormGenerator.expandAll"/></a>/
 	<a onclick="hide('all');"><bean:message key="eFormGenerator.collapseAll"/></a>
@@ -1869,7 +1869,7 @@ show('classic');
                        <%
                       }
                      %>
-            </select> <bean:message key="eFormGenerator.page"/> <input type="text" name="page" id="page" style="width:30px" value="" readonly="true">
+            </select> <bean:message key="eFormGenerator.page"/> <input type="text" name="page" id="page" style="width:30px" value="" readonly>
         </p>
 
 	<!-- <p><b>Image Name:</b><input type="text" name="imageName" id="imageName"></p> -->
@@ -1877,8 +1877,8 @@ show('classic');
 	<p><b>Orientation of form:</b><br>
 			<input type="radio" name="Orientation" id="OrientPortrait" value="750" checked><bean:message key="eFormGenerator.imagePortrait"/><br>
 			<input type="radio" name="Orientation" id="OrientLandscape" value="1000"><bean:message key="eFormGenerator.imageLandscape"/><br>
-			<input type="radio" name="Orientation" id="OrientCustom" value="CustomWidth"><bean:message key="eFormGenerator.imageCustom"/> <input type="text" name="OrientCustomValue" id="OrientCustomValue" width="100"> <bean:message key="eFormGenerator.imageEnterInteger"/><br>
-			<input type="button" value=<bean:message key="eFormGenerator.imageLoadButton"/> onClick="loadImage();">
+			<input type="radio" name="Orientation" id="OrientCustom" value="CustomWidth"><bean:message key="eFormGenerator.imageCustom"/> <input type="text" name="OrientCustomValue" id="OrientCustomValue" style="width:100px;"> <bean:message key="eFormGenerator.imageEnterInteger"/><br>
+			<input type="button" value="<bean:message key="eFormGenerator.imageLoadButton"/>" onClick="loadImage();">
 	</p>
 	<p><bean:message key="eFormGenerator.image.RedOutlinehint"/></p>
 
@@ -1915,9 +1915,9 @@ show('classic');
 
 			<div id="Section3b" style="display:none">
 				<span><b><bean:message key="eFormGenerator.radioLabel"/></b>: </span>
-				<input name="RadioButton" id="RadioButton" type="button" value='<bean:message key="eFormGenerator.radioButton"/>' onclick="SetSwitchOn(this.id);"></td>
+				<input name="RadioButton" id="RadioButton" type="button" value='<bean:message key="eFormGenerator.radioButton"/>' onclick="SetSwitchOn(this.id);">
 					<br>
-				<span><bean:message key="eFormGenerator.radioHint"/><span><input type="text" name="RadioName" id="RadioName" style="width:200px;" value="radio">
+				<span><bean:message key="eFormGenerator.radioHint"/></span><input type="text" name="RadioName" id="RadioName" style="width:200px;" value="radio">
 			</div>
 			<p><bean:message key="eFormGenerator.parent"/><br> <input name="parentchild" id="parentchild" type="checkbox" onclick="toggleView(this.checked,'Section3c');"><bean:message key="eFormGenerator.parentCheckbox"/></p>
 			<div id="Section3c" style="display:none">
@@ -1941,7 +1941,7 @@ show('classic');
 <span class='h2'>4. <bean:message key="eFormGenerator.signature"/></span><a onclick="show('Section4');"><bean:message key="eFormGenerator.expand"/></a>/<a onclick="hide('Section4');"><bean:message key="eFormGenerator.collapse"/></a>
 <div id="Section4">
 	<input type="checkbox" name="AddStamp2" id="AddStamp2"
-		onclick="toggleView(this.checked,'Section4e');toggleView(this.checked,'Section4f');"><span><b>Add Signature Stamps to this form<b></span><br>
+		onclick="toggleView(this.checked,'Section4e');toggleView(this.checked,'Section4f');"><span><b>Add Signature Stamps to this form</b></span><br>
 		<div id="Section4e" style="display:none">
 			<input type="radio" name="D" id="Delegation" checked ><span><b>MRP Signature by Delegation</b> If no sig file Sig of MRP used</span><br>
 			<input type="radio" name="D" id="Strict" ><span><i>Strict User Signatures</i> Only signed in users can stamp</span>
@@ -1952,7 +1952,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp2').disabled=true
 			<span>Signatures image files <code>consult_sig_xxx.png</code> where xxx is the OSCAR provider no., are uploaded to eform images</span><br>
 		</div>
 	<span id="classic" style="display:none">
-		<p>
+		<br>
 		<input type="checkbox" name="AddSignatureClassic" id="AddSignatureClassic"
 			onclick="	toggleView(this.checked,'Section4d');"><bean:message key="eFormGenerator.classic"/>
 		<br>
@@ -1961,10 +1961,12 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp2').disabled=true
 			<input type="button" name="AddClassicSignatureBox" id="AddClassicSignatureBox" style="width:400px" value="<bean:message key="eFormGenerator.signatureLocationButton"/>" onclick="SetSwitchOn('ClassicSignature');document.getElementById('AddSignatureClassic').disabled=true; document.getElementById('AddClassicSignatureBox').disabled=true;">
 			<br>
 		</div>
-	<p>
+	<br>
+    <span>
 	<input type="checkbox" name="AddSignature" id="AddSignature"
 			onclick="	toggleView(this.checked,'Section4a');"><bean:message key="eFormGenerator.freehand"/>
 <!-- Add A Freehand Signature area to this form--> <br>
+    </span>
 			<div id="Section4a" style="display:none">
 				<input type="button" name="AddSignatureBox1" id="AddSignatureBox1" style="width:400px" value="<bean:message key="eFormGenerator.signatureLocationButton"/>" onclick="SetSwitchOn('SignatureBox');document.getElementById('AddSignature').disabled=true; ">
 				<br>Signature Color
@@ -2015,40 +2017,32 @@ Boundary Color
 onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true; document.getElementById('AddSignatureBox2').disabled=true;">
 			</div>
 			<div id="Section4c" style="display:none">
-				<ul>
-					<li><bean:message key="eFormGenerator.signatureFragment"/>
-						<input type="text" name="UserList" id="UserList" style="width:200px;"></li>
-					<li><bean:message key="eFormGenerator.signatureImage"/>
-						<input type="text" name="SignatureList" id="SignatureList" style="width:200px;"></li>
+				<br><bean:message key="eFormGenerator.signatureFragment"/>
+						<input type="text" name="UserList" id="UserList" style="width:200px;">
+				<br><bean:message key="eFormGenerator.signatureImage"/>
+						<input type="text" name="SignatureList" id="SignatureList" style="width:200px;">
+				<br>
 					<input type="button" name="AddToUserSignatureList" id="AddToUserSignatureList" value="<bean:message key="eFormGenerator.signatureAddButton"/>" onclick="addToUserSignatureList();">
-					<input type="button" name="EmptyUserSignatureList" id="EmptyUserSignatureList" value="<bean:message key="eFormGenerator.signatureEmptyButton"/>" onclick="emptyUserSignaturelist()"><br>
-					<ul name="UserSignatureList" id="UserSignatureList" style="list-style-type:none; list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em">
-						<li name="UserSignatureListItem">
+					<input type="button" name="EmptyUserSignatureList" id="EmptyUserSignatureList" value="<bean:message key="eFormGenerator.signatureEmptyButton"/>" onclick="emptyUserSignaturelist()">
+				<br>
+					<ul id="UserSignatureList" style="list-style-type:none; list-style: none; margin-left: 50px; padding-left: 1em; text-indent: -1em">
+						<li>
 						      zapski|PHC.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      acasse|MLL.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      mith|PJS.png
-						</li><li name="UserSignatureListItem">
-						      arron|BAB.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      urrie|LNC.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      awson|HAL.png
-						</li><li name="UserSignatureListItem">
-						      lgadi|KME.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      ears|STS.png
-						</li><li name="UserSignatureListItem">
+						</li><li>
 						      eller|MKK.png
 						</li>
 					</ul>
-				</ul>
 			</div>
-	</p>
-
-
-
 
 </div>
 
@@ -2057,7 +2051,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 
 
 
-<span class='h2'>5. <bean:message key="eFormGenerator.input"/></span> <a onclick="show('Section5');"><bean:message key="eFormGenerator.expand"/></a>/<a onclick="hide('Section5');"><bean:message key="eFormGenerator.collapse"/></a></span>
+<span class='h2'>5. <bean:message key="eFormGenerator.input"/></span> <a onclick="show('Section5');"><bean:message key="eFormGenerator.expand"/></a>/<a onclick="hide('Section5');"><bean:message key="eFormGenerator.collapse"/></a>
 <div id="Section5">
 	<span class='h3'><bean:message key="eFormGenerator.inputType"/></span>
 		<p>
@@ -2085,7 +2079,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
                                   }
                                  %>
                         </select>			</li>
-			<li id="SectionImportMeasurements" style="diplay:block;">
+			<li id="SectionImportMeasurements" style="display:block;">
 				<input type="radio" name="AutoPopType" id="AutoPopMeasurements" value="measurements"><bean:message key="eFormGenerator.inputTypeMeasurements"/><br>
 				<table>
 					<tr>
@@ -2138,7 +2132,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 
 
 	<span id="c_formating"><span class='h3'><bean:message key="eFormGenerator.inputFormat"/></span>
-			<p>
+			<br>
 			<bean:message key="eFormGenerator.inputFormatFont"/>
 				<select id="fontFamily">
 					 <option value="sans-serif"><bean:message key="eFormGenerator.inputFormatSelectSans"/></option>
@@ -2166,19 +2160,19 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 					<option value="right"><bean:message key="eFormGenerator.inputFormatAlignRight"/></option>
 					<option value="justify"><bean:message key="eFormGenerator.inputFormatAlignJustify"/></option>
 				</select>
-			</p>
-			<p><bean:message key="eFormGenerator.inputFormatBackground"/>
+			<br>
+			<br><bean:message key="eFormGenerator.inputFormatBackground"/>
 				<select id="bgColor">
 					<option value="transparent"><bean:message key="eFormGenerator.inputFormatBackgroundTransparent"/></option>
 					<option value="white"><bean:message key="eFormGenerator.inputFormatBackgroundWhite"/></option>
 				</select><br>
 				- <bean:message key="eFormGenerator.inputFormatBackgroundhint"/>
-			</p></span>
+
 
 
 
 	<span class='h3'><bean:message key="eFormGenerator.inputName"/></span>
-	    <p>
+	    <br>
 	    			<bean:message key="eFormGenerator.inputClass"/>
         				<select id="inputClass">
         					 <option value="" selected><bean:message key="eFormGenerator.inputClassNone"/></option>
@@ -2187,16 +2181,16 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
         				</select>
         		    <bean:message key="eFormGenerator.inputParentclass"/><input type="text" name="inputParentclass" id="inputParentclass"  style="width:100px" value="">
 
-        </p>
-		<p><input type="radio" name="InputNameType" id="InputNameAuto" value="Auto" checked><bean:message key="eFormGenerator.inputNameSeq"/><br>
+        <br>
+		<br><input type="radio" name="InputNameType" id="InputNameAuto" value="Auto" checked><bean:message key="eFormGenerator.inputNameSeq"/><br>
 				- <bean:message key="eFormGenerator.inputNameSeqPrefix"/><input type="text" name="AutoNamePrefix" id="AutoNamePrefix" style="width:100px" value="AutoName"><br>
 			<input type="radio" name="InputNameType" id="InputNameCustom" value="Custom"><bean:message key="eFormGenerator.inputNameSeqCustom"/>
 				<input type="text" name="inputName" id="inputName">
 				<br>
 				- <bean:message key="eFormGenerator.inputNameSeqCustomhint1"/><br>
 				- <bean:message key="eFormGenerator.inputNameSeqCustomhint2"/>
-			<br>
-			<span id="iiimeasures"><input type="radio" name="InputNameType" id="InputNameMeasurement" value="Measurement"><bean:message key="eFormGenerator.inputNameMeasurement"/><br>
+			<br></span>
+			<span id="iiimeasures"><input type="radio" name="InputNameType" id="InputNameMeasurement" value="Measurement"><bean:message key="eFormGenerator.inputNameMeasurement"/></span><br>
 			<table>
 				<tr>
 					<td><p><bean:message key="eFormGenerator.inputNameMeasurementType"/><br>
@@ -2224,47 +2218,36 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 								<option value="SCR">SCR (Cr)</option>
 								<option value="ACR">ACR</option>
 						</select>
-					</p>
+					<br>
 					</td>
-					<td><p><bean:message key="eFormGenerator.inputNameMeasurementsCustom"/><br>
+					<td><br><bean:message key="eFormGenerator.inputNameMeasurementsCustom"/><br>
 					       <input type="text" name="ExportMeasurementCustom" id="ExportMeasurementCustom" style="width:50px;">
-					    </p>
+					    <br>
 					</td>
 					<td>
-						<p><bean:message key="eFormGenerator.inputNameMeasurementsField"/><br>
+						<br><bean:message key="eFormGenerator.inputNameMeasurementsField"/><br>
 							<select name="ExportMeasurementField" id="ExportMeasurementField">
 								<option value="value"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonValue"/></option>
 								<option value="dateObserved"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonDateObserved"/></option>
 								<option value="comments"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonComment"/></option>
 							</select>
-						</p>
+						<br>
 					</td>
 				</tr>
 			</table>
-        <p>
-            Class
-                <select id="inputClass">
-                    <option value="" selected>none</option>
-                    <option value="parent-field">parent</option>
-                    <option value="child-">child (specify parent below)</option>
-                    <option value="only-one-">radio (specify group below)</option>
-                </select><br>
-            Parent or Group Name<input type="text" name="inputParentclass" id="inputParentclass"  style="width:100px" value="" onblur="if (!isValid(this.value)){alert('one continuous word with letters/numbers only');}" >
-
-        </p>
-		</p></span>
+        <br>
 	<span class='h3'><bean:message key="eFormGenerator.inputDraw"/></span>
 	<br>
 		<span class='h4'><bean:message key="eFormGenerator.inputDrawText"/></span>
-			<p>
+			<br>
 			- <bean:message key="eFormGenerator.inputDrawTexthint"/><br>
-			</p>
+			<br>
 		<span class='h4'><bean:message key="eFormGenerator.inputDrawCheckbox"/></span>
-			<p>
+			<br>
 			- <bean:message key="eFormGenerator.inputDrawCheckboxhint"/><br>
-			</p>
-	<p><input type="button" onclick="Undo();" value='<bean:message key="eFormGenerator.inputDrawUndoButton"/>'></p>
-	<p><bean:message key="eFormGenerator.inputDrawhint"/></p>
+			<br>
+	<br><input type="button" onclick="Undo();" value='<bean:message key="eFormGenerator.inputDrawUndoButton"/>'><br>
+	<br><bean:message key="eFormGenerator.inputDrawhint"/><br>
 
 </div>
 
@@ -2297,7 +2280,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 			<input type="button" value='<bean:message key="eFormGenerator.tuningNudgeButton"/>' style="width:50px;" onclick="changeInput('left',1);">
 		</td>
 		<td style="text-align:left;">
-			<ul id="InputList" name="InputList" style="list-style-type:none; list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em"></ul>
+			<ul id="InputList" style="list-style-type:none; list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em"></ul>
 		</td>
 		<td>
 			<span><bean:message key="eFormGenerator.tuningRight"/></span><br>
@@ -2417,8 +2400,8 @@ Tickler message <input type="text" name="tickler_message" id="tickler_message" s
 </form>
 
 <!--  Drawing code: start -->
-<div id="preview" name="preview" style="position: absolute; left: 0px; top: 0px;"></div>
-<div id="myCanvas" name="myCanvas" style="position: absolute; left: 0px; top: 0px;"></div>
+<div id="preview" style="position: absolute; left: 0px; top: 0px;"></div>
+<div id="myCanvas" style="position: absolute; left: 0px; top: 0px;"></div>
 
 <script type="text/javascript">
 var DrawData = new Array();
