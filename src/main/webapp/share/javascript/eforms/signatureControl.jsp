@@ -35,7 +35,7 @@ var signatureControl = {
 			element.imgAttributes = "";
 			
 			var placeholder = jQuery(element.signatureInput);
-			if (placeholder == null || placeholder.size() == 0) { 
+			if (placeholder == null || placeholder.length == 0) { 
 				if (jQuery(".DoNotPrint").length > 0) { 
 					placeholder = jQuery("<div id='signatureInput'>&nbsp;</div>");
 					jQuery(".DoNotPrint").append(placeholder);				
