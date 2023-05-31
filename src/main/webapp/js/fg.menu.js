@@ -20,14 +20,14 @@ $.fn.menu = function(options){
 	allUIMenus.push(m);
 	
 	$(this)
-	.mousedown(function(){
+	.on('mousedown', (function(){
 		if (!m.menuOpen) { m.showLoading(); };
-	})	
-	.click(function(){
+	}))	
+	.on('click',(function(){
 		if (m.menuOpen == false) { m.showMenu(); }
 		else { m.kill(); };
 		return false;
-	});	
+	}));	
 };
 
 function Menu(caller, options){
@@ -138,7 +138,7 @@ function Menu(caller, options){
 				case 38: // up arrow 
 					if ($(event.target).is('.' + options.linkHover)) {	
 						var prevLink = $(event.target).parent().prev().find('a:eq(0)');						
-						if (prevLink.size() > 0) {
+						if (prevLink.length > 0) {
 							$(event.target).trigger('mouseout');
 							prevLink.trigger('mouseover');
 						};						
@@ -165,7 +165,7 @@ function Menu(caller, options){
 				case 40: // down arrow 
 					if ($(event.target).is('.' + options.linkHover)) {
 						var nextLink = $(event.target).parent().next().find('a:eq(0)');						
-						if (nextLink.size() > 0) {							
+						if (nextLink.length > 0) {							
 							$(event.target).trigger('mouseout');
 							nextLink.trigger('mouseover');
 						};				
@@ -206,10 +206,10 @@ function Menu(caller, options){
 			else { menu.drilldown(container, options); }	
 		}
 		else {
-			container.find('a').click(function(){
+			container.find('a').on('click',(function(){
 				menu.chooseItem(this);
 				return false;
-			});
+			}));
 		};	
 		
 		if (options.linkHover) {
@@ -299,10 +299,10 @@ Menu.prototype.flyout = function(container, options) {
 		);	
 	});
 	
-	container.find('a').click(function(){
+	container.find('a').on('click',(function(){
 		menu.chooseItem(this);
 		return false;
-	});
+	}));
 };
 
 
@@ -360,7 +360,7 @@ Menu.prototype.drilldown = function(container, options) {
 			$(this)
 				.addClass('fg-menu-indicator')
 				.each(function(){ $(this).html('<span>' + $(this).text() + '</span><span class="ui-icon '+options.nextMenuLink+'"></span>'); })
-				.click(function(){ // ----- show the next menu			
+				.on('click',(function(){ // ----- show the next menu			
 					var nextList = $(this).next();
 		    		var parentUl = $(this).parents('ul:eq(0)');   		
 		    		var parentLeft = (parentUl.is('.fg-menu-content')) ? 0 : parseFloat(topList.css('left'));    		
@@ -390,12 +390,12 @@ Menu.prototype.drilldown = function(container, options) {
 							footer.show();
 							$('<a href="#"><span class="ui-icon ui-icon-triangle-1-w"></span> <span>Back</span></a>')
 								.appendTo(footer)
-								.click(function(){ // ----- show the previous menu
+								.on('click',(function(){ // ----- show the previous menu
 									var b = $(this);
 						    		var prevLeftVal = parseFloat(topList.css('left')) + container.width();		    						    		
 						    		topList.animate({ left: prevLeftVal },  options.crossSpeed, function(){
 						    			setPrevMenu(b);
-						    		});			
+						    		}));			
 									return false;
 								});
 						}
@@ -404,17 +404,17 @@ Menu.prototype.drilldown = function(container, options) {
 		    		else { 
 		    			if (breadcrumb.find('li').length == 1){				
 							breadcrumb.empty().append(firstCrumb);
-							firstCrumb.find('a').click(function(){
+							firstCrumb.find('a').on('click',(function(){
 								menu.resetDrilldownMenu();
 								return false;
-							});
+							}));
 						}
 						$('.fg-menu-current-crumb').removeClass('fg-menu-current-crumb');
 						var crumbText = $(this).find('span:eq(0)').text();
 						var newCrumb = $('<li class="fg-menu-current-crumb"><a href="javascript://" class="fg-menu-crumb">'+crumbText+'</a></li>');	
 						newCrumb
 							.appendTo(breadcrumb)
-							.find('a').click(function(){
+							.find('a').on('click',(function(){
 								if ($(this).parent().is('.fg-menu-current-crumb')){
 									menu.chooseItem(this);
 								}
@@ -422,7 +422,7 @@ Menu.prototype.drilldown = function(container, options) {
 									var newLeftVal = - ($('.fg-menu-current').parents('ul').length - 1) * 180;
 									topList.animate({ left: newLeftVal }, options.crossSpeed, function(){
 										setPrevMenu();
-									});
+									}));
 								
 									// make this the current crumb, delete all breadcrumbs after this one, and navigate to the relevant menu
 									$(this).parent().addClass('fg-menu-current-crumb').find('span').remove();
@@ -433,14 +433,14 @@ Menu.prototype.drilldown = function(container, options) {
 						newCrumb.prev().append(' <span class="ui-icon '+options.nextCrumbLink+'"></span>');
 		    		};			
 		    		return false;    		
-    			});
+    			}));
 		}
 		// if the link is a leaf node (doesn't open a child menu)
 		else {
-			$(this).click(function(){
+			$(this).on('click',(function(){
 				menu.chooseItem(this);
 				return false;
-			});
+			}));
 		};
 	});
 };
