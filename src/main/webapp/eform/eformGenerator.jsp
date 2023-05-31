@@ -750,7 +750,7 @@ function GetTextTop(){
     // for screen media noborder should have a border and supply a gripper
     textTop += "&lt;style type=&quot;text/css&quot; media=&quot;screen&quot; &gt;\n";
 	textTop += " .noborder {\n\tborder:1px solid; !important\n }\n"
-    textTop += "/* Drawing the 'gripper' for touch-enabled devices */\n html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n";
+    textTop += " html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n";
 
     textTop += "&lt;/style&gt;\n\n";
     // for print media do not display DoNotPrint nor noborders
@@ -1808,7 +1808,7 @@ function update(e)
 show('classic');
 <% } %> ">
 
-<img id="BGImage" src="../images/Logo.png" alt="BGImage" style="position: absolute; left: 0px; top: 0px;"
+<img id="BGImage" src="../images/transparent_icon.gif" alt="BGImage" style="position: absolute; left: 0px; top: 0px; "
 	onmouseover="SetDrawOn();"
 	onmouseout="SetDrawOff();"
 	onmousedown="if (event.preventDefault) event.preventDefault(); SetMouseDown();SetStart();"
