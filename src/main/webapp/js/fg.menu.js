@@ -395,9 +395,9 @@ Menu.prototype.drilldown = function(container, options) {
 						    		var prevLeftVal = parseFloat(topList.css('left')) + container.width();
 						    		topList.animate({ left: prevLeftVal },  options.crossSpeed, function(){
 						    			setPrevMenu(b);
-						    		}));
+						    		});
 									return false;
-								});
+								}));
 						}
 					}
 					// or initialize top breadcrumb
