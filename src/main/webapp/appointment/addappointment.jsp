@@ -1,4 +1,4 @@
-	<%--
+<%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -39,11 +39,7 @@
 	}
 %>
 
-<%@ page import="org.oscarehr.util.SessionConstants"%>
-<%@ page import="org.oscarehr.common.model.ProviderPreference"%>
-<%@ page import="oscar.oscarBilling.ca.bc.decisionSupport.BillingGuidelines"%>
-<%@ page import="org.oscarehr.decisionSupport.model.DSConsequence"%>
-<%@ page import="org.oscarehr.util.MiscUtils"%>
+
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.HashSet"%>
 <%@ page import="java.util.ResourceBundle"%>
@@ -54,10 +50,59 @@
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.format.FormatStyle" %>
 <%@ page import="java.time.ZoneId" %>
-<%@ page import="org.oscarehr.managers.ProgramManager2"%>
+
+<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*, oscar.appt.*" errorPage="errorpage.jsp"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="oscar.appt.status.service.AppointmentStatusMgr"%>
+<%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
+<%@ page import="oscar.oscarBilling.ca.bc.decisionSupport.BillingGuidelines"%>
+<%@ page import="oscar.oscarEncounter.data.EctFormData"%>
+<%@ page import="oscar.util.ConversionUtils" %>
 <%@ page import="oscar.OscarProperties" %>
 <%@ page import="oscar.util.UtilDateUtilities" %>
+
+<%@ page import="org.oscarehr.common.model.AppointmentStatus"%>
+<%@ page import="org.oscarehr.common.model.DemographicCust" %>
+<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
+<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@ page import="org.oscarehr.common.model.EncounterForm" %>
+<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
+<%@ page import="org.oscarehr.common.model.Appointment" %>
+<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="org.oscarehr.PMmodule.model.Program" %>
+<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
+<%@ page import="org.oscarehr.common.model.Facility" %>
+<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
+<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
+<%@ page import="org.oscarehr.managers.ProgramManager2"%>
+<%@ page import="org.oscarehr.decisionSupport.model.DSConsequence"%>
+
+<%@ page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.oscarehr.util.SessionConstants"%>
+<%@ page import="org.oscarehr.common.model.ProviderPreference"%>
+
+<%@ page import="org.oscarehr.managers.LookupListManager"%>
+<%@ page import="org.oscarehr.common.model.LookupList"%>
+<%@ page import="org.oscarehr.common.model.LookupListItem"%>
+<%@ page import="org.oscarehr.common.dao.SiteDao"%>
+<%@ page import="org.oscarehr.common.model.Site"%>
+<%@ page import="org.oscarehr.common.dao.AppointmentTypeDao" %>
+<%@ page import="org.oscarehr.common.model.AppointmentType" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+
 <%@ page import="org.owasp.encoder.Encode" %>
+
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+
+<jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 
 <%
 
@@ -96,41 +141,7 @@
     MiscUtils.getLogger().error("Error", e);
   }
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*, oscar.appt.*" errorPage="errorpage.jsp"%>
-<%@ page import="oscar.appt.status.service.AppointmentStatusMgr"%>
-<%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
-<%@ page import="org.oscarehr.common.model.AppointmentStatus"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData"%>
-<%@ page import="org.oscarehr.common.model.DemographicCust" %>
-<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.EncounterForm" %>
-<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="org.oscarehr.managers.LookupListManager"%>
-<%@ page import="org.oscarehr.common.model.LookupList"%>
-<%@ page import="org.oscarehr.common.model.LookupListItem"%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-
-<jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 
 <%
 	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
@@ -169,18 +180,27 @@
 
     ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
 %>
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.oscarehr.common.model.Site"%>
+
 <html:html locale="true">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><bean:message key="appointment.addappointment.title" /></title>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+
+
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js" ></script>
 
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <script src="<%= request.getContextPath() %>/js/checkDate.js"></script>
@@ -208,6 +228,30 @@ body, html {
   padding: var(--margin) var(--margin) var(--margin) var(--marginLeft);
   transition: backgroundImage 0.25s;
 }
+</style>
+<!-- override styles for ui select menu -->
+<style>
+.ui-selectmenu-button.ui-button {
+    background-color: white;
+    width: 190px;
+    margin-bottom: 10px;
+
+}
+.ui-icon-triangle-1-s {
+	border-style: solid;
+	border-width: 0.142em 0.142em 0 0;
+	content: '';
+	display: inline-block;
+	height: 0.33em;
+	left: 0.6em;
+	position: relative;
+	top: 0.17em;
+	transform: rotate(135deg);
+	vertical-align: top;
+	width: 0.34em;
+
+}
+
 </style>
 <%
     // multisites start ==================
@@ -487,11 +531,79 @@ function pasteAppt(multipleSameDayGroupAppt) {
 		                          break;
 		                  }
 		          }
-		  } else if (loc.nodeName == "INPUT") {
+		  } else if (loc.nodeName == "input") {
 			  document.forms['ADDAPPT'].location.value = locSel;
 		  }
 	}
 
+
+
+	$(document).ready(function() {
+		$( document ).tooltip();
+
+		var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
+
+		$("#keyword").autocomplete( {
+			source: url,
+			minLength: 2,
+
+			focus: function( event, ui ) {
+				$("#keyword").val( ui.item.label );
+				return false;
+			},
+			select: function( event, ui ) {
+				$("#demographic_no").val( ui.item.value );
+				$("#mrp").val( ui.item.provider );
+				$("#keyword").val( ui.item.formattedName );
+				return false;
+			}
+		})
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div><b>" + item.label + "</b>" + "<br>" + item.provider + "</div>" )
+            .appendTo( ul );
+        };
+
+
+        $.widget('custom.myselectmenu', $.ui.selectmenu, {
+
+          /**
+           * @see {@link https://api.jqueryui.com/selectmenu/#method-_renderItem}
+           */
+          _renderItem: function(ul, item) {
+                if (item.element.attr("data-dur").length > 0){
+                  return $( "<li>" )
+                    .append( "<div><b>" + item.label + "</b> " + item.element.attr("data-dur")+ "<bean:message key='provider.preference.min' /><br>" + item.element.attr("data-reason") + "</div>" )
+                    .appendTo( ul );
+                } else {
+                  return $( "<li>" )
+                    .append( "<div><b>" + item.label + "</b> " + "</div>" )
+                    .appendTo( ul );
+
+                }
+          }
+        });
+
+        // render custom selectmenu
+        $('#type').myselectmenu({
+            change: function( event, data ) {
+                label=data.item.value;
+                origReason = $("[name=reason").val();
+                reason=data.item.element.attr("data-reason");
+                if (origReason.length > 0 ) {
+                    reason = reason.concat(" -- ".concat(origReason));
+                }
+                loc=data.item.element.attr("data-loc");
+                dur=data.item.element.attr("data-dur");
+                notes=data.item.element.attr("data-notes");
+                resources=data.item.element.attr("data-resources");
+                setType(label,reason,loc,dur,notes,resources);
+            }
+
+            });
+
+
+    });
 
 // stop javascript -->
 
@@ -571,18 +683,20 @@ LocalDateTime apptd=apptDate.toInstant().atZone(ZoneId.systemDefault()).toLocalD
 <script>
         var timers = new Array();
 
-	$(document).ready(function(){
-           $(window).on('beforeunload',function(){cancelPageLock();
-           });
-           //cancel any page view/locks held by provider on clicking 'X'
-           $("form#addappt").on( "submit",function() {$(window).off('beforeunload');
-           });
 
-           calculateEndTime();
-           var endTime = document.forms[0].end_time.value;
-           var startTime = document.forms[0].start_time.value;
-           var apptDate = document.forms[0].appointment_date.value;
-           updatePageLock(100,apptDate,startTime,endTime);
+	$(document).ready(function(){
+
+		$(window).on('beforeunload',function(){cancelPageLock();
+		});
+		//cancel any page view/locks held by provider on clicking 'X'
+		$("form#addappt").on( "submit",function() {$(window).off('beforeunload');
+		});
+
+		calculateEndTime();
+		var endTime = document.forms[0].end_time.value;
+		var startTime = document.forms[0].start_time.value;
+		var apptDate = document.forms[0].appointment_date.value;
+		updatePageLock(100,apptDate,startTime,endTime);
 	});
 
         function checkPageLock() {
@@ -731,9 +845,13 @@ function parseSearch() {
         document.getElementById("search_mode").value="search_address";
     }
 
-    //Ontario hin 10 didgits
-    const reHIN = /^\d{10}$/;
+    // hin OHIP 10 didgits  MSP 9 didgits Regie 4 alpha + 8 digits
+    const reHIN = /^\d{9}$/;
     if (reHIN.exec(keyVal)) {
+        document.getElementById("search_mode").value="search_hin";
+    }
+    const reRegie = /^[A-Z]{4}\d{8}$/;
+    if (reRegie.exec(keyVal)) {
         document.getElementById("search_mode").value="search_hin";
     }
 
@@ -766,13 +884,15 @@ function parseSearch() {
     }
 }
 
-// add style for multisites location
-var loc = document.forms['ADDAPPT'].location;
-if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
+function locale(){
+    // add style for multisites location
+    var loc = document.forms['ADDAPPT'].location;
+    if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
+}
 
 </script>
 </head>
-<body onLoad="setfocus(); moveAppt(); updateTime(); " >
+<body onLoad="setfocus(); moveAppt(); updateTime(); locale(); " >
  <% if (timeoutSecs >0) { %>
     <div id="lock_notification">
         <span title="">Viewers: N/A</span>
@@ -907,21 +1027,21 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
         </table>
 <% } %>
 
-<FORM NAME="ADDAPPT" id="addappt" METHOD="post" ACTION="<%=request.getContextPath()%>/appointment/appointmentcontrol.jsp"
-	onsubmit="return(onAdd())"><INPUT TYPE="hidden"
-	NAME="displaymode" value="">
+<form name="ADDAPPT" id="addappt" method="post" action="<%=request.getContextPath()%>/appointment/appointmentcontrol.jsp"
+	onsubmit="return(onAdd())"><input type="hidden"
+	name="displaymode" value="">
 	<input type="hidden" name="year" value="<%=request.getParameter("year") %>" >
     <input type="hidden" name="month" value="<%=request.getParameter("month") %>" >
     <input type="hidden" name="day" value="<%=request.getParameter("day") %>" >
     <input type="hidden" name="fromAppt" value="1" >
 
-<div class="sapn12">
-    <div class="time" id="header"><H4>
+<div class="span12">
+    <div class="time" id="header"><h4>
         <!-- We display a shortened title for the mobile version -->
         <% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.msgMainLabelMobile" />
         <% } else { %><bean:message key="appointment.addappointment.msgMainLabel" />
         <%          out.println("("+pFirstname+" "+pLastname+")"); %>
-        <% } %></H4>
+        <% } %></h4>
     </div>
 </div>
 <!-- /div -->
@@ -931,12 +1051,12 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
     <div class ="span6">
     <table>
         <tr>
-            <td>
+            <td style="width: 100px;">
                 <bean:message key="Appointment.formDate" />&nbsp;<span style="color:brown;">(<%=dateString1%>)</span>:
             </td>
             <td>
-                <INPUT TYPE="date" NAME="appointment_date"
-                    VALUE="<%=dateString2%>"
+                <input type="date" name="appointment_date"
+                    value="<%=dateString2%>"
                     onChange="checkDateTypeIn(this);checkPageLock()">
             </td>
         </tr>
@@ -945,8 +1065,8 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
                 <bean:message key="Appointment.formStartTime" />:
             </td>
             <td>
-                <INPUT TYPE="time" NAME="start_time"
-                    VALUE='<%=request.getParameter("start_time")%>' onChange="checkTimeTypeIn(this);updateTime();checkPageLock()">
+                <input type="time" name="start_time"
+                    value='<%=request.getParameter("start_time")%>' onChange="checkTimeTypeIn(this);updateTime();checkPageLock()">
             </td>
         </tr>
         <tr>
@@ -954,26 +1074,26 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
                 <bean:message key="Appointment.formDuration" />:
             </td>
             <td>
-                <INPUT TYPE="number" NAME="duration" id="duration"
-                        VALUE="<%=duration%>" onChange="checkPageLock()" onblur="calculateEndTime();">
-                <INPUT TYPE="hidden" NAME="end_time"
-                        VALUE='<%=request.getParameter("end_time")%>'
+                <input type="number" name="duration" id="duration"
+                        value="<%=duration%>" onChange="checkPageLock()" onblur="calculateEndTime();">
+                <input type="hidden" name="end_time"
+                        value='<%=request.getParameter("end_time")%>'
                          onChange="checkTimeTypeIn(this)">
             </td>
         </tr>
         <tr>
             <td>
-                 <INPUT TYPE="submit" name="searchBtn" id="searchBtn" class="btn" style="margin-bottom:10px;"
+                 <input type="submit" name="searchBtn" id="searchBtn" class="btn" style="margin-bottom:10px;"
                     onclick="parseSearch(); document.forms['ADDAPPT'].displaymode.value='Search ';"
-                    VALUE="<bean:message key="appointment.addappointment.btnSearch"/>">
+                    value="<bean:message key="appointment.addappointment.btnSearch"/>">
             </td>
             <td>
             	<%
             		String name="";
             		name = String.valueOf((bFirstDisp && !bFromWL)?"":request.getParameter("name")==null?session.getAttribute("appointmentname")==null?"":session.getAttribute("appointmentname"):request.getParameter("name"));
             	%>
-                <INPUT TYPE="TEXT" NAME="keyword"
-                        VALUE="<%=name%>"
+                <input type="text" name="keyword" id="keyword"
+                        value="<%=name%>"
                         placeholder="<bean:message key="Appointment.formNamePlaceholder" />">
             </td>
         </tr>
@@ -1060,8 +1180,8 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
                 <bean:message key="Appointment.formCreator" />:
             </td>
             <td>
-                <INPUT TYPE="TEXT" NAME="user_id" readonly
-                    VALUE='<%=bFirstDisp?(StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)):request.getParameter("user_id").equals("")?"Unknown":request.getParameter("user_id")%>'
+                <input type="TEXT" name="user_id" readonly
+                    value='<%=bFirstDisp?(StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)):request.getParameter("user_id").equals("")?"Unknown":request.getParameter("user_id")%>'
                     >
             </td>
         </tr>
@@ -1085,7 +1205,7 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
     <div class ="span6">
     <table>
         <tr>
-            <td>
+            <td style="width: 100px;">
                 <bean:message key="Appointment.formStatus" />:
             </td>
             <td>
@@ -1102,18 +1222,36 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
             </select> <%
             }
             if (strEditable==null || !strEditable.equalsIgnoreCase("yes")){
-            %> <INPUT TYPE="TEXT" NAME="status"
-					VALUE='<%=bFirstDisp?"t":request.getParameter("status")==null?"":request.getParameter("status").equals("")?"":request.getParameter("status")%>'
+            %> <input type="text" name="status"
+					value='<%=bFirstDisp?"t":request.getParameter("status")==null?"":request.getParameter("status").equals("")?"":request.getParameter("status")%>'
 					> <%}%>
             </td>
         </tr>
         <tr>
             <td>
-                <input type="button" class="btn" NAME="typeButton" VALUE="<bean:message key="Appointment.formType"/>" style="margin-bottom:10px;" onClick="openTypePopup();">
+                <bean:message key="Appointment.formType"/>:
+                <!--<input type="button" class="btn" name="typeButton" value="<bean:message key="Appointment.formType"/>" style="margin-bottom:10px;" onClick="openTypePopup();"> -->
              </td>
              <td>
-                <INPUT TYPE="TEXT" NAME="type"
-                    VALUE='<%=bFirstDisp?"":request.getParameter("type").equals("")?"":request.getParameter("type")%>' >
+                <!-- <input type="text" name="type" id="type" value='<%=bFirstDisp?"":request.getParameter("type").equals("")?"":request.getParameter("type")%>' > -->
+                <select name="type" id="type"
+                    >
+                <option data-dur="" data-reason=""><bean:message key="billing.billingCorrection.msgSelectVisitType"/></option>
+
+        <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+           List<AppointmentType> types = appDao.listAll();
+                for(int j = 0;j < types.size(); j++) {
+%>
+                    <option data-dur="<%= types.get(j).getDuration() %>"
+                            data-reason="<%= Encode.forHtmlAttribute(types.get(j).getReason()) %>"
+                            data-loc="<%= Encode.forHtmlAttribute(types.get(j).getLocation()) %>"
+                            data-notes="<%= Encode.forHtmlAttribute(types.get(j).getNotes()) %>"
+                            data-resources="<%= Encode.forHtmlAttribute(types.get(j).getResources()) %>">
+                        <%=Encode.forHtml(types.get(j).getName()) %>
+                    </option>
+                <% } %>
+                </select>
+
             </td>
         </tr>
         <tr>
@@ -1121,7 +1259,7 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
                 <bean:message key="Appointment.formDoctor" />:
             </td>
             <td>
-                <INPUT type="TEXT" readonly
+                <input type="text" id="mrp" readonly
                        value="<%=bFirstDisp ? "" : StringEscapeUtils.escapeHtml(providerBean.getProperty(curDoctor_no,""))%>">
             </td>
         </tr>
@@ -1131,7 +1269,7 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
             </td>
             <td>
 
-                <input type="TEXT" name="demographic_no"
+                <input type="text" name="demographic_no" id="demographic_no"
                     ONFOCUS="onBlockFieldFocus(this)" readonly
                     value='<%=(bFirstDisp && !bFromWL)?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>' >
             </td>
@@ -1171,12 +1309,12 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
             DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(request.getLocale()).withZone(ZoneId.systemDefault());
 
 %>
-                <INPUT TYPE="hidden" NAME="createdatetime" VALUE="<%=strDateTime%>">
+                <input type="hidden" name="createdatetime" value="<%=strDateTime%>">
                 <%=create.format(pattern)%>
-                <INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
-                <INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
-                <INPUT TYPE="hidden" NAME="creator" VALUE='<%=StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)%>'>
-                <INPUT TYPE="hidden" NAME="remarks" VALUE="">
+                <input type="hidden" name="provider_no" value="<%=curProvider_no%>">
+                <input type="hidden" name="dboperation" value="search_titlename">
+                <input type="hidden" name="creator" value='<%=StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)%>'>
+                <input type="hidden" name="remarks" value="">
             </td>
         </tr>
         <tr>
@@ -1211,18 +1349,18 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
 
 
 
-            <INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
+            <input type="hidden" name="orderby" value="last_name, first_name">
 <%
     String searchMode = request.getParameter("search_mode");
     if (searchMode == null || searchMode.isEmpty()) {
         searchMode = OscarProperties.getInstance().getProperty("default_search_mode","search_name");
     }
 %>
-            <INPUT TYPE="hidden" NAME="search_mode" id="search_mode" VALUE="<%=searchMode%>">
-            <INPUT TYPE="hidden" NAME="originalpage" VALUE="<%=request.getContextPath() %>/appointment/addappointment.jsp">
-            <INPUT TYPE="hidden" NAME="limit1" VALUE="0">
-            <INPUT TYPE="hidden" NAME="limit2" VALUE="5">
-            <INPUT TYPE="hidden" NAME="ptstatus" VALUE="active">
+            <input type="hidden" name="search_mode" id="search_mode" value="<%=searchMode%>">
+            <input type="hidden" name="originalpage" value="<%=request.getContextPath() %>/appointment/addappointment.jsp">
+            <input type="hidden" name="limit1" value="0">
+            <input type="hidden" name="limit2" value="5">
+            <input type="hidden" name="ptstatus" value="active">
 			<input type="hidden" name="outofdomain" value="<%=OscarProperties.getInstance().getProperty("pmm.client.search.outside.of.domain.enabled","true")%>" >
             <!--input type="hidden" name="displaymode" value="Search " -->
 
@@ -1238,15 +1376,15 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
         <% if(!(bDnb || bMultipleSameDayGroupAppt)) { %>
 
         <%    if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
-        <INPUT TYPE="submit" id="addButton" class="btn btn-primary"
+        <input type="submit" id="addButton" class="btn btn-primary"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appointment'"
             tabindex="6"
-            VALUE="<% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.btnAddAppointmentMobile" />
+            value="<% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.btnAddAppointmentMobile" />
                    <% } else { %><bean:message key="appointment.addappointment.btnAddAppointment"/><% } %>"
             <%=disabled%>>
-      <INPUT TYPE="submit" id="groupButton" class="btn"
+      <input type="submit" id="groupButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Group Appt'"
-            VALUE="<bean:message key="appointment.addappointment.btnGroupAppt"/>"
+            value="<bean:message key="appointment.addappointment.btnGroupAppt"/>"
             <%=disabled%>>
         <% }
 
@@ -1256,9 +1394,9 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
 
         org.apache.struts.util.MessageResources resources = org.apache.struts.util.MessageResources.getMessageResources("oscarResources");
 
-        %> <INPUT TYPE="submit" id="addPrintPreviewButton" class="btn"
+        %> <input type="submit" id="addPrintPreviewButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appt & PrintPreview'"
-            VALUE="<bean:message key='appointment.addappointment.btnAddApptPrintPreview'/>"
+            value="<bean:message key='appointment.addappointment.btnAddApptPrintPreview'/>"
             <%=disabled%>>
 
 
@@ -1267,14 +1405,14 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
 
 %>
 
-        <input TYPE="submit" id="printReceiptButton" class="btn"
+        <input type="submit" id="printReceiptButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appointment';document.forms['ADDAPPT'].printReceipt.value='1';"
-            VALUE="<bean:message key='appointment.addappointment.btnPrintReceipt'/>"
+            value="<bean:message key='appointment.addappointment.btnPrintReceipt'/>"
             <%=disabled%>>
         <input type="hidden" name="printReceipt" value="">
-<INPUT TYPE="submit" id="printButton"
+<input type="submit" id="printButton"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appt & PrintCard'" class="btn"
-            VALUE="<bean:message key='global.btnPrint'/>"
+            value="<bean:message key='global.btnPrint'/>"
             <%=disabled%>>
 
 
@@ -1308,7 +1446,7 @@ if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options
        <% if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
           <input type="button" id="apptRepeatButton" class="btn" value="<bean:message key="appointment.addappointment.btnRepeat"/>" onclick="onButRepeat()" <%=disabled%>>
       <%  } %>
-<INPUT TYPE="RESET" id="backButton" class="btn btn-link" VALUE="<bean:message key="global.btnCancel"/>" onClick="cancelPageLock();window.close();">
+<input type="RESET" id="backButton" class="btn btn-link" value="<bean:message key="global.btnCancel"/>" onClick="cancelPageLock();window.close();">
 
 </div>
 </div>
