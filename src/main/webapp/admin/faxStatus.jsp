@@ -35,15 +35,12 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
 <html:html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <html:base />
 <meta http-equiv="Content-Type" content="text/html;">
@@ -54,7 +51,7 @@ if(!authed) {
 
 </head>
 
-<body class="BodyStyle" vlink="#0000FF">
+<body class="BodyStyle">
 
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
