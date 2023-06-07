@@ -1234,9 +1234,9 @@ function locale(){
              </td>
              <td>
                 <!-- <input type="text" name="type" id="type" value='<%=bFirstDisp?"":request.getParameter("type").equals("")?"":request.getParameter("type")%>' > -->
-                <select name="type" id="type"
+                <select name="type" id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>"
                     >
-                <option data-dur="" data-reason=""><bean:message key="billing.billingCorrection.msgSelectVisitType"/></option>
+                <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
 
         <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
            List<AppointmentType> types = appDao.listAll();
