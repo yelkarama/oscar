@@ -1910,7 +1910,8 @@ show('classic');
 				</table>
 			</div>
 
-			<p><bean:message key="eFormGenerator.radio"/><br> <input name="radio" id="radio" type="checkbox" onclick="toggleView(this.checked,'Section3b');"><bean:message key="eFormGenerator.radioCheckbox"/><br>
+			<p><bean:message key="eFormGenerator.radio"/><br>
+<!-- <input name="radio" id="radio" type="checkbox" onclick="toggleView(this.checked,'Section3b');"><bean:message key="eFormGenerator.radioCheckbox"/><br> -->
             <input name="radioX" id="radioX" type="checkbox" onclick="toggleView(this.checked,'Section3b');document.getElementById('bgColor').value='white';">Add Radio Xboxes</p>
 
 			<div id="Section3b" style="display:none">
