@@ -548,7 +548,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
 			minLength: 2,
 
 			focus: function( event, ui ) {
-				$("#keyword").val( ui.item.label );
+				$("#keyword").val( ui.item.formattedName );
 				return false;
 			},
 			select: function( event, ui ) {
@@ -846,7 +846,7 @@ function parseSearch() {
     }
 
     // hin OHIP 10 didgits  MSP 9 didgits Regie 4 alpha + 8 digits
-    const reHIN = /^\d{9}$/;
+    const reHIN = /^\d{9,10}$/;
     if (reHIN.exec(keyVal)) {
         document.getElementById("search_mode").value="search_hin";
     }
