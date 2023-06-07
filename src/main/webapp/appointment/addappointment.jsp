@@ -567,21 +567,37 @@ function pasteAppt(multipleSameDayGroupAppt) {
 
         $.widget('custom.myselectmenu', $.ui.selectmenu, {
 
-          /**
-           * @see {@link https://api.jqueryui.com/selectmenu/#method-_renderItem}
-           */
-          _renderItem: function(ul, item) {
-                if (item.element.attr("data-dur").length > 0){
-                  return $( "<li>" )
-                    .append( "<div><b>" + item.label + "</b> " + item.element.attr("data-dur")+ "<bean:message key='provider.preference.min' /><br>" + item.element.attr("data-reason") + "</div>" )
-                    .appendTo( ul );
-                } else {
-                  return $( "<li>" )
-                    .append( "<div><b>" + item.label + "</b> " + "</div>" )
-                    .appendTo( ul );
+              /**
+               * @see {@link https://api.jqueryui.com/selectmenu/#method-_renderItem}
+               */
+              _renderItem: function(ul, item) {
+                    var string = "<div><b>" + item.label + "</b> "
+                    if (item.element.attr("data-dur") && item.element.attr("data-dur").length > 0){
+                        string = string + item.element.attr("data-dur")+ "&nbsp;<bean:message key='provider.preference.min' />";
+                    }
+                    if (item.element.attr("data-notes") && item.element.attr("data-notes").length > 0){
+                        string = string + "&nbsp;&nbsp;" + "<i class='icon-pencil' title='" + "<bean:message key="Appointment.formNotes" />:&nbsp;" +
+                        item.element.attr("data-notes") + "'></i>";
+                    }
+                    string = string + "<br>";
+                    if (item.element.attr("data-reason") && item.element.attr("data-reason").length > 0){
+                        string = string + "<i class='icon-tags' title='" + "<bean:message key="Appointment.formReason" />" + "'></i>&nbsp;&nbsp;" +
+                        item.element.attr("data-reason");
+                        }
+                    if (item.element.attr("data-resources") && item.element.attr("data-resources").length > 0){
+                        string = string + "<br>" + "<i class='icon-cog' title='" + "<bean:message key="Appointment.formResources" />" + "'></i>&nbsp;&nbsp;" +
+                        item.element.attr("data-resources");
+                    }
+                    if (item.element.attr("data-loc") && item.element.attr("data-loc").length > 1){
+                        string = string + "<br>" + "<i class='icon-home' title='" + "<bean:message key="Appointment.formLocation" />" + "'></i>&nbsp;&nbsp;" +
+                        item.element.attr("data-loc");
+                    }
+                    string = string + "</div>";
+                    return $( "<li>" )
+                        .append( string )
+                        .appendTo( ul );
 
-                }
-          }
+                    }
         });
 
         // render custom selectmenu
@@ -1287,7 +1303,7 @@ function locale(){
                 <bean:message key="Appointment.formResources" />:
             </td>
             <td>
-                <input type="TEXT" name="resources"
+                <input type="text" name="resources"
                     tabindex="5"
                     value='<%=bFirstDisp?"":request.getParameter("resources").equals("")?"":request.getParameter("resources")%>'
                     >
