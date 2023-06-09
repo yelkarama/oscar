@@ -838,7 +838,7 @@ if (openInTabs){
 							    if(LabTicklers!=null && LabTicklers.size()>0){
 							    %>
 							    <div id="ticklerWrap" class="DoNotPrint">
-							    <h4 style="color:#fff; text-align:center;"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4><br>
+							    <h4 style="color:#fff; text-align:center;"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4>
 
 							           <div id="ticklerDisplay" style="display:none">
 							   <%
@@ -862,7 +862,7 @@ if (openInTabs){
 							  	 ticklerClass="";
 							   }
 							   %>
-							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
+							   <div style="margin:auto; background-color:#fff; padding:5px; width:500px;" class="<%=ticklerClass%>">
 							   	<table width="100%">
 							   	<tr>
 							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
