@@ -144,9 +144,9 @@ if(!authed) {
                 <span class="help-block"><bean:message key="oscarMDS.forward.msgInstruction2" /></span>
                 <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSubmit" />" onclick="return preSubmit();">
               </fieldset>
-            </div class="span6">
-        </div class="row">
-    </div class="well">
+            </div> <!-- class="span6" -->
+        </div> <!-- class="row" -->
+    </div> <!-- class="well" -->
 
 </form>
 
