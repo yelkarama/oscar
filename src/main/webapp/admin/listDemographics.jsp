@@ -138,7 +138,8 @@ function checkForm(type) {
 <input type="hidden" name="studyId" value="<%=studyId%>">
 <div class="well">
 <h4><%=Encode.forHtml(studyDetails.getStudyName())%>&nbsp; <bean:message key="demographic.demographicexport.providers" /></h4>
-<input type="submit" class="btn" name="submit" value="<bean:message key="eform.groups.removeFromGroup" />" onclick="return checkForm('Provider');" >
+<!-- do not alter the value of this submit as it informs the action of the form -->
+<input type="submit" class="btn" name="submit" value="Remove Provider" title="<bean:message key="eform.groups.removeFromGroup" />" onclick="return checkForm('Provider');" >
 <table id="providerTable" class="table table-striped table-condensed table-hover" style="width:500px;">
 <thead>
 <tr>
@@ -165,7 +166,8 @@ function checkForm(type) {
 </div>
 <div class="well">
 <h4><%=studyDetails.getStudyName()%> &nbsp; <bean:message key="oscarEncounter.formIntakeHx.academicEnrollment" /></h4>
-<input type="submit" class="btn" name="submit" value="<bean:message key="eform.groups.removeFromGroup" />" onclick="return checkForm('Demographic');">
+<!-- do not alter the value of this submit as it informs the action of the form -->
+<input type="submit" class="btn" name="submit" value="Remove Demographic" title="<bean:message key="eform.groups.removeFromGroup" />" onclick="return checkForm('Demographic');">
 <table id="demoTable"  class="table table-striped table-condensed table-hover">
 <thead>
 <tr>
