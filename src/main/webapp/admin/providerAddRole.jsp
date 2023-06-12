@@ -241,7 +241,7 @@
     <label class="control-label" for="role_name" ><bean:message key="admin.provideraddrole.rolename"/></label>
     <div class="controls">
       <input type="text" name="role_name" id="role_name"
-			value="<%=prop.getProperty("role_name", "")%>"
+			value="<%=Encode.forHtml(prop.getProperty("role_name", ""))%>"
 			maxlength='30' >
         <input type="submit" name="submit" value="Search" class="btn"
 			onclick="javascript:return onSearch();" >
