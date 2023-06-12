@@ -28,6 +28,8 @@
 <%@ page import="java.util.*"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+
 <%@ page import="oscar.login.*"%>
 <%@ page import="oscar.log.*"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
@@ -68,7 +70,7 @@
 
   if (request.getParameter("submit") != null && request.getParameter("submit").equals("Save")) {
     // check the input data
-
+    String encodedRoleName = Encode.forHtmlContent(StringUtils.trimToEmpty(role_name));
     if(request.getParameter("action").startsWith("edit")) {
       	// update the code
       	SecRole secRole = secRoleDao.findByName(request.getParameter("action").substring(4));
@@ -76,12 +78,12 @@
 			secRole.setName(role_name);
 			secRoleDao.merge(secRole);
 			RoleCache.reload();
-			msg = role_name + " is updated.<br>" + searchFirst;
+			msg = encodedRoleName + " is updated.<br>" + searchFirst;
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		    LogAction.addLog(curUser_no, LogConst.UPDATE, LogConst.CON_ROLE, role_name, ip);
 		} else {
-			msg = role_name + " is <font color='red'>NOT</font> updated. Action failed! Try edit it again." ;
+			msg = encodedRoleName + " is <font color='red'>NOT</font> updated. Action failed! Try edit it again." ;
 		    action = "edit" + role_name;
 		    prop.setProperty("role_name", role_name);
 		}
@@ -94,12 +96,12 @@
 			secRoleDao.persist(secRole);
 			RoleCache.reload();
 
-  			msg = role_name + " is added.<br>" + searchFirst;
+  			msg = encodedRoleName + " is added.<br>" + searchFirst;
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		    LogAction.addLog(curUser_no, LogConst.ADD, LogConst.CON_ROLE, role_name, ip);
 		} else {
-      		msg = "You can <font color='red'>NOT</font> save the role  - " + role_name + ". Please search the role name first.";
+      		msg = "You can <font color='red'>NOT</font> save the role  - " + encodedRoleName + ". Please search the role name first.";
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		}
@@ -216,12 +218,12 @@
 	List<SecRole> secRoles = secRoleDao.findAll();
 	for(SecRole secRole:secRoles) {
 		%>
-		"<%=secRole.getName()%>",
+		"<%=Encode.forHtmlAttribute(secRole.getName())%>",
 	<%}%>
         ""
         ];
 		$("#role_name").autocomplete( {
-			source: currentRoles
+			source: currentRoles,
 			minLength: 2
 			}
 		);
@@ -241,7 +243,7 @@
     <label class="control-label" for="role_name" ><bean:message key="admin.provideraddrole.rolename"/></label>
     <div class="controls">
       <input type="text" name="role_name" id="role_name"
-			value="<%=Encode.forHtml(prop.getProperty("role_name", ""))%>"
+			value="<%=Encode.forHtmlAttribute(prop.getProperty("role_name", ""))%>"
 			maxlength='30' >
         <input type="submit" name="submit" value="Search" class="btn"
 			onclick="javascript:return onSearch();" >
