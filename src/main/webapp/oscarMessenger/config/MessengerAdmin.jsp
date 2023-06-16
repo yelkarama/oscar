@@ -37,11 +37,8 @@
 <head>
 	<title><bean:message key="oscarMessenger.config.MessengerAdmin.title" /></title>
 
-
-<!-- important do not update version without checking dependencies -->
 	<link href="${pageContext.request.contextPath}/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js" ></script>
-
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js" ></script>
 
 
 	<style>
