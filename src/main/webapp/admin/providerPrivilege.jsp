@@ -43,13 +43,11 @@
 
 <%@ page errorPage="../errorpage.jsp"%>
 <%@ page import="java.util.*"%>
+<%@ page import="java.sql.BatchUpdateException"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="oscar.util.*"%>
 <%@ page import="oscar.login.*"%>
 <%@ page import="oscar.log.*"%>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.springframework.dao.DataIntegrityViolationException"%>
-<%@ page import="java.sql.BatchUpdateException"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.oscarehr.common.model.SecRole"%>
 <%@ page import="org.oscarehr.common.dao.SecRoleDao"%>
@@ -64,6 +62,10 @@
 <%@ page import="org.oscarehr.common.dao.SecObjPrivilegeDao"%>
 <%@ page import="org.oscarehr.common.model.RecycleBin"%>
 <%@ page import="org.oscarehr.common.dao.RecycleBinDao"%>
+<%@ page import="org.springframework.dao.DataIntegrityViolationException"%>
+<%@ page import="org.springframework.web.util.HtmlUtils" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -154,6 +156,8 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
 	    String priority = request.getParameter(prefix);
 	    if(objectName.equals("Name1") )  objectName = request.getParameter("object$Name1").trim();
 
+        String encodedRoleUserGroup = Encode.forHtmlContent(StringUtils.trimToEmpty(roleUserGroup));
+		String encodedObjectName = Encode.forHtmlContent(StringUtils.trimToEmpty(objectName));
 	    SecObjPrivilege sop = new SecObjPrivilege();
 	    sop.setId(new SecObjPrivilegePrimaryKey());
 		sop.getId().setRoleUserGroup(roleUserGroup);
@@ -171,8 +175,8 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
 		if(secExceptionMsg.length() > 0)
 			msg += secExceptionMsg;
 		else {
-			msg += "Role/Obj/Rights " + roleUserGroup + "/" + objectName + "/" + privilege + " is added. ";
-		    LogAction.addLog(curUser_no, LogConst.ADD, LogConst.CON_PRIVILEGE, roleUserGroup +"|"+ objectName +"|"+privilege, ip);
+			msg += "Role/Obj/Rights " + encodedRoleUserGroup + "/" + encodedObjectName + "/" + privilege + " is added. ";
+		    LogAction.addLog(curUser_no, LogConst.ADD, LogConst.CON_PRIVILEGE, roleUserGroup +"|"+ encodedObjectName +"|"+privilege, ip);
 		}
 	}
 }
@@ -180,7 +184,9 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
 // update the role list
 if (request.getParameter("buttonUpdate") != null && request.getParameter("buttonUpdate").length() > 0) {
     String roleUserGroup   = request.getParameter("roleUserGroup");
+    String encodedRoleUserGroup = Encode.forHtmlContent(StringUtils.trimToEmpty(roleUserGroup));
     String objectName   = request.getParameter("objectName");
+    String encodedObjectName = Encode.forHtmlContent(StringUtils.trimToEmpty(objectName));
 
     String privilege = request.getParameter("privilege");
     String priority   = request.getParameter("priority");
@@ -227,7 +233,7 @@ if (request.getParameter("buttonUpdate") != null && request.getParameter("button
     	msg = "Role/Obj/Rights " + roleUserGroup + "/" + objectName + "/" + privilege + " is updated. ";
 	    LogAction.addLog(curUser_no, LogConst.UPDATE, LogConst.CON_PRIVILEGE, roleUserGroup +"|"+ objectName  + "|" + privilege, ip);
     } else {
-    	msg = "Role/Obj/Rights " + roleUserGroup + "/" + objectName + "/" + privilege + " is <font color='red'>NOT</font> updated!!! ";
+    	msg = "Role/Obj/Rights " + encodedRoleUserGroup + "/" + encodedObjectName + "/" + privilege + " is <span style='color:red'>NOT</span> updated!!! ";
     }
 
 }
@@ -236,7 +242,9 @@ if (request.getParameter("buttonUpdate") != null && request.getParameter("button
 // delete the role list
 if (request.getParameter("submit") != null && request.getParameter("submit").equals("Delete")) {
     String roleUserGroup   = request.getParameter("roleUserGroup");
+    String encodedRoleUserGroup = Encode.forHtmlContent(StringUtils.trimToEmpty(roleUserGroup));
     String objectName   = request.getParameter("objectName");
+    String encodedObjectName = Encode.forHtmlContent(StringUtils.trimToEmpty(objectName));
 
     String privilege = request.getParameter("privilege");
     String priority   = request.getParameter("priority");
@@ -248,7 +256,7 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
     	priority = String.valueOf(sop.getPriority());
     	provider_no = sop.getProviderNo();
     	secObjPrivilegeDao.remove(sop.getId());
-    	msg = "Role/Obj/Rights " + roleUserGroup + "/" + objectName + "/" + privilege + " is deleted. ";
+    	msg = "Role/Obj/Rights " + encodedRoleUserGroup + "/" + encodedObjectName + "/" + privilege + " is deleted. ";
 
     	RecycleBin recycleBin = new RecycleBin();
     	recycleBin.setProviderNo(curUser_no);
@@ -262,7 +270,7 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
     	recycleBinDao.persist(recycleBin);
     	LogAction.addLog(curUser_no, LogConst.DELETE, LogConst.CON_PRIVILEGE, roleUserGroup +"|"+ objectName, ip);
     } else {
-    	msg = "Role/Obj/Rights " + roleUserGroup + "/" + objectName + "/" + privilege + " is <font color='red'>NOT</font> deleted!!! ";
+    	msg = "Role/Obj/Rights " + encodedRoleUserGroup + "/" + encodedObjectName + "/" + privilege + " is <span style='color:red'>NOT</span> deleted!!! ";
     }
 }
 
@@ -390,8 +398,8 @@ function onChangeSelect(){
 <table width="100%">
 	<tr>
 		<th ><% if(msg.length()>1) {%> <div class="alert" style="width:100%; text-align:center"><%=msg%></div> <% } %></th>
-		<th style="width: 600px">Object Name/Role Name: <input type="text" name="keyword" size="15"
-			value="<%=keyword%>" /> <input type="submit" name="search" class="btn"
+		<th style="width: 600px">Object Name/Role Name: <input type="text" name="keyword"
+			value="<%=Encode.forHtmlAttribute(keyword)%>" > <input type="submit" name="search" class="btn"
 			value="Filter"> </th>
 	</tr>
 </table>
@@ -410,8 +418,8 @@ if("".equals(keyword)||vecRoleName.contains(keyword)) {
 }
 for(SecObjPrivilege sop:sops) {
 	prop = new Properties();
-	prop.setProperty("roleUserGroup",sop.getId().getRoleUserGroup());
-	prop.setProperty("objectName",sop.getId().getObjectName());
+    prop.setProperty("roleUserGroup", Encode.forHtmlAttribute(sop.getId().getRoleUserGroup()));
+    prop.setProperty("objectName", Encode.forHtmlAttribute(sop.getId().getObjectName()));
 	prop.setProperty("privilege", sop.getPrivilege());
 	prop.setProperty("priority", String.valueOf(sop.getPriority()));
 	vec.add(prop);
@@ -438,7 +446,7 @@ for(SecObjPrivilege sop:sops) {
         for (int i = 0; i < vec.size(); i++) {
        		bgColor = bgColor.equals("#f5f5f5;")?color:"#f5f5f5;";
        		String roleUser = (vec.get(i)).getProperty("roleUserGroup", "");
-       		String roleUserName = vecProviderNo.contains(roleUser)? "<font size='-1'>"+(String)vecProviderName.get(vecProviderNo.indexOf(roleUser))+"</font>": roleUser;
+       		String roleUserName = vecProviderNo.contains(roleUser)? ""+(String)vecProviderName.get(vecProviderNo.indexOf(roleUser))+"": roleUser;
        		String obj = (vec.get(i)).getProperty("objectName", "");
 %>
 	<form name="myformrow<%=i%>" action="providerPrivilege.jsp"
@@ -446,7 +454,7 @@ for(SecObjPrivilege sop:sops) {
 	<tr style="background-color:<%=bgColor%>">
 		<td><%= roleUserName %></td>
 		<td><%= obj %></td>
-		<td align="left">
+		<td style="text-align:left">
 		<%
 			String priv = (vec.get(i)).getProperty("privilege", "");
 			boolean bSet = true;
@@ -456,7 +464,7 @@ for(SecObjPrivilege sop:sops) {
             		bSet = false;
             	}
 %> <input type="checkbox" name="privilege<%=vecRightsName.get(j)%>"
-			<%=priv.indexOf(((String)vecRightsName.get(j)))>=0?"checked":""%> />
+			<%=priv.indexOf(((String)vecRightsName.get(j)))>=0?"checked":""%> >
 		<%=((String)vecRightsDesc.get(j)).replaceAll("Only","O")%>
 		<%			}%> <!--input type="text" name="privilege" value="<%--= priv--%>" /-->
 		</td>
@@ -467,11 +475,11 @@ for(SecObjPrivilege sop:sops) {
 				<%= (""+j).equals((vec.get(i)).getProperty("priority", ""))?"selected":"" %>><%= j %></option>
 			<%			} %>
 		</select></td>
-		<td align="center">
+		<td style="text-align:center">
 		<%			if(!roleUser.equals("admin") && !obj.equals("_admin")) { %> <input
-			type="hidden" name="keyword" value="<%=keyword%>" /> <input
-			type="hidden" name="objectName" value="<%=obj %>" /> <input
-			type="hidden" name="roleUserGroup" value="<%=roleUser %>" /> <input
+			type="hidden" name="keyword" value="<%=Encode.forHtmlAttribute(keyword)%>" > <input
+			type="hidden" name="objectName" value="<%=obj %>" > <input
+			type="hidden" name="roleUserGroup" value="<%=roleUser %>" > <input
 			type="submit" name="buttonUpdate" value="Update" class="btn"> <input
 			type="submit" name="submit" value="Delete" class="btn"> <%			} %>
 		</td>
@@ -486,24 +494,23 @@ for(SecObjPrivilege sop:sops) {
 	<h4>Add Role/Privilege</h4>
 <div class="well">
 	<form name="myform2" action="providerPrivilege.jsp" method="POST">
-
+    For:
 		<select name="roleUserGroup"
 			onChange="onChangeSelect()">
 			<option value="">-</option>
 			<%					for (int j = 0; j < vecRoleName.size(); j++) {%>
-			<option value="<%=vecRoleName.get(j)%>"><%= vecRoleName.get(j) %>
+			<option value="<%=Encode.forHtmlAttribute(vecRoleName.get(j).toString())%>"><%= Encode.forHtmlContent(vecRoleName.get(j).toString()) %>
 			</option>
 			<%                  }%>
 		</select> or <select name="roleUserGroup1">
 			<option value="">-</option>
 			<%					for (int j = 0; j < vecProviderNo.size(); j++) {%>
-			<option value="<%=vecProviderNo.get(j)%>"><%= vecProviderName.get(j) %>
+			<option value="<%=vecProviderNo.get(j)%>"><%= Encode.forHtmlContent((String) vecProviderName.get(j)) %>
 			</option>
 			<%                  }%>
 			<option value="_principal">_principal</option>
 		</select>
-<input type="submit"
-			name="submit" value="Add" class="btn">
+
 <table id="addtbl" style="width: 100%" class="table table-striped table-condensed" >
     <thead>
 	<tr>
@@ -511,6 +518,7 @@ for(SecObjPrivilege sop:sops) {
 		<th style="width:200px">Object ID</th>
 		<th style="width:300px">Privilege</th>
 		<th>Priority</th>
+		<th>Action</th>
 	</tr>
     </thead>
     <tbody>
@@ -528,10 +536,10 @@ for(SecObjPrivilege sop:sops) {
 			String objName = "";
 			if(i==vecObjectId.size()) {
 				objName = "Name1";
-%> <input type="text" name="object$<%=objName%>" value="" size=35 /> <%	} else {
+%> <input type="text" name="object$<%=objName%>" value=""> <%	} else {
 
 				objName = (String)vecObjectId.get(i);
-%> <input type="checkbox" name="object$<%=objName%>" /> <%= vecObjectId.get(i) %>
+%> <input type="checkbox" name="object$<%=objName%>" > <%= vecObjectId.get(i) %>
 		<%	if(objName.startsWith("_queue.")){
                     String d=null;
                     SecObjectName son = secObjectNameDao.find(objName);
@@ -569,6 +577,9 @@ for(SecObjPrivilege sop:sops) {
 			<%= j %></option>
 			<%                  }%>
 		</select></td>
+        <td>
+            <input type="submit"
+			name="submit" value="Add" class="btn"></td>
 	</tr>
 	<%                  }%>
 
@@ -594,23 +605,24 @@ for(SecObjPrivilege sop:sops) {
                     		bSet = false;
                     	}
 %> <input type="checkbox"
-			name="privilege$Name1$<%=vecRightsName.get(j)%>" /> <%=vecRightsDesc.get(j)%>
+			name="privilege$Name1$<%=vecRightsName.get(j)%>" > <%=vecRightsDesc.get(j)%>
 		<%                  }%>
 		</td>
-		<td><select name="priority$Name1" style="width:50px;">
+		<td>Priority <select name="priority$Name1" style="width:50px;">
 			<option value="">-</option>
 			<%                    for (int j = 10; j >=0; j--) { %>
 			<option value="<%=j%>" <%= (""+j).equals("0")?"selected":"" %>>
 			<%= j %></option>
 			<%                  }%>
-		</select> <input type="submit"
+		</select> </td>
+        <td><input type="submit"
 			name="submit" value="Add" class="btn"></td>
 
     </tr>
 </tbody>
 </table>
 <input type="hidden"
-			name="keyword" value="<%=keyword%>" >
+			name="keyword"  value="<%=Encode.forHtmlAttribute(keyword)%>" >
 
 	</form>
 </div>
