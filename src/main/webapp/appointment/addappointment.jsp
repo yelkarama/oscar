@@ -576,20 +576,20 @@ function pasteAppt(multipleSameDayGroupAppt) {
                         string = string + item.element.attr("data-dur")+ "&nbsp;<bean:message key='provider.preference.min' />";
                     }
                     if (item.element.attr("data-notes") && item.element.attr("data-notes").length > 0){
-                        string = string + "&nbsp;&nbsp;" + "<i class='icon-pencil' title='" + "<bean:message key="Appointment.formNotes" />:&nbsp;" +
-                        item.element.attr("data-notes") + "'></i>";
+                        string = string + "&nbsp;&nbsp;" + "<span style='color:gray'> <i class='icon-pencil' title='" + "<bean:message key="Appointment.formNotes" />:&nbsp;" +
+                        item.element.attr("data-notes") + "'></i></span>";
                     }
                     string = string + "<br>";
                     if (item.element.attr("data-reason") && item.element.attr("data-reason").length > 0){
-                        string = string + "<i class='icon-tags' title='" + "<bean:message key="Appointment.formReason" />" + "'></i>&nbsp;&nbsp;" +
+                        string = string + "<span style='color:gray'><i class='icon-tags' title='" + "<bean:message key="Appointment.formReason" />" + "'></i></span>&nbsp;&nbsp;" +
                         item.element.attr("data-reason");
                         }
                     if (item.element.attr("data-resources") && item.element.attr("data-resources").length > 0){
-                        string = string + "<br>" + "<i class='icon-cog' title='" + "<bean:message key="Appointment.formResources" />" + "'></i>&nbsp;&nbsp;" +
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-cog' title='" + "<bean:message key="Appointment.formResources" />" + "'></i></span>&nbsp;&nbsp;" +
                         item.element.attr("data-resources");
                     }
                     if (item.element.attr("data-loc") && item.element.attr("data-loc").length > 1){
-                        string = string + "<br>" + "<i class='icon-home' title='" + "<bean:message key="Appointment.formLocation" />" + "'></i>&nbsp;&nbsp;" +
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-home' title='" + "<bean:message key="Appointment.formLocation" />" + "'></i></span>&nbsp;&nbsp;" +
                         item.element.attr("data-loc");
                     }
                     string = string + "</div>";
