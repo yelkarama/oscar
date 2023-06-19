@@ -115,7 +115,7 @@ function urlencode(str) {
 function go() {
   var s = document.schedule.providerid.value ;
   var u = 'scheduleedittemplate.jsp?providerid=' + s +'&providername='+urlencode(document.schedule.providerid.options[document.schedule.providerid.selectedIndex].text);
-	popupPage(390,700,u);
+	popupPage(700,800,u);
 }
 //-->
 </script>
@@ -187,7 +187,7 @@ function go() {
 		<%if (!( isSiteAccessPrivacy  || isTeamAccessPrivacy || grantOnlyCurProviderScheduleData)) {%>
 			<tr>
 				<td nowrap style="background-color:#CCFFCC">&nbsp; <a HREF="#"
-					ONCLICK="popupPage(440,530,'scheduleholidaysetting.jsp?year=<%=year%>&month=<%=month%>&day=<%=day%>')"
+					ONCLICK="popupPage(540,530,'scheduleholidaysetting.jsp?year=<%=year%>&month=<%=month%>&day=<%=day%>')"
 					TITLE='<bean:message key="schedule.scheduletemplatesetting.msgHolidaySettingTip"/>;return true'><bean:message
 					key="schedule.scheduletemplatesetting.btnHolidaySetting" /></a></td>
 			</tr>
