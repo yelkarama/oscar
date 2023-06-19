@@ -31,7 +31,7 @@
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed=true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_appointment" rights="u" reverse="<%=true%>">
+<security:oscarSec roleName="<%=roleName$%>" objectName="_appointment" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
 	<%response.sendRedirect("../securityError.jsp?type=_appointment");%>
 </security:oscarSec>
@@ -99,6 +99,7 @@
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="oscar.oscarEncounter.data.EctFormData"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.BillingDataHlp" %>
+<%@ page import="org.oscarehr.common.dao.AppointmentTypeDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 
@@ -239,15 +240,18 @@
 <head>
 <title><bean:message key="appointment.editappointment.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <link href="${ pageContext.request.contextPath }/css/datepicker.css" rel="stylesheet">
 <link href="${ pageContext.request.contextPath }/css/bootstrap-responsive.css" rel="stylesheet">
 <link href="${ pageContext.request.contextPath }/css/font-awesome.min.css" rel="stylesheet">
 <link href="${ pageContext.request.contextPath }/css/helpdetails.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
 <script src="${ pageContext.request.contextPath }/js/global.js"></script>
-
 <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
 <style>
 body, html {
@@ -271,6 +275,31 @@ body, html {
   padding: var(--margin) var(--margin) var(--margin) var(--marginLeft);
   transition: backgroundImage 0.25s;
 }
+
+</style>
+<!-- override styles for ui select menu -->
+<style>
+.ui-selectmenu-button.ui-button {
+    background-color: white;
+    width: 190px;
+    margin-bottom: 10px;
+
+}
+.ui-icon-triangle-1-s {
+	border-style: solid;
+	border-width: 0.142em 0.142em 0 0;
+	content: '';
+	display: inline-block;
+	height: 0.33em;
+	left: 0.6em;
+	position: relative;
+	top: 0.17em;
+	transform: rotate(135deg);
+	vertical-align: top;
+	width: 0.34em;
+
+}
+
 </style>
 
 <%         if (bMultisites) { %>
@@ -577,7 +606,7 @@ function setType(typeSel,reasonSel,locSel,durSel,notesSel,resSel) {
   document.forms['EDITAPPT'].duration.value = durSel;
   document.forms['EDITAPPT'].resources.value = resSel;
   var loc = document.forms['EDITAPPT'].location;
-  if(loc.nodeName == 'SELECT') {
+  if(loc.nodeName.toUpperCase() == 'SELECT') {
           for(c = 0;c < loc.length;c++) {
                   if(loc.options[c].innerHTML == locSel) {
                           loc.selectedIndex = c;
@@ -585,7 +614,7 @@ function setType(typeSel,reasonSel,locSel,durSel,notesSel,resSel) {
                           break;
                   }
           }
-  } else if (loc.nodeName == "INPUT") {
+  } else if (loc.nodeName.toUpperCase() == "INPUT") {
 	  document.forms['EDITAPPT'].location.value = locSel;
   }
 }
@@ -608,9 +637,13 @@ function parseSearch() {
         document.getElementById("search_mode").value="search_address";
     }
 
-    //Ontario hin 10 didgits
-    const reHIN = /^\d{10}$/;
+    //Ontario hin 10 didgits  MSP 9 didgits Regie 4 alpha + 8 digits
+    const reHIN = /^\d{9,10}$/;
     if (reHIN.exec(keyVal)) {
+        document.getElementById("search_mode").value="search_hin";
+    }
+    const reRegie = /^[A-Z]{4}\d{8}$/;
+    if (reRegie.exec(keyVal)) {
         document.getElementById("search_mode").value="search_hin";
     }
 
@@ -642,10 +675,11 @@ function parseSearch() {
          document.getElementById("search_mode").value="search_hin";
     }
 }
+
+
+
 </script>
 <script>
-var loc = document.forms['EDITAPPT'].location;
-if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
 
 jQuery(document).ready(function(){
 	var belowTbl = jQuery("#belowTbl");
@@ -653,16 +687,103 @@ jQuery(document).ready(function(){
 		jQuery(belowTbl.find("tr")[1]).remove();
 	}
 });
+	jQuery(document).ready(function() {
+		jQuery( document ).tooltip();
 
+		var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
+
+		jQuery("#keyword").autocomplete( {
+			source: url,
+			minLength: 2,
+
+			focus: function( event, ui ) {
+				jQuery("#keyword").val( ui.item.formattedName );
+				return false;
+			},
+			select: function( event, ui ) {
+				jQuery("#demographic_no").val( ui.item.value );
+				jQuery("#mrp").val( ui.item.provider );
+				jQuery("#keyword").val( ui.item.formattedName );
+				return false;
+			}
+		})
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return jQuery( "<li>" )
+            .append( "<div><b>" + item.label + "</b>" + "<br>" + item.provider + "</div>" )
+            .appendTo( ul );
+        };
+
+
+        jQuery.widget('custom.myselectmenu', jQuery.ui.selectmenu, {
+
+              /**
+               * @see {@link https://api.jqueryui.com/selectmenu/#method-_renderItem}
+               */
+              _renderItem: function(ul, item) {
+                    var string = "<div><b>" + item.label + "</b> "
+                    if (item.element.attr("data-dur") && item.element.attr("data-dur").length > 0){
+                        string = string + item.element.attr("data-dur")+ "&nbsp;<bean:message key='provider.preference.min' />";
+                    }
+                    if (item.element.attr("data-notes") && item.element.attr("data-notes").length > 0){
+                        string = string + "&nbsp;&nbsp;" + "<span style='color:gray'> <i class='icon-pencil' title='" + "<bean:message key="Appointment.formNotes" />:&nbsp;" +
+                        item.element.attr("data-notes") + "'></i></span>";
+                    }
+                    string = string + "<br>";
+                    if (item.element.attr("data-reason") && item.element.attr("data-reason").length > 0){
+                        string = string + "<span style='color:gray'><i class='icon-tags' title='" + "<bean:message key="Appointment.formReason" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-reason");
+                        }
+                    if (item.element.attr("data-resources") && item.element.attr("data-resources").length > 0){
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-cog' title='" + "<bean:message key="Appointment.formResources" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-resources");
+                    }
+                    if (item.element.attr("data-loc") && item.element.attr("data-loc").length > 1){
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-home' title='" + "<bean:message key="Appointment.formLocation" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-loc");
+                    }
+                    string = string + "</div>";
+                    return jQuery( "<li>" )
+                        .append( string )
+                        .appendTo( ul );
+
+                    }
+        });
+
+        // render custom selectmenu
+        jQuery('#type').myselectmenu({
+            change: function( event, data ) {
+                label=data.item.value;
+                origReason = jQuery("[name=reason").val();
+                reason=data.item.element.attr("data-reason");
+                if (origReason.length > 0 ) {
+                    reason = reason.concat(" -- ".concat(origReason));
+                }
+                loc=data.item.element.attr("data-loc");
+                dur=data.item.element.attr("data-dur");
+                notes=data.item.element.attr("data-notes");
+                resources=data.item.element.attr("data-resources");
+                setType(label,reason,loc,dur,notes,resources);
+            }
+
+            });
+
+
+    });
+
+function locale(){
+    // add style for multisites location
+    var loc = document.forms['EDITAPPT'].location;
+    if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
+}
 </script>
 </head>
-<body onload="setfocus();updateTime();" >
+<body onload="setfocus();updateTime();locale()" >
 <!-- The mobile optimized page is split into two sections: viewing and editing an appointment
      In the mobile version, we only display the edit section first if we are returning from a search -->
 <div id="editAppointment" style="display:<%= (isMobileOptimized && bFirstDisp) ? "none":"block"%>;">
-<FORM NAME="EDITAPPT" METHOD="post" ACTION="appointmentcontrol.jsp"
-	onSubmit="return(onSub())"><INPUT TYPE="hidden"
-	NAME="displaymode" value="">
+<form name="EDITAPPT" METHOD="post" ACTION="appointmentcontrol.jsp"
+	onSubmit="return(onSub())"><input type="hidden"
+	name="displaymode" value="">
     <div class="header deep">
         <div class="time" id="header"><H4>
             <!-- We display a shortened title for the mobile version -->
@@ -764,8 +885,8 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formDate" />:
             </td>
             <td>
-                <INPUT TYPE="date" NAME="appointment_date"
-                    VALUE="<%=bFirstDisp?ConversionUtils.toDateString(appt.getAppointmentDate()):strApptDate%>"
+                <input type="date" name="appointment_date"
+                    value="<%=bFirstDisp?ConversionUtils.toDateString(appt.getAppointmentDate()):strApptDate%>"
                     >
             </td>
         </tr>
@@ -774,13 +895,13 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formStartTime" />:
             </td>
             <td>
-                <INPUT TYPE="time" NAME="start_time"
-                    VALUE="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getStartTime()):request.getParameter("start_time")%>"
+                <input type="time" name="start_time"
+                    value="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getStartTime()):request.getParameter("start_time")%>"
                     onChange="checkTimeTypeIn(this);updateTime();">
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="font-size:8pt;">
                 <bean:message key="Appointment.formDuration" />:
             </td>
             <td>
@@ -807,12 +928,12 @@ jQuery(document).ready(function(){
         nameSb.append(appt.getName());
     }
   }
-%> <INPUT TYPE="hidden" NAME="end_time"
-					VALUE="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getEndTime()):request.getParameter("end_time")%>"
+%> <input type="hidden" name="end_time"
+					value="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getEndTime()):request.getParameter("end_time")%>"
 					>
 
-				<INPUT TYPE="number" NAME="duration" id="duration"
-					VALUE="<%=request.getParameter("duration")!=null?(request.getParameter("duration").equals(" ")||request.getParameter("duration").equals("")||request.getParameter("duration").equals("null")?(""+everyMin) :request.getParameter("duration")):(""+everyMin)%>"
+				<input type="number" name="duration" id="duration"
+					value="<%=request.getParameter("duration")!=null?(request.getParameter("duration").equals(" ")||request.getParameter("duration").equals("")||request.getParameter("duration").equals("null")?(""+everyMin) :request.getParameter("duration")):(""+everyMin)%>"
                     onblur="calculateEndTime();">
             </td>
         </tr>
@@ -824,19 +945,19 @@ jQuery(document).ready(function(){
                         searchMode = OscarProperties.getInstance().getProperty("default_search_mode","search_name");
                     }
                 %>
-        		<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
-                <INPUT TYPE="hidden" NAME="search_mode" id="search_mode" VALUE="<%=searchMode%>">
-                <INPUT TYPE="hidden" NAME="originalpage" VALUE="<%=request.getContextPath() %>/appointment/editappointment.jsp">
-                <INPUT TYPE="hidden" NAME="limit1" VALUE="0">
-                <INPUT TYPE="hidden" NAME="limit2" VALUE="5">
-                <INPUT TYPE="hidden" NAME="ptstatus" VALUE="active">
-                <INPUT TYPE="submit" name="searchBtn" id="searchBtn" class="btn" style="margin-bottom:10px;"
-					onclick="parseSearch();document.forms['EDITAPPT'].displaymode.value='Search '"
-                    value="<bean:message key="appointment.editappointment.btnSearch"/>">
+        		<input type="hidden" name="orderby" value="last_name, first_name">
+        		<input type="hidden" name="search_mode" id="search_mode" value="<%=searchMode%>">
+        		<input type="hidden" name="originalpage" value="<%=request.getContextPath() %>/appointment/editappointment.jsp">
+        		<input type="hidden" name="limit1" value="0">
+        		<input type="hidden" name="limit2" value="5">
+        		<input type="hidden" name="ptstatus" value="active">
+        		<input type="submit" name="searchBtn" id="searchBtn" class="btn" style="margin-bottom:10px;"
+        		    onclick="parseSearch();document.forms['EDITAPPT'].displaymode.value='Search '"
+        		    value="<bean:message key="appointment.editappointment.btnSearch"/>">
             </td>
             <td>
-            	<INPUT TYPE="TEXT" NAME="keyword"
-                        VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?nameSb.toString():request.getParameter("name"))%>"
+            	<input type="text" name="keyword" id="keyword"
+                        value="<%=Encode.forHtmlAttribute(bFirstDisp?nameSb.toString():request.getParameter("name"))%>"
                         placeholder="<bean:message key="Appointment.formName" />">
             </td>
         </tr>
@@ -895,7 +1016,7 @@ jQuery(document).ready(function(){
 				<%
 					StringBuilder sb = new StringBuilder();
 					for (Site s:sites) {
-						if (s.getName().equals(loc)) isSiteSelected = true; // added by vic
+						if (s.getName().equals(loc)) isSiteSelected = true;
 						sb.append("<option value=\"").append(s.getName()).append("\" class=\"").append(s.getShortName()).append("\" style=\"background-color: ").append(s.getBgColor()).append("\" ").append(s.getName().equals(loc)?"selected":"").append(">").append(s.getName()).append("</option>");
 					}
 					if (isSiteSelected) {
@@ -925,7 +1046,7 @@ jQuery(document).ready(function(){
 		  	%>
                </select>
 	        <% } else { %>
-		        <INPUT TYPE="TEXT" NAME="location" tabindex="4" VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
+		        <input type="text" name="location" tabindex="4" value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
 	        <% } %>
         <% } %>
             </td>
@@ -936,7 +1057,7 @@ jQuery(document).ready(function(){
             </td>
             <td>
                 <% String lastCreatorNo = bFirstDisp?(appt.getCreator()):request.getParameter("user_id"); %>
-                <INPUT TYPE="TEXT" NAME="user_id" VALUE="<%=Encode.forHtmlAttribute(lastCreatorNo)%>" readonly >
+                <input type="text" name="user_id" value="<%=Encode.forHtmlAttribute(lastCreatorNo)%>" readonly >
             </td>
         </tr>
 				<%
@@ -969,7 +1090,7 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.CreateDate" />:
             </td>
             <td>
-                <INPUT TYPE="hidden" NAME="createDate" VALUE="<%=origDate%>">
+                <input type="hidden" name="createDate" value="<%=origDate%>">
                 <%=dateString1%>
             </td>
         </tr>
@@ -1008,10 +1129,10 @@ jQuery(document).ready(function(){
 				</select> <%
               } else {
               	if (importedStatus==null || importedStatus.trim().equals("")) { %>
-              	<INPUT TYPE="TEXT" NAME="status" VALUE="<%=statusCode%>" > <%
+              	<input type="text" name="status" value="<%=statusCode%>" > <%
               	} else { %>
-                <INPUT TYPE="TEXT" NAME="status" VALUE="<%=statusCode%>" >
-                <INPUT TYPE="TEXT" TITLE="Imported Status" VALUE="<%=importedStatus%>" readonly> <%
+                <input type="text" name="status" value="<%=statusCode%>" >
+                <input type="text" TITLE="Imported Status" value="<%=importedStatus%>" readonly> <%
               	}
               }
             %>
@@ -1019,11 +1140,28 @@ jQuery(document).ready(function(){
         </tr>
         <tr>
             <td>
-                <input type="button" class="btn" NAME="typeButton" VALUE="<bean:message key="Appointment.formType"/>" style="margin-bottom:10px;" onClick="openTypePopup();">
+                <bean:message key="Appointment.formType"/>:
+                <!-- <input type="button" class="btn" name="typeButton" value="<bean:message key="Appointment.formType"/>" style="margin-bottom:10px;"  onClick="openTypePopup();"> -->
              </td>
              <td>
-                <INPUT TYPE="TEXT" NAME="type"
-                    VALUE="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type"))%>" >
+                <!--<input type="text" name="type"
+                    value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type"))%>" >-->
+                <select name="type" id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>" >
+                <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
+
+        <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+           List<AppointmentType> types = appDao.listAll();
+                for(int j = 0;j < types.size(); j++) {
+%>
+                    <option data-dur="<%= types.get(j).getDuration() %>"
+                            data-reason="<%= Encode.forHtmlAttribute(types.get(j).getReason()) %>"
+                            data-loc="<%= Encode.forHtmlAttribute(types.get(j).getLocation()) %>"
+                            data-notes="<%= Encode.forHtmlAttribute(types.get(j).getNotes()) %>"
+                            data-resources="<%= Encode.forHtmlAttribute(types.get(j).getResources()) %>" >
+                        <%=Encode.forHtml(types.get(j).getName()) %>
+                    </option>
+                <% } %>
+                </select>
             </td>
         </tr>
         <tr>
@@ -1031,7 +1169,7 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formDoctor" />:
             </td>
             <td>
-                <INPUT type="TEXT" readonly name="doctorNo"
+                <input type="text" readonly name="doctorNo"
                        value="<%=StringEscapeUtils.escapeHtml(providerBean.getProperty(doctorNo,""))%>">
             </td>
         </tr>
@@ -1041,7 +1179,7 @@ jQuery(document).ready(function(){
                     <bean:message key="global.master" /></a>
             </td>
             <td>
-                <input type="TEXT" name="demographic_no"
+                <input type="text" name="demographic_no"
                     ONFOCUS="onBlockFieldFocus(this)" readonly
        		    value="<%=bFirstDisp?( (appt.getDemographicNo())==0?"":(""+appt.getDemographicNo()) ):request.getParameter("demographic_no")%>">
             </td>
@@ -1051,7 +1189,7 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formChartNo" />:
             </td>
             <td>
-                <input type="TEXT" name="chart_no"
+                <input type="text" name="chart_no"
                     readonly value="<%=bFirstDisp?StringUtils.trimToEmpty(chartno):request.getParameter("chart_no")%>"
                     >
             </td>
@@ -1069,9 +1207,8 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formResources" />:
             </td>
             <td>
-                <input type="TEXT"
-					name="resources" tabindex="5"
-					value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getResources():request.getParameter("resources"))%>"
+                <input type="text" name="resources" tabindex="5"
+					value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getResources():request.getParameter("resources"))%>" >
             </td>
         </tr>
         <tr>
@@ -1091,8 +1228,8 @@ jQuery(document).ready(function(){
         		}
 	        }
         %>
-                <INPUT TYPE="TEXT" readonly
-					VALUE="<%=lastCreatorNo%>" >
+                <input type="text" readonly
+					value="<%=lastCreatorNo%>" >
             </td>
         </tr>
         <tr>
@@ -1100,15 +1237,15 @@ jQuery(document).ready(function(){
                 <bean:message key="Appointment.formLastTime" />:
             </td>
             <td>
-                <INPUT TYPE="hidden" NAME="lastcreatedatetime"
-                    VALUE="<%=Encode.forHtmlContent(bFirstDisp?lastDateTime:request.getParameter("lastcreatedatetime"))%>"
+                <input type="hidden" name="lastcreatedatetime"
+                    value="<%=Encode.forHtmlContent(bFirstDisp?lastDateTime:request.getParameter("lastcreatedatetime"))%>"
                     > <%=Encode.forHtmlContent(dateString2)%>
-                <INPUT TYPE="hidden" NAME="createdatetime" VALUE="<%=strDateTime%>">
-				<INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
-				<INPUT TYPE="hidden" NAME="dboperation" VALUE="">
-                <INPUT TYPE="hidden" NAME="creator" VALUE="<%=Encode.forHtmlAttribute(userlastname+", "+userfirstname)%>">
-                <INPUT TYPE="hidden" NAME="remarks" VALUE="<%=Encode.forHtmlAttribute(remarks)%>">
-                <INPUT TYPE="hidden" NAME="appointment_no" VALUE="<%=appointment_no%>">
+                <input type="hidden" name="createdatetime" value="<%=strDateTime%>">
+                <input type="hidden" name="provider_no" value="<%=curProvider_no%>">
+                <input type="hidden" name="dboperation" value="">
+                <input type="hidden" name="creator" value="<%=Encode.forHtmlAttribute(userlastname+", "+userfirstname)%>">
+                <input type="hidden" name="remarks" value="<%=Encode.forHtmlAttribute(remarks)%>">
+                <input type="hidden" name="appointment_no" value="<%=appointment_no%>">
             </td>
         </tr>
         <tr>
@@ -1165,9 +1302,9 @@ jQuery(document).ready(function(){
 			onclick="document.forms['EDITAPPT'].displaymode.value='Group Action'; onButUpdate();"
 			value="<bean:message key="appointment.editappointment.btnGroupAction"/>">
              <% }%>
-        <input TYPE="submit" id="printReceiptButton" class="btn"
+        <input type="submit" id="printReceiptButton" class="btn"
             onclick="document.forms['EDITAPPT'].displaymode.value='Update Appt';document.forms['EDITAPPT'].printReceipt.value='1';"
-            VALUE="<bean:message key='appointment.editappointment.btnPrintReceipt'/>">
+            value="<bean:message key='appointment.editappointment.btnPrintReceipt'/>">
         <input type="hidden" name="printReceipt" value="">
 		<input type="submit" class="btn btn-danger" id="deleteButton"
 			onclick="document.forms['EDITAPPT'].displaymode.value='Delete Appt'; onButDelete();"
@@ -1296,15 +1433,15 @@ jQuery(document).ready(function(){
                 if (numForms == 1) {
 
 %>
-         <table style="font-size: 9pt;" bgcolor="#c0c0c0" align="center" valign="top" cellpadding="3px">
-            <tr bgcolor="#ccccff">
+          <table style="font-size: 9pt; background-color: #e8e8e8; margin-left:auto; vertical-align: top; padding:3px">
+            <tr style="background-color:#f3f6f9">
                 <th colspan="2">
                     <bean:message key="appointment.addappointment.msgFormsSaved"/>
                 </th>
             </tr>
 <%              } %>
 
-            <tr bgcolor="#c0c0c0" align="left">
+            <tr style="background-color:#c0c0c0; text-align:left">
                 <th style="padding-right: 20px"><c:out value="${formName}:"/></th>
 <%                 if (formComplete){  %>
                 <td><bean:message key="appointment.addappointment.msgFormCompleted"/></td>
