@@ -146,7 +146,7 @@ function upCaseCtrl(ctrl) {
           if (bMoreAddr) {
           %>
       <div class="control-group">
-        <label class="control-label" for="reason">Location:</label>
+        <label class="control-label" for="reason"><bean:message key="Appointment.formLocation" />:</label>
         <div class="controls">
              <select id="reason" name="reason" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 					<% for(int i=0; i<siteList.length; i++) { %>
