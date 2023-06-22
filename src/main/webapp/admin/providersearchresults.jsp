@@ -118,14 +118,16 @@
 <table style="width:100%">
 	<tr>
 		<td rowspan="2"  style="text-align:right; vertical-align:middle">
-			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i>
+			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i>&nbsp;&nbsp;
+		</td>
+		<td style="white-space: nowrap;">
+
 		</td>
 		<td style="white-space: nowrap;">
 				<input type="radio" <%=searchMode.equals("search_name")?"checked":""%> name="search_mode"
 					   value="search_name" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.providersearch.formLastName" />
-		</td>
-		<td style="white-space: nowrap;">
+            <br>
 				<input type="radio"	<%=searchMode.equals("search_providerno")?"checked":""%> name="search_mode"
 					   value="search_providerno" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.provider.formProviderNo" />
@@ -133,17 +135,17 @@
 		<td style="white-space: nowrap;">
 				<input type="radio" name="search_status" value="All" <%=searchStatus == null ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formAllStatus" />
-			<br/>
+			<br>
 				<input type="radio" name="search_status" value="1" <%="1".equals(searchStatus) ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formActiveStatus" />
-			<br/>
+			<br>
 				<input type="radio" name="search_status" value="0" <%="0".equals(searchStatus) ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formInactiveStatus" />
 		</td>
 		<td style="vertical-align:middle; text-align:left" rowspan="2" >
             <div class="input-append">
-			    <input type="text" name="keyword" class="input input-large" maxlength="100" style="height:24px">
-                <button type="submit" name="button" class="btn add-on" style="height:24px" ><i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>"></i></button>
+			    <input type="text" name="keyword" class="input input-large" maxlength="100" >
+                <button type="submit" name="button" class="btn add-on" style="height:30px; width:30px;" ><i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>" ></i></button>
             </div>
 			<input type="hidden" name="orderby" value="last_name">
 			<input type="hidden" name="limit1" value="0">
