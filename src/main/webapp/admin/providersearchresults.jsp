@@ -110,8 +110,7 @@
 %>
 <body onLoad="setfocus()">
 
-<h4>
-<i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchresults.description" /></h4>
+<h4><i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchrecordshtm.description" /></h4>
 
 <form method="post" action="providersearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
 <div class="well">
