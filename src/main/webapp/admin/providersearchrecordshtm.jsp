@@ -111,8 +111,8 @@
 		</td>
 		<td style="vertical-align:middle; text-align:left" rowspan="2" >
             <div class="input-append">
-			    <input type="text" name="keyword" class="input input-large" maxlength="100" style="height:24px">
-                <button type="submit" name="button" class="btn add-on" style="height:24px" >
+			    <input type="text" name="keyword" class="input input-large" maxlength="100">
+                <button type="submit" name="button" class="btn add-on" style="height:30px; width:30px" >
                     <i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>"></i></button>
             </div>
 			<input type="hidden" name="orderby" value="last_name">
