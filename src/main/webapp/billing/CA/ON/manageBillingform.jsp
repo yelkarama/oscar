@@ -29,7 +29,7 @@ String service_form="", service_name="";
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" %>
 <%@ include file="../../../admin/dbconnection.jsp"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.CtlBillingService" %>
@@ -38,6 +38,7 @@ String service_form="", service_name="";
 <%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
 <%@ page import="org.oscarehr.common.model.CtlBillingServicePremium" %>
 <%@ page import="org.oscarehr.common.dao.CtlBillingServicePremiumDao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
 	CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
@@ -149,7 +150,7 @@ function manageBillType(id,oldtype,newtype) {
             <input type="radio" name="reportAction" value="dxcode"
 			<%=reportAction.equals("dxcode")?"checked":""%>> <bean:message
 			key="billing.manageBillingform.formDxCode" /></td>
-		<td style="width:30%">
+		<td style="width:40%; text-align: center">
 		<div style="align:right">
             <bean:message key="billing.manageBillingform.formSelectForm" />&nbsp;&nbsp;
             <select	name="billingform">
@@ -174,7 +175,7 @@ for(Object[] billingService:billingServices){
 %>
 		</select></div>
 		</td>
-		<td style="width:40%">
+		<td style="width:30%;">
             <input type="submit" name="Submit" class="btn"
 			value="<bean:message key="billing.manageBillingform.btnManage"/>">
 		</td>
