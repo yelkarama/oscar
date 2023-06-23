@@ -68,7 +68,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/securityaddarecord.jsp">
 						<bean:message key="admin.admin.btnAddLogin" />
 					</a></li>
-					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/securitysearchrecordshtm.jsp">
+					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/securitysearchresults.jsp?search_mode=search_providerno&keyword=&button=&orderby=user_name&limit1=0&limit2=10000">
 						<bean:message key="admin.admin.btnSearchLogin" />
 					</a></li>
 
