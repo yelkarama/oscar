@@ -185,6 +185,48 @@ ul {
 		color: #555;
 	}
 
+.addLookupListItemButton  {
+  display: inline-block;
+  padding: 1px 10px;
+  margin-bottom: 0;
+  font-size: 11px;
+  line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border: 1px solid #cccccc;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.addLookupListItemButton:hover,
+.addLookupListItemButton:focus,
+.addLookupListItemButton:active,
+.addLookupListItemButton.active,
+.addLookupListItemButton.disabled,
+.addLookupListItemButton[disabled] {
+  color: #333333;
+  background-color: #e6e6e6;
+}
+
+
+
 div.addLookupListItemTools {
 	padding:5px;
 	float:left;
@@ -224,11 +266,10 @@ footer {
 </style>
 </head>
 <body id="lookUpListManager">
-<header>
-	<h1 class="pageTitle">
+
+<h2 class="pageTitle">
 		<bean:message key="admin.admin.lookuplists.title" />
-	</h1>
-</header>
+	</h2>
 
 <security:oscarSec roleName="${ sessionScope.userrole },${ sessionScope.user }"
 	objectName="_admin.*" rights="w" reverse="${ true }">
