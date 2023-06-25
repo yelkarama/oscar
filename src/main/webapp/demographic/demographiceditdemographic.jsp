@@ -978,7 +978,7 @@ var cellPhoneHistory="";
 function generateMarkup(addresses,type,header) {
     var priorAddress = "";
     var markup = '<table style="width:500px">';
-    markup += '<tr><th><b>Date Entered</b></th><th><b>'+header+'</b></th></tr>';
+    markup += '<tr><th><b><bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDateEntered" /></b></th><th><b>'+header+'</b></th></tr>';
     for(var x=0;x<addresses.length;x++) {
         if(addresses[x].type == type ) {
             if ( addresses[x].name != priorAddress && addresses[x].name != null) {
@@ -1037,10 +1037,10 @@ jQuery(document).ready(function() {
                      addresses = arr;
             	}
 
-                addressHistory = generateMarkup(addresses,'address','Address');
-                homePhoneHistory = generateMarkup(addresses,'phone','Phone #');
-                workPhoneHistory = generateMarkup(addresses,'phone2','Phone #');
-                cellPhoneHistory = generateMarkup(addresses,'cell','Phone #');
+                addressHistory = generateMarkup(addresses,'address','<bean:message key="demographic.demographiceditdemographic.formAddr" />');
+                homePhoneHistory = generateMarkup(addresses,'phone','<bean:message key="demographic.demographiceditdemographic.formPhoneH" />');
+                workPhoneHistory = generateMarkup(addresses,'phone2','<bean:message key="demographic.demographiceditdemographic.formPhoneW" />');
+                cellPhoneHistory = generateMarkup(addresses,'cell','<bean:message key="demographic.demographiceditdemographic.formPhoneC" />');
                 jQuery( "#addressHistory" ).tooltip("option","content", addressHistory);
                 jQuery( "#homePhoneHistory" ).tooltip("option","content", homePhoneHistory);
                 jQuery( "#workPhoneHistory" ).tooltip("option","content", workPhoneHistory);
@@ -2263,7 +2263,8 @@ if( demographic!=null) {
 						<% if ((!StringUtils.trimToEmpty(demographic.getAddress()).equals(""))
 							|| (!StringUtils.trimToEmpty(demographic.getCity()).equals(""))
 							|| (!StringUtils.trimToEmpty(demographic.getProvince()).equals(""))) { // if there is data in any primary address field, show the header %>
-							<tr><td colspan="2"><i><u>Primary Address</u></i></td></tr>
+							<tr><td colspan="2"><i><u><bean:message
+							      key="demographic.demographiceditdemographic.formAddr" /></u></i></td></tr>
 						<%}%>
 						<tr><td><span class="labels"><bean:message
 							      key="demographic.demographiceditdemographic.formAddr" />:</td>
@@ -2296,7 +2297,8 @@ if( demographic!=null) {
 							 <% if ((!StringUtils.trimToEmpty(demographic.getResidentialAddress()).equals(""))
                                                         || (!StringUtils.trimToEmpty(demographic.getResidentialCity()).equals(""))
                                                         || (!StringUtils.trimToEmpty(demographic.getResidentialProvince()).equals(""))) { // if there is data in any primary address field, show the header %>
-							<tr><td colspan="2"<i><u>Residential Address</i></u></td></tr>
+							<tr><td colspan="2"<i><u><bean:message
+								      key="demographic.demographiceditdemographic.formResidentialAddr" /></i></u></td></tr>
                                                 <%}%>
 							<%
 							if(!StringUtils.trimToEmpty(demographic.getResidentialAddress()).equals("")) {  %>
@@ -2644,7 +2646,7 @@ enoughRoom=true;
                         }
 			%></td></tr>
                             <% } if (StringUtils.isNotEmpty(providerBean.getProperty(nurse,""))) { %>
-			    <tr><td>Nurse:</td><td><b><%=providerBean.getProperty(nurse,"")%></b></td></tr>
+			    <tr><td><bean:message key="demographic.demographiceditdemographic.formNurse" />:</td><td><b><%=providerBean.getProperty(nurse,"")%></b></td></tr>
                         <% // ===== quick appointment booking for prov3 =====
                         if (provMap.get("prov3") != null) {
 			%><tr><td colspan="2" style="text-align: center;"><%
@@ -2733,7 +2735,9 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
 
 						<div class="demographicSection" id="notes">
 						<h4>&nbsp;<bean:message
-							key="demographic.demographiceditdemographic.formNotes" /> <input type="button" class="btn btn-link" onclick="popupOscarRx(800, 1000,'demographicAudit.jsp?demographic_no=<%=demographic_no %>');" value="Audit Information"/></h4>
+							key="demographic.demographiceditdemographic.formNotes" />
+                        <input type="button" class="btn btn-link" onclick="popupOscarRx(800, 1000,'demographicAudit.jsp?demographic_no=<%=demographic_no %>');"
+                        value="<bean:message key="admin.admin.securityLogReport" />"></h4>
 
 						<table style="background-color: #FFFFFF"><tr><td style="width:100%"><%=Encode.forHtmlContent(notes)%>&nbsp;
 <%if (hasImportExtra) { %>
