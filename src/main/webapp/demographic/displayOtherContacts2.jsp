@@ -85,19 +85,22 @@
         <html>
         <head>
 
-        <!-- <link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
-        <link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/OscarStandardLayout.css" /> -->
-        <script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.12.3.js"></script>
+       <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 
     </c:if>
     <%-- END DETACHED VIEW ENABLED  --%>
 
     <c:if test="${ param.view ne 'detached' }" >
-        <script type="text/javascript" >
+        <script type="text/javascript">
             jQuery(document).ready( function($) {
                 //--> Popup effects
-                jQuery(".contactHover").on( "mouseover", function(){
-                    nhpup.popup( jQuery('#contactDetail_' + this.id).html(), { 'width':250 } );
+                $(".contactHover").on( "mouseover", function(){
+                    $('#contactDetail_' + this.id).slideUp( 300 ).delay( 400 ).fadeIn( 400 );
+                    $(this).css("fontWeight", "bold");
+                });
+                $(".contactHover").on( "mouseout", function(){
+                    $('#contactDetail_' + this.id).delay(400).fadeOut(400);
+                    $(this).css("fontWeight", "inherit");
                 });
             })
         </script>
@@ -125,7 +128,7 @@
         <body id="${ param.view }View">
         <table class="MainTable" >
         <tr class="MainTableTopRow">
-            <td class="MainTableTopRowLeftColumn" width="20%">Other Contacts</td>
+            <td class="MainTableTopRowLeftColumn" style="width:20%">Other Contacts</td>
             <td class="MainTableTopRowRightColumn">
                 <table class="TopStatusBar">
                     <tr>
@@ -164,14 +167,6 @@
             <%-- END DETACHED VIEW ENABLED  --%>
 
         <table style="border-spacing: 0px;">
-            <!-- <thead class="header-xs" style="text-align: left">
-            <th style="width: 83px;">Role</th>
-            <th>Name</th>
-            <th>Preferred Contact</th>
-            <th style="width: 83px;">Type</th>
-            <th>Notes</th>
-            </thead> -->
-
 
             <%
                 for(DemographicContact dContact : demographicContacts) {
@@ -212,17 +207,18 @@
                     }
             %>
 
-            <tr id="<%=dContact.getId()%>" class="contactHover">
-                <td><%=Encode.forHtmlContent(dContact.getRole())%>:&nbsp;<b><%=Encode.forHtmlContent(dContact.getContactName())%></b>
+            <tr >
+                <td ><%=Encode.forHtmlContent(dContact.getRole())%>:&nbsp;<b><%=Encode.forHtmlContent(dContact.getContactName())%></b>
                     <% if (dContact.getType() == DemographicContact.TYPE_DEMOGRAPHIC) { %>
                     <a href='<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=dContact.getContactId()%>&displaymode=edit&dboperation=search_detail'>M</a>
-                    <a href='<%=request.getContextPath()%>/oscarEncounter/IncomingEncounter.do?demographicNo=<%=dContact.getContactId()%>&providerNo=<%=curProviderNo%>&appointmentNo=&curProviderNo=&reason=&appointmentDate=&startTime=&status=&userName=<%=URLEncoder.encode(userFirstName + " " + userLastName)%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>'>E</a>             
+                    <a href='<%=request.getContextPath()%>/oscarEncounter/IncomingEncounter.do?demographicNo=<%=dContact.getContactId()%>&providerNo=<%=curProviderNo%>&appointmentNo=&curProviderNo=&reason=&appointmentDate=&startTime=&status=&userName=<%=URLEncoder.encode(userFirstName + " " + userLastName)%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>'>E</a>
                     <% } %> &nbsp;<%=preferredContact%></td>
-                <td class="text-warning" style="font-weight: bold;">&nbsp;<%=responsibility%></td>
-                <td>&nbsp;<%=StringUtils.trimToNull(dContact.getNote()) != null ? Encode.forHtmlContent(dContact.getNote()) : ""%></td>
+                <td id="<%=dContact.getId()%>" class="contactHover text-warning" style="font-weight: bold;">&nbsp;<%=responsibility%></td>
+                <td>&nbsp;<%=StringUtils.trimToNull(dContact.getNote()) != null ? Encode.forHtmlContent(dContact.getNote()) : ""%>
+                </td>
             </tr>
-
-            <div class="" id="contactDetail_<%=dContact.getId()%>" style="display:none;">
+            <tr id="contactDetail_<%=dContact.getId()%>" style="display:none;">
+                <td colspan="3">
                 <div class="contactName"><%=Encode.forHtmlContent(dContact.getContactName())%></div>
                 <% if (StringUtils.trimToNull(ecSdm) != null) {%>
                     <div><%=ecSdm%></div>
@@ -265,8 +261,9 @@
                     Email:
                     <span class="alignRight"><%=StringUtils.trimToNull(details.getEmail()) != null ? details.getEmail() : ""%></span>
                 </div>
+            </td>
+            </tr>
 
-            </div>
 
             <%}%>
         </table>
