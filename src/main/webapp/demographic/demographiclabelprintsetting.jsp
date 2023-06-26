@@ -70,7 +70,14 @@
 
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 
-
+<style>
+.copytext {
+    font-family:courier;
+    font-size: 12px;
+    user-select: all;
+    cursor: pointer;
+}
+</style>
 <script>
 
 function onNewPatient() {
@@ -87,91 +94,6 @@ function checkTotal() {
   return true;
 }
 
-function ClipBoard1(spanId) {
-
-	var browser = navigator.userAgent.toLowerCase();
-
-	if( browser.indexOf('msie') > -1 )
-	{
-		document.getElementById("text1").innerText = document.getElementById(spanId).innerText;
-		//alert("clip");
-		Copied = document.getElementById("text1").createTextRange();
-		//alert("clip");
-		Copied.execCommand("RemoveFormat");
-		Copied.execCommand("Copy");
-	}
-	else if( browser.indexOf('safari') > -1 )
-	{
-		alert("Copy to clipboard is not supported in Safari");
-	}
-	else if( browser.indexOf('firefox') > -1 )
-	{
-
-		//need privelege to access clipboard
-		//We'll catch exception if security prevents access and tell user how to correct the problem
-		try
-		{
-			netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-		}
-		catch(ex)
-		{
-			alert("Your browser has restricted access to clipboard\n" +
-			       "Please type \"about:config\" in location bar\n" +
-			       "and search for \"signed.applets.codebase_principal_support\"\n" +
-			       "then set value to true.  You will then be able to copy to clipboard");
-			return;
-		}
-
-		var strText = document.getElementById(spanId).innerHTML;
-
-		//we want to keep line format so replace <br> with \r\n
-		strText = strText.replace(/\t/g, "");
-		strText = strText.replace(/<br>/g,"\r\n");
-
-		//get rid of html tags and &nbsp;
-		strText = strText.stripTags();
-		strText = strText.replace(/&nbsp;/g," ");
-
-		//object to hold copy of string
-		var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
-		str.data = strText;
-
-		//transfer object holds string. xfer obj is placed on clipboard
-		var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
-		trans.addDataFlavor("text/unicode");
-		trans.setTransferData("text/unicode",str,strText.length * 2);
-
-		//xfer object to clipboard
-		var clipid = Components.interfaces.nsIClipboard;
-		var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipid);
-		clip.setData(trans,null,clipid.kGlobalClipboard);
-
-	}
-}
-function ClipBoard2() {
-	document.getElementById("text1").innerText = document.getElementById("copytext").innerText;
-	//alert("cl ip");
-	Copied = document.getElementById("text1").createTextRange();
-	//alert("clip");
-	Copied.execCommand("RemoveFormat");
-	Copied.execCommand("Copy");
-}
-function ClipBoard3() {
-	document.getElementById("text1").innerText = document.getElementById("copytext").innerText;
-	//alert("cl ip");
-	Copied = document.getElementById("text1").createTextRange();
-	//alert("clip");
-	Copied.execCommand("RemoveFormat");
-	Copied.execCommand("Copy");
-}
-function ClipBoard4() {
-	document.getElementById("text1").innerText = document.getElementById("copytext").innerText;
-	//alert("cl ip");
-	Copied = document.getElementById("text1").createTextRange();
-	//alert("clip");
-	Copied.execCommand("RemoveFormat");
-	Copied.execCommand("Copy");
-}
 
 </script>
 </head>
@@ -248,7 +170,7 @@ function ClipBoard4() {
 		<table style="width:90%">
 			<tr>
 				<td style="border: solid 1px; background-color: white;">
-				<span id="copytext1" style="font-family:courier; font-size: 12px;"> <b><%=last_name%>,&nbsp;<%=first_name%></b><br>
+				<span id="copytext1" class="copytext" > <b><%=last_name%>,&nbsp;<%=first_name%></b><br>
 				&nbsp;&nbsp;&nbsp;&nbsp;<%=hin%><br>
 				&nbsp;&nbsp;&nbsp;&nbsp;<%=dob%>&nbsp;<%=sex%><br>
 				<br>
@@ -260,8 +182,7 @@ function ClipBoard4() {
 		</table>
 		</td>
 		<td style="text-align:center; background-color:#CCCCCC"><a href="#" onClick="onNewPatient()">
-			<bean:message key="demographic.demographiclabelprintsetting.btnNewPatientLabel" /></a><br>
-			<input type="button" class="btn" onClick="ClipBoard1('copytext1');" value="<bean:message key='appointment.appointmentedit.copy'/>" >
+			<bean:message key="demographic.demographiclabelprintsetting.btnNewPatientLabel" /></a><br><br>
 			<input type="checkbox" name="label1checkbox" value="checked">
 			<input type="text" name="label1no" size="2" maxlength="2" value="<%= oscarVariables.getProperty("label.1no","1") %>" />
 		</td>
@@ -297,7 +218,7 @@ function ClipBoard4() {
 		<table style="width:90%" >
 			<tr>
 				<td style="border: solid 1px; background-color: white;">
-				<span id="copytext2" style="font-family:courier; font-size: 12px;"> <b><%=last_name%>,&nbsp;<%=first_name%>&nbsp;<%=chart_no%></b><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
+				<span id="copytext2" class="copytext"> <b><%=last_name%>,&nbsp;<%=first_name%>&nbsp;<%=chart_no%></b><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
 				<bean:message key="demographic.demographiclabelprintsetting.msgHome" />:&nbsp;<%=phone%><br><%=dob%>&nbsp;<%=sex%><br><%=hin%><br>
 				<bean:message key="demographic.demographiclabelprintsetting.msgBus" />:<%=phone2%>&nbsp;
 				<bean:message key="demographic.demographiclabelprintsetting.msgDr" />&nbsp;<%=providername%><br>
@@ -306,7 +227,6 @@ function ClipBoard4() {
 		</table>
 		</td>
 		<td style="text-align:center; background-color:#CCCCCC">
-		<input type="button" class="btn" onClick="ClipBoard1('copytext2');" value="<bean:message key='appointment.appointmentedit.copy'/>" >
 		<input type="checkbox" name="label2checkbox" value="checked" checked>
 		<input type="text" name="label2no" size="2" maxlength="2" value="<%= oscarVariables.getProperty("label.2no","1") %>"></td>
 	</tr>
@@ -315,13 +235,12 @@ function ClipBoard4() {
 		<table style="width:90%" >
 			<tr>
 				<td style="border: solid 1px; background-color: white;">
-				<span id="copytext3" style="font-family:courier; font-size: 12px;"> <%=last_name%>,&nbsp;<%=first_name%><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
+				<span id="copytext3" class="copytext"> <%=last_name%>,&nbsp;<%=first_name%><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
 				</span></td>
 			</tr>
 		</table>
 		</td>
 		<td style="text-align:center; background-color:#CCCCCC">
-		<input type="button" class="btn" onClick="ClipBoard1('copytext3');" value="<bean:message key='appointment.appointmentedit.copy'/>" >
 		<input type="checkbox" name="label3checkbox" value="checked">
 		<input type="text" name="label3no" size="2" maxlength="2" value="<%= oscarVariables.getProperty("label.3no","1") %>"></td>
 	</tr>
@@ -330,14 +249,13 @@ function ClipBoard4() {
 		<table style="width:90%">
 			<tr>
 				<td style="border: solid 1px; background-color: white;">
-				<span id="copytext4" style="font-family:courier; font-size: 12px;"> <%=first_name%>&nbsp;<%=last_name%><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
+				<span id="copytext4" class="copytext"> <%=first_name%>&nbsp;<%=last_name%><br><%=address%><br><%=city%>,&nbsp;<%=province%>,&nbsp;<%=postal%><br>
 				</span></td>
 			</tr>
 		</table>
 		</td>
 		<td style="text-align:center; background-color:#CCCCCC">
 		<textarea id="text1" STYLE="display: none;"> </textarea>
-		<input type="button" class="btn" onClick="ClipBoard1('copytext4');" value="<bean:message key='appointment.appointmentedit.copy'/>" >
 		<input type="checkbox" name="label4checkbox" value="checked">
 		<input type="text" name="label4no" size="2" maxlength="2" value="<%= oscarVariables.getProperty("label.4no","1") %>"></td>
 	</tr>
@@ -346,14 +264,13 @@ function ClipBoard4() {
 		<table style="width:90%">
 			<tr>
 				<td style="border: solid 1px; background-color: white;">
-				<span id="copytext5" style="font-family:courier; font-size: 12px;"> <%=chart_no%> &nbsp;&nbsp;<%=last_name%>, <%=first_name%><br><%=address%>, <%=city%>, <%=province%>, <%=postal%>
+				<span id="copytext5" class="copytext"> <%=chart_no%> &nbsp;&nbsp;<%=last_name%>, <%=first_name%><br><%=address%>, <%=city%>, <%=province%>, <%=postal%>
 				<br><%=dob%> &nbsp;&nbsp;&nbsp;<%=age%> <%=sex%> &nbsp;<%=hin%><br><%=phone%>&nbsp;&nbsp;&nbsp;<%=phone2%><br><%=refDoc%>
 				</span></td>
 			</tr>
 		</table>
 		</td>
 		<td style="text-align:center; background-color:#CCCCCC"><textarea id="text1" style="display: none;"></textarea>
-		<input type="button" class="btn" onClick="ClipBoard1('copytext5');" value="<bean:message key='appointment.appointmentedit.copy'/>" >
 		<input type="checkbox" name="label5checkbox" value="checked">
 		<input type="text" name="label5no" size="2" maxlength="2" value="<%= oscarVariables.getProperty("label.5no","1") %>"></td>
 	</tr>
