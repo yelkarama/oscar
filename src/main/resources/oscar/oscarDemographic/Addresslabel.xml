@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 
-<jasperReport name="label" pageWidth="229" pageHeight="74"
-	columnWidth="200" leftMargin="15" rightMargin="0" topMargin="0"
+<jasperReport name="label" pageWidth="252" pageHeight="79"
+	columnWidth="200" leftMargin="18" rightMargin="0" topMargin="0"
 	bottomMargin="4">
 	<reportFont name="sansserif" isDefault="false" fontName="sansserif"
 		size="10" isBold="false" isItalic="false" isUnderline="false"
@@ -53,5 +53,3 @@
 		</band>
 	</title>
 </jasperReport>
-
-
