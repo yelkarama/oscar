@@ -74,7 +74,7 @@
 <p class="PropSheetLevel1CurrentItem">
 	<bean:message key="oscarRx.sideLinks.msgDiseases"/>
 </p>
-<%	
+<%
 DxresearchDAO dxreasearchDao = SpringUtils.getBean(DxresearchDAO.class);
 CodingSystemManager codingSystemManager = SpringUtils.getBean(CodingSystemManager.class);
 
@@ -94,7 +94,7 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 %>
 <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml(codeDescr)%></p>
 <%
-	} 
+	}
 }
 %>
 </p>
@@ -106,14 +106,14 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 <p class="PropSheetLevel1CurrentItem">
 	<bean:message key="oscarRx.sideLinks.msgMedHistory"/>
 </p>
-<%	
+<%
 	CaseManagementManager cmgmtMgr1 = SpringUtils.getBean(CaseManagementManager.class);
 	List<Issue> issues1 = cmgmtMgr1.getIssueInfoByCode(bean2.getProviderNo(), "MedHistory");
 	String[] issueIds1 = new String[] {String.valueOf(issues1.get(0).getId())};
 	List<CaseManagementNote> notes1 = cmgmtMgr1.getNotes(bean2.getDemographicNo()+"", issueIds1);
 	for(CaseManagementNote note:notes1) {
 		 if (!note.isLocked() && !note.isArchived()) {
-			 
+
 %>
 <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml(note.getNote()) %></p>
 <%
@@ -132,7 +132,12 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
         oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites
             = new oscar.oscarRx.data.RxPrescriptionData().getFavorites(bean2.getProviderNo());
 
-        for (int j=0; j<favorites.length; j++){%>
+        for (int j=0; j<favorites.length; j++){
+            if (favorites[j].getFavoriteName() == null) {
+                continue;
+            }
+
+%>
 
 <p class="PropSheetMenuItemLevel1"><a
         href="javascript:void(0);" onclick="useFav2('<%= favorites[j].getFavoriteId() %>');"
