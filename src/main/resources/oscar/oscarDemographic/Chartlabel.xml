@@ -54,7 +54,7 @@
 			<textField>
 				<reportElement x="17" y="15" width="330" height="14"/>
 				<textElement/>
-				<textFieldExpression><![CDATA["HIN:" + $F{hin} + " " + $F{ver} + "   " + "SEX:" + $F{sex} + "  " + "DOB:" +$F{date_of_birth} + "/" + $F{month_of_birth} + "/" + $F{year_of_birth} + "  AGE:" + $F{age}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["HIN:" + $F{hin} + " " + $F{ver} + " " + "SEX:" + $F{sex} + " " + "DOB:" +$F{date_of_birth} + "/" + $F{month_of_birth} + "/" + $F{year_of_birth} + "  AGE:" + $F{age} ]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="17" y="0" width="330" height="14">
