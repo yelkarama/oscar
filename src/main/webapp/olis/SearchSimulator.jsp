@@ -8,7 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*,org.oscarehr.olis.*,org.oscarehr.olis.model.*, org.oscarehr.olis.dao.*, org.oscarehr.util.SpringUtils, org.joda.time.DateTime, org.joda.time.format.DateTimeFormat, org.joda.time.format.DateTimeFormatter"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -24,14 +24,8 @@ if(session.getAttribute("user") == null ) response.sendRedirect("../logout.jsp")
 	href="../share/css/OscarStandardLayout.css">
 
 <script type="text/javascript" language="JavaScript"
-	src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" language="JavaScript"
 	src="../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript">
-    jQuery.noConflict();
-</script>
+
 <script type="text/JavaScript">
 function popupPage(vheight,vwidth,varpage) { //open a new popup window
   var page = "" + varpage;
@@ -124,7 +118,7 @@ br {
 }
 </style>
 </head>
-<body vlink="#0000FF" class="BodyStyle">
+<body class="BodyStyle">
 <form action="<%=request.getContextPath()%>/olis/Results.do" method="POST">
 <table class="MainTable">
 	<tr class="MainTableTopRow">
@@ -138,7 +132,7 @@ br {
 		</td>
 	</tr>
 	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">&nbsp;</td>
+		<td class="MainTableLeftColumn" style="vertical-align:top: width:160px;">&nbsp;</td>
 		<td class="MainTableRightColumn" valign="top">
 			<div>ERP Message:</div>
 			<textarea name="olisResponseContent" style="width:640px; height:640px;"></textarea>
