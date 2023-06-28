@@ -36,12 +36,12 @@ if(session.getValue("user") == null)
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
 <html:html>
 	<head>
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 		<html:base />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title><bean-el:message key="${providertitle}" /></title>
-
-		<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+        <script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"	></script>
+        <script src="<c:out value="${ctx}"/>/js/global.js"></script>
+		<link href="<c:out value="${ctx}"/>/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
 
 	</head>
 
@@ -50,10 +50,10 @@ if(session.getValue("user") == null)
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">
-			<bean-el:message key="${providermsgPrefs}" />
+			<h4><bean-el:message key="${providermsgPrefs}" /></h4>
 		</td>
 		<td style="color: white" class="MainTableTopRowRightColumn">
-			<bean-el:message key="${providermsgProvider}" />
+			<h4>&nbsp;<bean-el:message key="${providermsgProvider}" /></h4>
 		</td>
 	</tr>
 	<tr>
@@ -64,7 +64,7 @@ if(session.getValue("user") == null)
 
             <html:form styleId="providerForm" action="/setProviderStaleDate.do">
 				<input type="hidden" name="method" value="<c:out value="${method}"/>">
-				<p id="errorMessage" style="display: none; color: red;">
+				<p id="errorMessage"  class="alert alert-danger" style="display: none; color: red;">
 				Invalid input.
 				</p>
 				<bean:message key="provider.patientNameLength.title"/> 
@@ -74,7 +74,7 @@ if(session.getValue("user") == null)
 			</html:form>
 
 		<%}else {%>
-			<bean-el:message key="${providermsgSuccess}" /> <br>
+			<div class="alert alert-success" style="width:100%"><bean-el:message key="${providermsgSuccess}" /></div> <br>
 		<%}%>
 		</td>
 	</tr>
