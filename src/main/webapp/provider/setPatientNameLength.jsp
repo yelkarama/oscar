@@ -32,8 +32,7 @@ if(session.getValue("user") == null)
     response.sendRedirect("../logout.htm");
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
 <html:html>
 	<head>
@@ -43,12 +42,10 @@ if(session.getValue("user") == null)
 		<title><bean-el:message key="${providertitle}" /></title>
 
 		<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
-		<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"	type="text/javascript"></script>
-		<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"	type="text/javascript"></script>
-		<script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"	type="text/javascript"></script>
+
 	</head>
 
-<body class="BodyStyle" vlink="#0000FF">
+<body class="BodyStyle">
 
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
