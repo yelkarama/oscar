@@ -32,30 +32,27 @@ if(session.getValue("user") == null)
     response.sendRedirect("../logout.htm");
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
 <html:html>
 	<head>
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 		<html:base />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title><bean-el:message key="${providertitle}" /></title>
-
-		<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
-		<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"	type="text/javascript"></script>
-		<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"	type="text/javascript"></script>
+        <script src="<c:out value="${ctx}"/>/js/global.js"></script>
+        <script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"	></script>
+        <link href="<c:out value="${ctx}"/>/css/bootstrap.css" rel="stylesheet" type="text/css"><!-- Bootstrap 2.3.1 -->
 	</head>
 
-<body class="BodyStyle" vlink="#0000FF">
+<body class="BodyStyle">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+<table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">
-			<bean-el:message key="${providermsgPrefs}" />
+			<h4><bean-el:message key="${providermsgPrefs}" /></h4>
 		</td>
-		<td style="color: white" class="MainTableTopRowRightColumn">
-			<bean-el:message key="${providermsgProvider}" />
+		<td class="MainTableTopRowRightColumn">
+			<h4>&nbsp;&nbsp;<bean-el:message key="${providermsgProvider}" /></h4>
 		</td>
 	</tr>
 	<tr>
@@ -64,20 +61,23 @@ if(session.getValue("user") == null)
 		<%if( request.getAttribute("status") == null ){%>
 			<bean-el:message key="${providermsgEdit}" />
 
-            <html:form action="/setProviderStaleDate.do">
+            <html:form styleId="providerForm" action="/setProviderStaleDate.do">
 				<input type="hidden" name="method" value="<c:out value="${method}"/>">
-				<br/>
-				Width: <html:text property="encounterWindowWidth.value" size="5"/>
-				<br/>
-				Height: <html:text property="encounterWindowHeight.value" size="5"/>
-				<br/>
+				<br>
+				Width: <html:text styleId="numericFormField" property="encounterWindowWidth.value"/>
+				<p id="errorMessage" class="alert alert-danger" style="display: none; color: red;">
+					Invalid input.
+				</p>
+				<br>
+				Height: <html:text property="encounterWindowHeight.value" />
+				<br>
                 Maximize: <html:checkbox property="encounterWindowMaximize.checked"/>
-                <br/>
-                <html:submit property="btnApply"/>
+                <br><br>
+                <html:submit styleClass="btn btn-primary" property="btnApply"/>
 			</html:form>
 
 		<%}else {%>
-			<bean-el:message key="${providermsgSuccess}" /> <br>
+			<div class="alert alert-success" ><bean-el:message key="${providermsgSuccess}" /></div><br>
 		<%}%>
 		</td>
 	</tr>
