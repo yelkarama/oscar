@@ -15,40 +15,50 @@
 window.onload = function() {
 
 	// register event listener
-	document.getElementById("providerForm").onsubmit = function(e) {
-		// get form element value in a safe manner
-		var formFieldElement = document.getElementById("numericFormField");
-		if (!formFieldElement) {
-			return;
-		}
+    if (document.getElementById("providerForm")) {
 
-		var value = formFieldElement.value;
-		if (!value) {
-			return;
-		}
+	    document.getElementById("providerForm").onsubmit = function(e) {
+		    // get form element value in a safe manner
+		    var formFieldElements = document.querySelectorAll('[id^="numericFormField"]');
+            for (var i = 0; i < formFieldElements.length; i++ ) {
 
-		// trim
-		value = value.replace(/^\s+|\s+$/, "");
+                var formFieldElement = formFieldElements[i];
+		        if (!formFieldElement) {
+                    console.log("no element");
+			        return;
+		        }
 
-		// validate
-		var hasNonDigits = /\D+/.test(value);
-		var isGreaterThanZero = parseInt(value) > 0;
-		var isValid = !hasNonDigits && isGreaterThanZero;
-		if (isValid) {
-			return;
-		}
+		        var value = formFieldElement.value;
+		        if (!value) {
+                    console.log("no value");
+			        return;
+		        }
 
-		// show error message
-		var errorMessageElement = document.getElementById("errorMessage");
-		if (errorMessageElement) {
-			errorMessageElement.style.display = "block";
-		}
+		        // trim
+		        value = value.replace(/^\s+|\s+$/, "");
 
-		// highlight error
-		formFieldElement.focus();
-		formFieldElement.style.borderColor = "red";
+		        // validate
+		        var hasNonDigits = /\D+/.test(value);
+		        var isGreaterThanZero = parseInt(value) > 0;
+		        var isValid = !hasNonDigits && isGreaterThanZero;
+		        if (!isValid) {
 
-		// cancel form submission
-		return false;
-	};
+		            // show error message
+		            var errorMessageElement = document.getElementById("errorMessage");
+		            if (errorMessageElement) {
+			            errorMessageElement.style.display = "block";
+		            }
+
+		            // highlight error
+		            formFieldElement.focus();
+		            formFieldElement.style.borderColor = "red";
+
+		            // cancel form submission
+		            return false;
+
+		        }
+            }
+            return;
+	    };
+    };
 };
