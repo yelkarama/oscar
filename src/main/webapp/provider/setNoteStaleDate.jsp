@@ -35,51 +35,25 @@ if(session.getValue("user") == null)
   boolean bFirstLoad = request.getAttribute("status") == null;
 
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
 <html:html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <html:base />
 <title><bean:message key="provider.setNoteStaleDate.title" /></title>
 
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
-	title="win2k-cold-1">
-
-<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"
-	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"
-	type="text/javascript"></script>
-
-<script type="text/javascript">
-
-            function validate() {
-                var date = document.getElementById("staleDate");
-                if( date.value == "" ) {
-                    alert("Please select a date before saving");
-                    return false;
-                }
-
-                return true;
-            }
-        </script>
+<link href="<c:out value="${ctx}"/>/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
 
 </head>
-
-<body class="BodyStyle" vlink="#0000FF">
+<body class="BodyStyle">
 
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message
-			key="provider.setNoteStaleDate.msgPrefs" /></td>
-		<td style="color: white" class="MainTableTopRowRightColumn"><bean:message
-			key="provider.setNoteStaleDate.msgProviderStaleDate" /></td>
+		<td class="MainTableTopRowLeftColumn"><h4><bean:message
+			key="provider.setNoteStaleDate.msgPrefs" /></h4></td>
+		<td class="MainTableTopRowRightColumn"><h4>&nbsp;&nbsp;<bean:message
+			key="provider.setNoteStaleDate.msgProviderStaleDate" /></h4></td>
 	</tr>
 	<tr>
 		<td class="MainTableLeftColumn">&nbsp;</td>
@@ -146,14 +120,14 @@ if(session.getValue("user") == null)
 			</html:select>
 
 			<br/>
-			<input type="submit"
+			<input type="submit" class="btn btn-primary"
 				value="<bean:message key="provider.setNoteStaleDate.btnSubmit"/>" />
-			<input type="submit" onclick="$('method').value='remove';"
+			<input type="submit" class="btn" onclick="$('method').value='remove';"
 				value="<bean:message key="provider.setNoteStaleDate.btnReset"/>" />
 		</html:form> <%
                }
                else {
-            %> <bean:message key="provider.setNoteStaleDate.msgSuccess" />
+            %> <div class="alert alert-success" style="width:100%"><bean:message key="provider.setNoteStaleDate.msgSuccess" /></div>
 		<br>
 
 		<%
