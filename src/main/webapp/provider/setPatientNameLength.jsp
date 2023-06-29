@@ -52,8 +52,8 @@ if(session.getValue("user") == null)
 		<td class="MainTableTopRowLeftColumn">
 			<h4><bean-el:message key="${providermsgPrefs}" /></h4>
 		</td>
-		<td style="color: white" class="MainTableTopRowRightColumn">
-			<h4>&nbsp;<bean-el:message key="${providermsgProvider}" /></h4>
+		<td class="MainTableTopRowRightColumn">
+			<h4>&nbsp;&nbsp;<bean-el:message key="${providermsgProvider}" /></h4>
 		</td>
 	</tr>
 	<tr>
@@ -67,10 +67,10 @@ if(session.getValue("user") == null)
 				<p id="errorMessage"  class="alert alert-danger" style="display: none; color: red;">
 				Invalid input.
 				</p>
-				<bean:message key="provider.patientNameLength.title"/> 
-				<html:text styleId="numericFormField" property="patientNameLength.value" size="5"/>
+				<bean:message key="provider.patientNameLength.title"/>
+				<html:text styleId="numericFormField" property="patientNameLength.value" />
                 <br/>
-                <html:submit property="btnApply"/>
+                <html:submit styleClass="btn btn-primary" property="btnApply"/>
 			</html:form>
 
 		<%}else {%>
