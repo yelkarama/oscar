@@ -69,7 +69,7 @@ if(session.getValue("user") == null)
 					Invalid input.
 				</p>
 				<br>
-				Height: <html:text property="encounterWindowHeight.value" />
+				Height: <html:text styleId="numericFormField2" property="encounterWindowHeight.value" />
 				<br>
                 Maximize: <html:checkbox property="encounterWindowMaximize.checked"/>
                 <br><br>
