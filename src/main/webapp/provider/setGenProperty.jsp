@@ -56,6 +56,9 @@ if(session.getValue("user") == null)
 <c:if test="${method eq 'saveConsultationRequestCuffOffDate'}">
 	<script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"></script>
 </c:if>
+<c:if test="${method eq 'viewConsultationRequestCuffOffDate'}">
+	<script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"></script>
+</c:if>
 
 <!-- main calendar program -->
 <script type="text/javascript"
@@ -123,10 +126,11 @@ if(session.getValue("user") == null)
 
 			</html:select>
 
-			<%}%>
+			<%}%><br>
+
 			<input type="submit" class="btn btn-primary"
 				value="<bean-el:message key="${providerbtnSubmit}" />" />
-		</html:form> <%}else {%> <div class="alert alert-success" ><bean-el:message key="${providermsgSuccess}" /> </div> <br>
+		</html:form> <%} else {%> <div class="alert alert-success" ><bean-el:message key="${providermsgSuccess}" /> </div> <br>
 		<%}%>
 		</td>
 	</tr>
