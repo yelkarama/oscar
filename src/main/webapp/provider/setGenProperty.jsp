@@ -34,8 +34,7 @@ if(session.getValue("user") == null)
    String tite = (String) request.getAttribute("provider.title");
 
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
 <html:html>
@@ -45,23 +44,17 @@ if(session.getValue("user") == null)
 <html:base />
 <title><bean-el:message key="${providertitle}" /></title>
 
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<c:out value="${ctx}"/>/css/bootstrap.css" rel="stylesheet" type="text/css"><!-- Bootstrap 2.3.1 -->
 
 <!-- calendar stylesheet -->
 <link rel="stylesheet" type="text/css" media="all"
 	href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
 	title="win2k-cold-1">
 
-<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"
-	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"
-	type="text/javascript"></script>
+
 <c:if test="${method eq 'saveConsultationRequestCuffOffDate'}">
-	<script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"	
-		type="text/javascript"></script>
+	<script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"></script>
 </c:if>
 
 <!-- main calendar program -->
@@ -76,32 +69,32 @@ if(session.getValue("user") == null)
                adding a calendar a matter of 1 or 2 lines of code. -->
 <script type="text/javascript"
 	src="<c:out value="${ctx}"/>/share/calendar/calendar-setup.js"></script>
-<script type="text/javascript">            
+<script type="text/javascript">
             function setup() {
                 Calendar.setup({ inputField : "staleDate", ifFormat : "%Y-%m-%d", showsTime :false, button : "staleDate_cal", singleClick : true, step : 1 });
             }
-            
+
             function validate() {
                 var date = document.getElementById("staleDate");
                 if( date.value == "" ) {
                     alert("Please select a date before saving");
                     return false;
                 }
-                
+
                 return true;
             }
         </script>
 
 </head>
 
-<body class="BodyStyle" vlink="#0000FF">
+<body class="BodyStyle">
 
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean-el:message
-			key="${providermsgPrefs}" /></td>
-		<td style="color: white" class="MainTableTopRowRightColumn"><bean-el:message
-			key="${providermsgProvider}" /></td>
+		<td class="MainTableTopRowLeftColumn"><h4><bean-el:message
+			key="${providermsgPrefs}" /></h4></td>
+		<td class="MainTableTopRowRightColumn"><h4>&nbsp;&nbsp;<bean-el:message
+			key="${providermsgProvider}" /></h4></td>
 	</tr>
 	<tr>
 		<td class="MainTableLeftColumn">&nbsp;</td>
@@ -111,14 +104,14 @@ if(session.getValue("user") == null)
 			styleId="providerForm"
 			action="/setProviderStaleDate.do">
 			<input type="hidden" name="method" value="<c:out value="${method}"/>">
-			
-			<p id="errorMessage" style="display: none; color: red;">
+
+			<p id="errorMessage" class="alert alert-danger" style="display: none; color: red;">
 				Invalid input.
 			</p>
-			
+
 			<% if (request.getAttribute("dropOpts") == null) { %>
 			<html:text
-					styleId="numericFormField" 
+					styleId="numericFormField"
 					property="dateProperty.value" />
                             <%if ( request.getAttribute("dateProperty2") != null ){%>
                                 <html:text property="dateProperty2.value" />
@@ -131,7 +124,7 @@ if(session.getValue("user") == null)
 			</html:select>
 
 			<%}%>
-			<input type="submit"
+			<input type="submit" class="btn btn-primary"
 				value="<bean-el:message key="${providerbtnSubmit}" />" />
 		</html:form> <%}else {%> <p><div class="alert alert-success" > </button><bean-el:message key="${providermsgSuccess}" /> </div> <br>
 		<%}%>
