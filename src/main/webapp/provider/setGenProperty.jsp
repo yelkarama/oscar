@@ -126,7 +126,7 @@ if(session.getValue("user") == null)
 			<%}%>
 			<input type="submit" class="btn btn-primary"
 				value="<bean-el:message key="${providerbtnSubmit}" />" />
-		</html:form> <%}else {%> <p><div class="alert alert-success" > </button><bean-el:message key="${providermsgSuccess}" /> </div> <br>
+		</html:form> <%}else {%> <div class="alert alert-success" ><bean-el:message key="${providermsgSuccess}" /> </div> <br>
 		<%}%>
 		</td>
 	</tr>
