@@ -60,7 +60,7 @@ public class EForm extends EFormBase {
 	private String appointment_no = "-1";
 	private HashMap<String,String> sql_params = new HashMap<String, String>();
 	private String parentAjaxId = null;
-        private String eform_link = null;
+    private String eform_link = null;
 	private HashMap<String, String> fieldValues = new HashMap<String, String>();
 	private int needValueInForm = 0;
 	private boolean setAP2nd = false;
@@ -74,7 +74,7 @@ public class EForm extends EFormBase {
 	private static final String TABLE_NAME = "table_name";
 	private static final String TABLE_ID = "table_id";
 	private static final String OTHER_KEY = "other_key";
-        private static final String OPENER_VALUE = "link$eform";
+    private static final String OPENER_VALUE = "link$eform";
 
 	public EForm() {
 	}
@@ -531,19 +531,19 @@ public class EForm extends EFormBase {
 
 	private StringBuilder putValue(String value, String type, int pointer, StringBuilder html) {
 		// inserts value= into tag or textarea
-                if (type.equals("onclick") || type.equals("onclick_append")) {
-                        if (type.equals("onclick_append")) {
-                            if (html.charAt(pointer-1)=='"') pointer -= 1;
-                            if (html.charAt(pointer-1)!=';') value = ";"+value;
-                        } else {
-                            value = "onclick=\"" + value + "\"";
-                        }
+        if (type.equals("onclick") || type.equals("onclick_append")) {
+            if (type.equals("onclick_append")) {
+                if (html.charAt(pointer-1)=='"') pointer -= 1;
+                if (html.charAt(pointer-1)!=';') value = ";"+value;
+            } else {
+                value = "onclick=\"" + value + "\"";
+            }
 			html.insert(pointer, " " + value);
-                } else if (type.equals(OPENER_VALUE)) {
-			html.insert(pointer, " "+OPENER_VALUE+"=\""+value+"\"");
+		} else if (type.equals(OPENER_VALUE)) {
+				html.insert(pointer, " "+OPENER_VALUE+"=\""+value+"\"");
 		} else if (type.equals("text") || type.equals("hidden")) {
 			html.insert(pointer, " value=\""+value.replace("\"", "&quot;")+"\"");
-                } else if(type.equals("textarea")) {
+		} else if(type.equals("textarea")) {
 			pointer = html.indexOf(">", pointer) + 1;
 			int endPointer = html.indexOf("<", pointer);
 			html.delete(pointer, endPointer);
@@ -571,7 +571,9 @@ public class EForm extends EFormBase {
 				pointer = nextSpot(html, valindexE);
 				html.insert(pointer, " checked");
 			}
-		}
+		} else if(type.equals("date")) {
+	        html.insert(pointer, " value=\""+value+"\"");
+        }
 		return html;
 	}
 
