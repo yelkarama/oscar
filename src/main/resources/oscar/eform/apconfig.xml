@@ -168,6 +168,11 @@
 		<ap-output>${hc_type}</ap-output>
 	</databaseap>
     <databaseap>
+        <ap-name>hinqc</ap-name>
+        <ap-sql>SELECT UPPER( CONCAT(LEFT(hin,4),' ', MID(hin,5,4),' ',MID(hin,9,4)) ) AS hinqc FROM demographic WHERE demographic_no=${demographic}</ap-sql>
+        <ap-output>${hinqc}</ap-output>
+    </databaseap>
+    <databaseap>
         <ap-name>hc_renew_date</ap-name>
         <ap-sql>SELECT hc_renew_date FROM demographic WHERE demographic_no=${demographic}</ap-sql>
         <ap-output>${hc_renew_date}</ap-output>
@@ -299,7 +304,12 @@
         <ap-sql>SELECT sin FROM demographic WHERE demographic_no=${demographic}</ap-sql>
         <ap-output>${sin}</ap-output>
     </databaseap>
-
+	<databaseap>
+		<ap-name>newsletter</ap-name>
+		<ap-sql>SELECT newsletter FROM demographic WHERE demographic_no=${demographic}</ap-sql>
+		<ap-output>${newsletter}</ap-output>
+	</databaseap>
+    
 <!-- PATIENT'S PARTNER -->
     <databaseap>
         <ap-name>partner_nameL</ap-name>
@@ -369,6 +379,11 @@
 			WHERE d.demographic_no = ${demographic};
 		</ap-sql>
 		<ap-output>${fax}</ap-output>
+	</databaseap>
+	<databaseap>
+		<ap-name>doctor_address_label</ap-name>
+		<ap-sql>SELECT * FROM provider JOIN demographic ON provider.provider_no = demographic.provider_no where demographic.demographic_no=${demographic}</ap-sql>
+		<ap-output>${address}</ap-output>
 	</databaseap>
     <databaseap>
         <ap-name>doctor_signature</ap-name>
@@ -770,6 +785,16 @@
         <ap-sql>SELECT provider.work_phone FROM provider WHERE provider.provider_no='${provider}' </ap-sql>
         <ap-output>${work_phone}</ap-output>
     </databaseap>
+    <databaseap>
+		<ap-name>current_user_phone</ap-name>
+		<ap-sql>SELECT phone FROM provider WHERE provider_no='${provider}' </ap-sql>
+		<ap-output>${phone}</ap-output>
+	</databaseap>
+	<databaseap>
+		<ap-name>current_user_team</ap-name>
+		<ap-sql>SELECT team FROM provider WHERE provider_no='${provider}' </ap-sql>
+		<ap-output>${team}</ap-output>
+	</databaseap>
     <databaseap>
         <ap-name>current_user_email</ap-name>
         <ap-sql>SELECT provider.email FROM provider WHERE provider.provider_no='${provider}' </ap-sql>
@@ -1202,7 +1227,53 @@
         <ap-sql>SELECT GROUP_CONCAT(aa.doc_list SEPARATOR ';') as doc_list from (select concat(d.document_no, ',', d.docdesc) as doc_list from document d join ctl_document c on d.document_no=c.document_no where c.module='demographic' and c.module_id=${demographic} ) as aa</ap-sql>
         <ap-output>${doc_list}</ap-output>
     </databaseap>
-
+    <databaseap>
+		<ap-name>latest_lab_values</ap-name>
+		<ap-sql>
+			SELECT
+			JSON_ARRAYAGG(
+			JSON_OBJECT(
+			'id', latest.id,
+			'labNo', labNo.val,
+			'dateObserved', latest.dateObserved,
+			'monthsAgo', TIMESTAMPDIFF(MONTH, latest.dateObserved, NOW()),
+			'type', latest.type,
+			'loincCode', latest.loincCode,
+			'name', `name`.val,
+			'abnormal', abnormal.val,
+			'measurementValue', latest.datafield,
+			'unit', IFNULL(unit.val,''),
+			'range', IFNULL(latest.`range`,'')
+			)
+			) AS 'labvalues'
+			FROM (
+			SELECT
+			RANK() OVER (PARTITION BY me.val ORDER BY m.dateObserved DESC, m.id DESC) AS ranking,
+			m.id,
+			m.type,
+			TRIM(REGEXP_REPLACE(m.dataField, '[^[:alnum:]^\.]+', ' '))AS datafield,
+			m.dateObserved,
+			me.val AS loincCode,
+			m.measuringInstruction AS 'range'
+			FROM measurements m
+			LEFT JOIN measurementsExt me
+			ON (m.id = measurement_id)
+			WHERE m.demographicNo = ${demographic}
+			AND me.id IS NOT NULL
+			AND me.keyval = "identifier"
+			) latest
+			LEFT JOIN measurementsExt unit
+			ON (unit.measurement_id = latest.id AND unit.keyval LIKE "unit")
+			LEFT JOIN measurementsExt labNo
+			ON (labNo.measurement_id = latest.id AND labNo.keyval LIKE "lab_no")
+			LEFT JOIN measurementsExt `name`
+			ON (`name`.measurement_id = latest.id AND `name`.keyval LIKE "name")
+			LEFT JOIN measurementsExt abnormal
+			ON (abnormal.measurement_id = latest.id AND abnormal.keyval LIKE "abnormal")
+			WHERE latest.ranking = 1
+		</ap-sql>
+		<ap-output>${labvalues}</ap-output>
+	</databaseap>
 <!-- PRENATAL -->
     <databaseap>
         <ap-name>onGTPAL</ap-name>
