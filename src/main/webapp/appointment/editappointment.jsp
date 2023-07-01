@@ -1169,7 +1169,7 @@ function locale(){
                 <bean:message key="Appointment.formDoctor" />:
             </td>
             <td>
-                <input type="text" readonly name="doctorNo"
+                <input type="text" readonly name="doctorNo" id="mrp"
                        value="<%=StringEscapeUtils.escapeHtml(providerBean.getProperty(doctorNo,""))%>">
             </td>
         </tr>
@@ -1179,7 +1179,7 @@ function locale(){
                     <bean:message key="global.master" /></a>
             </td>
             <td>
-                <input type="text" name="demographic_no"
+                <input type="text" name="demographic_no" id="demographic_no"
                     ONFOCUS="onBlockFieldFocus(this)" readonly
        		    value="<%=bFirstDisp?( (appt.getDemographicNo())==0?"":(""+appt.getDemographicNo()) ):request.getParameter("demographic_no")%>">
             </td>
