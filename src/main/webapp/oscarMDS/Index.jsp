@@ -59,7 +59,13 @@ if(!authed) {
                 }
             }
 
-
+class Sortbylabnum implements Comparator<PatientInfo>
+{
+    public int compare (PatientInfo a, PatientInfo b)
+    {
+        return b.getLabCount() + b.getDocCount() -a.getLabCount() -a.getDocCount() ;
+    }
+}
 @SuppressWarnings("unchecked")
 ArrayList<PatientInfo> patients = (ArrayList<PatientInfo>) request.getAttribute("patients");
 if (patients!=null) {
@@ -126,18 +132,18 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>        
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
 
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css"  />
-        
-       <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  /> 
+
+       <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  />
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-  <script type="text/javascript" src="<%=request.getContextPath()%>/dms/showDocument.js"></script>        
+  <script type="text/javascript" src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
 
 <!-- important leave this last to override the css above -->
 <style>
@@ -165,7 +171,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
     }
 
     .Field2 {
-        
+
     }
     .UnassignedRes {
         background-color: #FFCC00;
@@ -222,7 +228,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 </style>
 
         <script type="text/javascript" src="showDocument.js"></script>
-        
+
         		<script>
 
 			function runhl7Macro(name,formid, closeOnSuccess) {
@@ -248,9 +254,9 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	            var data=$(formid).serialize(true);
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-                   	            	
+
                     if(closeOnSuccess) {
-                        refreshCategoryList();  
+                        refreshCategoryList();
                         Effect.BlindUp(formid);
 
 	            	}
@@ -270,16 +276,16 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 					}
 				}
 			}
-			
+
 			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=$(formid).serialize(true);
 
 	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-                   	            	
+
                     if(closeOnSuccess) {
 	            		refreshCategoryList();
-                        updateStatus(formid); //oscarMDSIndex.js 
+                        updateStatus(formid); //oscarMDSIndex.js
                         //Effect.BlindUp(formid);
 	            	}
 	        	}});
@@ -294,7 +300,7 @@ contextpath='<%=request.getContextPath()%>';
                             if(json!=null){
                                 var success=json.isLinkedToDemographic;
                                 var demoid='';
-                            	                                       
+
                                 if(success){
                                     demoid=json.demoId;
                                     if(demoid!=null && demoid.length>0) {
@@ -311,43 +317,43 @@ contextpath='<%=request.getContextPath()%>';
                     break;
                 case "msgLabMAM":
                     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=MAM','prevention');
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing'); 
-                <% } %>                              
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabPAP":
                     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PAP','prevention');
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing'); 
-                <% } %>                               
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabFIT":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabCOLONOSCOPY":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention'); 
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing'); 
-                <% } %>                             
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing');
+                <% } %>
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabBMD":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgLabPSA":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');                              
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');
                     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
                     break;
                 case "msgInf":
-                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?search=true&demographic_no='+demoid+'&snomedId=46233009&brandSnomedId=46233009','prevention');  
-                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q130A','billing'); 
+                    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?search=true&demographic_no='+demoid+'&snomedId=46233009&brandSnomedId=46233009','prevention');
+                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q130A','billing');
                 <% } %>
-                    break;               
+                    break;
                 default:
                     console.log('default');
                     break;
@@ -356,7 +362,7 @@ contextpath='<%=request.getContextPath()%>';
 
 
 
-                   
+
                                 }
                                 else {
                                     alert("Make sure demographic is linked and document changes saved!");
@@ -375,14 +381,14 @@ contextpath='<%=request.getContextPath()%>';
 
 <script type="text/javascript" >
 	jQuery.noConflict();
-	
+
 	jQuery(window).on("scroll",handleScroll());
-	
+
 	function renderCalendar(id,inputFieldId){
     	Calendar.setup({ inputField : inputFieldId, ifFormat : "%Y-%m-%d", showsTime :false, button : id });
-        
+
 	}
-	
+
 	function split(id) {
 		var loc = "<%= request.getContextPath()%>/oscarMDS/Split.jsp?document=" + id;
 		popupStart(1100, 1100, loc, "Splitter");
@@ -470,7 +476,7 @@ contextpath='<%=request.getContextPath()%>';
 		}
 		else {
 			div = document.getElementById("summaryView");
-		}	
+		}
 		jQuery("#readerSwitcher").prop("disabled",true);
 		jQuery("#listSwitcher").prop("disabled",true);
 		return new Ajax.Updater(div,url,{method:'get',parameters:query,insertion:Insertion.Bottom,evalScripts:true,onSuccess:function(transport){
@@ -498,7 +504,7 @@ contextpath='<%=request.getContextPath()%>';
 				// to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
 				setTimeout("fakeScroll();", 1000);
 			}
-			
+
 			jQuery("#readerSwitcher").prop("disabled",false);
 			jQuery("#listSwitcher").prop("disabled",false);
 		}});
@@ -508,7 +514,7 @@ contextpath='<%=request.getContextPath()%>';
 		var CATEGORY_ALL = 1,CATEGORY_DOCUMENTS = 2,CATEGORY_HL7 = 3,CATEGORY_NORMAL = 4,CATEGORY_ABNORMAL = 5,CATEGORY_PATIENT = 6,CATEGORY_PATIENT_SUB = 7,CATEGORY_TYPE_DOC = 'DOC',CATEGORY_TYPE_HL7 = 'HL7';
 		var query = "method=prepareForContentPage";
 		query +="&searchProviderNo="+searchProviderNo+"&providerNo="+providerNo+"&status="+searchStatus+"&page="+page
-			   +"&pageSize="+pageSize+"&isListView="+(isListView?"true":"false") 
+			   +"&pageSize="+pageSize+"&isListView="+(isListView?"true":"false")
 			   +"&startDate=" + startDate + "&endDate=" + endDate;
 		switch (selected_category) {
 		case CATEGORY_ALL:
@@ -684,17 +690,17 @@ contextpath='<%=request.getContextPath()%>';
 	.singlePage {
 
 	}
- 
-	[id^=ticklerWrap]{position:relative;top:0px;background-color:#FF6600;width:100%;}  
-	
+
+	[id^=ticklerWrap]{position:relative;top:0px;background-color:#FF6600;width:100%;}
+
 	.completedTickler{
 	    opacity: 0.8;
 	    filter: alpha(opacity=80); /* For IE8 and earlier */
 	}
-	
-	@media print { 
+
+	@media print {
 	.DoNotPrint{display:none;}
-	}  	
+	}
 
 	.TDISRes	{font-weight: bold; font-size: 10pt; color: black; font-family:
                Verdana, Arial, Helvetica}
@@ -816,6 +822,13 @@ contextpath='<%=request.getContextPath()%>';
     						<a id="totalAbnormals" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_ABNORMAL);" title="Abnormal">
     							Abnormal
    							</a>
+
+						</div>
+						<div>
+    						<a id="sortbynum" href="javascript:void(0);" onclick="document.getElementById('patientsdoclabs').toggle(); document.getElementById('patientsdoclabsB').toggle();un_bold(this);" title="Toggle sort by number of results or by name">
+    							Toggle By #
+   							</a>
+
 						</div>
 						<dl id="patientsdoclabs">
 				    <%
@@ -829,7 +842,7 @@ contextpath='<%=request.getContextPath()%>';
 
    					   <dt> <img id="plus<%=patientId%>" alt="plus" src="<%=request.getContextPath()%>/images/plus.png" onclick="showhideSubCat('plus','<%=patientId%>');"/>
        					    <img id="minus<%=patientId%>" alt="minus" style="display:none;" src="<%=request.getContextPath()%>/images/minus.png" onclick="showhideSubCat('minus','<%=patientId%>');"/>
-       						<a id="patient<%=patientId%>all" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,<%=patientId%>);" 
+       						<a id="patient<%=patientId%>all" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,<%=patientId%>);"
                             title="<%=patientName%>">
                             <%=shortName%> (<span id="patientNumDocs<%=patientId%>"><%=numDocs%></span>)
                             </a>
@@ -877,13 +890,83 @@ contextpath='<%=request.getContextPath()%>';
                         		</dt>
                    <%}%>
                     		</dl>
+
+                    	</dt>
+
+					<% } %>
+
+                  	</dl>
+						<dl id="patientsdoclabsB" style="display:none">
+				    <%
+if (patients!=null) {
+	Collections.sort(patients, new Sortbylabnum());
+}
+				         for (PatientInfo info : patients) {
+				                        String patientId= info.id + "";
+				                        String patientName= info.toString();
+                                        String[] names = patientName.split(", ");
+				                        String shortName= names[0]+" "+ names[1].charAt(0);
+				                        int numDocs= info.getDocCount() + info.getLabCount();
+				   %>
+
+   					   <dt> <img id="plus<%=patientId%>B" alt="plus" src="<%=request.getContextPath()%>/images/plus.png" onclick="showhideSubCat('plus','<%=patientId%>');"/>
+       					    <img id="minus<%=patientId%>B" alt="minus" style="display:none;" src="<%=request.getContextPath()%>/images/minus.png" onclick="showhideSubCat('minus','<%=patientId%>');"/>
+       						<a id="patient<%=patientId%>allB" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,<%=patientId%>);"
+                            title="<%=patientName%>">
+                            <%=shortName%> (<span id="patientNumDocs<%=patientId%>"><%=numDocs%></span>)
+                            </a>
+                    		<dl id="labdoc<%=patientId%>showSublistB" style="display:none" >
+                   <%if (info.getDocCount() > 0) {%>
+                        		<dt>
+                        			<a id="patient<%=patientId%>docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_DOC);" title="Documents">
+                        				Documents (<span id="pDocNum_<%=patientId%>"><%=info.getDocCount()%></span>)
+                       				</a>
+                        		</dt>
+                   <%} if (info.getLabCount() > 0) {%>
+                     			<dt>
+                     				<a id="patient<%=patientId%>hl7sB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_HL7);" title="HL7">
+                     					HL7 (<span id="pLabNum_<%=patientId%>"><%=info.getLabCount()%></span>)
+                   					</a>
+                        		</dt>
+                   <%}%>
+                    		</dl>
+                    	</dt>
+
+			<% if (selectedCategoryPatient != null) { if (selectedCategoryPatient.equals(Integer.toString(info.id))) { %>
+			<script>
+				showhideSubCat('plus','<%=info.id%>');
+				un_bold($('patient<%=info.id%><%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>'));
+			</script>
+			<% } } %>
+                   <%}%>
+
+				   <% if (unmatchedDocs > 0 || unmatchedLabs > 0) { %>
+						<dt> <img id="plus0" alt="plus" src="<%=request.getContextPath()%>/images/plus.png" onclick="showhideSubCat('plus','0');"/>
+       					    <img id="minus0" alt="minus" style="display:none;" src="<%=request.getContextPath()%>/images/minus.png" onclick="showhideSubCat('minus','0');"/>
+       						<a id="patient0allB" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,0)" title="Unmatched">Unmatched (<span id="patientNumDocs0"><%=unmatchedDocs + unmatchedLabs%></span>)</a>
+                    		<dl id="labdoc0showSublistB" style="display:none" >
+                   <%if (unmatchedDocs > 0) {%>
+                        		<dt>
+                        			<a id="patient0docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="Documents">
+                        				Documents (<span id="pDocNum_0"><%=unmatchedDocs%></span>)
+                       				</a>
+                        		</dt>
+                   <%} if (unmatchedLabs > 0) {%>
+                     			<dt>
+                     				<a id="patient0hl7sB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_HL7);" title="HL7">
+                     					HL7 (<span id="pLabNum_0"><%=unmatchedLabs%></span>)
+                   					</a>
+                        		</dt>
+                   <%}%>
+                    		</dl>
+
                     	</dt>
 
 					<% } %>
 
                   	</dl>
                   	</div>
-                  	
+
 <%  } //end else
 	if (!ajax) {
 %>
