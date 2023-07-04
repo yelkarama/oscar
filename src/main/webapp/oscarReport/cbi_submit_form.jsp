@@ -66,13 +66,13 @@ if(!authed) {
 <script>
 $(function () {
 
-    $("#checkAll").bind("click", function () {
+    $("#checkAll").on("click", function () {
         $("[name = cbiFormIdsSelected]:checkbox").attr("checked", this.checked);
 	
     });
 
 
-    $("[name = cbiFormIdsSelected]:checkbox").bind("click", function () {
+    $("[name = cbiFormIdsSelected]:checkbox").on("click", function () {
         var $chk = $("[name = cbiFormIdsSelected]:checkbox");	
         $("#checkAll").attr("checked", $chk.length == $chk.filter(":checked").length);
 		  if($(this).attr("checked"))

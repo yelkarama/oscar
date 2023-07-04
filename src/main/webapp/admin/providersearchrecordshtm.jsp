@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -31,7 +31,7 @@
 <%
     String curProvider_no = (String) session.getAttribute("user");
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    
+
     boolean isSiteAccessPrivacy=false;
     boolean authed=true;
 %>
@@ -54,22 +54,19 @@
 
 <html:html locale="true">
 <head>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 <title><bean:message key="admin.providersearchrecordshtm.title" /></title>
-<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
-<link rel="stylesheet" href="../web.css">
-<script LANGUAGE="JavaScript">
-    <!--
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
-		function setfocus() {
+<script>
+
+	function setfocus() {
 		  document.searchprovider.keyword.focus();
 		  document.searchprovider.keyword.select();
-		}
+	}
 
     function onsub() {
       // make keyword lower case
-      var keyword = document.searchprovider.keyword.value; 
+      var keyword = document.searchprovider.keyword.value;
       var keywordLowerCase = keyword.toLowerCase();
       document.searchprovider.keyword.value = keywordLowerCase;
     }
@@ -77,68 +74,54 @@
 		ctrl.value = ctrl.value.toUpperCase();
 	}
 
-    //-->
-    </script>
-	<style>
-		.small-blue-text {
-			font-size: x-small;
-			font-family: Verdana, serif;
-			color: #0000FF;
-		}
-	</style>
+</script>
+
 </head>
 
-<body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
+<body onLoad="setfocus()" >
 <h4>
 <i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchrecordshtm.description" /></h4>
 
 <div class="well">
-<table cellspacing="0" cellpadding="2" width="100%" border="0" class="table-condensed">
-
-	<form method="post" action="providersearchresults.jsp" name="searchprovider"	onsubmit="return onsub()">
-	<tr valign="top">
-		<td rowspan="2" align="right" valign="middle">
+<form method="post" action="providersearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
+<table style="width:100%">
+	<tr>
+		<td rowspan="2"  style="text-align:right; vertical-align:middle">
 			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i></b>
 		</td>
-		<td nowrap>
-
+		<td style="white-space: nowrap;">
 				<input type="radio" checked="checked" name="search_mode"
 					   value="search_name" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.providersearch.formLastName" />
-
 		</td>
-		<td nowrap>
-
-				<input type="radio"	name="search_mode" 
+		<td style="white-space: nowrap;">
+				<input type="radio"	name="search_mode"
 					   value="search_providerno" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.providersearch.formNo" />
-
 		</td>
-		<td nowrap>
-
+		<td style="white-space: nowrap;">
 				<input type="radio" name="search_status" value="All">
 				<bean:message key="admin.providersearch.formAllStatus" />
             <br/>
-
 				<input type="radio" name="search_status" value="1" checked="checked">
 				<bean:message key="admin.providersearch.formActiveStatus" />
 			<br/>
-			
 				<input type="radio" name="search_status" value="0">
 				<bean:message key="admin.providersearch.formInactiveStatus" />
-			
 		</td>
-		<td valign="middle" rowspan="2" ALIGN="left">
-			<input type="text" NAME="keyword" SIZE="17" MAXLENGTH="100">
-			<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name">
-			<INPUT TYPE="hidden" NAME="limit1" VALUE="0">
-			<INPUT TYPE="hidden" NAME="limit2" VALUE="10">
-			<INPUT TYPE="SUBMIT" NAME="button" class="btn btn-primary" VALUE=<bean:message key="admin.search.btnSubmit"/> SIZE="17">
+		<td style="vertical-align:middle; text-align:left" rowspan="2" >
+            <div class="input-append">
+			    <input type="text" name="keyword" class="input input-large" maxlength="100">
+                <button type="submit" name="button" class="btn add-on" style="height:30px; width:30px" >
+                    <i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>"></i></button>
+            </div>
+			<input type="hidden" name="orderby" value="last_name">
+			<input type="hidden" name="limit1" value="0">
+			<input type="hidden" name="limit2" value="10000">
 		</td>
 	</tr>
-	</form>
 </table>
+</form>
 </div>
-</center>
 </body>
 </html:html>

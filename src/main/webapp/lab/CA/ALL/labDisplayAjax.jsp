@@ -38,7 +38,7 @@
 
 <%@ page import="org.oscarehr.common.dao.Hl7TextInfoDao"%>
 <%@ page import="org.oscarehr.common.model.Hl7TextInfo"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%> 
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
 <%@ page import="org.oscarehr.common.model.PatientLabRouting"%>
 <%@ page import="org.oscarehr.common.dao.PatientLabRoutingDao"%>
@@ -62,11 +62,11 @@
 <%@ page import="net.sf.json.JSONException"%>
 <%@ page import="net.sf.json.JSONSerializer"%>
 <%@ page import="net.sf.json.JSONObject"%>
-<%@ page import="net.sf.json.JSONArray"%>	
+<%@ page import="net.sf.json.JSONArray"%>
 
 <%@ page import="org.owasp.encoder.Encode" %>
 
-	
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -100,7 +100,7 @@ if(!authed) {
     boolean bShortcutForm2 = bShortcutForm && !formName2.equals("");
 
     UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
-	String curUser_no = (String) session.getAttribute("user"); 
+	String curUser_no = (String) session.getAttribute("user");
 	UserProperty tabViewProp = userPropertyDao.getProp(curUser_no, UserProperty.OPEN_IN_TABS);
     boolean openInTabs = false;
     if ( tabViewProp == null ) {
@@ -215,7 +215,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 </script>
 <%}
 %>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 
     <script language="JavaScript">
          popupStart=function(vheight,vwidth,varpage,windowname) {
@@ -224,7 +224,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
             var popup=window.open(varpage, windowname, windowprops);
         }
 
-        pop4=function(vheight, vwidth, varpage, windowName) { 
+        pop4=function(vheight, vwidth, varpage, windowName) {
             windowName  = typeof(windowName)!= 'undefined' ? windowName : 'demoEdit';
         <% if (!openInTabs) { %>
             vheight     = typeof(vheight)   != 'undefined' ? vheight : '700px';
@@ -243,27 +243,27 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
         <% } %>
         }
 
-         
+
      	<%
      		int version = 0;
      		if( multiLabId != null ) {
      		String[] multiID = multiLabId.split(",");
      		    if( multiID.length > 1 ) {
      		    	for( int k = 0; k < multiID.length; ++k ) {
-     					if( multiID[k].equals(segmentID)) {     	
-     						version = k;     	
+     					if( multiID[k].equals(segmentID)) {
+     						version = k;
      					}
      				}
      			}
      		}
      	%>
-     	
+
          getComment=function(labid, action) {
-            var ret = true;            
+            var ret = true;
             var text = "V" + <%=version%> + "commentText" + labid + $("providerNo").value;
-            
+
             var commentVal = "";
-            
+
             if( $(text) != null ) {
             	commentVal = $(text).innerHTML;
             	if( commentVal == null ) {
@@ -271,9 +271,9 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
             	}
             }
             var commentID = "comment_" + labid;
-            
+
             var comment = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
-			
+
             if( comment == null )
                 ret = false;
             else if ( comment != null && comment.length > 0 ){
@@ -313,7 +313,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                         //check if lab is linked to a provider
                                                                         if(success){
                                                                             if(action=='ackLab'){
-                                                                                if(confirmAck()){ 
+                                                                                if(confirmAck()){
                                                                                 	$("status_"+labid).value = "A";
                                                                                     updateStatus(formid);
                                                                                 }
@@ -336,9 +336,9 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=MAM','prevention');
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing'); 
-<% } %>                              
+<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing');
+<% } %>
     //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
@@ -346,45 +346,45 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
     window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PAP','prevention');
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q0111A','billing'); 
-<% } %>                               
+<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing');
+<% } %>
     //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }else if(action=='msgLabFIT'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
     //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }else if(action=='msgLabFIT'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');                              
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
     //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }else if(action=='msgLabCOLONOSCOPY'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');                              
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>  
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing'); 
-<% } %> 
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');
+<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing');
+<% } %>
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }else if(action=='msgLabBMD'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');                              
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }else if(action=='msgLabPSA'){
                                                                                 demoid=json.demoId;
                                                                                 if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');                              
+    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');
     window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
     }
                                                                             }
@@ -409,33 +409,33 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                     }
                                                             }});
         }
-        
+
         function addComment(formid,labid) {
         	var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do?method=addComment";
         	var status = "status_" + labid;
-        	
+
 			if( $F(status) == "" ) {
 				$(status).value = "N";
 			}
         	var data=$(formid).serialize(true);
-        	
+
         	var label = "V" + <%=version%> + "commentLabel" + labid + $F("providerNo");
         	var text = "V" + <%=version%> + "commentText" + labid + $("providerNo").value;
 			var commentID = "comment_" + labid;
 			var newComment;
-			
-            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){            	
-            	if( $(label) != null && $(text) != null ) {            		
+
+            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
+            	if( $(label) != null && $(text) != null ) {
             		newComment = $(commentID).value;
-            		$(label).update("comment: ");            		            		
-            		$(text).update(newComment);            		
+            		$(label).update("comment: ");
+            		$(text).update(newComment);
             	}
             	else {
             		alert("Comment '" + $(commentID).value + "' added!\nThis lab has been forwarded to you.");
             	}
         }});
         }
-        
+
        function confirmAck(){
 		<% if (props.getProperty("confirmAck", "").equals("yes")) { %>
             		return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledge"/>');
@@ -506,8 +506,8 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     <input type="hidden" name="labType" value="HL7"/>
                                     <input type="hidden" name="ajaxcall" value="yes"/>
                                     <input type="hidden" id="demoName<%=segmentID%>" value="<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>"/>
- 
-                                            
+
+
 
                                     <% if ( !ackFlag ) { %>
 <%
@@ -519,7 +519,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 											  <button class="dropbtns btn">Macros&nbsp;<span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 
-											  
+
 											  <%
 											    try {
 												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
@@ -528,7 +528,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 													  		JSONObject macro = macros.getJSONObject(x);
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
-													  		
+
 													  		%><a href="javascript:void(0);" onClick="runhl7Macro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
@@ -536,14 +536,14 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
 											    }
 											  %>
-											    
+
 											  </div>
 											</div>
 									<% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
-                                    
+
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
-                                   
+
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
 
@@ -551,33 +551,33 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">								
+                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
-                                <div class="dropdowns-content">                                   
+                                <div class="dropdowns-content">
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabBMD'); return false;">BMD</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPSA'); return false;">PSA</a>
-                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                     <a href="#" onClick="popupStart(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
                                     <a href="#" onClick="popupStart(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
                                     <a href="#" onclick="popupStart(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
-                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
-                                <% } %>     
+                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a>
+                                <% } %>
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
-                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
+                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>
                                 </div>
                             </div>
-                                    
-                                    
+
+
                                    	<% if (bShortcutForm) { %>
 									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
 									<% } %>
@@ -585,9 +585,9 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									<input type="button" class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" />
 									<% } %>
 
-									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')"> 							
+									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
                                     <input type="button" class="btn" id="createLabel" value="Label"  onClick="createTdisLabel('TDISLabelForm<%=segmentID%>','acknowledgeForm_<%=segmentID%>','labelspan_<%=segmentID%>','label_<%=segmentID%>')">
-				
+
 
                  <input type="text" class="input-large" id="label_<%=segmentID%>" style="margin-bottom:2px;" name="label" value=""/>
                  <% String labelval="";
@@ -771,7 +771,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                             <a href="mailto:<%=demographic.getEmail()%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=demographic.getEmail()%></a>
                                                                         <% } else { %>
                                                                             <span id="email<%= segmentID %>"><%=demographic.getEmail()%></span>
-                                                                        <% } } %> 
+                                                                        <% } } %>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -805,7 +805,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                             </td>
                                             <td>
                                                 <div class="FieldData" nowrap="nowrap">
-                                                    <%= handler.getServiceDate() %> 
+                                                    <%= handler.getServiceDate() %>
                                                 </div>
                                             </td>
                                         </tr>
@@ -888,62 +888,62 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                 </td>
                             </tr>
                             <tr>
-                                <td align="center" bgcolor="white" colspan="2"> 							   
+                                <td align="center" bgcolor="white" colspan="2">
 <% if(demographicID!=null && !demographicID.equals("")){
 
 							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(segmentID), Integer.valueOf(demographicID));
-							    
+
 							    if(LabTicklers!=null && LabTicklers.size()>0){
 							    %>
 							    <div id="ticklerWrap<%= segmentID %>" class="DoNotPrint">
 							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklersp<%= segmentID %>" onclick="showHideItem('ticklerDisplay<%= segmentID %>')">View Ticklers</a> Linked to this Lab</h4>
-							    
+
 							           <div id="ticklerDisplay<%= segmentID %>" style="display:none">
 							   <%
 							   String flag;
 							   String ticklerClass;
 							   String ticklerStatus;
 							   for(Tickler tickler:LabTicklers){
-							   
+
 							   ticklerStatus = tickler.getStatus().toString();
-							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){ 
+							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span style='color:red'>&#9873;</span>";
 							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span>&#9873;</span>";
-							   }else{	
+							   }else{
 							   	flag="";
 							   }
-							   
+
 							   if(ticklerStatus.equals("C")){
 							  	 ticklerClass = "completedTickler";
 							   }else{
 							  	 ticklerClass="";
 							   }
-							   %>	
+							   %>
 							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
 							   	<table width="100%">
 							   	<tr>
 							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
+							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>
 							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
 							   	</tr>
 							   	<tr>
 							   	<td colspan="4"><%=tickler.getMessage()%></td>
 							   	</tr>
 							   	</table>
-							   </div>	
+							   </div>
 							   <br>
 							   <%
 							   }
 							   %>
 							   		</div><!-- end ticklerDisplay -->
-							   </div>   
-							   <%}//no ticklers to display 
+							   </div>
+							   <%}//no ticklers to display
 
-}%>                                  
-                                
+}%>
+
                                     <%String[] multiID = multiLabId.split(",");
                                     ReportStatus report;
                                     boolean startFlag = false;
@@ -981,7 +981,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                             }
                                                                         %>
                                                                         <font color="red"><%= ackStatus %></font>
-                                                                        
+
                                                                             <%= report.getTimestamp() %>,
                                                                             <% String commentTitle = null;
                                                                                if(report.getComment() == null || report.getComment().equals("")) {
@@ -992,7 +992,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                                                                }
                                                                             %>
                                                                             <span id="<%="V" + j + "commentLabel" + segmentID + report.getProviderNo()%>"><%=commentTitle%></span><span id="<%="V" + j + "commentText" + segmentID + report.getProviderNo()%>"> <%=report.getComment() == null ? "" : Encode.forHtmlContent(report.getComment())%></span>
-                                                                        
+
                                                                         <br>
                                                                     <% }
                                                                     if (ackList.size() == 0){
@@ -1124,7 +1124,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									boolean isAllowedDuplicate = false;
 									if(handler.getMsgType().equals("PATHL7")){
 										//if the obxidentifier and result name are any of the following, they must be displayed (they are the Excepetion to Excelleris TX/FT duplicate result name display rules)
-										if((handler.getOBXName(j, k).equals("Culture") && handler.getOBXIdentifier(j, k).equals("6463-4")) || 
+										if((handler.getOBXName(j, k).equals("Culture") && handler.getOBXIdentifier(j, k).equals("6463-4")) ||
 										(handler.getOBXName(j, k).equals("Organism") && (handler.getOBXIdentifier(j, k).equals("X433") || handler.getOBXIdentifier(j, k).equals("X30011")))){
 										isAllowedDuplicate = true;
 											}
@@ -1135,8 +1135,8 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     } else if(handler.getMsgType().equals("PFHT") || handler.getMsgType().equals("HHSEMR")) {
                                     	b2=true;
                                     }
-                                    
-                                    
+
+
                                     if ( !handler.getOBXResultStatus(j, k).equals("DNS") && b2 && b3){ // <<--  DNS only needed for MDS messages
                                         String obrName = handler.getOBRName(j);
                                         if(!obrFlag && !obrName.equals("") && !(obxName.contains(obrName) && obxCount < 2)){%>
@@ -1240,7 +1240,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 	                               				else{%>
 	                                            <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a href="javascript:popupStart('660','900','<%=request.getContextPath()%>/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(j, k)%>'))"><%=obxName %></a></td><%}%>
 	                                            <%
-	                                          	//for pathl7, if it is an SG/CDC result greater than 100 characters, left justify it 
+	                                          	//for pathl7, if it is an SG/CDC result greater than 100 characters, left justify it
 	                                            if((handler.getOBXResult(j, k) != null && handler.getOBXResult(j, k).length() > 100) && isSGorCDC){%>
 	                                            	<td align="left"><%= handler.getOBXResult( j, k) %></td><%
 	                                            }else{%>
@@ -1250,8 +1250,8 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 													if(handler.getMsgType().equals("PATHL7") && ((PATHL7Handler)handler).isLegacy(j,k) ) {
 														legacy ="&legacy=true";
 													}
-												
-												%>	
+
+												%>
 													 <td align="right"><a href="<%=request.getContextPath() %>/lab/DownloadEmbeddedDocumentFromLab.do?labNo=<%=segmentID%>&segment=<%=j%>&group=<%=k%><%=legacy%>">PDF Report</a></td>
 													 <%
 												} else {
@@ -1336,7 +1336,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 											  <button class="dropbtns btn">Macros&nbsp;<span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 
-											  
+
 											  <%
 											    try {
 												  	JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
@@ -1345,7 +1345,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 													  		JSONObject macro = macros.getJSONObject(x);
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
-													  		
+
 													  		%><a href="javascript:void(0);" onClick="runhl7Macro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
@@ -1353,14 +1353,14 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 											    	MiscUtils.getLogger().warn("Invalid JSON for lab macros",e);
 											    }
 											  %>
-											    
+
 											  </div>
 											</div>
 									<% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
-                                            
+
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
-                                            
+
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
 
@@ -1368,33 +1368,33 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">								
+                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
-                                <div class="dropdowns-content">                                   
+                                <div class="dropdowns-content">
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabMAM'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formMammogram"/></a>
-                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a> 
+                                    <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPAP'); return false;"><bean:message key="oscarEncounter.formFemaleAnnual.formPapSmear"/></a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabFIT'); return false;">FIT</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabCOLONOSCOPY'); return false;">Colonoscopy</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabBMD'); return false;">BMD</a>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','msgLabPSA'); return false;">PSA</a>
-                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a> 
+                            <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
                                     <a href="#" onClick="popupStart(700, 1280, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');return false;"><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
                                     <a href="#" onClick="popupStart(700,1000,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&displaymode=edit','MDR<%=demographicID%>');return false;"><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
                                     <a href="#" onclick="popupStart(500,1024,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=<%=demographicID%>','Rx<%=demographicID%>');return false;"><bean:message key="global.prescriptions"/></a>
-                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %> 
-                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a> 
-                                <% } %>     
+                                <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                    <a href="#" onclick="popupStart(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing');return false;"><bean:message key="global.billingtag"/></a>
+                                <% } %>
                             <a href="#" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;"></a>
                             <% } %>
                                     <a href="#" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"/><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
-                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>                                
+                                    <a href="#" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />Req# <%=reqTableID%></a>
                                 </div>
                             </div>
-                                    
-                                    
+
+
                                    	<% if (bShortcutForm) { %>
 									<input type="button" class="btn" value="<%=formNameShort%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName%>&demographic_no=<%=demographicID%>', '<%=formNameShort%>')" />
 									<% } %>

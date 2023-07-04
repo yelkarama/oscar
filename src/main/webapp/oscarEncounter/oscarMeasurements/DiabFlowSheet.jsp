@@ -101,10 +101,12 @@ ArrayList<String> recomendations = mi.getRecommendations();
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/lang/<bean:message key="global.javascript.calendar"/>" ></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/calendar-setup.js" ></script>
 
-
-	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.autogrow-textarea.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery-ui-1.8.15.custom.draggable.slider.min.js"></script>
+	<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+	<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+	<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+	<!-- The following replaces textareas with div, not used -->
+	<!-- <script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.autogrow-textarea.js"></script> -->
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.sparkline.js"></script>
 
 	<script type="text/javascript">
@@ -206,13 +208,13 @@ ArrayList<String> recomendations = mi.getRecommendations();
 		$("#highlightSliderLength").text(Object.keys(dateRange)[0]);
 
 
-		$("#close-message").click(function() {
+		$("#close-message").on( "click", function() {
 			$("#measurement-view").hide();
 			$("#deleteId").val("");
 		});
 
 
-		$("[id^=mView]").click(function() {
+		$("[id^=mView]").on( "click", function() {
 
 		id=this.id;
 		measId=id.replace('mView-','');
@@ -225,7 +227,7 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 		});
 
-	    $("#deleteButton").click(function(){
+	    $("#deleteButton").on( "click", function(){
 		var link = "<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/DeleteData2.do";
 
 		var deletevalue = "id="+$("#deleteId").val()+"&deleteCheckbox="+$("#deleteId").val();
@@ -353,7 +355,6 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/share/css/jquery-ui-1.8.15.custom.draggable.slider.css" />
 	<style type="text/css" media="all">
 
 

@@ -77,7 +77,8 @@ if (wPhoneExt != null)
     <head>
         <title>Register for PHR</title>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/bootstrap.css">
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         
         <style type="text/css" language="JavaScript">
             .headingTop {
@@ -107,7 +108,7 @@ if (wPhoneExt != null)
 	            if ($("#username").val() == '') {
 	            	$("#username-group").addClass('error');
 	            	$("#username-required").show();
-	                $("#username").focus();
+	                $("#username").trigger( "focus" );
 	                error = true;
 	            } 
 	            
@@ -116,7 +117,7 @@ if (wPhoneExt != null)
 		            if (!usernameRegex.test($("#username").val())) {
 		            	$("#username-group").addClass('error');
 		            	$("#username-invalid").show();
-		                $("#username").focus();
+		                $("#username").trigger( "focus" );
 		                error = true;
 		            } 
             	}	                   
@@ -124,7 +125,7 @@ if (wPhoneExt != null)
                 if ($("#password").val().length < 8) {
 	            	$("#password-group").addClass('error');
 	            	$("#pwd-help").show();
-	            	$("#password").focus();
+	            	$("#password").trigger( "focus" );
 	            	error = true;
 	            }        
                 

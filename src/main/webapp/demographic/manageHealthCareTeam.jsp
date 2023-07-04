@@ -89,7 +89,7 @@
 	
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/OscarStandardLayout.css" />
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.12.3.js"></script>
 	
 </c:if>
 <%-- END DETACHED VIEW ENABLED  --%> 
@@ -207,7 +207,7 @@ function renderResponse(html, id) {
 	}
 	
 	try{
-		jQuery("input:submit").eq(1).focus();
+		jQuery("input:submit").eq(1).trigger( "focus" );
 	} catch(error) {
 		// do nothing
 	}
@@ -224,7 +224,7 @@ function renderResponse(html, id) {
 //--> Remove/Edit contact action. Wrapped in a function to re-bind after postback
 jQuery.fn.bindFunctions = function() {
 	
-	jQuery('.actionlink').bind("click", function(event){			
+	jQuery('.actionlink').on("click", function(event){			
 		 var id = this.id.split("_")[1].trim();
 		 var param = '{"contactId":"' + id + 
 			'","contactName":"' +  
@@ -273,7 +273,7 @@ window.onunload = function() {
 jQuery(document).ready( function($) {
 
 	//--> Add internal provider
-	jQuery('#addHealthCareTeamButton').bind("click", function(){
+	jQuery('#addHealthCareTeamButton').on("click", function(){
 		// get the selected value
 		var selected = jQuery('#internalProviderList option:selected');
 		var selectedtext = selected.text();
@@ -292,20 +292,20 @@ jQuery(document).ready( function($) {
 	})	
 
 	//--> Search external providers events
-	jQuery('#searchHealthCareTeamInput').bind('keydown', function(event) {		
+	jQuery('#searchHealthCareTeamInput').on('keydown', function(event) {		
 	    if (event.keyCode == 13) {
 	    	event.preventDefault();
 	    	searchExternalProviders("Search");
 	    }     
 	});
 			
-	jQuery('#searchHealthCareTeamButton').bind("click", function(){
+	jQuery('#searchHealthCareTeamButton').on("click", function(){
 		searchExternalProviders(this.value);
 	});		
 
 	//--> Toggle search options
 	jQuery(".external").hide();	// internal = on, external = off	
-	jQuery('#searchInternalExternal').bind("change", function(){
+	jQuery('#searchInternalExternal').on("change", function(){
 		var selected = jQuery('#' + this.id + ' option:selected').text();
 		jQuery(this).find('option').each(function(){
 			if( selected == $(this).text() )	{

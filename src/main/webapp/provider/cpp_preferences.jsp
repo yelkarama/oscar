@@ -47,7 +47,8 @@
 <link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css" title="win2k-cold-1">
 <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"	type="text/javascript"></script>
 <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/js/jquery.js"></script>
+<script src="<c:out value="${ctx}"/>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script>
 	jQuery.noConflict();
 </script>

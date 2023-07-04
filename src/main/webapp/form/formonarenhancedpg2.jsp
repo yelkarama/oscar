@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -66,32 +66,32 @@
     props.setProperty("c_lastVisited", "pg2");
 
     //get project_home
-    String project_home = ctx.substring(1);   
-    
+    String project_home = ctx.substring(1);
+
     //load eform groups
     List<LabelValueBean> cytologyForms = PregnancyAction.getEformsByGroup("Cytology");
     List<LabelValueBean> ultrasoundForms = PregnancyAction.getEformsByGroup("Ultrasound");
-    
+
     String customEformGroup = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_eform_group");
     String prenatalScreenName = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_name");
     String prenatalScreen = oscar.OscarProperties.getInstance().getProperty("prenatal_screening_abbrv");
 
     List<LabelValueBean> customForms = PregnancyAction.getEformsByGroup(customEformGroup);
- 
+
     if(props.getProperty("rf_num", "0").equals("")) {props.setProperty("rf_num","0");}
     if(props.getProperty("sv_num", "0").equals("")) {props.setProperty("sv_num","0");}
     if(props.getProperty("us_num", "0").equals("")) {props.setProperty("us_num","0");}
-    
+
     String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver","07");
     if(labReqVer.equals("")) {labReqVer="07";}
 
 	boolean bView = false;
-  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
+  	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true;
 
-    FrmAREnhancedBloodWorkTest ar1BloodWorkTest = new FrmAREnhancedBloodWorkTest(demoNo, formId); 
-    java.util.Properties ar1Props = ar1BloodWorkTest.getAr1Props(); 
-    int ar1BloodWorkTestListSize = ar1BloodWorkTest.getAr1BloodWorkTestListSize(); 
-    String ar1CompleteSignal = "AR1 labs Complete"; 
+    FrmAREnhancedBloodWorkTest ar1BloodWorkTest = new FrmAREnhancedBloodWorkTest(demoNo, formId);
+    java.util.Properties ar1Props = ar1BloodWorkTest.getAr1Props();
+    int ar1BloodWorkTestListSize = ar1BloodWorkTest.getAr1BloodWorkTestListSize();
+    String ar1CompleteSignal = "AR1 labs Complete";
 
 	String abo = "";
 	String rh ="";
@@ -119,14 +119,17 @@
 <script type="text/javascript" src="../share/calendar/calendar.js"></script>
 <script type="text/javascript" src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
-<script src="<%=ctx%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script src="<%=ctx%>/js/fg.menu.js"></script>
+
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
 <script type="text/javascript" src="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
 
-
-<link rel="stylesheet" href="<%=ctx%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 <link rel="stylesheet" href="<%=ctx%>/css/fg.menu.css">
 
 <style type="text/css">
@@ -1306,13 +1309,13 @@ function getGA() {
 }
 
 $(document).ready(function() {
-	$("input[name='ar2_lab2GTT1']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT1']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT2']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT2']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT3']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT3']").on('keyup',function(){
 		updateGtt();
 	});
 	
@@ -1335,7 +1338,7 @@ $(document).ready(function(){
 		$("#rhNegSpan").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_rhNeg']").bind('change',function(){
+	$("input[name='ar2_rhNeg']").on('change',function(){
 		if($("input[name='ar2_rhNeg']").attr('checked') == 'checked') {
 			$("#rhNegSpan").css('background-color','red');
 		} else {
@@ -1351,7 +1354,7 @@ $(document).ready(function(){
 		$("#hepbSpan2").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_hepBIG']").bind('change',function(){
+	$("input[name='ar2_hepBIG']").on('change',function(){
 		if($("input[name='ar2_hepBIG']").attr('checked') == 'checked') {
 			$("#hepbSpan").css('background-color','red');
 		} else {
@@ -1359,7 +1362,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("input[name='ar2_hepBVac']").bind('change',function(){
+	$("input[name='ar2_hepBVac']").on('change',function(){
 		if($("input[name='ar2_hepBVac']").attr('checked') == 'checked') {
 			$("#hepbSpan2").css('background-color','red');
 		} else {
@@ -1372,7 +1375,7 @@ $(document).ready(function(){
 		$("#rubellaSpan").css('background-color','red');
 	}	
 	
-	$("input[name='ar2_rubella']").bind('change',function(){
+	$("input[name='ar2_rubella']").on('change',function(){
 		if($("input[name='ar2_rubella']").attr('checked') == 'checked') {
 			$("#rubellaSpan").css('background-color','red');
 		} else {
@@ -1552,7 +1555,7 @@ $(document).ready(function(){
 		        	}
 		        	//go to it
 		        	document.forms[0].action=url;
-		        	$("#printBtn").click();
+		        	$("#printBtn").trigger( "click" );
 		        }
 				
 			},
@@ -1585,11 +1588,11 @@ $(document).ready(function(){
     $(function(){
 
 <% if(!bView) { %>     			
-		$('#gbs_menu').bind('click',function(){gbsReq();});
-		$("#gd_menu").bind('click',function(){popPage('http://www.diabetes.ca/diabetes-and-you/what/gestational/','resource')});
-		$("#gct_menu").bind('click',function(){gctReq();});
-		$("#gtt_menu").bind('click',function(){gttReq();});
-		$("#edb_menu").bind('click',function(){
+		$('#gbs_menu').on('click',function(){gbsReq();});
+		$("#gd_menu").on('click',function(){popPage('http://www.diabetes.ca/diabetes-and-you/what/gestational/','resource')});
+		$("#gct_menu").on('click',function(){gctReq();});
+		$("#gtt_menu").on('click',function(){gttReq();});
+		$("#edb_menu").on('click',function(){
 			var usNum = checkSOGCGuidelineForEDB();
 			if(usNum > 0) {
 				var usDate = $("#ar2_uDate"+usNum).val();
@@ -1599,7 +1602,7 @@ $(document).ready(function(){
 			}			
 		});
 		
-		$("#print_log_menu").bind('click',function(){
+		$("#print_log_menu").on('click',function(){
 			jQuery.ajax({type:"POST",url:'<%=ctx%>/Pregnancy.do?method=getPrintData',data: {resourceName:'ONAREnhanced',resourceId:$('#episodeId').val()},dataType:'json',async:true, success:function(data) {
 				$("#print_log_table tbody").html("");
 				$.each(data, function(key, val) {
@@ -1621,14 +1624,14 @@ $(document).ready(function(){
 
 <% } %>
 
-		$('#graph_menu').bind('click',function(){
+		$('#graph_menu').on('click',function(){
 			fancyBoxFundal();
 		});
 		
 		function fancyBoxFundal(){
 			$("#fundal_link").attr('href',getFundalImageUrl('1'));
 			$("#fundal_link").fancybox({type:'image'});
-			$("#fundal_link").click();	
+			$("#fundal_link").trigger( "click" );	
 		}
 		
 		function getFundalImageUrl(c){
@@ -1680,7 +1683,7 @@ $(document).ready(function(){
 			return n;
 		}
 		
-		$("#fundalImageLink").click(function(){
+		$("#fundalImageLink").on( "click", function(){
 			getFundalImageUrl();
 			fancyBoxFundal();
 		});
@@ -1706,9 +1709,9 @@ $(document).ready(function(){
 	
 	$(function(){
 		
-		$("#24wk_visit_menu").bind('click',function(){wk24VisitTool();});
-		$("#35wk_visit_menu").bind('click',function(){wk35VisitTool();});
-		$("#dd_visit_menu").bind('click',function(){ddVisitTool();});
+		$("#24wk_visit_menu").on('click',function(){wk24VisitTool();});
+		$("#35wk_visit_menu").on('click',function(){wk35VisitTool();});
+		$("#dd_visit_menu").on('click',function(){ddVisitTool();});
 		
 		var ga = getGA();
 		if(ga != 'NaNw+undefined')
@@ -1955,7 +1958,7 @@ $(document).ready(function(){
 		
 		$("#edb-update-form").dialog('close');
 		
-		$("#saveBtn").click();
+		$("#saveBtn").trigger( "click" );
 		
 		return false;
 	}

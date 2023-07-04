@@ -36,7 +36,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/jqplot/jquery.jqplot.min.css" />
 <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
 
-<script src="${pageContext.request.contextPath}/js/jquery-1.9.1.js" language="javascript" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js"  language="javascript" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqplot/jquery.jqplot.min.js" language="javascript" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqplot/jqplot.dateAxisRenderer.min.js" type="text/javascript" ></script>

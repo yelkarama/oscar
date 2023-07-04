@@ -60,28 +60,45 @@
 <html:html locale="true">
 <head>
 <title>Audit Log Purge Tool</title>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.css" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" type="text/css">
-
-
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
 
+<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" type="text/css">
 
+<%
+	String minDays = OscarProperties.getInstance().getProperty("log.purge.minDays", String.valueOf(365 * 10));
+	Integer iMinDays = null;
+	try {
+		iMinDays = Integer.parseInt(minDays);
+	} catch(NumberFormatException e) {
 
+	}
+	Calendar c = Calendar.getInstance();
+	c.add(Calendar.DAY_OF_YEAR, -iMinDays);
+
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	String minDate = formatter.format(c.getTime());
+
+	String outputDirectory =  OscarProperties.getInstance().getProperty("log.purge.outputdir");
+	if(outputDirectory == null) {
+		outputDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+	}
+
+%>
 <SCRIPT LANGUAGE="JavaScript">
 jQuery(document).ready(function(){
-	jQuery("#dateBegin").datepicker();
-	//jQuery("#dateBegin").datepicker("option","showAnim","blind");
-	jQuery("#dateBegin").datepicker("option","dateFormat","yy-mm-dd");	
+        var startDate = $("#dateBegin").datepicker({
+    	format : "yyyy-mm-dd"
+    });
 });
 
 function submitForm() {
-	
+
 	if(jQuery("#dateBegin").val().length == 0) {
 		alert('Please fill in a date');
 		return false;
@@ -95,12 +112,7 @@ function resetForm() {
 
 </SCRIPT>
 
-<style type="text/css">
-	input[type="checkbox"] {
-	    line-height: normal;
-	    margin: 4px 4px 4px;
-	}
-</style>
+
 
 </head>
 
@@ -116,53 +128,35 @@ function resetForm() {
 <div class="span12">
 
 <%
-	String minDays = OscarProperties.getInstance().getProperty("log.purge.minDays", String.valueOf(365 * 10));
-	Integer iMinDays = null;
-	try {
-		iMinDays = Integer.parseInt(minDays);
-	} catch(NumberFormatException e) {
-		
-	}
-	Calendar c = Calendar.getInstance();
-	c.add(Calendar.DAY_OF_YEAR, -iMinDays);
-	
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	String minDate = formatter.format(c.getTime());
-	
-	String outputDirectory =  OscarProperties.getInstance().getProperty("log.purge.outputdir");
-	if(outputDirectory == null) {
-		outputDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-	}
-	
-%>
-
-<%
 	if(msg == null) {
 %>
 <form action="<%=request.getContextPath()%>/admin/AuditLogPurge.do" onsubmit="return submitForm();">
-	
+
 	<p>Welcome to the Audit Log Purge Tool.</p>
 	<p>
 		When run, this tool will backup all the log entries set to be purged using mysqldump onto the OSCAR server.
-		The file can be found in <%=outputDirectory %>. 
+		The file can be found in <%=outputDirectory %>.
 	</p>
 	<p>The admin of this system has set log.purge.minDays to <%=minDays%> meaning that you must choose a date below
 	that is before <%=minDate%>.</p>
 	<p>
 		Please note that after this tool is run, you will have DELETED all audit log recorded prior to your chosen date.
 	</p>
-	
-	Most Recent Day to purge: <input class="span4" type="text"  id="dateBegin" name="dateBegin" value=""/> 
-	
+
+	Most Recent Day to purge:
+<div class="input-append">
+    <input class="span4" type="text"  id="dateBegin" name="dateBegin" value="" style="width:90px" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" autocomplete="off" > <!-- 2023-05-03 -->
+	<span class="add-on"><i class="icon-calendar"></i></span>
+</div>
 	<br/>
-	
-	<input type="submit" value="Purge"/>&nbsp;&nbsp;<input type="button" value="Reset" onclick="return resetForm();"/>
-	
+
+	<input type="submit" value="Purge" class="btn btn-danger" >&nbsp;&nbsp;<input type="button" class="btn" value="Reset" onclick="return resetForm();">
+
 </form>
 
 <% } else { %>
 	<br/>
-	<p style="color:red"><%=msg %></p>
+	<div class="alert alert-danger"><%=msg %></div>
 
 <% } %>
 </div><!--span4-->
@@ -171,4 +165,6 @@ function resetForm() {
 
 
 </body>
+
+
 </html:html>

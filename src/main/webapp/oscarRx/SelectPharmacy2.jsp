@@ -53,7 +53,8 @@ String help_url = (oscarProps.getProperty("HELP_SEARCH_URL","https://oscargalaxy
 <html:html locale="true">
 <head>
 
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
@@ -126,7 +127,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 						$("#preferredList").append(pharm);
 					}
 
-					$(".prefUnlink").click(function(){
+					$(".prefUnlink").on( "click", function(){
 						  var data = "pharmacyId=" + $(this).closest("div").attr("pharmId") + "&demographicNo=" + demo;
 						  $.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=unlink",
 							  data, function( data ) {
@@ -139,7 +140,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 							}, "json");
 					  });
 
-					$(".prefUp").click(function(){
+					$(".prefUp").on( "click", function(){
 						if($(this).closest("div").prev() != null){
 							var $curr = $(this).closest("div");
 							var $prev = $(this).closest("div").prev();
@@ -160,7 +161,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 						}
 					  });
 
-					$(".prefDown").click(function(){
+					$(".prefDown").on( "click", function(){
 						if($(this).closest("div").next() != null){
 							var $curr = $(this).closest("div");
 							var $next = $(this).closest("div").next();
@@ -190,7 +191,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 		var pharmacyPhoneKey = new RegExp($("#pharmacyPhoneSearch").val(), "i");
 		var pharmacyAddressKey =  new RegExp($("#pharmacyAddressSearch").val(), "i");
 		
-		$("#pharmacySearch").keyup(function(){
+		$("#pharmacySearch").on( "keyup", function(){
 			updateSearchKeys();
 		  $(".pharmacyItem").hide();
 		  $.each($(".pharmacyName"), function( key, value ) {
@@ -208,7 +209,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 		  });
 	  });
     
-	  $("#pharmacyCitySearch").keyup(function(){
+	  $("#pharmacyCitySearch").on( "keyup", function(){
 		  updateSearchKeys();
 		  $(".pharmacyItem").hide();
 		  $.each($(".city"), function( key, value ) {
@@ -226,7 +227,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 		  });
 	  });
 
-        $("#pharmacyPostalCodeSearch").keyup(function(){
+        $("#pharmacyPostalCodeSearch").on( "keyup", function(){
 			updateSearchKeys();
             $(".pharmacyItem").hide();
             $.each($(".postalCode"), function( key, value ) {
@@ -242,7 +243,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
             });
         });
     
-	  $("#pharmacyFaxSearch").keyup(function(){
+	  $("#pharmacyFaxSearch").on( "keyup", function(){
 		  updateSearchKeys();
 		  $(".pharmacyItem").hide();
 		  $.each($(".fax"), function( key, value ) {
@@ -258,7 +259,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 		  });
 	  });
 
-        $("#pharmacyPhoneSearch").keyup(function(){
+        $("#pharmacyPhoneSearch").on( "keyup", function(){
 			updateSearchKeys();
             $(".pharmacyItem").hide();
             $.each($(".phone"), function( key, value ) {
@@ -274,7 +275,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
             });
         });
 
-		$("#pharmacyAddressSearch").keyup(function(){
+		$("#pharmacyAddressSearch").on( "keyup", function(){
 			updateSearchKeys()
 			$(".pharmacyItem").hide();
 			$.each($(".address"), function( key, value ) {
@@ -290,7 +291,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 			});
 		});
 
-      $(".pharmacyItem").click(function(){
+      $(".pharmacyItem").on( "click", function(){
 		  var pharmId = $(this).attr("pharmId");
 		  
 		  $("#preferredList div").each(function(){
@@ -312,7 +313,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 		  },"json");
       });
   
-	$(".deletePharm").click(function(){
+	$(".deletePharm").on( "click", function(){
 		if( confirm("You are about to remove this pharmacy for all users. Are you sure you want to continue?")) {
 			var data = "pharmacyId=" + $(this).closest("tr").attr("pharmId");
 			$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=delete",

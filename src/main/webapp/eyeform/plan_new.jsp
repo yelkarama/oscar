@@ -42,7 +42,8 @@
 		<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
 		<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 		<script type="text/javascript" src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
-		<script src="<c:out value="../js/jquery.js"/>"></script>
+		<script src="<c:out value="../js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="../library/jquery/jquery-migrate-1.4.1.js"/>"></script>
 <script>
 	jQuery.noConflict();
 </script>

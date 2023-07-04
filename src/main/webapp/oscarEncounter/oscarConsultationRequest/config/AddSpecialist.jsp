@@ -88,7 +88,8 @@ if(!authed) {
 
 <head>
 
-<script src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <title><%=transactionType%></title>
 <html:base />
 
@@ -145,7 +146,7 @@ function formatPhone(obj) {
 
 
 	$(document).ready(function(){
-		$('#institution').change(function(){
+		$('#institution').on("change",function(){
 			changeInstitution();
 		});
 

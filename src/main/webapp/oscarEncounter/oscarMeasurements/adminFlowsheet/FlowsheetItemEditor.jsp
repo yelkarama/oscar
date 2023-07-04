@@ -23,9 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.common.dao.DemographicDao"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@page import="org.oscarehr.common.dao.FlowSheetUserCreatedDao"%>
@@ -61,20 +59,9 @@
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Jobs</title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath() %>/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <style>
 .red{color:red}
@@ -86,7 +73,7 @@
 %>
 <script>
 $(document).ready(function(){
-	
+
 	loadValidations();
 	loadWarnings();
 	loadTargets();
@@ -112,11 +99,11 @@ function loadValidations() {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		for(var i=0;i<arr.length;i++) {
 			jQuery('#validations').append("<option value="+arr[i].id +">"+arr[i].name+"</option>");
 		}
-		
+
 		loadItem();
     });
 }
@@ -130,9 +117,9 @@ function loadWarnings() {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		$("#warningTable tbody tr").remove();
-		
+
 		for(var x=0;x<xml.rules.length;x++) {
 			var i = xml.rules[x];
 			$("#warningTable tbody").append("<tr><td><a href=\"javascript:void(0)\" onClick=\"removeWarning('"+i.hash+"')\"><img src=\"<%=request.getContextPath()%>/images/icons/101.png\" border=\"0\"/></a></td><td>"+i.strength+"</td><td>"+i.type+"</td><td>"+i.param+"</td><td>"+i.value+"</td></tr>");
@@ -149,9 +136,9 @@ function loadTargets() {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		$("#targetTable tbody tr").remove();
-		
+
 		for(var x=0;x<xml.rules.length;x++) {
 			var i = xml.rules[x];
 			$("#targetTable tbody").append("<tr><td><a href=\"javascript:void(0)\" onClick=\"removeTarget('"+i.hash+"')\"><img src=\"<%=request.getContextPath()%>/images/icons/101.png\" border=\"0\"/></a></td><td>"+i.indicator+"</td><td>"+i.type+"</td><td>"+i.param+"</td><td>"+i.value+"</td></tr>");
@@ -172,12 +159,12 @@ function addNewWarning() {
 }
 
 function addNewTarget() {
-	location.href='<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/adminFlowsheet/FlowsheetAddTarget.jsp?flowsheetId=<%=flowsheetId %>&measurementType=<%=measurementType%>';	
+	location.href='<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/adminFlowsheet/FlowsheetAddTarget.jsp?flowsheetId=<%=flowsheetId %>&measurementType=<%=measurementType%>';
 }
 
 function updateDetails() {
 	var template = $("#template").val();
-	
+
     $.post('<%=request.getContextPath()%>/admin/Flowsheet.do?method=getTemplateDetails',{template:template},function(data){
       //  loadFlowsheet();
 	});
@@ -200,7 +187,7 @@ function removeTarget(hash) {
 </script>
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body>
 <h2>Flowsheet Item Editor</h2>
 <br/>
 <form name="theForm" id="theForm">
@@ -231,7 +218,7 @@ function removeTarget(hash) {
 </tr>
 <tr>
 	<td><b>Validation:</b></td>
-	<td>	
+	<td>
 		<select id="validations" name="validations">
 			<option value="">Select Below</option>
 		</select>
@@ -272,7 +259,7 @@ function removeTarget(hash) {
 	<th>Type</th>
 	<th>Parameter</th>
 	<th>Value</th>
-	
+
 </thead>
 <tbody>
 </tbody>

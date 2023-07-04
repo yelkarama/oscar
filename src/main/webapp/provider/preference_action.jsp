@@ -51,5 +51,5 @@
 	//parameters.remove("dxCode");
 	//parameters.remove("provider_no");		
 	
-	response.sendRedirect(request.getContextPath()+"/provider/providerDefaultDxCode.jsp?provider_no="+providerNo);
+	response.sendRedirect(request.getContextPath()+"/provider/providerDefaultDxCode.jsp?provider_no="+providerNo+"&success=true");
 %>

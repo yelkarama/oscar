@@ -106,7 +106,7 @@ $(function ()  {
 
 </script>
 <script>
-    $('#eformOptions a').click(function (e) {
+    $('#eformOptions a').on( "click", function (e) {
     e.preventDefault();
     if(this.href.indexOf('download') != -1) {
     	document.getElementById("downloadFrame").src = document.getElementById("downloadFrame").src;

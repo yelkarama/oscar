@@ -49,11 +49,11 @@
 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" >
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" >
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
     <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
 
@@ -65,7 +65,7 @@
 		$(document).ready(function() {
 			loadValues();
 
-			$("#saveBtn").click(function(){
+			$("#saveBtn").on( "click", function(){
 				saveValues();
 			});
 

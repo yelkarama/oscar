@@ -17,11 +17,11 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <%-- This JSP is the multi-site admin page --%>
 <%@ include file="/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	boolean authed=true;
@@ -40,41 +40,19 @@
 <%@page import="org.oscarehr.common.model.Site"%>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Clinic</title>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
-
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/Oscar.js"></script>
-<link href="<html:rewrite page='/css/displaytag.css'/>" rel="stylesheet" ></link>
+    <script src="${pageContext.request.contextPath}/js/global.js"></script>
+    <script	src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 </head>
+<body class="BodyStyle">
+<h4><bean:message key="admin.admin.sitesAdmin" /></h4>
 
-<body vlink="#0000FF" class="BodyStyle">
-
-<table class="MainTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">admin</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar" style="width: 100%;">
-			<tr>
-				<td>Manage Satellite Site Details</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">
-		&nbsp;</td>
-		<td class="MainTableRightColumn" valign="top">
-		
 <nested:form action="/admin/ManageSites?method=add">
-<nested:submit style="border:1px solid #666666;">Add New Site</nested:submit>
+<nested:submit styleClass="btn">Add New Site</nested:submit>
 </nested:form>
 
-  <display-el:table name="sites" id="site" class="its" style="border:1px solid #666666; width:99%;margin-top:2px;">
+  <display-el:table name="sites" id="site" class="table table-striped table-hover" >
      <display-el:column title="Active" ><c:choose ><c:when test="${site.status==0}">No</c:when><c:otherwise>Yes</c:otherwise></c:choose></display-el:column>
      <display-el:column title="Site Name">
      <a href="<%= request.getContextPath() %>/admin/ManageSites.do?method=update&siteId=<c:out value='${site.siteId}'/>" ><c:out value="${site.name}" /></a></display-el:column>
@@ -86,20 +64,13 @@
      <display-el:column property="city" title="City" />
      <display-el:column property="province" title="Province" />
      <display-el:column property="postal" title="Postal Code" />
-   <% if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) { %>  
+   <% if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) { %>
      <display-el:column property="providerIdFrom" title="ProviderID From" />
-     <display-el:column property="providerIdTo" title="ProviderID To" />  
-   <% } %>   
+     <display-el:column property="providerIdTo" title="ProviderID To" />
+   <% } %>
   </display-el:table>
-		
 
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
 
-		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
-	</tr>
-</table>
+
 
 </html:html>

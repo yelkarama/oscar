@@ -49,7 +49,8 @@
 	<title><bean:message key="admin.admin.surveillanceConfig"/></title>
 	<link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/library/angular.min.js"></script>	
 	<script type="text/javascript" src="<%=request.getContextPath() %>/library/ui-bootstrap-tpls-0.11.0.js"></script>	

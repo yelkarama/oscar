@@ -50,32 +50,36 @@
 <head>
 
 <title>Manage Faxes</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">                                
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.min.css" type="text/css" />
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css" type="text/css" />
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" type="text/css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" />
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<!-- <script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script> -->
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js" ></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
 
 
 <script type="text/javascript">
-	
-	
+
+
 	$(document).ready(function() {
 		$( document ).tooltip();
-		
+
 		var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
-		
+
 		$("#autocompletedemo").autocomplete( {
 			source: url,
 			minLength: 2,
-			
+
 			focus: function( event, ui ) {
 				$("#autocompletedemo").val( ui.item.label );
 				return false;
@@ -87,37 +91,37 @@
 			}
 		});
 
-		$( "#reportForm" ).submit(function( event ) {
+		$( "#reportForm" ).on( "submit",function( event ) {
 			// Stop form from submitting normally
 			event.preventDefault();
 			// Get some values from elements on the page:
 			var data = $( this ).serialize();
 			var url = $(this).attr("action");
-			
+
 			var post = $.post(url,data);
-			
-			post.done(function( resultdata ) {				
+
+			post.done(function( resultdata ) {
 				$("#results").empty().append(resultdata);
 				$("#preview").empty();
 			});
-			
+
 			return false;
 		});
 	});
-	
+
 	function view(id) {
 		var url = "<%=request.getContextPath()%>/admin/viewFax.jsp";
 		var data = "jobId=" + id;
-		
+
 		var post = $.post(url,data);
-		
+
 		post.done(function( resultdata ) {
 			$("#preview").empty().append( resultdata );
 		});
-		
+
 		return false;
 	}
-	
+
 	function _zoom(d) {
 		var img = $(d).attr('src');
 		var modal = $('img[src$="' + img + '"]').clone();
@@ -126,7 +130,7 @@
 
 		var t = new Image();
 		t.src = img;
-		
+
 		var height = t.height;
 		var width = t.width;
 
@@ -135,20 +139,20 @@
 			modal: true,
 			draggable: false,
 			resizable: false,
-			width: width 
+			width: width
 		});
 	}
-	
+
 	function resend(id, faxNumber, status) {
-		
+
 		var answer = prompt("Is this the correct fax number?", faxNumber);
-		
+
 		if( answer == null ) {
 			return false;
 		}
-				
+
 		if( answer.match("^\\d{10,11}$") ) {
-			
+
 			var url = $("#reportForm").attr("action");
 			var data = "method=ResendFax&jobId="+id+"&faxNumber="+answer;
 
@@ -158,28 +162,28 @@
 				data: data,
 				dataType: "json",
 				success: function(data){
-					
+
 					if( data.success ) {
 						$('#'+status).text("SENT");
 					}
 					else {
-						alert("An error occured trying to resend your fax.  Please contact your system administrator"); 
+						alert("An error occured trying to resend your fax.  Please contact your system administrator");
 					}
 				}});
 		}
 		else {
 			alert("Fax numbers must be input as 11231234567");
-	
+
 		}
-		
+
 		return false;
-			
+
 	}
-	
+
 	function cancel(jobId,status) {
-		
+
 		var answer = confirm("Are you sure you want to remove this fax from the queue?");
-		
+
 		if( answer == null ) {
 			return false;
 		}
@@ -193,50 +197,50 @@
 			data: data,
 			dataType: "json",
 			success: function(data){
-				
+
 				if( data.success ) {
 					$('#'+status).text("CANCELLED");
 				}
 				else {
- 					alert("OSCAR WAS UNABLE TO CANCEL THE FAX"); 
+ 					alert("OSCAR WAS UNABLE TO CANCEL THE FAX");
 				}
 			}});
-		
+
 		return false;
 	}
-	
+
 	function complete(id, status ) {
-		
+
 		var answer = confirm("Are you sure you want to mark this fax as completed?");
-		
-		if( answer == null ) {			
+
+		if( answer == null ) {
 			return false;
 		}
-		
+
 		var url = $("#reportForm").attr("action");
 		var data = "method=SetCompleted&jobId="+id;
 
 		$.ajax({
 			url: url,
 			method: 'POST',
-			data: data,			
+			data: data,
 			success: function(data){
-				
+
 				$('#'+status).text("RESOLVED");
-				
+
 			}});
 	}
 
 	function resetForm() {
 		$("#demographic_no").val( "" );
-		$("#reportForm").trigger("reset");	
+		$("#reportForm").trigger("reset");
 		$("#preview").empty();
 		$("#results").empty();
 
-		
+
 		return false;
 	}
-	
+
 </script>
 <style type="text/css">
 	form {
@@ -251,11 +255,11 @@
 
 <div id="bodyrow" class="container-fluid">
 	<div id="bodycolumn" class="span12">
-	
+
 		<form id="reportForm" action="<%=request.getContextPath()%>/admin/ManageFaxes.do">
 
 		<input type="hidden" name="method" value="fetchFaxStatus" />
-	
+
 		<div class="row">
 			<legend>Search Faxes</legend>
 			 <div class="input-append span3" >
@@ -263,11 +267,11 @@
                 	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="From" id="dateBegin" name="dateBegin" />
                 	<span class="add-on">
                 		<i class="icon-calendar"></i>
-                	</span> 
-              </div>  
-                
-              <div class="input-append span3" >  
-                            
+                	</span>
+              </div>
+
+              <div class="input-append span3" >
+
                 	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="To" id="dateEnd" name="dateEnd" />
                 	<span class="add-on">
                 		<i class="icon-calendar"></i>
@@ -276,24 +280,24 @@
 			 <div class="span6">
 				<input class="span6" type="text" placeholder="Pt. Name (last, first)" id="autocompletedemo" />
 				<input type="hidden" id="demographic_no" name="demographic_no" value="">
-	         </div> 
-      
-	    </div>         
-		
+	         </div>
+
+	    </div>
+
 		<div class="row">
 			<div class="span5">
 			<select class="span5" name="oscarUser">
 				<option value="-1">Provider</option>
-				
+
 		<%
 			ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
 			List<ProviderData> providerDataList = providerDataDao.findAll(false);
 			Collections.sort(providerDataList, ProviderData.LastNameComparator);
-			
+
 			for( ProviderData providerData : providerDataList ) {
 		%>
 				<option value="<%=providerData.getId()%>"><%=providerData.getLastName() + ", " + providerData.getFirstName()%></option>
-			
+
 		<%
 			}
 		%>
@@ -305,7 +309,7 @@
 		<%
 			FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
 			List<FaxConfig> faxConfigList = faxConfigDao.findAll(null, null);
-			
+
 			for( FaxConfig faxConfig : faxConfigList ) {
 		%>
 				<option value="<%=faxConfig.getFaxUser()%>"><%=faxConfig.getFaxUser() %></option>
@@ -317,27 +321,27 @@
 			<div class="span2">
 			<select class="span2" name="status">
 				<option value="-1">Status</option>
-			
+
 		<%
 			for( FaxJob.STATUS status : FaxJob.STATUS.values() ) {
 		%>
 				<option value="<%=status%>"><%=status%></option>
-		<%	    
+		<%
 			}
 		%>
 			</select>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<div class="span12">
 			<input class="btn btn-default" type="submit" value="Fetch Faxes"/>
 			<input class="btn btn-default" type="button" value="Reset" onclick="return resetForm();"/>
 			</div>
 		</div>
-		
+
 		</form>
-		
+
 		<div class="row">
 			<div class="span8">
 				<div class="row">
@@ -355,7 +359,7 @@
 					</div>
 				</div>
 			</div>
-		</div>	
+		</div>
 
 </div>	<!-- body column -->
 </div> <!-- body row -->
@@ -364,7 +368,7 @@
 	var startDate = $("#dateBegin").datepicker({
 		format : "yyyy-mm-dd"
 	});
-	
+
 	var endDate = $("#dateEnd").datepicker({
 		format : "yyyy-mm-dd"
 	});

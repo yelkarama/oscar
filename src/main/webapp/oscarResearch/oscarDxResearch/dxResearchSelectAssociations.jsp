@@ -33,7 +33,8 @@
 <link rel="stylesheet" type="text/css" href="dxResearch.css">
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 
 <title><bean:message
@@ -62,7 +63,7 @@ function populateListOfAssociations() {
 $(document).ready(function() {
 
 	//clear list
-	$("#clear_list").click(function(){
+	$("#clear_list").on( "click", function(){
 		if(confirm('Are you sure you want to delete all associations?')) {
 			//$.get("<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=clearAssociations");
 			$.ajax({
@@ -78,13 +79,13 @@ $(document).ready(function() {
 	});
 
 	//export
-	$("#export").click(function(){
+	$("#export").on( "click", function(){
 		window.open("<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=export");
 		
 	});
 
 	//automatch
-	$("#automatch").click(function(){
+	$("#automatch").on( "click", function(){
 		if(confirm('This function will remove and re-generate all entries in the disease registry where the entry was created by an association.\nWould you like to continue?')) {
 			$.getJSON("<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=autoPopulateAssociations",
 			        function(data,textStatus){

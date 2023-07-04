@@ -17,6 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*, oscar.appt.*, org.oscarehr.common.dao.AppointmentTypeDao, org.oscarehr.common.model.AppointmentType, org.oscarehr.util.SpringUtils" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -24,9 +25,9 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ include file="../admin/dbconnection.jsp" %>
 <%--RJ 07/07/2006 --%>
-<%  
+<%
   String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-  
+
   String sError = "";
   if (request.getParameter("err")!=null &&  !request.getParameter("err").equals(""))
   	sError = "Error: " + request.getParameter("err");
@@ -39,16 +40,17 @@
 <%@ page import="oscar.login.*" %>
 <%@ page import="oscar.log.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-  <html>
-    <head>
+<html:html locale="true">
+<head>
       <title>
         APPOINTMENT TYPES
       </title>
-<script language="JavaScript">
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<script>
 	function popupPage(vheight,vwidth,title,varpage) {
 		var page = "" + varpage;
 		var leftVal = (screen.width-850) / 2;
-		var topVal = (screen.height-300) / 2;  		
+		var topVal = (screen.height-300) / 2;
 		windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,top="+topVal+",left="+leftVal;
 		var popup=window.open(page, title, windowprops);
   		if (popup != null) {
@@ -105,172 +107,155 @@
 		  if(obj.value == '') {
 		    alert("Please enter value in Names field");
 			onBlockFieldFocus(obj);
-		  } 
+		  }
 		}
 	}
 </script>
+<script>
+function delType(url) {
+var answer = confirm("Type will be deleted! Are you sure?")
+	if (answer){
+		window.location = url;
+	}
+}
+</script>
+
     </head>
-    <body topmargin="0" leftmargin="0" rightmargin="0">
-	<table width="100%">
-	  <tr><td colspan="3" height="30"></td></tr>
-	  <tr>	
-	  <td width="100">&nbsp;</td>
-	  <td align="center">
-      <table border="0" cellspacing="0" cellpadding="0" width="100%">
-        <tr bgcolor="#486ebd" height="30">
-          <th align="LEFT" width="90%">
-            <font face="Helvetica" color="#FFFFFF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<html:errors/>
-            </font>
-          </th>
-          <td nowrap>
-            <font size="-1" color="#FFFFFF">&nbsp;
-            </font>
-          </td>
-        </tr>
-      </table>
-      <table width="100%" border="0" bgcolor="ivory" cellspacing="1" cellpadding="1">
-          <tr bgcolor="mediumaquamarine">
-            <th align="right"></th>
-			<th colspan="6" align="left">
-              &nbsp;&nbsp;&nbsp;&nbsp; Appointment Types
-            </th>
-          </tr>
-          <tr>
-            <td colspan=7>
-              <center>
-				<html:form action="appointment/appointmentTypeAction">  
-  					<input TYPE="hidden" NAME="oper" VALUE="save" />
-  					<input TYPE="hidden" NAME="id" VALUE="<bean:write name="AppointmentTypeForm" property="id"/>" /> 
-  					<table border=0 cellspacing=0 cellpadding=0 width="100%" > 
-    					<tr  bgcolor="#CCCCFF"> 
-      						<th><font face="Helvetica">EDIT APPOINTMENT TYPE</font></th> 
-    					</tr> 
-  					</table> 
-  					<table border="0" cellpadding="0" cellspacing="0" width="100%"> 
-    					<tr> 
-      						<td width="100%"> 
-      							<table BORDER="0" CELLPADDING="0" CELLSPACING="1" WIDTH="100%" BGCOLOR="#C0C0C0"> 
-          							<tr valign="middle" BGCOLOR="#EEEEFF"> 
-            							<td width="30%"> <div align="right"><font face="arial">Name:</font></div></td> 
-			            				<td width="25%"> <INPUT TYPE="TEXT" NAME="name" VALUE="<bean:write name="AppointmentTypeForm" property="name"/>" WIDTH="10" HEIGHT="20" border="0" hspace="2" maxlength="50" onChange="checkTimeTypeIn(this)"> 
-            							<td width="20%"> <div align="right"><font face="arial">Duration:</font></div></td> 
-			            				<td width="25%"> <INPUT TYPE="TEXT" NAME="duration" VALUE="<bean:write name="AppointmentTypeForm" property="duration"/>" WIDTH="5" HEIGHT="20" border="0"  onChange="checkTimeTypeIn(this)"> </td> 
-          							</tr> 
-          							<tr valign="middle" BGCOLOR="#EEEEFF"> 
-            							<td > <div align="right"><font face="arial"><font face="arial">Reason:</font></font></div></td> 
-            							<td > <TEXTAREA NAME="reason" COLS="40" ROWS="2" border="0" hspace="2"><bean:write name="AppointmentTypeForm" property="reason"/></TEXTAREA> </td> 
-            							<td > <div align="right"><font face="arial">Notes:</font></div></td> 
-            							<td > <TEXTAREA NAME="notes"  COLS="40" ROWS="2" border="0" hspace="2"><bean:write name="AppointmentTypeForm" property="notes"/></TEXTAREA> </td> 
-          							</tr> 
-          							<tr valign="middle" BGCOLOR="#EEEEFF" > 
-            							<td align="right"> <font face="arial">Location:</font> </td>
+    <body>
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<html:errors/></span>
+<h3>Appointment Types</h3><br>
+	<table style="width:100%;">
+	  <tr>
+	  <td>&nbsp;</td>
+	  <td >
+
+
+				<html:form action="appointment/appointmentTypeAction">
+  					<input TYPE="hidden" NAME="oper" VALUE="save" >
+  					<input TYPE="hidden" NAME="id" VALUE="<bean:write name="AppointmentTypeForm" property="id"/>" >
+  					<table style="width:100%;" >
+    					<tr>
+      						<th>EDIT APPOINTMENT TYPE</th>
+    					</tr>
+  					</table>
+  					<table style="width:100%;">
+    					<tr>
+      						<td style="width:100%;">
+      							<table style="width:100%;" >
+          							<tr>
+            							<td style="text-align:right;"> Name:</td>
+			            				<td> <INPUT TYPE="TEXT" NAME="name" VALUE="<bean:write name="AppointmentTypeForm" property="name"/>" maxlength="50" onChange="checkTimeTypeIn(this)">
+            							<td style="text-align:right;">Duration:</td>
+			            				<td> <INPUT TYPE="TEXT" NAME="duration" VALUE="<bean:write name="AppointmentTypeForm" property="duration"/>" onChange="checkTimeTypeIn(this)"> </td>
+          							</tr>
+          							<tr >
+            							<td style="text-align:right;">Reason:</td>
+            							<td > <TEXTAREA NAME="reason" COLS="40" ROWS="2"><bean:write name="AppointmentTypeForm" property="reason"/></TEXTAREA> </td>
+            							<td style="text-align:right;">Notes:</td>
+            							<td > <TEXTAREA NAME="notes"  COLS="40" ROWS="2"><bean:write name="AppointmentTypeForm" property="notes"/></TEXTAREA> </td>
+          							</tr>
+          							<tr>
+            							<td style="text-align:right;">Location:</td>
             							<td>
-            							  <logic:notEmpty name="locationsList"> 
+            							  <logic:notEmpty name="locationsList">
 											<html:select property="location" >
 												<html:option value="0">Select Location</html:option>
 												<logic:iterate id="location" name="locationsList">
 												    <bean:define id="locValue" ><bean:write name='location' property='label'/></bean:define>
 													<html:option value="<%= locValue %>">
 														<bean:write name="location" property="label"/>
-													</html:option>	
+													</html:option>
 												</logic:iterate>
 											</html:select>
 										  </logic:notEmpty>
 										  <logic:empty name="locationsList">
-            								<INPUT TYPE="TEXT" NAME="location" VALUE="<bean:write name="AppointmentTypeForm" property="location"/>" WIDTH="30" HEIGHT="20" border="0" hspace="2" maxlength="30" > 
+            								<INPUT TYPE="TEXT" NAME="location" VALUE="<bean:write name="AppointmentTypeForm" property="location"/>" maxlength="30" >
 										  </logic:empty>
-										</td>	
-            							<td > <div align="right"><font face="arial">Resources:</font></div></td> 
-            							<td ><INPUT TYPE="TEXT" NAME="resources" VALUE="<bean:write name="AppointmentTypeForm" property="resources"/>" WIDTH="10" HEIGHT="20" maxlength="10" border="0" hspace="2" > </td> 
-          							</tr> 
+										</td>
+            							<td style="text-align:right">Resources:</td>
+            							<td ><INPUT TYPE="TEXT" NAME="resources" VALUE="<bean:write name="AppointmentTypeForm" property="resources"/>" maxlength="10" > </td>
+          							</tr>
         						</table>
-        					</td> 
-    					</tr> 
+        					</td>
+    					</tr>
   					</table>
-  					<table border="0" cellpadding="0" cellspacing="0" width="100%"> 
-    					<tr bgcolor="#CCCCFF"> 
-      						<TD nowrap align="center"> <html:submit value="    Save  "  /> 
-      						</TD> 
-    					</tr> 
-  					</table> 
+  					<table style="width:100%;">
+    					<tr >
+      						<TD> <input type="submit" value="Save"  class="btn btn-primary" >
+      						</TD>
+    					</tr>
+  					</table>
 				</html:form>
-	          </center>
             </td>
           </tr>
-          <tr bgcolor="silver">
-            <th width="15%" nowrap>
+</table>
+<br><br>
+<table class="table table-hover table-striped table-condensed">
+        <thead>
+          <tr>
+            <th>
               Name
             </th>
-            <th width="5%" nowrap>
+            <th>
               Duration
             </th>
-            <th width="20%" nowrap>
+            <th>
               Reason
             </th>
-            <th width="20%" nowrap>
+            <th>
               Notes
             </th>
-            <th width="15%" nowrap>
+            <th>
               Location
             </th>
-            <th width="15%" nowrap>
+            <th>
               Resources
             </th>
-            <th width="10%" nowrap>
+            <th>
             </th>
           </tr>
-<% 
+        </thead>
+        <tbody>
+<%
 boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
 List<AppointmentType> types = new ArrayList<AppointmentType>();
 AppointmentTypeDao dao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
 types = dao.listAll();
 
   int rowNum = 0;
-  String color = "#ccCCFF";
-  String bgColor = "#EEEEFF";
   if(types != null && types.size()>0) {
   	for(AppointmentType type : types) {
-		bgColor = bgColor.equals("#EEEEFF")?color:"#EEEEFF";
-%> 
-          <tr bgcolor="<%=bgColor%>">
+%>
+          <tr>
             <td>
               <%= type.getName() %>
             </td>
-            <th >
+            <td>
               <%= Integer.toString(type.getDuration()) %> min
-            </th>
-            <th >
+            </td>
+            <td>
               <%= type.getReason() %>
-            </th>
-            <th >
+            </td>
+            <td>
               <%= type.getNotes() %>
-            </th>
-            <th nowrap>
+            </td>
+            <td>
               <%= type.getLocation() %>
-            </th>
-            <th nowrap>
+            </td>
+            <td>
               <%= type.getResources() %>
-            </th>
-            <th nowrap>
+            </td>
+            <td>
               <a href="appointmentTypeAction.do?oper=edit&no=<%= type.getId() %>">edit</a>
               &nbsp;&nbsp;<a href="javascript:delType('appointmentTypeAction.do?oper=del&no=<%= type.getId() %>')">delete</a>
-            </th>
+            </td>
           </tr>
 <%
   	}
   }
 %>
+            </tbody>
         </table>
-	  <td width="100">&nbsp;</td>
-	  </tr>
-	</table>
+
 	</body>
-<script type="text/javascript">
-function delType(url) {
-var answer = confirm("Type will be deleted! Are you sure?")
-	if (answer){
-		window.location = url;
-	} 
-}
-</script>
-  </html>
+</html:html>

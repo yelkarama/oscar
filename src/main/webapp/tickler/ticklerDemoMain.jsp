@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -44,11 +44,11 @@
 	String user_no = (String) session.getAttribute("user");
   int  nItems=0;
      String strLimit1="0";
-    String strLimit2="5"; 
+    String strLimit2="5";
     if(request.getParameter("limit1")!=null) strLimit1 = request.getParameter("limit1");
   if(request.getParameter("limit2")!=null) strLimit2 = request.getParameter("limit2");
   String demoview = request.getParameter("demoview")==null?"all":request.getParameter("demoview") ;
-  
+
 //Retrieve encounter id for updating encounter navbar if info this page changes anything
 String parentAjaxId;
 if( request.getParameter("parentAjaxId") != null )
@@ -57,7 +57,7 @@ else if( request.getAttribute("parentAjaxId") != null )
     parentAjaxId = (String)request.getAttribute("parentAjaxId");
 else
     parentAjaxId = "";
-    
+
 String updateParent;
 if( request.getParameter("updateParent") != null )
     updateParent = request.getParameter("updateParent");
@@ -90,7 +90,7 @@ else
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
-	
+
 	TicklerLinkDao ticklerLinkDao = (TicklerLinkDao) SpringUtils.getBean("ticklerLinkDao");
 %>
 
@@ -118,12 +118,64 @@ if(labReqVer.equals("")) {labReqVer="07";}
 <html:html locale="true">
 
 <head>
- <script src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
- <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
+<title><bean:message key="tickler.ticklerDemoMain.title" /></title>
+ <script src="<%=request.getContextPath()%>/js/global.js"></script>
+ <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
+ <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
  <script>
-jQuery.noConflict();
-</script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+    jQuery.noConflict();
+ </script>
+
+
+ <link rel="stylesheet" href="<%=request.getContextPath()%>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+ <link rel="stylesheet" href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+ <style>
+	td.lilac, td.white      {
+        color: #000000;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+	td.lilacRed, td.whiteRed {
+        color: red;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+	td.lilacRed A:link, td.whiteRed a:link  {
+        font-weight: normal;
+        color: red;
+    }
+	td.lilacRed A:visited, td.whiteRed a:visited  {
+        font-weight: normal;
+        color: red;
+    }
+	td.lilacRed A:hover, td.whiteRed a:hover {
+        font-weight: normal;
+        color: red;
+        background-color: #CDCFFF  ;
+    }
+    td.lilacRed A:focus, td.whiteRed a:focus    {
+        font-weight: bold;
+        color: white;
+        background-color: #666699  ;
+    }
+	td.whiteRed, td.lilacRed {
+        font-weight: normal;
+        color: red;
+        background-color: #FFFFFF;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    .message {
+        font-style: italic;
+        font-size: 90%;
+     }
+
+ </style>
+
+ <link rel="stylesheet" type="text/css" media="all" href="../css/print.css"  />
+ <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
 <script>
 jQuery(document).ready(function() {
@@ -132,90 +184,69 @@ jQuery(document).ready(function() {
 		height: 340,
 		width: 450,
 		modal: true,
-		
+
 		close: function() {
-			
+
 		}
-	});		
-		
+	});
+
 });
 
 function openNoteDialog(demographicNo, ticklerNo) {
 	jQuery("#tickler_note_demographicNo").val(demographicNo);
 	jQuery("#tickler_note_ticklerNo").val(ticklerNo);
-	
-	//is there an existing note?
+
+    	//is there an existing note?
 	jQuery.ajax({url:'../CaseManagementEntry.do',
 		data: { method: "ticklerGetNote", ticklerNo: jQuery('#tickler_note_ticklerNo').val()  },
-		async:false, 
-		dataType: 'json',
 		success:function(data) {
-			if(data != null) {
-				jQuery("#tickler_note_noteId").val(data.noteId);
-				jQuery("#tickler_note").val(data.note);
-				jQuery("#tickler_note_revision").html(data.revision);
-				jQuery("#tickler_note_revision_url").attr('onclick','window.open(\'../CaseManagementEntry.do?method=notehistory&noteId='+data.noteId+'\');return false;');
-				jQuery("#tickler_note_editor").html(data.editor);
-				jQuery("#tickler_note_obsDate").html(data.obsDate);
-			}
-		},
-		error: function(jqXHR, textStatus, errorThrown ) {
-			alert(errorThrown);
+            //console.log(data);
+            try {
+                note = JSON.parse(data);
+			    jQuery("#tickler_note_noteId").val(note.noteId);
+			    jQuery("#tickler_note").val(note.note);
+			    jQuery("#tickler_note_revision").html(note.revision);
+			    jQuery("#tickler_note_revision_url").attr('onclick','window.open(\'../CaseManagementEntry.do?method=notehistory&noteId='+note.noteId+'\');return false;');
+			    jQuery("#tickler_note_editor").html(note.editor);
+			    jQuery("#tickler_note_obsDate").html(note.obsDate);
+            } catch(e) {
+                console.log("No data");
+
+            }
+
 		}
+
 		});
-	
-	jQuery( "#note-form" ).dialog( "open" );
+		jQuery( "#note-form" ).dialog( "open" );
+
 }
 function closeNoteDialog() {
 	jQuery( "#note-form" ).dialog( "close" );
 }
 function saveNoteDialog() {
-	//alert('not yet implemented');
+
 	jQuery.ajax({url:'../CaseManagementEntry.do',
 		data: { method: "ticklerSaveNote", noteId: jQuery("#tickler_note_noteId").val(), value: jQuery('#tickler_note').val(), demographicNo: jQuery('#tickler_note_demographicNo').val(), ticklerNo: jQuery('#tickler_note_ticklerNo').val()  },
-		async:false, 
+		async:false,
 		success:function(data) {
-		 // alert('ok');		  
+		//  alert('ok');
 		},
 		error: function(jqXHR, textStatus, errorThrown ) {
 			alert(errorThrown);
 		}
-		});	
-	
+		});
+
 	jQuery( "#note-form" ).dialog( "close" );
 }
 
 
 
 </script>
-  
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
-<title><bean:message key="tickler.ticklerDemoMain.title" /></title>
-<script language="JavaScript">
-<!--
 
 
-function selectprovider(s) {
-  if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
-  else a = self.location.href;
-	self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
-}
-function openBrWindow(theURL,winName,features) {
-  window.open(theURL,winName,features);
-}
 
-function refresh() {
-  var u = self.location.href;  
-  //if(u.lastIndexOf("view=1") > 0) {
-  //  self.location.href = u.substring(0,u.lastIndexOf("view=1")) + "view=0" + u.substring(eval(u.lastIndexOf("view=1")+6));
-  //} else {
-    self.location.reload();
-  //}
-}
-//-->
-</script>
 <script>
-   
+
     function Check(e)
     {
 	e.checked = true;
@@ -307,7 +338,7 @@ function refresh() {
     function Delete()
     {
 	var ml=document.messageList;
-	ml.DEL.value = "1"; 
+	ml.DEL.value = "1";
 	ml.submit();
     }
 
@@ -359,9 +390,9 @@ function refresh() {
 	    ml.submit();
 	}
     }
-    
+
     function allYear()
-    {       
+    {
     var newD = "3000-12-31";
     var beginD = "2000-01-01"
     	document.serviceform.xml_appointment_date.value = newD;
@@ -369,11 +400,11 @@ function refresh() {
 }
 
 function setup() {
-    
+
     var parentId = "<%=parentAjaxId%>";
     var Url = window.opener.URLs;
-    var update = "<%=updateParent%>";    
-    
+    var update = "<%=updateParent%>";
+
     if( update == "true" && parentId != "" && !window.opener.closed ) {
         window.opener.document.forms['encForm'].elements['reloadDiv'].value=parentId;
         window.opener.updateNeeded = true;
@@ -381,8 +412,8 @@ function setup() {
     else if( update == "true" && parentId == "" && !window.opener.closed )
         window.opener.location.reload();
   }
-  
-  
+
+
 function generateRenalLabReq(demographicNo) {
 	var url = '<%=request.getContextPath()%>/form/formlabreq<%=labReqVer%>.jsp?demographic_no='+demographicNo+'&formId=0&provNo=<%=session.getAttribute("user")%>&fromSession=true';
 	jQuery.ajax({url:'<%=request.getContextPath()%>/renal/Renal.do?method=createLabReq&demographicNo='+demographicNo,async:false, success:function(data) {
@@ -396,86 +427,29 @@ function reportWindow(page) {
     popup.focus();
 }
 </script>
-<style type="text/css">
-	<!--
-	A, BODY, INPUT, OPTION ,SELECT , TABLE, TEXTAREA, TD, TR {font-family:tahoma,sans-serif; font-size:11px;}
 
-	TD.black              {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #666699   ;}
-	TD.lilac              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;  padding-top: 4px;padding-bottom: 4px;}
-	TD.lilacRed              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;  padding-top: 4px;padding-bottom: 4px;}
-        
-	TD.boldlilac          {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:hover      {font-weight: normal;                                                                            color: #000000; background-color: #CDCFFF  ;}
-        TD.lilac A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-        
-	TD.lilacRed A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;}
-	TD.lilacRed A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;}
-	TD.lilacRed A:hover      {font-weight: normal;                                                                            color: red; background-color: #CDCFFF  ;}
-        TD.lilacRed A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-        
-	TD.whiteRed              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;  padding-top: 4px;padding-bottom: 4px;}
 
-	TD.white              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;  padding-top: 4px;padding-bottom: 4px;}
-	TD.heading            {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FDCB03; background-color: #666699   ;}
-	H2                    {font-weight: bold  ; font-size: 12pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H3                    {font-weight: bold  ; font-size: 10pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H4                    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H6                    {font-weight: bold  ; font-size: 7pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	A:link                {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #336666; }
-	A:visited             {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #336666; }
-	A:hover               {                                                                            color: red; background-color: #CDCFFF  ;}
-	TD.cost               {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-	TD.black A:link       {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #FFFFFF;}
-	TD.black A:visited    {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #FFFFFF;}
-	TD.black A:hover      {                                                                            color: #FDCB03; background-color: #FFFFFF;}
-        TD.title              {font-weight: bold  ; font-size: 10pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-        
-        TD.white A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	TD.white A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	TD.white A:hover      {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #CDCFFF  ;}
-        TD.white A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-	
-        TD.whiteRed A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-		TD.whiteRed A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-		TD.whiteRed A:hover      {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #CDCFFF  ;}
-        TD.whiteRed A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-	#navbar               {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FDCB03; background-color: #666699   ;}
-	SPAN.navbar A:link    {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #666699   ;}
-	SPAN.navbar A:visited {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #EFEFEF; background-color: #666699   ;}
-	SPAN.navbar A:hover   {                                                                            color: #FDCB03; background-color: #666699   ;}
-	SPAN.bold             {font-weight: bold  ;                                                                                            background-color: #666699   ;}
-	.sbttn {background: #EEEEFF;border-bottom: 1px solid #104A7B;border-right: 1px solid #104A7B;border-left: 1px solid #AFC4D5;border-top:1px solid #AFC4D5;color:#000066;height:19px;text-decoration:none;cursor: hand}
-.mbttn {background: #D7DBF2;border-bottom: 1px solid #104A7B;border-right: 1px solid #104A7B;border-left: 1px solid #AFC4D5;border-top:1px solid #AFC4D5;color:#000066;height:19px;text-decoration:none;cursor: hand}
-
-	-->
-</style>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-<link rel="stylesheet" type="text/css" media="all" href="../css/print.css"  />
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<!--<oscar:customInterface section="ticklerMain"/>-->
 </head>
-<oscar:customInterface section="ticklerMain"/>
-<body onload="setup();" bgcolor="#FFFFFF" text="#000000" leftmargin="0" rightmargin="0" topmargin="10">
+<body onload="setup();" >
 
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr bgcolor="#000000">
-		<td height="40" width="10%" class="noprint"><input type='button' name='print' class="btn"
-			value=<bean:message key="global.btnPrint"/>
-			' onClick='window.print()' class="sbttn"></td>
-		<td width="90%" style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message
+<table style="width:100%" >
+	<tr>
+		<td style="width:10%" class="noprint"><input type='button' name='print' class="btn sbttn"
+			value="<bean:message key="global.btnPrint"/>"
+			onClick='window.print()'></td>
+		<td style="width:90%;text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:black"><bean:message
 			key="tickler.ticklerDemoMain.msgTitle" />
 		</td>
 	</tr>
 </table>
 <div class="container-fluid well" >
 <form name="serviceform" method="get" action="ticklerDemoMain.jsp">
-<table width="100%" border="0" bgcolor="#EEEEFF">
+<table style="width:100%;">
 	<tr class="noprint">
-		<td width="20%">
-		<div align="right"><font
-			face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b><bean:message
+		<td style="width:20%;">
+		<div><b><bean:message
 			key="tickler.ticklerDemoMain.formMoveTo" /> </b> <select
 			name="ticklerview">
 			<option value="A" <%=ticklerview.equals("A")?"selected":""%>><bean:message
@@ -484,19 +458,19 @@ function reportWindow(page) {
 				key="tickler.ticklerDemoMain.formCompleted" /></option>
 			<option value="D" <%=ticklerview.equals("D")?"selected":""%>><bean:message
 				key="tickler.ticklerDemoMain.formDeleted" /></option>
-		</select> </font></div>
+		</select></div>
 		</td>
-		<td width="30%">
-		<div align="center"><bean:message
+		<td style="width:30%;">
+		<div style="text-align: center;" ><bean:message
 			key="tickler.ticklerDemoMain.btnBegin" />:<input type="date" style="height:26px;" name="xml_vdate"
 			value="<%=xml_vdate%>">  </div>
 		</td>
-		<td width="30%"><bean:message
+		<td style="width:30%;"><bean:message
 			key="tickler.ticklerDemoMain.btnEnd" />:
             <input type="date" style="height:26px;" name="xml_appointment_date"
 			value="<%=xml_appointment_date%>"> </td>
-		<td width="20%">
-		<div align="right"><input type="hidden" name="demoview"
+		<td style="width:20%;">
+		<div style="text-align: right;"><input type="hidden" name="demoview"
 			value="<%=demoview%>"> <input type="hidden" name="Submit"
 			value=""> <input type="hidden" name="parentAjaxId"
 			value="<%=parentAjaxId%>"> <input type="submit"
@@ -508,52 +482,46 @@ function reportWindow(page) {
 	</tr>
 </table>
 	</form>
-	
-	<form name="ticklerform" method="post" action="dbTicklerDemoMain.jsp">
 
-<table bgcolor=#666699 border=0 cellspacing=0 width=100%>
-	
-	<tr>
-		<td><input type="hidden" name="demoview" value="<%=demoview%>">
+	<form name="ticklerform" method="post" action="dbTicklerDemoMain.jsp">
+        <input type="hidden" name="demoview" value="<%=demoview%>">
 		<input type="hidden" name="parentAjaxId" value="<%=parentAjaxId%>">
 		<input type="hidden" name="updateParent" value="true">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%">
-			<TR bgcolor=#666699>
-				<TD width="3%" class="noprint"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B></B></FONT></TD>
-				<TD width="3%" class="noprint"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B></B></FONT></TD>
-				<TD width="17%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.msgDemographicName" /></B></FONT></TD>
-				<TD width="8%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.MRP" /></B></FONT></TD>
-				<TD width="9%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.msgDate" /></B></FONT></TD>
-				<TD width="9%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.msgCreationDate" /></B></FONT></TD>
-				<TD width="6%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.Priority" /></B></FONT></TD>
-				<TD width="12%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.taskAssignedTo" /></B></FONT></TD>
+<table style="width:100%;">
 
-				<TD width="6%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.msgStatus" /></B></FONT></TD>
-				<TD width="39%"><FONT FACE="verdana,arial,helvetica"
-					COLOR="#FFFFFF" SIZE="-2"><B><bean:message
-					key="tickler.ticklerMain.msgMessage" /></B></FONT></TD>
-				<td COLOR="#FFFFFF" SIZE="-2" class="noprint">&nbsp;</td>
-			</TR>
+	<tr>
+		<td>
+
+
+		<table id="ticklerTable" class="table table-striped table-condensed">
+            <thead>
+			<tr>
+				<th style="width:3%;" class="noprint">&nbsp;</th>
+				<th style="width:3%;" class="noprint">&nbsp;</th>
+				<th style="width:12%;"><bean:message
+					key="tickler.ticklerMain.msgDemographicName" /></th>
+				<th style="width:12%;"><bean:message
+					key="tickler.ticklerMain.MRP" /></th>
+				<th style="width:9%;"><bean:message
+					key="tickler.ticklerMain.msgDate" /></th>
+				<th style="width:9%;"><bean:message
+					key="tickler.ticklerMain.msgCreationDate" /></th>
+				<th style="width:6%;"><bean:message
+					key="tickler.ticklerMain.Priority" /></th>
+				<th style="width:12%;"><bean:message
+					key="tickler.ticklerMain.taskAssignedTo" /></th>
+				<th style="width:6%;"><bean:message
+					key="tickler.ticklerMain.msgStatus" /></th>
+				<th style="width:29%;"><bean:message
+					key="tickler.ticklerMain.msgMessage" /></th>
+				<th style="width:3%;" class="noprint">&nbsp;&nbsp;&nbsp;</th>
+			</tr>
+            </thead>
+            <tbody>
 			<%
 				String vGrantdate = "1980-01-07 00:00:00.0";
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:ss:mm.SSS", request.getLocale()); 
-				 
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:ss:mm.SSS", request.getLocale());
+
 
 				String dateBegin = xml_vdate;
 				String dateEnd = xml_appointment_date;
@@ -566,11 +534,12 @@ function reportWindow(page) {
 				List<Tickler> ticklers = ticklerManager.search_tickler_bydemo(loggedInInfo, request.getParameter("demoview")==null?null: Integer.parseInt(request.getParameter("demoview")),ticklerview,ConversionUtils.fromDateString(dateBegin),ConversionUtils.fromDateString(dateEnd));
 				String rowColour = "lilac";
 				for (Tickler t:ticklers) {
+
 				    Demographic d = demographicDao.getDemographicById(t.getDemographicNo());
 				    Provider p = null;
 				    Provider assignedP = null;
 					String providerNumber = d.getProviderNo();
-				    
+
 				    if(d != null && providerNumber != null && ! providerNumber.isEmpty()) {
 				            p = providerDao.getProvider(providerNumber);
 				    }
@@ -578,14 +547,14 @@ function reportWindow(page) {
 				            assignedP = providerDao.getProvider(t.getTaskAssignedTo());
 				    }
 
-				    nItems = nItems +1; 
-				    
+				    nItems = nItems +1;
+
 				    if (p == null){
 				      provider = "";
 				    } else {
 				      provider = p.getFormattedName();
 				    }
-				    
+
 				    if (assignedP == null){
 				      taskAssignedTo = "";
 				    }
@@ -598,7 +567,7 @@ function reportWindow(page) {
 				    java.util.Date toDate = new java.util.Date();
 				    long millisDifference = toDate.getTime() - grantdate.getTime();
 
-				    long ONE_DAY_IN_MS = (1000 * 60 * 60 * 24);                                                      
+				    long ONE_DAY_IN_MS = (1000 * 60 * 60 * 24);
 				    long daysDifference = millisDifference / (ONE_DAY_IN_MS);
 
 				    String numDaysUntilWarn = OscarProperties.getInstance().getProperty("tickler_warn_period");
@@ -606,7 +575,7 @@ function reportWindow(page) {
 				    boolean ignoreWarning = (ticklerWarnDays < 0);
 
 
-				    //Set the colour of the table cell 
+				    //Set the colour of the table cell
 				    String warnColour = "";
 				    if (!ignoreWarning && (daysDifference >= ticklerWarnDays)){
 				       warnColour = "Red";
@@ -622,38 +591,39 @@ function reportWindow(page) {
 			%>
 
 			<tr>
-				<TD ROWSPAN="1" class="<%=cellColour%> noprint"><input
+				<td class="<%=cellColour%> noprint"><input
 					type="checkbox" name="checkbox"
-					value="<%=t.getId()%>"></TD>
-					<TD ROWSPAN="1" class="<%=cellColour%>">
+					value="<%=t.getId()%>"></td>
+					<td class="<%=cellColour%> noprint">
 					<%if(Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_edit_enabled"))) {%>
 					<a href=#  onClick="popupPage(600,800, '<%=request.getContextPath() %>/tickler/ticklerEdit.jsp?tickler_no=<%=t.getId()%>')"><bean:message key="tickler.ticklerMain.editTickler"/></a>
 					<% } %>
-					</TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><a
+					</td>
+				<TD class="<%=cellColour%>"><a
 					href=#
-					onClick="window.open('<%=request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=t.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=d.getLastName()%>,<%=d.getFirstName()%></a></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=provider%></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>">
+					onClick="window.open('<%=request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=t.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=d.getLastName()%>,<%=d.getFirstName()%></a></td>
+				<td class="<%=cellColour%>"><%=provider%></td>
+				<td class="<%=cellColour%>">
 				<%
 					java.util.Date service_date = t.getServiceDate();
 						SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
 						String service_date_str = dateFormat2.format(service_date);
 						out.print(service_date_str);
 				%>
-				</TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>">
+				</td>
+				<td class="<%=cellColour%>">
 				<%
 					service_date = t.getUpdateDate();
 						dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
 						service_date_str = dateFormat2.format(service_date);
 						out.print(service_date_str);
+
 				%>
-				</TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getPriority()%></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=taskAssignedTo%></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=String.valueOf(t.getStatus()).equals("A")?"Active":String.valueOf(t.getStatus()).equals("C")?"Completed":String.valueOf(t.getStatus()).equals("D")?"Deleted":String.valueOf(t.getStatus())%></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getMessage()%>
+				</td>
+				<td class="<%=cellColour%>"><%=t.getPriority().toString().equals("High")? "<span style=\"font-weight:bold;\"><i class=\"icon-flag\"></i> High</span>": t.getPriority() %></td>
+				<td class="<%=cellColour%>"><%=taskAssignedTo%></td>
+				<td class="<%=cellColour%>"><%=String.valueOf(t.getStatus()).equals("A")?"Active":String.valueOf(t.getStatus()).equals("C")?"Completed":String.valueOf(t.getStatus()).equals("D")?"Deleted":String.valueOf(t.getStatus())%></td>
+				<td class="<%=cellColour%>"><%=t.getMessage()%>
 
 <%
                                              	List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(t.getId().intValue());
@@ -681,7 +651,7 @@ function reportWindow(page) {
                                                 <%
                                                 	}else if (LabResultData.isHRM(type)){
                                                 %>
-                                                <a href="javascript:reportWindow('<%=request.getContextPath() %>/hospitalReportManager/Display.do?id=<%=tl.getTableId()%>')">ATT</a>                                                
+                                                <a href="javascript:reportWindow('<%=request.getContextPath() %>/hospitalReportManager/Display.do?id=<%=tl.getTableId()%>')">ATT</a>
                                                 <%
                                                 	}else {
                                                 %>
@@ -692,44 +662,42 @@ function reportWindow(page) {
                                         <%
                                         	}
                                                                                 }
-                                        %>				
-				
-				
-				
-				
-				</TD>
-				  <td ROWSPAN="1" class="<%=cellColour%> noprint">
+                                        %>
+
+
+
+
+				</td>
+				  <td class="<%=cellColour%> noprint">
                 	<a href="javascript:void(0)" onClick="openNoteDialog('<%=t.getDemographicNo() %>','<%=t.getId() %>');return false;">
-                		<img border="0" src="<%=request.getContextPath()%>/images/notepad.gif"/>
+                		<img title="<bean:message key="Appointment.formNotes"/>" src="<%=request.getContextPath()%>/images/notepad.gif"/>
                 	</a>
                 </td>
 			</tr>
         <%
-        	boolean ticklerEditEnabled = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_edit_enabled")); 
+        	boolean ticklerEditEnabled = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_edit_enabled"));
                         Set<TicklerComment> tcomments = t.getComments();
                         if (ticklerEditEnabled && !tcomments.isEmpty()) {
                             for (TicklerComment tc : tcomments) {
         %>
                         <tr>
-                            <td width="3%" ROWSPAN="1" class="<%=cellColour%>"></td>
-                            <td width="12%" ROWSPAN="1" class="<%=cellColour%>"></td>
-                            <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getProvider().getLastName()%>,<%=tc.getProvider().getFirstName()%></td>
-                            <td ROWSPAN="1" class="<%=cellColour%>"></td>
+                            <td class="<%=cellColour%> message"></td>
+                            <td class="<%=cellColour%> message"></td>
+                            <td class="<%=cellColour%> message"><%=tc.getProvider().getLastName()%>,<%=tc.getProvider().getFirstName()%></td>
+                            <td class="<%=cellColour%> message"></td>
                             <% if (tc.isUpdateDateToday()) { %>
-                            <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getUpdateTime(request.getLocale())%></td>
+                            <td class="<%=cellColour%> message"><%=tc.getUpdateTime(request.getLocale())%></td>
                             <% } else { %>
-                            <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getUpdateDate(request.getLocale())%></td>
+                            <td class="<%=cellColour%> message"><%=tc.getUpdateDate(request.getLocale())%></td>
                             <% } %>
-                            <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                            <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                            <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                            <td ROWSPAN="1" class="<%=cellColour%>" colspan="3"><%=tc.getMessage()%></td>
-                            
+                            <td class="<%=cellColour%> message"></td>
+                            <td class="<%=cellColour%> message" colspan="5"><%=tc.getMessage()%></td>
+
                         </tr>
        <%           }
-                }  
-}                                                     
-                                    
+                }
+}
+
 if (nItems == 0) {
 %>
 			<tr>
@@ -739,8 +707,11 @@ if (nItems == 0) {
 			<%}
 			Demographic d = demographicDao.getDemographicById(request.getParameter("demoview")==null?null: Integer.parseInt(request.getParameter("demoview")));
 			%>
-			<tr bgcolor=#FFFFFF class="noprint">
-				<td colspan="11" class="white"><a id="checkAllLink" name="checkAllLink" href="javascript:CheckAll();"><bean:message
+</tbody>
+</table>
+<table style="width:100%;">
+			<tr class="noprint">
+				<td class="white"><a id="checkAllLink" href="javascript:CheckAll();"><bean:message
 					key="tickler.ticklerDemoMain.btnCheckAll" /></a> - <a
 					href="javascript:ClearAll();"><bean:message
 					key="tickler.ticklerDemoMain.btnClearAll" /></a> &nbsp; &nbsp; &nbsp;
@@ -767,48 +738,41 @@ if (nItems == 0) {
 			</tr>
 		</table>
 		</td>
-	</tr>	
+	</tr>
 </table>
 	</form>
 
-<div id="note-form" title="Tickler Note">
+<div id="note-form" title="<bean:message key="tickler.ticklerDemoMain.title"/>">
 	<form>
-		
-			<table>
-				<tbody>
-					<textarea id="tickler_note" name="tickler_note" style="width:100%;height:80%"></textarea>		
-					<input type="hidden" name="tickler_note_demographicNo" id="tickler_note_demographicNo" value=""/>	
-					<input type="hidden" name="tickler_note_ticklerNo" id="tickler_note_ticklerNo" value=""/>	
-					<input type="hidden" name="tickler_note_noteId" id="tickler_note_noteId" value=""/>	
-				</tbody>
-			</table>
-			<br/>
-			<table>
-				<tr>
-					<td >
-						<a href="javascript:void()" onclick="saveNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/note-save.png"/>
-						</a>
-						<a href="javascript:void()" onclick="closeNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/system-log-out.png"/>
-						</a>
-					</td>
-					<td style="width:40%" nowrap="nowrap">
-					Date: <span id="tickler_note_obsDate"></span> rev <a id="tickler_note_revision_url" href="javascript:void(0)" onClick=""><span id="tickler_note_revision"></span></a><br/>
-					Editor: <span id="tickler_note_editor"></span>
-					</td>
-				</tr>
-			
-			</table>
-			
-	</form>	
+        <input type="hidden" name="tickler_note_demographicNo" id="tickler_note_demographicNo" value="">
+		<input type="hidden" name="tickler_note_ticklerNo" id="tickler_note_ticklerNo" value="">
+		<input type="hidden" name="tickler_note_noteId" id="tickler_note_noteId" value="">
+
+		<fieldset>
+			<div class="control-group">
+				<label class="control-label" for="tickler_note"><bean:message key="Appointment.formNotes"/>:</label>
+				<div class="controls">
+					<textarea class="input-block-level" rows="5" id="tickler_note" name="tickler_note"></textarea>
+				</div>
+			</div>
+		</fieldset>
+        <input type="button" name="button"
+					value="<bean:message key="global.btnSave"/>"
+					onclick="saveNoteDialog(); return false;" class="btn btn-primary">
+        <input type="button" name="button"
+					value="<bean:message key="global.btnCancel"/>"
+					onclick="closeNoteDialog(); return false;" class="btn"><br>
+        <div style="text-align:right; font-size: 80%;">
+            <bean:message key="tickler.ticklerDemoMain.msgDate"/>: <span id="tickler_note_obsDate"></span> <bean:message key="oscarEncounter.noteRev.title"/> <a id="tickler_note_revision_url" href="javascript:void(0)" onClick=""><span id="tickler_note_revision"></span></a><br/>
+			<bean:message key="oscarEncounter.editors.title"/>: <span id="tickler_note_editor"></span>
+        </div>
+	</form>
 </div>
 
 
-<p><font face="Arial, Helvetica, sans-serif" size="2"> </font></p>
+
 <p class="noprint">
 <%@ include file="../demographic/zfooterbackclose.jsp"%>
-</p>
 
 </div>
 </body>

@@ -30,7 +30,7 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.CtlBillingType" %>
 <%@ page import="org.oscarehr.common.dao.CtlBillingTypeDao" %>
-
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 	CtlBillingTypeDao ctlBillingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
 %>
@@ -49,8 +49,8 @@ for(CtlBillingType cbt:ctlBillingTypeDao.findByServiceType(type_id)) {
 
 <table width=95%>
 	<tr>
-		<td class="black" width="15%"><%=type_id%></td>
-		<td class="black" height="30"><%=type_name%></td>
+		<td class="black" style="width:15%"><%=Encode.forHtml(type_id)%></td>
+		<td class="black" style="height:30px"><%=Encode.forHtml(type_name)%></td>
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
@@ -75,12 +75,12 @@ for(CtlBillingType cbt:ctlBillingTypeDao.findByServiceType(type_id)) {
 			<option value="ODS" <%=billtype.equals("ODS")?"selected":""%>>-ODSP</option>
 			<option value="CPP" <%=billtype.equals("CPP")?"selected":""%>>-CPP</option>
 			<option value="STD" <%=billtype.equals("STD")?"selected":""%>>-STD/LTD</option>
-		</select> <input type="button" value="Change"
+		</select> <input type="button" value="Change" class="btn"
 			onclick="manageBillType(bill_servicetype.value, billtype_old.value, billtype_new.value);"><br>
 		</p>
-		<p><input type="button" value="Delete Billing Form"
+		<p><input type="button" value="Delete Billing Form" class="btn"
 			onclick="onUnbilled('dbManageBillingform_delete.jsp?servicetype=<%=type_id%>');"></p>
-		<p><input type="button" value="Cancel"
+		<p><input type="button" value="Cancel" class="btn"
 			onclick="showManageType(false);"></p>
 		</td>
 	</tr>

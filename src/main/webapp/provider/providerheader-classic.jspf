@@ -70,7 +70,8 @@ int curDay = cal.get(Calendar.DAY_OF_MONTH);
 
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/receptionistapptstyle.css" type="text/css"><!-- for old css -->
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script><!-- needed for tabalerts -->
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
    <script>
      jQuery.noConflict();
    </script>

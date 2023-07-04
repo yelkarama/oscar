@@ -253,15 +253,15 @@ $(function (){
 
 $( document ).ready(function() {
 
-$("#eformToGroupForm").submit(function(){
+$("#eformToGroupForm").on( "submit",function(){
 	$('#myModal').modal('hide');
 });
 
-$(".modalShow").click(function(){
+$(".modalShow").on( "click", function(){
 	$('#myModal').modal('toggle');
 });
 
-$(".check").change(validate).keyup(validate);
+$(".check").on("change",validate).keyup(validate);
 
 });
 

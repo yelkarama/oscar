@@ -24,12 +24,12 @@
 
 --%>
 
-<!-- jquery-1.9.1.js - in nonPatientContextHeader.jspf -->
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
+<!-- jquery-3.6.4.min.js - in nonPatientContextHeader.jspf -->
+<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
 
 
 <script>
@@ -71,7 +71,7 @@ $(document).ready(function(){
 <script type="text/javascript">
 $( document ).ready(function( $ ) {
 
-$("a.contentLink").click(function(e) {
+$("a.contentLink").on( "click", function(e) {
 	//alert('link click');
 	e.preventDefault();
 	//alert("You clicked the link");
@@ -88,7 +88,7 @@ $("a.contentLink").click(function(e) {
 });
 
 function registerFormSubmit(formId, divId) {
-	$('#'+formId).submit(function() {
+	$('#'+formId).on( "submit",function() {
 		if(!$('#'+formId).valid()){
 			return false;
 		}

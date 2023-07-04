@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ include file="/taglibs.jsp"%>
@@ -52,16 +51,14 @@ if(!authed) {
 %>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-
 <title>Completion of Pregnancy</title>
 
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-<script type="text/javascript" language="JavaScript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 <style>
 div#demo
 {
@@ -78,12 +75,12 @@ div#demo
 			if(request.getAttribute("close") != null) {
 				%>
 				window.opener.reloadNav('pregnancy');
-				window.close();				
-				<%				
+				window.close();
+				<%
 			}
 		%>
 	});
-	
+
 	function validate() {
 		patt1=new RegExp("^\\d{4}\\-\\d{2}\\-\\d{2}$");
 		if(!patt1.test($("#endDate").val())) {
@@ -103,12 +100,12 @@ div#demo
 <%
 	if(request.getAttribute("error") != null) {
 %>
-	<h2 style="color:red"><%=request.getAttribute("error") %></h2>
-<% 
+	<span class="alert alert-warning"><%=request.getAttribute("error") %></span>
+<%
 	return;
-	} 
+	}
 %>
-
+<div class="well">
 	<form action="Pregnancy.do">
 		<fieldset>
 			<h5>Set the date of completion to close this episode</h5>
@@ -118,7 +115,9 @@ div#demo
 					<td>
 						<input type="hidden" name="method" value="doComplete"/>
 						<input type="hidden" name="episodeId" value="<%=request.getParameter("episodeId")%>"/>
-						<input id="endDate" name="endDate" type="text"/>
+<div class="input-append">
+						<input id="endDate" name="endDate" type="text"/><span class="add-on"><i class="icon-calendar"></i></span>
+</div>
 					</td>
 				</tr>
 				<tr>
@@ -129,7 +128,7 @@ div#demo
 				</tr>
 				<tr>
 					<td colspan="2">
-						<input type="submit" value="Submit" onclick="return validate();"/>
+						<input type="submit" value="Submit" class="btn btn-primary" onclick="return validate();"/>
 					</td>
 				</tr>
 			</table>
@@ -148,16 +147,16 @@ div#demo
 					<td>
 						<input type="hidden" name="method" value="doDelete"/>
 						<input type="hidden" name="episodeId" value="<%=request.getParameter("episodeId")%>"/>
-						<textarea id="notes" name="notes" cols="40" rows="4"></textarea>
+						<textarea id="notes2" name="notes" cols="40" rows="4"></textarea>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="2">
-						<input type="submit" value="Submit" onclick="return validate();"/>
+						<input type="submit" value="Submit" class="btn btn-primary" onclick="return validate();"/>
 					</td>
 				</tr>
 			</table>
 		</fieldset>
 	</form>
-
+</div> <!-- well ends here -->
 </html:html>

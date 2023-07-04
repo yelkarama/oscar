@@ -139,7 +139,7 @@
 		<div class="col-md-6">
 			Last loaded:
 			<c:out value="${ dashboard.lastChecked }" />
-			<a href="#" title="Refresh Dashboard" class="reloadDashboardBtn" id="getDashboard_${ dashboard.id }" >
+			<a href="javascript:void(0)" title="Refresh Dashboard" class="reloadDashboardBtn" id="getDashboard_${ dashboard.id }" >
 				<span class="glyphicon glyphicon-refresh"></span>
 			</a>
 			&nbsp;&nbsp;
@@ -153,7 +153,7 @@
 
 		</div>
 		<div class="col-md-6">
-			<a href="#" title="Dashboard Manager" class="pull-right dashboardManagerBtn" id="${ dashboard.id }" >
+			<a href="javascript:void(0)" title="Dashboard Manager" class="pull-right dashboardManagerBtn" id="${ dashboard.id }" >
 				<span class="glyphicon glyphicon glyphicon-cog"></span>
 			</a>
 		</div>

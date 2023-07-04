@@ -23,13 +23,13 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    
+
     boolean isSiteAccessPrivacy=false;
     boolean authed=true;
 %>
@@ -51,11 +51,10 @@
 
 <html:html locale="true">
 <head>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 <title><bean:message key="admin.securitysearchrecordshtm.title" /></title>
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
-<script LANGUAGE="JavaScript">
+<script>
 <!--
 
 	function setfocus() {
@@ -64,7 +63,7 @@
 	}
 
   function onsub() {
-    // check input data in the future 
+    // check input data in the future
   }
 	function upCaseCtrl(ctrl) {
 		ctrl.value = ctrl.value.toUpperCase();
@@ -74,39 +73,35 @@
     </script>
 </head>
 
-<body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
-<h4>
-<i class="icon-search" title=""></i>&nbsp;<bean:message key="admin.securitysearchrecordshtm.description" /></h4>
+<body onLoad="setfocus()">
+<h4><i class="icon-search" title=""></i>&nbsp;<bean:message key="admin.securitysearchrecordshtm.description" /></h4>
 <div class="well">
-<table cellspacing="0" cellpadding="2" width="100%" border="0" class="table-condensed">
-
-	<form method="post" action="securitysearchresults.jsp" name="searchprovider"
-		onsubmit="return onsub()">
-	<tr valign="top">
-		<td rowspan="2" align="right" valign="middle"><b><i><bean:message
-			key="admin.securitysearchrecordshtm.msgCriteria" /></i></b>&nbsp;&nbsp;</td>
-		<td nowrap>
-		<input type="radio" name="search_mode" value="search_username">
-		<bean:message key="admin.securityrecord.formUserName" /></td>
-
-		<td nowrap>
-		<input type="radio" checked name="search_mode"
-			value="search_providerno"> <bean:message
-			key="admin.securityrecord.formProviderNo" /></td>
-		<td valign="middle" rowspan="2" ALIGN="left"><input type="text"
-			NAME="keyword" SIZE="17" MAXLENGTH="100"> <INPUT
-			TYPE="hidden" NAME="orderby" VALUE="user_name"> 
-
-		<INPUT TYPE="hidden" NAME="limit1" VALUE="0"> 
-        <INPUT TYPE="hidden" NAME="limit2" VALUE="10">
-        <INPUT TYPE="SUBMIT" NAME="button" class="btn btn-primary"
-			VALUE="<bean:message key="admin.securitysearchrecordshtm.btnSearch"/>"
-			SIZE="17"></td>
-	</tr>
-
+<form method="post" action="securitysearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
+    <table style="width:100%">
+	    <tr>
+		    <td style="text-align:right; vertical-align:middle"><b><i><bean:message
+			    key="admin.securitysearchrecordshtm.msgCriteria" /></i></b>&nbsp;&nbsp;</td>
+		    <td style="white-space: nowrap;">
+		    <input type="radio" name="search_mode" value="search_username">
+		    <bean:message key="admin.securityrecord.formUserName" /></td>
+		    <td style="white-space: nowrap;">
+		    <input type="radio" checked name="search_mode"
+			    value="search_providerno"> <bean:message
+			    key="admin.securityrecord.formProviderNo" /></td>
+		    <td style="vertical-align:middle; text-align:left" >
+                <div class="input-append" name="keywordwrap">
+			        <input type="text" name="keyword" class="input input-large" maxlength="100" >
+                    <button type="submit" name="button" class="btn add-on" style="height:30px; width:30px;" >
+                    <i class="icon-search" title="<bean:message key="admin.securitysearchrecordshtm.btnSearch"/>" ></i></button>
+                </div>
+			    <input type="hidden" name="orderby" value="user_name">
+			    <input type="hidden" name="limit1" value="0">
+			    <input type="hidden" name="limit2" value="10000">
+			    </td>
+	    </tr>
+    </table>
 	</form>
-</table>
-
 </div>
+
 </body>
 </html:html>

@@ -98,7 +98,8 @@
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=request.getContextPath() %>/js/jqBootstrapValidation-1.3.7.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 
@@ -125,7 +126,7 @@
                     }
                 );
 
-                $("a[data-toggle=\"tab\"]").click(function(e) {
+                $("a[data-toggle=\"tab\"]").on( "click", function(e) {
                     e.preventDefault();
                     $(this).tab("show");
                 });
@@ -138,11 +139,11 @@
 
 
 jQuery(document).ready( function() {
-        jQuery("#provider_type").change(function() {
+        jQuery("#provider_type").on("change",function() {
             
             if( jQuery("#provider_type").val() == "resident") {                
                 jQuery(".supervisor").slideDown(600);
-                jQuery("#supervisor").focus();
+                jQuery("#supervisor").trigger( "focus" );
                
             }
             else {

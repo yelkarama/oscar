@@ -74,10 +74,10 @@
 
 <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/css/print.css" media="print">
 
-<!-- 
-<script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
- -->
- <script src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
+
+<script src="<c:out value="${ctx}/js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="${ctx}/library/jquery/jquery-migrate-1.4.1.js"/>"></script>
+
 <script language="javascript">
      jQuery.noConflict();
 </script>
@@ -173,14 +173,14 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>    
 
 
-    jQuery("input[name='reviewed']").change(function() {
+    jQuery("input[name='reviewed']").on("change",function() {
             
             if( jQuery("input[name='reviewed']:checked").val() == "true") {                
                 if( jQuery(".supervisor").is(":visible") ) {
                     jQuery(".supervisor").slideUp(300);                    
                 }
                 jQuery(".reviewer").slideDown(600);
-                jQuery("#reviewer").focus();
+                jQuery("#reviewer").trigger( "focus" );
                
             }
             else {
@@ -188,7 +188,7 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
                     jQuery(".reviewer").slideUp(300);
                 }
                 jQuery(".supervisor").slideDown(600);
-                jQuery("#supervisor").focus();
+                jQuery("#supervisor").trigger( "focus" );
             }
         }
     

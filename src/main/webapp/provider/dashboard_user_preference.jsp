@@ -72,7 +72,8 @@ providerList = providerDao.getBillableProviders();
 
 <!-- Bootstrap -->
 <link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/library/bootstrap/3.0.0/css/bootstrap.min.css">
-<script src="<c:out value="${ctx}"/>/js/jquery-1.9.1.min.js"></script>
+<script src="<c:out value="${ctx}"/>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <!-- Include all compiled plugins (below) -->
 <script src="<c:out value="${ctx}"/>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 

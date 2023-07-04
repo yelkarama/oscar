@@ -5,7 +5,7 @@ var HealthCardHandler = function(handler) {
 	this.lastReadSuccess = false;
 	this.keyBufferHandler = handler;
 
-	jQuery(window).keypress((function (context) {
+	jQuery(window).on( "keypress", (function(context) {
 		return function(e) {
 			var charReceived = String.fromCharCode(e.charCode);
 			if (charReceived == "%")

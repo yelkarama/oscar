@@ -450,7 +450,8 @@ font-size:20px
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="../js/jquery-1.9.1.js"></script>
+	<script src="../js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	
 	<script src="../library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 	<!-- script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script -->

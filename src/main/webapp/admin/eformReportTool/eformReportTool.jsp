@@ -90,7 +90,7 @@ if(!authed) {
 
 						listReports();
 
-						$("#btnAdd").bind('click', function() {
+						$("#btnAdd").on('click', function() {
 							/*
 							var e = {
 								name : 'testing',

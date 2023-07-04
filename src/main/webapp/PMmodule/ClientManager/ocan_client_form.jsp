@@ -86,7 +86,7 @@ $("document").ready(function() {
 function submitOcanClientForm() {
 	var status = document.getElementById('assessment_status').value;
 	if(status == 'Active') {
-		$('#ocan_client_form').unbind('submit').submit();		
+		$('#ocan_client_form').off('submit').trigger( "submit" );		
 		return true;
 	}
 	if(!$("#ocan_client_form").valid()) {

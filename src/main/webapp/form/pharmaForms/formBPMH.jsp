@@ -59,7 +59,7 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="${ pageContext.request.contextPath }/form/pharmaForms/index.css" />
  	<link rel="stylesheet" type="text/css" media="screen" href="${ pageContext.request.contextPath }/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.12.3.js"></script>
  	<script type="text/javascript" >
 		
  		function popUpData(data) {
@@ -69,7 +69,7 @@
 		}
 
  		jQuery(document).ready( function($) { 			
-			$("#editFamilyDr").click(function(){
+			$("#editFamilyDr").on( "click", function(){
 				var familyDrContactId = $("#familyDrContactId").val();
 				var demographicNo = '${ bpmh.demographic.demographicNo }';
 				var source = "${ pageContext.request.contextPath }/demographic/manageHealthCareTeam.jsp?" +

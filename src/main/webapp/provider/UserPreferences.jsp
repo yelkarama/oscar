@@ -42,7 +42,8 @@
 <title><bean:message key="provider.pref.title" /></title>
 <script src="<c:out value="${ctx}/js/checkPassword.js.jsp"/>"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
+<script src="<c:out value="${ctx}/js/jquery-1.12.3.js"/>"></script>
+		<script src="<c:out value="${ctx}/library/jquery/jquery-migrate-1.4.1.js"/>"></script>
 <script>
 jQuery.noConflict();
 </script>
@@ -57,7 +58,7 @@ jQuery(document).ready(function(){
 	jQuery("#caisi").hide();
 	jQuery("#billing").hide();
 	
-	jQuery('.head').click(function(e) {
+	jQuery('.head').on( "click", function(e) {
 		e.preventDefault();
 		jQuery(".pref_pane").each(function() {
 			jQuery(this).hide();
@@ -100,18 +101,18 @@ function dxScriptAttach(name2) {
 		if(jQuery("input[name='current_password']").val().length>0) {
 			if(jQuery("input[name='new_password']").val().length == 0) {
 				alert('Please enter a new password');
-				jQuery("input[name='new_password']").focus();
+				jQuery("input[name='new_password']").trigger( "focus" );
 				return false;
 			}			
 			//validate password to policy
 			if(!validatePassword(jQuery("input[name='new_password']").val())) {
-				jQuery("input[name='new_password']").focus();
+				jQuery("input[name='new_password']").trigger( "focus" );
 				return false;
 			}
 			//check that new_password and confirm_password match
 			if(!(jQuery("input[name='new_password']").val() == jQuery("input[name='confirm_password']").val())) {
 				alert('Passwords do not match')
-				jQuery("input[name='confirm_password']").focus();
+				jQuery("input[name='confirm_password']").trigger( "focus" );
 				return false;
 			}
 		}

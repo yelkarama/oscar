@@ -111,7 +111,7 @@
                 init(6);
 
                 // Buttons that get the Clinical Data
-                $(".clinicalData").click(function(){
+                $(".clinicalData").on( "click", function(){
                     var data = new Object();
                     var target = "#" + this.id.split("|")[1];
                     data.method = this.id.split("|")[0];

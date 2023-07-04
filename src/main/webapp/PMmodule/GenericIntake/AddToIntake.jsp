@@ -136,10 +136,11 @@ String pSize        = request.getParameter("pSize");
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Add To Intake</title>
-<script type="text/javascript" src="<html:rewrite page="/js/jquery.js"/>"></script>
+<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.12.3.js" />"></script>
+		<script type="text/javascript" src="<html:rewrite page="/library/jquery/jquery-migrate-1.4.1.js" />"></script>
 <script type="text/javascript">
 	$("document").ready(function(){		
-		$("input[name='elementType']").change(function(){
+		$("input[name='elementType']").on("change",function(){
 			if($(this).val() == 8) {			
 				//repeating on
 				//$("input[name='repeating']").attr("checked","checked");
@@ -158,7 +159,7 @@ String pSize        = request.getParameter("pSize");
 			*/
 		});
 
-		$("input[name='elementType']").change(function(){
+		$("input[name='elementType']").on("change",function(){
 			var val = $(this).val();
 			if(val == 8) {
 				$("#validations").html('<option value="">Choose</option><option value="integer">Integer</option>');

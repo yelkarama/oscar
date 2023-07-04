@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
@@ -48,15 +48,18 @@
 	}
 %>
 
-	
+
 <html:html locale="true">
 <head>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 <title><bean:message key="admin.providersearchresults.title" /></title>
-<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
-<link rel="stylesheet" href="../web.css" />
-<script LANGUAGE="JavaScript">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+<script>
 	function setfocus() {
 		document.searchprovider.keyword.focus();
 		document.searchprovider.keyword.select();
@@ -68,17 +71,22 @@
 
 	}
 </script>
-	<style>
+<script>
+    jQuery(document).ready( function () {
+        jQuery('#tblResults').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+    });
+</script>
 
-	</style>
 </head>
 
 <%
-		String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
-
-		//Defaults    		
+		//Defaults
 		String strOffset = "0";
-		String strLimit = "10";
+		String strLimit = "10000";
 
 		//OFFSET
 		if (request.getParameter("limit1") != null)
@@ -96,101 +104,97 @@
 			orderBy = "last_name";
 
 		String searchStatus = ("All".equalsIgnoreCase(request.getParameter("search_status")) ? null : request.getParameter("search_status"));
-		
+
 		int offset = Integer.parseInt(strOffset);
 		int limit = Integer.parseInt(strLimit);
 %>
-<body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
+<body onLoad="setfocus()">
 
-<h4>
-<i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchresults.description" /></h4>
+<h4><i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchrecordshtm.description" /></h4>
 
 <form method="post" action="providersearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
 <div class="well">
-<table cellspacing="0" cellpadding="0" width="100%" border="0" class="table-condensed">
-	<tr valign="top">
-		<td rowspan="2" align="right" valign="middle">
-			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i></b>
+<table style="width:100%">
+	<tr>
+		<td rowspan="2"  style="text-align:right; vertical-align:middle">
+			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i>&nbsp;&nbsp;
 		</td>
-		<td nowrap>
-			
-				<input type="radio" <%=searchMode.equals("search_name")?"checked":""%> name="search_mode" 
+		<td style="white-space: nowrap;">
+
+		</td>
+		<td style="white-space: nowrap;">
+				<input type="radio" <%=searchMode.equals("search_name")?"checked":""%> name="search_mode"
 					   value="search_name" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.providersearch.formLastName" />
-			
-		</td>
-		<td nowrap>
-
-				<input type="radio"	<%=searchMode.equals("search_providerno")?"checked":""%> name="search_mode" 
+            <br>
+				<input type="radio"	<%=searchMode.equals("search_providerno")?"checked":""%> name="search_mode"
 					   value="search_providerno" onclick="document.forms['searchprovider'].keyword.focus();">
 				<bean:message key="admin.provider.formProviderNo" />
-
 		</td>
-		<td nowrap>
+		<td style="white-space: nowrap;">
 				<input type="radio" name="search_status" value="All" <%=searchStatus == null ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formAllStatus" />
-			<br/>
-			
+			<br>
 				<input type="radio" name="search_status" value="1" <%="1".equals(searchStatus) ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formActiveStatus" />
-			<br/>
-			
+			<br>
 				<input type="radio" name="search_status" value="0" <%="0".equals(searchStatus) ? "checked" : ""%>>
 				<bean:message key="admin.providersearch.formInactiveStatus" />
-			
 		</td>
-		<td valign="middle" rowspan="2" ALIGN="left">
-			<input type="text" NAME="keyword" SIZE="17" MAXLENGTH="100">
-			<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name">
-			<INPUT TYPE="hidden" NAME="limit1" VALUE="0"> 
-			<INPUT TYPE="hidden" NAME="limit2" VALUE="10">
-			<INPUT TYPE="SUBMIT" NAME="button" class="btn btn-primary" VALUE=<bean:message key="admin.providersearchresults.btnSubmit"/> SIZE="17">
+		<td style="vertical-align:middle; text-align:left" rowspan="2" >
+            <div class="input-append">
+			    <input type="text" name="keyword" class="input input-large" maxlength="100" >
+                <button type="submit" name="button" class="btn add-on" style="height:30px; width:30px;" ><i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>" ></i></button>
+            </div>
+			<input type="hidden" name="orderby" value="last_name">
+			<input type="hidden" name="limit1" value="0">
+			<input type="hidden" name="limit2" value="10000">
+
 		</td>
 	</tr>
 </table>
 </div>
 </form>
 
-<table width="100%" border="0">
+<table>
 	<tr>
-		<td align="left"><i><bean:message key="admin.search.keywords" /></i> : <%=Encode.forHtml(keyword)%></td>
+		<td style="text-align:left"><i><bean:message key="admin.search.keywords" /></i> : <%=Encode.forHtml(keyword)%></td>
 	</tr>
 </table>
 
-<table width="100%" class="table table-bordered table-hover table-striped table-condensed"
-	>
-	<tr bgcolor="<%=deepcolor%>">
-		<TH align="center" width="10%"><b><a
-			href="providersearchresults.jsp?keyword=<%=Encode.forUriComponent(keyword)%>&search_mode=<%=searchMode%>&orderby=provider_no&limit1=0&limit2=10">
-			<bean:message key="admin.providersearchresults.ID" /></a></b></TH>
-		<TH align="center" width="19%"><b><a
-			href="providersearchresults.jsp?keyword=<%=Encode.forUriComponent(keyword)%>&search_mode=<%=searchMode%>&orderby=first_name&limit1=0&limit2=10">
-			<bean:message key="admin.provider.formFirstName" /></a> </b></TH>
-		<TH align="center" width="19%"><b><a
-			href="providersearchresults.jsp?keyword=<%=Encode.forUriComponent(keyword)%>&search_mode=<%=searchMode%>&orderby=last_name&limit1=0&limit2=10">
-			<bean:message key="admin.provider.formLastName" /></a></b></TH>
-		<TH align="center" width="16%"><b>
-			<bean:message key="admin.provider.formSpecialty" /></b></TH>
-		<TH align="center" width="9%"><b>
-			<bean:message key="admin.provider.formTeam" /></b></TH>
-		<TH align="center" width="2%"><b>
-			<bean:message key="admin.provider.formSex" /></B></TH>
-		<TH align="center" width="15%"><b>
-			<bean:message key="admin.providersearchresults.phone" /></B></TH>
-		<TH align="center" width="15%"><b>
-			<bean:message key="admin.provider.formStatus" /></B></TH>
+<table id="tblResults" style="width:100%" class="table table-hover table-striped table-condensed">
+    <thead>
+	<tr>
+		<th style="text-align:center; width:10%">
+			<bean:message key="admin.providersearchresults.ID" /></th>
+		<th style="text-align:center; width:20%; white-space: nowrap;">
+			<bean:message key="admin.provider.formLastName" />,&nbsp;
+			<bean:message key="admin.provider.formFirstName" /></th>
+		<th style="text-align:center; width:10%"><bean:message key="admin.provider.formProviderNo" /></th>
+		<th style="text-align:center; width:18%">
+			<bean:message key="admin.provider.formSpecialty" /></th>
+		<th style="text-align:center; width:14%">
+			<bean:message key="admin.provider.formTeam" /></th>
+		<th style="text-align:center; width:4%">
+			<bean:message key="admin.provider.formSex" /></th>
+		<th style="text-align:center; width:14%">
+			<bean:message key="admin.providersearchresults.phone" /></th>
+		<th style="text-align:center; width:10%">
+			<bean:message key="admin.provider.formStatus" /></th>
 	</tr>
+    </thead>
+    <tbody>
 <%
 	List<ProviderData> providerList = null;
 	ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
-	
+
 	if(searchMode.equals("search_name")) {
 		providerList = providerDao.findByProviderName(keyword, searchStatus, limit, offset);
 	}
 	else if(searchMode.equals("search_providerno")) {
 		providerList = providerDao.findByProviderNo(keyword, searchStatus, limit, offset);
 	}
-	
+
 	if(orderBy.equals("last_name")) {
 		Collections.sort(providerList, ProviderData.LastNameComparator);
 	}
@@ -200,27 +204,27 @@
 	else if(orderBy.equals("provider_no")) {
 		Collections.sort(providerList, ProviderData.ProviderNoComparator);
 	}
-  
+
   boolean toggleLine=false;
   int nItems=0;
-  
+
   if(providerList == null) {
     out.println("failed!!!");
-  } 
+  }
   else {
-    
+
 	  for(ProviderData provider : providerList) {
 		  toggleLine = !toggleLine;
 		  nItems++;
 %>
-
-	<tr bgcolor="<%=toggleLine?"white":weakcolor%>">
-		<td align="center"><a href='providerupdateprovider.jsp?keyword=<%=provider.getId()%>'><%= provider.getId() %></a></td>
-		<td><%= Encode.forHtmlContent(provider.getFirstName()) %></td>
-		<td><%= Encode.forHtmlContent(provider.getLastName()) %></td>
+    <!-- getPractionerNo() getPractitionerNoType() getFormattedName() getComments() getBillingNo() getTitle() getEmail() getOhipNo() getAddress() -->
+	<tr>
+		<td style="text-align:center"><a href='providerupdateprovider.jsp?keyword=<%=provider.getId()%>'><%= provider.getId() %></a></td>
+		<td><%= Encode.forHtmlContent(provider.getLastName()+", "+provider.getFirstName()) %></td>
+		<td style="text-align:center"><%= Encode.forHtmlContent(provider.getOhipNo())%></td>
 		<td><%= Encode.forHtmlContent(provider.getSpecialty()) %></td>
 		<td><%= Encode.forHtmlContent(provider.getTeam()) %></td>
-		<td align="center"><%= provider.getSex() %></td>
+		<td style="text-align:center"><%= Encode.forHtmlContent(provider.getSex()) %></td>
 		<td><%= Encode.forHtmlContent(provider.getPhone()) %></td>
 		<td><%= (provider.getStatus()!=null)?(provider.getStatus().equals("1")?"Active":"Inactive"):"" %></td>
 	</tr>
@@ -228,13 +232,13 @@
     }
   }
 %>
-
+    </tbody>
 </table>
 
 <br>
 <%
   int nLastPage=0,nNextPage=0;
-  
+
   nNextPage=Integer.parseInt(strLimit)+Integer.parseInt(strOffset);
   nLastPage=Integer.parseInt(strOffset)-Integer.parseInt(strLimit);
   String searchStatusQ = (searchStatus!=null)?"&search_status="+searchStatus:"";

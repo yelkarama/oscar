@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%!  boolean bMultisites=org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
 <%!  String [] bgColors; %>
 
@@ -31,13 +31,15 @@
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
 <%@page import="org.oscarehr.common.model.ScheduleTemplate" %>
-<%
-	ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
-%>
+<%@page import="org.oscarehr.common.dao.SiteDao"%>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@page import="org.oscarehr.common.model.Site"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-
+<%
+	ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
+%>
 
 <jsp:useBean id="scheduleDateBean" class="java.util.Hashtable" scope="session" />
 <%
@@ -56,13 +58,11 @@
 
 %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="org.oscarehr.common.model.Site"%><html:html locale="true">
+<html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="schedule.scheduledatepopup.title" /></title>
-<link rel="stylesheet" href="../web.css" />
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
 <script language="JavaScript">
 <!--
@@ -77,69 +77,59 @@ function upCaseCtrl(ctrl) {
 //-->
 </script>
 </head>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-	topmargin="0" leftmargin="0" rightmargin="0">
-<form method="post" name="schedule" action="scheduledatesave.jsp">
+<body onLoad="setfocus()">
 
-<table border="0" width="100%">
-	<tr>
-		<td width="50" bgcolor="#009966">&nbsp;</td>
-		<td>
-		<table width="95%" border="0" cellspacing="0" cellpadding="5">
-			<tr>
-				<td bgcolor="#CCFFCC">
-				<p align="right"><bean:message
-					key="schedule.scheduledatepopup.formDate" />:</p>
-				</td>
-				<td bgcolor="#CCFFCC"><%=year%>-<%=month%>-<%=day%></td>
-				<input type="hidden" name="date"
-					value="<%=year%>-<%=month%>-<%=day%>">
-			</tr>
-			<tr>
-				<td>
-				<div align="right"><bean:message
-					key="schedule.scheduledatepopup.formAvailable" />:</div>
-				</td>
-				<td><input type="radio" name="available" value="1"
+<h4>&nbsp;<bean:message key="schedule.scheduledatepopup.title" /></h4>
+<div class="well">
+    <div style="background-color:#CCFFCC; text-align:center">
+        <bean:message key="schedule.scheduledatepopup.formDate" />: <%=year%>-<%=month%>-<%=day%>
+    </div>
+    <form method="post" name="schedule" action="scheduledatesave.jsp" class="form-horizontal">
+        <input type="hidden" name="date" value="<%=year%>-<%=month%>-<%=day%>">
+        <div class="control-group">
+            <label class="control-label" for="available"><bean:message
+					key="schedule.scheduledatepopup.formAvailable" />:</label>
+        <div class="controls">
+            <input type="radio" name="available" value="1"
 					<%=available.equals("checked")?"checked":""%>> <bean:message
 					key="schedule.scheduledatepopup.formAvailableYes" /> <input
 					type="radio" name="available" value="0"
 					<%=available.equals("checked")?"":"checked"%>> <bean:message
-					key="schedule.scheduledatepopup.formAvailableNo" /></td>
-			</tr>
-			<tr>
-				<td>
-				<div align="right"><bean:message
-					key="schedule.scheduledatepopup.formTemplate" />:</div>
-				</td>
-				<td><!--input type="text" name="hour1" <%=strHour%> --> <select
-					name="hour">
+					key="schedule.scheduledatepopup.formAvailableNo" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="hour"><bean:message
+					key="schedule.scheduledatepopup.formTemplate" />:</label>
+        <div class="controls">
+             <select name="hour" id="hour">
 					<%
-					
+
 					for(ScheduleTemplate st: scheduleTemplateDao.findByProviderNo("Public")) {
-						
+
 	%>
 					<option value="<%=st.getId().getName()%>"
 						<%=strHour.equals(st.getId().getName())?"selected":""%>><%=st.getId().getName()+" |"+st.getSummary()%></option>
 					<% }
 					for(ScheduleTemplate st: scheduleTemplateDao.findByProviderNo( request.getParameter("provider_no"))) {
-  
+
 	%>
 					<option value="<%=st.getId().getName()%>"
 						<%=st.getId().getName().equals(strHour)?"selected":""%>><%=st.getId().getName()+" |"+st.getSummary()%></option>
 					<% }	%>
-				</select></td>
-			</tr>
-			<% 
+				</select>
+        </div>
+      </div>
+			<%
           OscarProperties props = OscarProperties.getInstance();
           boolean bMoreAddr = bMultisites
 						? true
 						: props.getProperty("scheduleSiteID", "").equals("") ? false : true;
           String [] siteList;
           if (bMultisites) {
-        		//multisite starts =====================	  
+        		//multisite starts =====================
         		  SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
-        	      List<Site> sites = siteDao.getActiveSitesByProviderNo(request.getParameter("provider_no")); 
+        	      List<Site> sites = siteDao.getActiveSitesByProviderNo(request.getParameter("provider_no"));
         	      siteList = new String[sites.size()+1];
         		  bgColors = new String[sites.size()+1];
         	      for (int i=0; i<sites.size(); i++) {
@@ -148,62 +138,51 @@ function upCaseCtrl(ctrl) {
         	      }
         	      siteList[sites.size()]="NONE";
         		  bgColors[sites.size()]="white";
-        		//multisite ends =====================	 
+        		//multisite ends =====================
           } else {
           	siteList = props.getProperty("scheduleSiteID", "").split("\\|");
           }
-          
+
           if (bMoreAddr) {
           %>
-			<tr>
-				<td>
-				<div align="right">Location:</div>
-				</td>
-				<td><select id="reason" name="reason" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
+      <div class="control-group">
+        <label class="control-label" for="reason"><bean:message key="Appointment.formLocation" />:</label>
+        <div class="controls">
+             <select id="reason" name="reason" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
 					<% for(int i=0; i<siteList.length; i++) { %>
 					<option value="<%=siteList[i]%>" <%=(bMultisites? " style='background-color:"+bgColors[i]+"'" : "")%>
 						<%=strReason.equals(siteList[i])?"selected":""%>><b><%=siteList[i]%></b></option>
 					<% } %>
-				</select> </td>
-			</tr>
+				</select>
 		<% } %>
-			<!--  input type="hidden" name="reason" <%--=strReason--%> -->
-			<tr>
-				<td>
-				<div align="right"><bean:message
-					key="schedule.scheduledatepopup.formCreator" />:</div>
-				</td>
-				<td><%=strCreator%></td>
-			</tr>
-		</table>
-<% 		if (bMultisites)
-			out.println("<script>var _r=document.getElementById('reason'); _r.style.backgroundColor=_r.options[_r.selectedIndex].style.backgroundColor;</script>");
-%>		
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td bgcolor="#CCFFCC">
-				<div align="right"><input type="hidden" name="Submit" value="">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for=""><bean:message
+					key="schedule.scheduledatepopup.formCreator" />:</label>
+          <div class="controls">
+            <%=strCreator%>
+        </div>
+      </div>
+        <div style="text-align:right">
+                <input type="hidden" name="Submit" value="">
 				<input type="hidden" name="provider_no"
 					value="<%=request.getParameter("provider_no")%>"> <input
-					type="button"
+					type="button" class="btn"
 					value='<bean:message key="schedule.scheduledatepopup.btnSave"/>'
 					onclick="document.forms['schedule'].Submit.value=' Save '; document.forms['schedule'].submit();">
-				<input type="button" name="Button"
-					value='<bean:message key="schedule.scheduledatepopup.btnCancel"/>'
-					onClick="window.close()"> <input type="button"
+                <input type="button" class="btn"
 					value='<bean:message key="schedule.scheduledatepopup.btnDelete"/>'
 					onclick="document.forms['schedule'].Submit.value=' Delete '; document.forms['schedule'].submit();">
-				</div>
-				</td>
-			</tr>
-		</table>
-		<br>
-		</td>
-	</tr>
-</table>
+				<input type="button" name="Button" class="btn btn-link"
+					value='<bean:message key="schedule.scheduledatepopup.btnCancel"/>'
+					onClick="window.close()">
+        </div>
+    </form>
+<% 		if (bMultisites)
+			out.println("<script>var _r=document.getElementById('reason'); _r.style.backgroundColor=_r.options[_r.selectedIndex].style.backgroundColor;</script>");
+%>
+</div>
 
 </form>
 </body>

@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="oscar.oscarEncounter.pageUtil.EctDisplayLabAction2"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
@@ -33,6 +34,7 @@
 <%@ page import="oscar.oscarLab.ca.on.LabResultData"%>
 <%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*"%>
 <%@ page import="oscar.util.DateUtils" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -43,7 +45,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_lab");%>
+	<%response.sendRedirect("${ pageContext.request.contextPath }/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -52,7 +54,7 @@ if(!authed) {
 %>
 
 <%
-    
+
 
     //oscar.oscarMDS.data.MDSResultsData mDSData = new oscar.oscarMDS.data.MDSResultsData();
     CommonLabResultData comLab = new CommonLabResultData();
@@ -65,25 +67,25 @@ if(!authed) {
     if ( ackStatus == null ) { ackStatus = "N"; } // default to only new lab reports
     if ( providerNo == null ) { providerNo = ""; }
     if ( searchProviderNo == null ) { searchProviderNo = providerNo; }
-    
+
     ArrayList<LabResultData> labs = comLab.populateLabResultsData(LoggedInInfo.getLoggedInInfoFromSession(request), "",demographicNo, "", "","","U");
-    
+
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     if (loggedInInfo.getCurrentFacility().isIntegratorEnabled())
     {
        ArrayList<LabResultData> remoteResults=CommonLabResultData.getRemoteLabs(loggedInInfo,Integer.parseInt(demographicNo));
        labs.addAll(remoteResults);
     }
-    
+
     Collections.sort(labs);
-    
+
     int pageNum = 1;
     if ( request.getParameter("pageNum") != null ) {
         pageNum = Integer.parseInt(request.getParameter("pageNum"));
     }
-    
+
     LabResultData result;
-    
+
     LinkedHashMap<String,LabResultData> accessionMap = new LinkedHashMap<String,LabResultData>();
 
 	for (int i = 0; i < labs.size(); i++) {
@@ -95,20 +97,16 @@ if(!authed) {
 		}
 	}
 	labs = new ArrayList<LabResultData>(accessionMap.values());
-	
-	
+
+
 %>
-<html>
+<html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+
 <title><bean:message key="oscarMDS.index.title" /> Page <%=pageNum%>
 </title>
 <html:base />
 
-<!-- link rel="stylesheet" type="text/css" href="encounterStyles.css" -->
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 
 
 <script type="text/javascript" language=javascript>
@@ -130,7 +128,7 @@ function reportWindow(page) {
 }
 
 function checkSelected() {
-    aBoxIsChecked = false;    
+    aBoxIsChecked = false;
     if (document.reassignForm.flaggedLabs.length == undefined) {
         if (document.reassignForm.flaggedLabs.checked == true) {
             aBoxIsChecked = true;
@@ -150,7 +148,7 @@ function checkSelected() {
 }
 
 function submitFile(){
-   aBoxIsChecked = false;    
+   aBoxIsChecked = false;
     if (document.reassignForm.flaggedLabs.length == undefined) {
         if (document.reassignForm.flaggedLabs.checked == true) {
             aBoxIsChecked = true;
@@ -163,7 +161,7 @@ function submitFile(){
         }
     }
     if (aBoxIsChecked) {
-       document.reassignForm.action = '../oscarLab/FileLabs.do';
+       document.reassignForm.action = '${ pageContext.request.contextPath }/oscarLab/FileLabs.do';
        document.reassignForm.submit();
     }
 }
@@ -176,35 +174,53 @@ function checkAll(formId){
    }
 }
 </script>
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/js/global.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="${ pageContext.request.contextPath }//js/global.js"></script>
+
+
+    <script>
+	    jQuery(document).ready( function () {
+	        jQuery('#labTbl').DataTable({
+            "order": [],
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
 
 <script>
 $(function() {
     $( document ).tooltip();
   });
 </script>
-
 <style>
 .visLink {
-	color : white; 
+	color : white;
 }
 </style>
-</head>
 
-<body oldclass="BodyStyle" vlink="#0000FF">
+</head>
+<body>
 <form name="reassignForm" method="post" action="ReportReassign.do"
 	id="lab_form">
-<table oldclass="MainTable" id="scrollNumber1" border="0"
-	name="encounterTable" cellspacing="0" cellpadding="3" width="100%">
-	<tr oldclass="MainTableTopRow">
-		<td class="MainTableTopRowRightColumn" colspan="9" align="left">
-		<table width="100%">
+<table class="MainTable" id="scrollNumber1" style="width:100%">
+	<tr class="MainTableTopRow">
+		<td class="MainTableTopRowRightColumn"  style="text-align: left;">
+		<table style="width:100%">
 			<tr>
-				<td align="left" valign="center" width="30%"><input
+				<td style="text-align: left; width:30%"><input
 					type="hidden" name="providerNo" value="<%= providerNo %>">
 				<input type="hidden" name="searchProviderNo"
 					value="<%= searchProviderNo %>"> <%= (request.getParameter("lname") == null ? "" : "<input type=\"hidden\" name=\"lname\" value=\""+request.getParameter("lname")+"\">") %>
@@ -212,33 +228,33 @@ $(function() {
 				<%= (request.getParameter("hnum") == null ? "" : "<input type=\"hidden\" name=\"hnum\" value=\""+request.getParameter("hnum")+"\">") %>
 				<input type="hidden" name="status" value="<%= ackStatus %>">
 				<input type="hidden" name="selectedProviders"> <% if (demographicNo == null) { %>
-				<input type="button" class="smallButton"
+				<input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnSearch"/>"
 					onClick="window.location='Search.jsp?providerNo=<%= providerNo %>'">
-				<% } %> <input type="button" class="smallButton"
+				<% } %> <input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnClose"/>"
-					onClick="window.close()"> 
-					
+					onClick="window.close()">
+
 					 <% if (demographicNo != null) { %>
-					<input type="button" class="smallButton"
+					<input type="button" class="btn"
 					value="Search OLIS"
-					onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')"> 
+					onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')">
 					<% } %>
-					
+
 					<% if (demographicNo == null && request.getParameter("fname") != null) { %>
-				<input type="button" class="smallButton"
+				<input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnDefaultView"/>"
 					onClick="window.location='DemographicLab.jsp?providerNo=<%= providerNo %>'">
-				<% } %> <% if (demographicNo == null && labs.size() > 0) { %> <!-- <input type="button" class="smallButton" value="Reassign" onClick="popupStart(300, 400, 'SelectProvider.jsp', 'providerselect')"> -->
-				<input type="button" class="smallButton"
+				<% } %> <% if (demographicNo == null && labs.size() > 0) { %>
+				<input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnForward"/>"
 					onClick="checkSelected()"> <input type="button"
-					class="smallButton" value="File" onclick="submitFile()" />
-					<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
-        
+					class="btn" value="File" onclick="submitFile()" />
+					<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="${ pageContext.request.contextPath }/images/icon_alertsml.gif"/></span></span>
+
 					 <% } %>
 				</td>
-				<td align="center" valign="center" width="40%" class="Nav">
+				<td style="text-align: center; width:40%" class="Nav">
 				&nbsp;&nbsp;&nbsp; <% if (demographicNo == null) { %> <span
 					class="white"> <% if (ackStatus.equals("N")) {%> <bean:message
 					key="oscarMDS.index.msgNewLabReportsFor" /> <%} else if (ackStatus.equals("A")) {%>
@@ -249,93 +265,49 @@ $(function() {
 				<bean:message key="oscarMDS.index.msgUnclaimed" /> <%} else {%> <%=ProviderData.getProviderName(searchProviderNo)%>
 				<%}%> &nbsp;&nbsp;&nbsp; Page : <%=pageNum%> </span> <% } %>
 				</td>
-				<td align="right" valign="center" width="30%"><oscar:help keywords="lab demographic" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')"><bean:message
+				<td style="text-align:right; width:30%;"><oscar:help keywords="lab demographic" key="app.top1"/> | <a
+					href="javascript:popupStart(300,400,'${ pageContext.request.contextPath }/oscarEncounter/About.jsp')"><bean:message
 					key="global.about" /></a></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
+</table>
+<table  id="labTbl" class="stripe">
+<thead>
 	<tr>
-		<!--th align="left" valign="bottom" class="cell" nowrap>
-                    <input type="checkbox" onclick="checkAll('lab_form');" name="checkA"/>
-                    <bean:message key="oscarMDS.index.msgHealthNumber"/>
-                </th>
-                <th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgPatientName"/>
-                </th>
-                <th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgSex"/>
-                </th-->
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgDiscipline" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgDateTest" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgRequestingClient" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgResultStatus" /></th>
-
-		<!--th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgOrderPriority"/>
-                </th-->
-
-
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgReportStatus" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th style="text-align: left;" class="cell"><bean:message
 			key="oscarMDS.index.msgLabel" /></th>
 	</tr>
+</thead>
+<tbody>
+	<%
 
-	<%  
-            int startIndex = 0;
-            if ( request.getParameter("startIndex") != null ) {
-                startIndex = Integer.parseInt(request.getParameter("startIndex"));
-            }
-            int endIndex = startIndex+20;            
-            if ( labs.size() < endIndex ) {
-                endIndex = labs.size();
-            }
+            for (int i = 0; i < labs.size(); i++) {
 
-            for (int i = startIndex; i < endIndex; i++) {
-                
-                
+
                 result =  (LabResultData) labs.get(i);
-                
+
                 String segmentID        = (String) result.segmentID;
                 String status           = (String) result.acknowledgedStatus;
 
-                String resultStatus     = (String) result.resultStatus; 
+                String resultStatus     = (String) result.resultStatus;
 
-                String bgcolor = i % 2 == 0 ? "#e0e0ff" : "#ccccff" ;
-                if (!result.isMatchedToPatient()){
-                   bgcolor = "#FFCC00";    
-                }
                 %>
 
-	<tr bgcolor="<%=bgcolor%>"
-		class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">
-		<!--td nowrap>
-                    <input type="checkbox" name="flaggedLabs" value="<%=segmentID%>"> 
-                    <input type="hidden" name="labType<%=segmentID%><%=result.labType%>" value="<%=result.labType%>"/>
-                    <%=result.getHealthNumber() %>
-                </td>
-                <td nowrap>                                    
-                    <% if ( result.isMDS() ){ %>
-                    <a href="javascript:reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%= result.getPatientName()%></a>
-                    <% }else if (result.isCML()){ %>
-                    <a href="javascript:reportWindow('../lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }else if (result.isHL7TEXT()) {%>
-                    <a href="javascript:reportWindow('../lab/CA/ON/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }else {%>
-                    <a href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }%>
-                </td>
-                <td nowrap>
-                    <center><%= (String) result.getSex() %></center>
-                </td-->
-		<td nowrap>
-		<% 
+	<tr	class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">
+		<td>
+		<%
 			String remoteFacilityIdQueryString="";
 			if (result.getRemoteFacilityId()!=null)
 			{
@@ -347,89 +319,63 @@ $(function() {
 	            	MiscUtils.getLogger().error("Error", e);
 	            }
 			}
-		
+
 		   if ( result.isMDS() ){ %> <a
-			href="javascript:reportWindow('../oscarMDS/SegmentDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%= result.getDiscipline()%></a>
+			href="javascript:reportWindow('${ pageContext.request.contextPath }/oscarMDS/SegmentDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%= result.getDiscipline()%></a>
 		<% } else if (result.isCML()){ %> <a
-			href="javascript:reportWindow('../lab/CA/ON/CMLDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
+			href="javascript:reportWindow('${ pageContext.request.contextPath }/lab/CA/ON/CMLDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
 		<% }else if (result.isHL7TEXT()) {%> <a
-			href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
+			href="javascript:reportWindow('${ pageContext.request.contextPath }/lab/CA/ALL/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
 		<% } else {%> <a
-			href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
+			href="javascript:reportWindow('${ pageContext.request.contextPath }/lab/CA/BC/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
 		<% }%>
 		</td>
-		<td nowrap>
-		<% 
+		<td>
+		<%
 		    Date d1 = getServiceDate(loggedInInfo,result);
 		 	String formattedDate = DateUtils.getDate(d1);
-         
+
 		%>
 		<%=formattedDate %>
 		</td>
-		<td nowrap><%= (String) result.getRequestingClient()%></td>
-		<td nowrap><%= (result.isAbnormal() ? "Abnormal" : "" ) %></td>
-
-		<!--td nowrap>
-                    <%= (String) result.getPriority()%>
-                </td-->
-
-
-		<td nowrap><%= ( (String) ( result.isFinal() ? "Final" : "Partial") )%>
+		<td><%= (String) result.getRequestingClient()%></td>
+		<td><%= (result.isAbnormal() ? "Abnormal" : "" ) %></td>
+		<td><%= ( (String) ( result.isFinal() ? "Final" : "Partial") )%>
 		</td>
-		<td nowrap><%=StringUtils.trimToEmpty(result.getLabel()) %></td>
-	</tr>
-	<% } 
-         
-            if ( endIndex == 0 ) { %>
-	<tr>
-		<td colspan="9" align="center"><i><bean:message
-			key="oscarMDS.index.msgNoReports" /></i></td>
+		<td><%=StringUtils.trimToEmpty(result.getLabel()) %></td>
 	</tr>
 	<% } %>
+</tbody>
+</table>
+<table style="width:100%;">
 	<tr class="MainTableBottomRow">
-		<td class="MainTableBottomRowRightColumn" bgcolor="#003399"
-			colspan="9" align="left">
-		<table width="100%">
+		<td class="MainTableBottomRowRightColumn"
+			 style="text-align:left;">
+		<table style="width:100%;">
 			<tr>
-				<td align="left" valign="middle" width="30%">
+				<td style="text-align:left; width:30%;">
 				<% if (demographicNo == null) { %> <input type="button"
-					class="smallButton"
+					class="btn"
 					value="<bean:message key="oscarMDS.index.btnSearch"/>"
 					onClick="window.location='Search.jsp?providerNo=<%= providerNo %>'">
-				<% } %> <input type="button" class="smallButton"
+				<% } %> <input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnClose"/>"
 					onClick="window.close()"> <% if (request.getParameter("fname") != null) { %>
-				<input type="button" class="smallButton"
+				<input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnDefaultView"/>"
 					onClick="window.location='DemographicLab.jsp?providerNo=<%= providerNo %>'">
-				<% } %> <% if (demographicNo == null && labs.size() > 0) { %> <!-- <input type="button" class="smallButton" value="Reassign" onClick="popupStart(300, 400, 'SelectProvider.jsp', 'providerselect')"> -->
-				<input type="button" class="smallButton"
+				<% } %> <% if (demographicNo == null && labs.size() > 0) { %>
+				<input type="button" class="btn"
 					value="<bean:message key="oscarMDS.index.btnForward"/>"
 					onClick="checkSelected()"> <input type="button"
-					class="smallButton" value="File" onclick="submitFile()" /> <% } %>
+					class="btn" value="File" onclick="submitFile()" /> <% } %>
 				</td>
-				<td align="center" valign="middle" width="40%">
+				<td style="text-align:center; width:40%;">
 				<div class="Nav" >
-				<% if ( pageNum > 1 || labs.size() > endIndex ) {
-                                    if ( pageNum > 1 ) { %> <a class="visLink"
-					href="DemographicLab.jsp?providerNo=<%=providerNo%><%= (demographicNo == null ? "" : "&demographicNo="+demographicNo ) %>&searchProviderNo=<%=searchProviderNo%>&status=<%=ackStatus%><%= (request.getParameter("lname") == null ? "" : "&lname="+request.getParameter("lname")) %><%= (request.getParameter("fname") == null ? "" : "&fname="+request.getParameter("fname")) %><%= (request.getParameter("hnum") == null ? "" : "&hnum="+request.getParameter("hnum")) %>&pageNum=<%=pageNum-1%>&startIndex=<%=startIndex-20%>"><
-				<bean:message key="oscarMDS.index.msgPrevious" /></a> <% } else { %>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<% } %> <%int count = 1;
-                                      for( int i =0; i < labs.size(); i = i +20){%>
-				<a style="text-decoration: none;" class="visLink"
-					href="DemographicLab.jsp?providerNo=<%=providerNo%><%= (demographicNo == null ? "" : "&demographicNo="+demographicNo ) %>&searchProviderNo=<%=searchProviderNo%>&status=<%=ackStatus%><%= (request.getParameter("lname") == null ? "" : "&lname="+request.getParameter("lname")) %><%= (request.getParameter("fname") == null ? "" : "&fname="+request.getParameter("fname")) %><%= (request.getParameter("hnum") == null ? "" : "&hnum="+request.getParameter("hnum")) %>&pageNum=<%=count%>&startIndex=<%=i%>">[<%=count%>]</a>
-				<%count++;
-                                      }%> <% if ( labs.size() > endIndex ) { %>
-				<a
-					class="visLink" href="DemographicLab.jsp?providerNo=<%=providerNo%><%= (demographicNo == null ? "" : "&demographicNo="+demographicNo ) %>&searchProviderNo=<%=searchProviderNo%>&status=<%=ackStatus%><%= (request.getParameter("lname") == null ? "" : "&lname="+request.getParameter("lname")) %><%= (request.getParameter("fname") == null ? "" : "&fname="+request.getParameter("fname")) %><%= (request.getParameter("hnum") == null ? "" : "&hnum="+request.getParameter("hnum")) %>&pageNum=<%=pageNum+1%>&startIndex=<%=startIndex+20%>"><bean:message
-					key="oscarMDS.index.msgNext" /> ></a> <% } else { %>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<% }
-                                   } %>
+
 				</div>
 				</td>
-				<td align="right" width="30%">&nbsp;</td>
+				<td style="text-align:right; width:30%;">&nbsp;</td>
 			</tr>
 		</table>
 		</td>
@@ -437,7 +383,7 @@ $(function() {
 </table>
 </form>
 </body>
-</html>
+</html:html>
 <%!
 public Date getServiceDate(LoggedInInfo loggedInInfo, LabResultData labData) {
     EctDisplayLabAction2.ServiceDateLoader loader = new EctDisplayLabAction2.ServiceDateLoader(labData);

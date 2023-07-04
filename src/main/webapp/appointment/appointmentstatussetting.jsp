@@ -17,6 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%@ page import="java.util.*,org.oscarehr.common.model.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -31,42 +32,37 @@
 	<%response.sendRedirect("../logout.jsp");%>
 </security:oscarSec>
 
-
-<html>
+<html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="admin.appt.status.mgr.title" /></title>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
-   <script>
-     jQuery.noConflict();
-   </script>
+
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
 <oscar:customInterface section="apptStatusList"/>
 </head>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 <body>
 <%
         String reseturl = request.getContextPath();
         reseturl = reseturl + "/appointment/apptStatusSetting.do?dispatch=reset";
     %>
-<table border=0 cellspacing=0 cellpadding=0 width="100%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER" NOWRAP><font face="Helvetica" color="#FFFFFF"><bean:message
-			key="admin.appt.status.mgr.title" /></font></th>
-		<th align="right" NOWRAP><font face="Helvetica" color="#CCCCCC"><a
-			href=<%=reseturl%>>reset</a></font></th>
-	</tr>
-</table>
 
 
-<table class="borderAll" width="100%">
+<h4><bean:message
+			key="admin.appt.status.mgr.title" /></h4>
+
+
+<table class="table table-hover table-condensed">
+    <thead>
 	<tr>
 		<th><bean:message key="admin.appt.status.mgr.label.status" /></th>
 		<th><bean:message key="admin.appt.status.mgr.label.desc" /></th>
 		<th><bean:message key="admin.appt.status.mgr.label.color" /></th>
 		<th><bean:message key="admin.appt.status.mgr.label.enable" /></th>
 		<th><bean:message key="admin.appt.status.mgr.label.active" /></th>
-		<th>&nbsp;</th>
 	</tr>
+    </thead>
+    <tbody>
 	<%
             List apptsList = (List) request.getAttribute("allStatus");
             AppointmentStatus apptStatus = null;
@@ -88,14 +84,14 @@
 	<tr class=<%=(i % 2 == 0) ? "even" : "odd"%>>
 		<td class="nowrap"><%=strStatus%></td>
 		<td class="nowrap"><%=strDesc%></td>
-		<td class="nowrap" bgcolor="<%=strColor%>"><%=strColor%></td>
-		<td class="nowrap"><%=iActive%></td>
+		<td class="nowrap" style="text-align:center;background-color:<%=strColor%>;"><%=strColor%></td>
+		<td class="nowrap" style="text-align:center;"><%=iActive%></td>
 		<td class="nowrap">
 		<%
     String url = request.getContextPath();
     url = url + "/appointment/apptStatusSetting.do?dispatch=modify&statusID=";
     url = url + iStatusID;
-        %> <a href=<%=url%>>Edit</a> &nbsp;&nbsp;&nbsp; <%
+        %> <a href="<%=url%>">Edit</a> &nbsp;&nbsp;&nbsp; <%
     int iToStatus = (iActive > 0) ? 0 : 1;
     url = request.getContextPath();
     url = url + "/appointment/apptStatusSetting.do?dispatch=changestatus&iActive=";
@@ -103,7 +99,7 @@
     url = url + "&statusID=";
     url = url + iStatusID;
     if (iEditable == 1) {
-        %> <a href=<%=url%>><%=(iActive > 0) ? "Disable" : "Enable"%></a>
+        %> <a href="<%=url%>"><%=(iActive > 0) ? "Disable" : "Enable"%></a>
 		<%
     }
         %>
@@ -112,6 +108,7 @@
 	<%
             }
 %>
+</tbody>
 </table>
 <br>
 
@@ -125,5 +122,6 @@ status.
 <%
     }
 %>
+
 </body>
-</html>
+</html:html>

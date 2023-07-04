@@ -23,14 +23,14 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.WebUtilsOld"%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.util.LocaleUtils"%>
 <%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+  if(session.getValue("user") == null) response.sendRedirect("${pageContext.request.contextPath}/logout.jsp");
 %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -49,58 +49,56 @@
 <html:html locale="true">
 
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.Index.oldMeasurements" />
 </title>
 <html:base />
-
+<script src="${ pageContext.request.contextPath }/js/global.js"></script>
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 </head>
 
 
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
 <style type="text/css" media="print">
     .noprint {
         display: none;
     }
-    
+
 </style>
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="window.focus();">
+<body onload="window.focus();">
 <html:errors />
 <%=WebUtilsOld.popErrorAndInfoMessagesAsHtml(session)%>
 
 <div style="display:inline-block; text-align:center">
-	<bean:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>
-	
-	<table>
+	<h4><bean:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/></h4>
+
+	<table class="table table-striped table-condensed">
 		<tr>
-			<th align="left" class="Header" width="20"><bean:message
+			<th style="text-align: left; width: 20px;" class="Header"><bean:message
 				key="oscarEncounter.oscarMeasurements.displayHistory.headingType" />
 			</th>
-			<th align="left" class="Header" width="200"><bean:message key="oscarEncounter.oscarMeasurements.typedescription"/></th>
-			<th align="left" class="Header" width="50"></th>
+			<th style="text-align: left; width: 200px;" class="Header"><bean:message key="oscarEncounter.oscarMeasurements.typedescription"/></th>
+			<th style="text-align: left; width: 50px;" class="Header"></th>
 		</tr>
 		<logic:present name="measurementsData">
 			<logic:iterate id="data" name="measurementsData"
 	                 property="measurementsDataVector" type="oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean" indexId="ctr">
-				<tr class="data">                                                  
-	                         <td width="20"><bean:write name="data" property="type" /></td>
-					<td width="200"><bean:write name="data"
+				<tr class="data">
+	                         <td><bean:write name="data" property="type" /></td>
+					<td><bean:write name="data"
 						property="typeDescription" /></td>
-					<td width="50"><a href="#"
+					<td><a href="#"
 						name='<bean:message key="oscarEncounter.Index.oldMeasurements"/>'
 						onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<bean:write name="data" property="type" />'); return false;">more...</a></td>
 				</tr>
 			</logic:iterate>
 		</logic:present>
 	</table>
-	
-	<input type="button" name="Button" value="<bean:message key="global.btnPrint"/>" onClick="window.print()">
-	<input type="button" name="Button" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
+
+	<input type="button" name="Button" class="btn noprint" value="<bean:message key="global.btnPrint"/>" onClick="window.print()">
+	<input type="button" name="Button" class="btn noprint" value="<bean:message key="global.btnClose"/>" onClick="window.close()">
 	<logic:present name="type">
 		<input type="hidden" name="type" value="<bean:write name="type" />" />
 	</logic:present>
-	
+
 	<%
 		if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user")))
 		{
@@ -110,13 +108,13 @@
 			String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
 					+ "demographicId=" + bean.getDemographicNo() + "&"
 					+ "medicalDataType=Measurements" + "&"
-					+ "parentPage=" + request.getRequestURI(); 
+					+ "parentPage=" + request.getRequestURI();
 			%>
-				<input type="button" name="Button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> value="<%=LocaleUtils.getMessage(request, "SendToPHR")%>" onclick="document.location.href='<%=sendDataPath%>'">
+				<input type="button" class="btn noprint" name="Button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> value="<%=LocaleUtils.getMessage(request, "SendToPHR")%>" onclick="document.location.href='<%=sendDataPath%>'">
 			<%
 		}
 	%>
-									             	
+
 </div>
 
 </body>

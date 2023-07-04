@@ -50,13 +50,15 @@ if(!authed) {
 <head>
 <title>CBI Upload Administration Panel</title>
 
-<!-- <script type="text/javascript" src="../js/jquery-1.9.1.js"></script> -->
-<script type="text/javascript" language="JavaScript" src="../js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../js/jquery.treeview.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.treeview.js"></script>
 
-<link rel="stylesheet" href="../css/cupertino/jquery-ui-1.8.18.custom.css">
-<link rel="stylesheet" href="../css/jqtreeview/jquery.treeview.css" />
+
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/jqtreeview/jquery.treeview.css" />
 
 <style type="text/css">
 body
@@ -85,11 +87,11 @@ body
 {
 	height: 30px;
 }
-.table_main_details td.summary span, .table_main_details td.filter span 
+.table_main_details td.summary span, .table_main_details td.filter span
 {
 	margin-right: 15px;
 }
-.table_main_details>tbody>tr>td 
+.table_main_details>tbody>tr>td
 {
 	padding-left: 5px;
 	border-left: none !important;
@@ -140,7 +142,7 @@ div.ui-dialog
     background: none !important;
     opacity: .50 !important; /* Make sure to change both of these, as IE only sees the second one */
   	filter: Alpha(Opacity=50) !important;
-  	background-color: rgb(50, 50, 50) !important; 
+  	background-color: rgb(50, 50, 50) !important;
 }
 
 .table_form_dtl td.label
@@ -162,7 +164,7 @@ function onclick_tree_item(obj)
 {
 	var dateStr = $(obj).html();
 	//alert("in onclick_tree_item.. dateStr = "+dateStr);
-	
+
 	$(".div_content").html('<div align="center" style="margin-top: 100px; font-weight: bold; font-size: 15px;">Loading...</div>');
 	$.ajax({
 		url: "./cbiAdminSubmissionDtl.jsp?date="+dateStr,
@@ -175,7 +177,7 @@ function onclick_filter(val)
 {
 	//alert("val = "+val);
 	$(".table_records").find("tr").show();
-	
+
 	if(val!='all')
 	{
 		//hide rows having status other than val

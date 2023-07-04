@@ -35,7 +35,8 @@
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <title>Clinic NBR Management Start Time : <%=oscar.OscarProperties.getInstance().getStartTime()%></title>
 <script type="text/javascript">
 	function toggleButtons(visible) {

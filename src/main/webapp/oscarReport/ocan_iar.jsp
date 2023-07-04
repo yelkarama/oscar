@@ -147,12 +147,12 @@ if(!authed) {
 <script>
 	$(function() {
 
-		$("#checkA").bind("click", function() {
+		$("#checkA").on("click", function() {
 			$("[name = test1]:checkbox").attr("checked", this.checked);
 
 		});
 
-		$("[name = test1]:checkbox").bind(
+		$("[name = test1]:checkbox").on(
 				"click",
 				function() {
 					var $chk = $("[name = test1]:checkbox");
@@ -210,7 +210,7 @@ if(!authed) {
 		}
 		$('#ocanForm').action = '${ctx}/oscarReport/ocan_report_export_iar_manual.jsp?assessmentIds='
 				+ fieldList;
-		$('#ocanForm').submit();
+		$('#ocanForm').trigger( "submit" );
 
 	}
 </script>

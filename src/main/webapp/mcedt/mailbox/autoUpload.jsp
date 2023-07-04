@@ -48,7 +48,8 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Uploading Claims from Oscar to MCEDT</title>
-	<script src="../js/jquery-1.7.1.min.js"></script>
+	<script src="..>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900" rel="stylesheet" type="text/css">
 
@@ -165,7 +166,7 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 		 //the click on dialog button
 		 $(document).ready(function ()
         {
-            $("#btnDone").click(function (e)
+            $("#btnDone").on( "click", function (e)
             {
             	return submitForm('cancelUpload', null);
                 //ShowDoneDialog(true);
@@ -180,11 +181,11 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 
             if (modal)
             {
-                $("#donescreen").unbind("click");
+                $("#donescreen").off("click");
             }
             else
             {
-                $("#donescreen").click(function (e)
+                $("#donescreen").on( "click", function (e)
                 {
                     HideDialog();
                 });

@@ -38,8 +38,12 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page import="java.util.*,java.text.*,java.sql.*,java.net.*" errorPage="errorpage.jsp" %>
-<%@ page import="oscar.OscarProperties" %>
+
+<%@ page import="java.util.*"%>
+<%@ page import="java.text.*"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="java.net.*" errorPage="errorpage.jsp" %>
+<%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
@@ -72,17 +76,16 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="provider.providerpreference.title" /></title>
-<!-- <script src="../share/javascript/prototype.js"></script> -->
-
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/datepicker.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 <script>
 
 function setfocus() {
@@ -250,7 +253,7 @@ window.opener.location.reload();
 					<span class="preferenceUnits">(0-23)</span>
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="end_hour" VALUE='<%=endHour%>' size="2" maxlength="2">
+					<INPUT TYPE="TEXT" NAME="end_hour" VALUE='<%=endHour%>' maxlength="2">
 				</td>
 			</tr>
 			<tr>
@@ -259,7 +262,7 @@ window.opener.location.reload();
 					<span class="preferenceUnits"><bean:message key="provider.preference.min" /></span>
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="every_min" VALUE='<%=everyMin%>' size="2" maxlength="2">
+					<INPUT TYPE="TEXT" NAME="every_min" VALUE='<%=everyMin%>' maxlength="2">
 				</td>
 			</tr>
             <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.schedule,_admin.schedule.curprovider_only" rights="r" reverse="<%=false%>">
@@ -268,7 +271,7 @@ window.opener.location.reload();
 					<bean:message key="provider.preference.formGroupNo" />
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="mygroup_no" VALUE='<%=myGroupNo%>' size="12" maxlength="10">
+					<INPUT TYPE="TEXT" NAME="mygroup_no" VALUE='<%=myGroupNo%>' maxlength="10">
 
 					<input type="button" class="btn btn-link" value="<bean:message key="provider.providerpreference.viewedit" />" onClick="popupPage(360,680,'providerdisplaymygroup.jsp' );return false;" />
 				</td>
@@ -533,7 +536,7 @@ window.opener.location.reload();
 					</select>
 	            </td>
         <script>
-$('#rxInteractionWarningLevel').bind( 'change', function(event) {
+$('#rxInteractionWarningLevel').on( 'change', function(event) {
 	var value = $('#rxInteractionWarningLevel').val();
 
     $.ajax({
@@ -578,7 +581,7 @@ $('#rxInteractionWarningLevel').bind( 'change', function(event) {
          </td>
         </tr>
         <script>
-        $('#reviewMsg').bind('change', function(event) {
+        $('#reviewMsg').on('change', function(event) {
 	var value = $('#reviewMsg').val();
 alert(value);
     $.ajax({
@@ -708,9 +711,6 @@ alert(value);
       </tr>
       <tr>
           <td><a href=# onClick ="popupPage(230,860,'providerColourPicker.jsp');return false;"><bean:message key="provider.btnEditColour"/></a></td>
-      </tr>
-      <tr>
-          <td><a href=# onClick ="popupPage(500,860,'providerPrinter.jsp');return false;"><bean:message key="provider.btnSetDefaultPrinter"/></a></td>
       </tr>
       <tr>
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxPageSize');return false;"><bean:message key="provider.btnSetRxPageSize"/></a></td>
@@ -925,7 +925,7 @@ alert(value);
 </div>
 </FORM>
 <script>
-    // As exception to usual OSCAR conventions a CDN is used instead of a local i18n resource to reduce code maintenance
+   
     // NOTE
     // DataTables 1.13.4 language plugin is tested compatible with 1.10.11
     // and allows for specific use of tag global.i18nLanguagecode=fr-FR  pt-BR
@@ -937,7 +937,7 @@ alert(value);
             "order": [],
 	        "bPaginate": false,
             "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
             });
 	    });

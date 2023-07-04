@@ -65,25 +65,27 @@ if(!authed) {
 
 </style>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <script type="text/javascript">
 	
-	$(document).keypress(function() {
+	$(document).on( "keypress", function() {
 		$("#submit").prop("disabled", false);
 		$(this).off();
 	});
 			
 	
 	$(document).ready(function() {
-		$("#faxUrl").focus();				
+		$("#faxUrl").trigger( "focus" );				
 		
-		$("select").change(function() {
+		//$("select").on("change",function() {
+		$("select").on("change", function() {
 			$("#submit").prop("disabled", false);
 			$(this).off();
 		});
 				
-		$("#submit").click(function(e) {
+		$("#submit").on( "click", function(e) {
 			e.preventDefault();
 			
 			if( verify() ) {
@@ -106,7 +108,7 @@ if(!authed) {
 						else {
 							$("#msg").html("There was a problem saving your configuration.  Check the logs for further details.");
 							$('.alert').removeClass('alert-success');
-							$('.alert').adqdClass('alert-error');
+							$('.alert').addClass('alert-error');
 							$('.alert').show(); 
 						}
 					}});
@@ -118,56 +120,56 @@ if(!authed) {
 		});
 		
 		if( $("#faxUrl").val().substr(0,2) == "ip" ) {
-			$("#faxUrl").keypress(function() {
+			$("#faxUrl").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
 		}
 		else {
-			$("#faxUrl").dblclick(function() {
+			$("#faxUrl").on( "dblclick", function() {
 				$(this).val("");
 			});
 		}
 		
 		
 		if( $("#faxServiceUser").val() == "Fax Service login" ) {
-			$("#faxServiceUser").keypress(function() {
+			$("#faxServiceUser").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
 		}
 		else {
-			$("#faxServiceUser").dblclick(function() {
+			$("#faxServiceUser").on( "dblclick", function() {
 				$(this).val("");
 			});
 		}
 				
 		if( $("#faxServicePasswd").val() == "**********" ) {
-			$("#faxServicePasswd").keypress(function() {
+			$("#faxServicePasswd").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
 		}
 		else {
-			$("#faxServicePasswd").dblclick(function() {
+			$("#faxServicePasswd").on( "dblclick", function() {
 				$(this).val("");
 			});
 		}
 		
 		if( $("#faxUser").val() == "user login" ) {
-			$("#faxUser").keypress(function() {
+			$("#faxUser").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
@@ -175,25 +177,26 @@ if(!authed) {
 		
 		
 		if( $("#faxPasswd").val() == "**********" ) {
-			$("#faxPasswd").keypress(function() {
+			$("#faxPasswd").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
 		}
 		
 		if( $("#faxNumber").val() == "Clinic Fax Number" ) {
-			$("#faxNumber").keypress(function() {
+			$("#faxNumber").on( "keypress", function() {
 				$(this).val("");
 				$(this).off();
-				$(this).dblclick(function() {
+				$(this).on( "dblclick", function() {
 					$(this).val("");
 				});
 			});
-			
-			$("#faxNumber").blur(function() {
+			//blur() deprecated in jQuery 3.3
+			//$("#faxNumber").blur(function() {
+			$("#faxNumber").on("blur", function() {
 				if( !$(this).val().match("^\\d{10}$")) {
 					alert("please enter fax number in form 1234567890");
 					var input = $(this);
@@ -206,7 +209,7 @@ if(!authed) {
 		$("input[type='text']").filter(function() {
 			return this.id.match("^faxUser\d+")
 		}).each(function() {			
-			$(this).dblclick(function() {
+			$(this).on( "dblclick", function() {
 				$(this).val("");
 			});
 		});
@@ -214,7 +217,7 @@ if(!authed) {
 		$("input[type='password']").filter(function() {
 			return this.id.match("^faxPasswd\\d+")
 		}).each(function() {			
-			$(this).dblclick(function() {
+			$(this).on( "dblclick", function() {
 				$(this).val("");
 			});
 						
@@ -224,7 +227,7 @@ if(!authed) {
 		$("input[type='text']").filter(function() {
 			return this.id.match("^faxNumber\\d+")
 		}).each(function() {				
-			$(this).dblclick(function() {
+			$(this).on( "dblclick", function() {
 				$(this).val("");
 			});
 			
@@ -238,7 +241,7 @@ if(!authed) {
 						
 		});
 				
-		$("input[type='radio']").click(function() {
+		$("input[type='radio']").on( "click", function() {
 			$("#submit").prop("disabled", false);
 			setState(this);
 		});
@@ -295,7 +298,7 @@ if(!authed) {
 		$("#content").append(theSpan);
 		
 		//$(div).appendTo("#content");
-		$("#faxUser"+userCount).focus();	
+		$("#faxUser"+userCount).trigger( "focus" );	
 		$("#submit").prop("disabled", false);
 	}
 	

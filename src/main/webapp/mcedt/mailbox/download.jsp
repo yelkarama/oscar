@@ -46,10 +46,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<script src="../js/jquery-1.7.1.min.js"></script>
+<script src="..>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script language="javascript">	
 $(window).load(function(){
-	$('input[type="checkbox"]').click(function () {
+	$('input[type="checkbox"]').on( "click", function () {
    	 var pass = 5; //5 files at a time
    	 var numOfFiles = $('input[type="checkbox"]:checked').length;
    	 if (numOfFiles == pass) {
@@ -66,7 +67,7 @@ $(window).load(function(){
   	  }
 	})
 	
-	$("#unSelDL").click(function(){	
+	$("#unSelDL").on( "click", function(){	
 		$('input[type="checkbox"]').filter(':checked').prop('checked', false);
 		$('input[type="checkbox"]').filter(':disabled').prop('disabled', false);
 		$("#unSelDL").prop('disabled', true);

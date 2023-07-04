@@ -199,12 +199,13 @@ if (!authed) {
 
 
 	<script type="text/javascript"
-		src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
+		src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script type="text/javascript"
 		src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript">
-$(".prevention-item").click(function () {
+$(".prevention-item").on( "click", function () {
     var id = $(this).attr("id");
     var name = $(this).attr("prevention-data");
     bin = $("#prevention-bin");
@@ -319,7 +320,7 @@ function setModalItems(){
 
 
 
-$("#btnConfirm").click(function () {
+$("#btnConfirm").on( "click", function () {
 	$('html, body', window.parent.document).animate({scrollTop:230}, 'slow');
 	setModalItems();
 });

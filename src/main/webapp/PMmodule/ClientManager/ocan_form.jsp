@@ -285,7 +285,7 @@ function changeNumberOfcentres() {
 <script>
 $("document").ready(function() {
 
-	$("#generate_summary_of_actions").click(function(){ 
+	$("#generate_summary_of_actions").on( "click", function(){ 
 		$("#summary_of_actions_block").innerHTML='';
 		var count=0;
 		var domains = '';

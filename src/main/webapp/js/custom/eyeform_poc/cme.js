@@ -18,7 +18,8 @@
 
 
      	//link save button
-		jQuery("#save_measurements").live('click',function(e){
+		//jQuery("#save_measurements").live('click',function(e){  //deprecated in Jquery 1.9
+		jQuery( document ).on( "click", "#save_measurements", function(e) { 
 			e.preventDefault();
 			touchColor();
 
@@ -281,7 +282,8 @@
 
        jQuery("#newNoteImg").hide();
        jQuery("#imgPrintEncounter").removeAttr('onclick');
-       jQuery("#imgPrintEncounter").live('click',function(e){
+       //jQuery("#imgPrintEncounter").live('click',function(e){ deprecated in 1.9
+       jQuery( document ).on( "click", "#imgPrintEncounter", function(e) {
     	   e.preventDefault();
     	   location.href=ctx+'/eyeform/Eyeform.do?method=print&apptNos=' + appointmentNo;
        });

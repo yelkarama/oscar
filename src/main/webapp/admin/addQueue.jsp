@@ -104,7 +104,7 @@ $(document).attr('title', 'Administration Panel | Add New Inbox Queue');
 
 $( document ).ready(function( $ ) {
 
-	$("#add-btn").click(function(e) {
+	$("#add-btn").on( "click", function(e) {
 		e.preventDefault();
 		
 		var qn=$('#newQueueName').val();

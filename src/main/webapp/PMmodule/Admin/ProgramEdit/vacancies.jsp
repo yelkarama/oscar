@@ -45,7 +45,7 @@
 var sortOrder = 'desc';
 
 $(document).ready(function(){
-$('#sortVacancies').click(function(e) {
+$('#sortVacancies').on( "click", function(e) {
 	  
 
     var rows = $('#vacancyTable tbody  tr').get();

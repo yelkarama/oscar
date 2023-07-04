@@ -31,42 +31,44 @@
 <html>
 <head>
 <title>Look-Up List Manager</title>
-<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.7.1.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+
 <script type="text/javascript" >
 	$.fn.bindEvents = function() {
 
-		$(".addLookupListItemButton").unbind("click");
-		$(".removeLookupListItem").unbind("click");
-		$(".showHideEdit").unbind( "click");
-		
-		$(".addLookupListItemButton").bind("click", function(){
+		$(".addLookupListItemButton").off("click");
+		$(".removeLookupListItem").off("click");
+		$(".showHideEdit").off( "click");
+
+		$(".addLookupListItemButton").on("click", function(){
 			var data = new Object();
 			data.lookupListId = this.id.split("_")[1];
 			data.lookupListItemLabel = $( "#lookupListItemLabel_" + data.lookupListId ).val();
 			data.method = "add";
 			postData( data, "#lookupListItems_" + data.lookupListId );
 		});
-	
-		$(".removeLookupListItem").bind("click", function(){
+
+		$(".removeLookupListItem").on("click", function(){
 			var lookupListId = this.id.split("_")[2];
 			var data = new Object();
 			data.lookupListItemId = this.id.split("_")[1];
 			data.method = "remove";
 			postData( data, "#lookupListItems_" + lookupListId );
 		});
-	
-		$(".showHideEdit").bind( "click", function(){		
+
+		$(".showHideEdit").on( "click", function(){
 			var lookupListId = this.id.split("_")[1];
 			var showId = "#lookupListItemWrapper_" + lookupListId;
-			var cancel = "#cancel_" + lookupListId; 
+			var cancel = "#cancel_" + lookupListId;
 			var edit = "#edit_" + lookupListId;
-	
+
 			$(showId).toggle();
 			$(cancel).toggle();
-			$(edit).toggle();		
+			$(edit).toggle();
 		});
 	}
-	
+
 	function postData( data, target ) {
 		$.ajax({
 			method : "POST",
@@ -79,9 +81,9 @@
 			}
 		});
 	}
-	
-	$(document).ready(function(){	
-		$().bindEvents();	
+
+	$(document).ready(function(){
+		$().bindEvents();
 		$(".lookupListItemWrapper").hide();
 	});
 
@@ -140,7 +142,7 @@ div.lookupListItemsWrapper {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff, endColorstr=#eaeaea);
 	margin-top: 15px;
 	padding: 10px ;
-	
+
 }
 
 div.lookupListTitle {
@@ -158,7 +160,7 @@ ul {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 }
-	
+
 	li.lookupListItem {
 		list-style-type: none;
 		padding: 5px;
@@ -167,7 +169,7 @@ ul {
 		border: 2px double #CCCCCC;
 	}
 
-	
+
 	li.lookupListItem a {
 		display: inline-block;
 		text-decoration: none;
@@ -177,18 +179,60 @@ ul {
 		border: red thin solid;
 		padding: 0 2px;
 	}
-	
+
 	li.lookupListItem a:hover {
 		border-color: #555;
 		color: #555;
 	}
+
+.addLookupListItemButton  {
+  display: inline-block;
+  padding: 1px 10px;
+  margin-bottom: 0;
+  font-size: 11px;
+  line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border: 1px solid #cccccc;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.addLookupListItemButton:hover,
+.addLookupListItemButton:focus,
+.addLookupListItemButton:active,
+.addLookupListItemButton.active,
+.addLookupListItemButton.disabled,
+.addLookupListItemButton[disabled] {
+  color: #333333;
+  background-color: #e6e6e6;
+}
+
+
 
 div.addLookupListItemTools {
 	padding:5px;
 	float:left;
 	width:100%;
 }
-	
+
 	div.addLookupListItemTools div.addInput {
 	   width:89%;
 		float:left;
@@ -204,7 +248,7 @@ div.addLookupListItemTools {
 		text-align: left;
 		float:left;
 	}
-	
+
 	div.addLookupListItemTools input[type="text"] {
 		width: 100%;
 	  border:none;
@@ -222,18 +266,17 @@ footer {
 </style>
 </head>
 <body id="lookUpListManager">
-<header>
-	<h1 class="pageTitle">
-		<bean:message key="admin.admin.lookuplists.title" />
-	</h1>
-</header>
 
-<security:oscarSec roleName="${ sessionScope.userrole },${ sessionScope.user }" 
+<h2 class="pageTitle">
+		<bean:message key="admin.admin.lookuplists.title" />
+	</h2>
+
+<security:oscarSec roleName="${ sessionScope.userrole },${ sessionScope.user }"
 	objectName="_admin.*" rights="w" reverse="${ true }">
-	
+
 	<div id="lookUpListWrapper">
-		<c:import url="./manageLookUpLists.jsp" />	
-	</div>	
+		<c:import url="./manageLookUpLists.jsp" />
+	</div>
 </security:oscarSec>
 
 <footer></footer>

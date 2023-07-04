@@ -209,7 +209,8 @@
 
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script src="<%=request.getContextPath() %>/js/jqBootstrapValidation-1.3.7.min.js"></script>
    <script>
      //jQuery.noConflict(); 
@@ -241,7 +242,7 @@
                     }
                 );
 
-                $("a[data-toggle=\"tab\"]").click(function(e) {
+                $("a[data-toggle=\"tab\"]").on( "click", function(e) {
                     e.preventDefault();
                     $(this).tab("show");
                 });
@@ -265,7 +266,6 @@
             if(!checkFormTypeIn()) return false;
 
             if( !ignoreDuplicates() ) return false;
-            //document.getElementById("adddemographic").submit();
 
   
   			var rosterStatus = document.adddemographic.roster_status.value;
@@ -687,7 +687,7 @@ $( document ).ready( function() {
 	var defPhTitle = "Check to set preferred contact number";
 	var prefPhTitle = "Preferred contact number";
 
-  $('#cell_check').change(function() 
+  $('#cell_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -699,7 +699,7 @@ $( document ).ready( function() {
 	$('#phone_check').prop('checked', false);
     }
   }); 
-  $('#phone_check').change(function() 
+  $('#phone_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -711,7 +711,7 @@ $( document ).ready( function() {
 	$('#cell_check').prop('checked', false);
     }
   });
-  $('#phone2_check').change(function() 
+  $('#phone2_check').on("change",function() 
   {
     if(this.checked == true)
     {
@@ -742,11 +742,11 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
 $(document).ready(function(){
 	
-	$("#country").bind('change',function(){
+	$("#country").on('change',function(){
 		updateProvinces('');
 	});
 	
-	$("#residentialCountry").bind('change',function(){
+	$("#residentialCountry").on('change',function(){
 		updateResidentialProvinces('');
 	});
 	
@@ -2557,7 +2557,7 @@ $(document).ready(function(){
 		$("#usSigned").show();
 	}
 	
-	$("#countryOfOrigin").change(function () {
+	$("#countryOfOrigin").on("change",function () {
 		var countryOfOrigin = $("#countryOfOrigin").val();
 		if("US" == countryOfOrigin){
 		   	$("#usSigned").show();

@@ -48,14 +48,15 @@ if(session.getValue("user") == null)
 
 
 <!-- jQuery for radio fields -->
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <script>
 $(document).ready(function() {
 
     $('input[type="checkbox"]').addClass("only-one-");
 
-	$('[class^="only-one-"]').click(function() {
+	$('[class^="only-one-"]').on( "click", function() {
 		if ( $(this).is('input:checkbox') ){
 			$('.'+$(this).attr('class')).prop('checked', false);
 			$(this).prop('checked', true);

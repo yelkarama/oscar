@@ -106,15 +106,15 @@ function reload() {
 </head>
 <body onload="initiate()">
 <form method="post" action="">
-<br>
+<h3>&nbsp;&nbsp;<bean:message key="admin.admin.btnStudy" /></h3>
 <div class="well">
 <table id="study" class="table table-striped">
     <thead>
         <tr>
-	        <th>Name</th>
-	        <th>Status</th>
-	        <th>Add Demographic</th>
-	        <th>Add Provider</th>
+	        <th><bean:message key="admin.providersearch.formName" /></th>
+	        <th><bean:message key="admin.provider.formStatus" /></th>
+	        <th><bean:message key="global.btnAdd" />&nbsp;<bean:message key="admin.admin.demographic" /></th>
+	        <th><bean:message key="global.btnAdd" />&nbsp;<bean:message key="admin.admin.provider" /></th>
         </tr>
     </thead>
     <tbody>
@@ -128,11 +128,11 @@ for( Study study : listStudies ) {
 %>
         <tr>
 	        <td><a href="#" onclick="popupStart(800, 1200, '<%= request.getContextPath() %>/admin/addStudy.jsp?studyId=<%=study.getId()%>', 'editStudy')"><%=Encode.forHtml(study.getStudyName())%></a></td>
-	        <td><input type="radio" name="status_<%=study.getId()%>" <%=active ? "checked" : ""%> value="active" onclick="changeStatus('<%=study.getId()%>','1');"/>&nbsp;Active<br/>
-		        <input type="radio" name="status_<%=study.getId()%>" <%=active ? "" : "checked"%> value="inactive" onclick="changeStatus('<%=study.getId()%>','0');"/>Inactive
+	        <td><input type="radio" name="status_<%=study.getId()%>" <%=active ? "checked" : ""%> value="<bean:message key="admin.provider.formStatusActive" />" onclick="changeStatus('<%=study.getId()%>','1');"/>&nbsp;Active<br/>
+		        <input type="radio" name="status_<%=study.getId()%>" <%=active ? "" : "checked"%> value="<bean:message key="admin.provider.formStatusInactive" />" onclick="changeStatus('<%=study.getId()%>','0');"/>Inactive
 	        </td>
-	        <td><input type="button" class="btn" value="Add Demographic" onclick="window.open('<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp?studyId=<%=study.getId()%>')"/></td>
-	        <td><input type="button" class="btn" value="Add Provider" onclick="popupStart(768, 1024, '<%= request.getContextPath() %>/admin/addProvider.jsp?studyId=<%=study.getId()%>', 'providerselect')"/></td>
+	        <td><input type="button" class="btn" value="<bean:message key="global.btnAdd" />&nbsp;<bean:message key="admin.admin.demographic" />" onclick="window.open('<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp?studyId=<%=study.getId()%>')"/></td>
+	        <td><input type="button" class="btn" value="<bean:message key="global.btnAdd" />&nbsp;<bean:message key="admin.admin.provider" />" onclick="popupStart(768, 1024, '<%= request.getContextPath() %>/admin/addProvider.jsp?studyId=<%=study.getId()%>', 'providerselect')"/></td>
         </tr>
 <%
 }

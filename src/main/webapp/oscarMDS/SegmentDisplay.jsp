@@ -72,7 +72,8 @@ String AbnFlag = "";
 	key="oscarMDS.segmentDisplay.title" /></title>
 <script language="javascript" type="text/javascript"
 	src="../share/javascript/Oscar.js"></script>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
 <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 </head>
@@ -81,7 +82,7 @@ String AbnFlag = "";
        <script  type="text/javascript" charset="utf-8">
        jQuery.noConflict();
         jQuery(function() {
-        	jQuery("#createLabel").click(function() {
+        	jQuery("#createLabel").on( "click", function() {
         		jQuery.ajax( {
       	      		type: "POST",      
       	      		url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",

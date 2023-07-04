@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ include file="/casemgmt/taglibs.jsp"%>
 <%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
 <%
@@ -48,8 +48,13 @@
  %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Note History</title>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<style>
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+</style>
 </head>
 <body>
 <h3 style="text-align: center;"><nested:write name="title" /></h3>
@@ -64,7 +69,7 @@
 				theNote = theNote.replaceAll("\n", "<br/>");
 			%>
 			<%=theNote %>
-		
+
 		</p>
 	</div>
 	<div style="color: #0000FF;"><nested:notEmpty name="current">
@@ -75,17 +80,17 @@
         <c:if test="${note.archived == true}">
                 <div style="color: #336633;">ARCHIVED</div>
         </c:if>
-        
+
         Documentation Date: <nested:write name="note"
 		property="observation_date" format="dd-MMM-yyyy H:mm" /><br>
-	<nested:equal name="note" property="signed" value="true"> 
-                             Signed by 
-                             <%                               
+	<nested:equal name="note" property="signed" value="true">
+                             Signed by
+                             <%
                                CaseManagementNote n = (CaseManagementNote)note;
                                out.println(pMgr.getProvider(n.getSigning_provider_no()).getFormattedName());
                              %>
-	</nested:equal> <nested:notEqual name="note" property="signed" value="true"> 
-                             Saved by 
+	</nested:equal> <nested:notEqual name="note" property="signed" value="true">
+                             Saved by
                              <nested:write name="note"
 			property="provider.formattedName" />:
                          </nested:notEqual> <nested:write name="note"

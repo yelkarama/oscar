@@ -141,7 +141,8 @@
         <link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="${ctx}/css/bootstrap-multiselect.css" type="text/css"/>
 
-        <script src="${ctx}/js/jquery-1.9.1.min.js"></script>
+        <script src="${ctx}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         <script src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="${ctx}/js/bootstrap-multiselect.js"></script>
 
@@ -186,7 +187,7 @@
                 // send button
                 $("#sendButton").on("click", function() {
                     // make sure the user selected a policy
-                    if ($("#policySelect option:selected").size() == 0) {
+                    if ($("#policySelect option:selected").length == 0) {
                         alert("You must select at least 1 consent policy to continue.");
                         return false;
                     }
@@ -214,7 +215,8 @@
                             data: consentData,
                             success: function(data) {
                                 // grab the policy info and create the dynamic policies section in the consent confirmation modal
-                                var policy = jQuery.parseJSON(data);
+                                // jQuery.parseJSON is deprecated in jQuery 3; use native JSON.parse
+                                var policy = JSON.parse(data);
 
                                 var policyLink = "<a href=\"#\" onclick=\"window.open('" + policy.url + "','View Policy: " + policy.name + "','width='+popupWidth+', height='+popupHeight+', top='+popupTop+', left='+popupLeft); return false;\">" + policy.name + "</a>";
                                 $("#policyViewAndConfirmation").append('<span class="glyphicon glyphicon-eye-close"></span>');
@@ -237,7 +239,7 @@
                 // confirm button
                 $("#confirmButton").on("click", function() {
                     if ($("#consentGiven").is(':checked')) {
-                        $("#documentexportform").submit();
+                        $("#documentexportform").trigger( "submit" );
                     } else {
                         alert("You must give consent to all consent/privacy policies to continue");
                         return false;

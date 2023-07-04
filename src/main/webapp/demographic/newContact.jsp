@@ -39,11 +39,11 @@
     $(document).ready(function() {
         setContactCategoryType('<%=category%>', '<%=type%>');
 
-        $('input[type=radio][name=contact_category]').change(function() {
+        $('input[type=radio][name=contact_category]').on("change",function() {
             setContactCategoryType();
         });
 
-        $('input[type=radio][name=contact_bestContact]').change(function() {
+        $('input[type=radio][name=contact_bestContact]').on("change",function() {
             setBestContactMethod($('input[type=radio][name=contact_bestContact]:checked').val());
         });
 

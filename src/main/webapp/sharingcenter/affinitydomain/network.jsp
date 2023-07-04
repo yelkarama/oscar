@@ -81,7 +81,8 @@
         <title>Oscar Sharing Center</title>
 
         <link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css">
-        <script src="${ctx}/js/jquery-1.9.1.min.js"></script>
+        <script src="${ctx}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         <script src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
         <script>
@@ -199,7 +200,7 @@
             var answer = confirm("Are you sure you want to delete \n this Affinity Domain Configuration?");
                     if (answer) {
             $("#action").val("delete");
-                    $("#configform").submit();
+                    $("#configform").trigger( "submit" );
             }
             <%}%>
             }
@@ -214,22 +215,22 @@
 
             //Set up the click funciton
             //Not all of these buttons are present and many probably won't be in the future
-            $("#addActorButton").click(function(){
+            $("#addActorButton").on( "click", function(){
             addNewActorForm(++globalActorNum);
             });
-                    $("#addPolicyButton").click(function(){
+                    $("#addPolicyButton").on( "click", function(){
             addNewPolicyForm(++globalPolicyNum);
             });
-                    $("#addACLButton").click(function(){
+                    $("#addACLButton").on( "click", function(){
             addNewPolicyForm(++globalPolicyNum);
             });
-                    $("#addValueSetButton").click(function(){
+                    $("#addValueSetButton").on( "click", function(){
             addNewValueSetForm(++globalPolicyNum);
             });
-                    $("#addCodeMappingButton").click(function(){
+                    $("#addCodeMappingButton").on( "click", function(){
             addNewCodeMappingForm(++globalPolicyNum);
             });
-                    $("#addCodeValueButton").click(function(){
+                    $("#addCodeValueButton").on( "click", function(){
             addNewCodeMappingForm(++globalPolicyNum);
             });
                     //----------------------
@@ -237,7 +238,7 @@
                     //Load the NavBar
                     $("#navBar").load("${ctx}/sharingcenter/globaltemplates/NavBar.jsp");
                     //Set up form validationg here. This is non-functional
-                    $("form").submit(function(event){
+                    $("form").on( "submit",function(event){
 
             $("form input").each(function (){
 

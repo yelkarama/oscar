@@ -1051,8 +1051,8 @@ if ( renderMarkdown && !isMagicNote && fulltxt){ // note this code is repliclate
  	if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {
  	%>
  	<script type="text/javascript">
-	jQuery("._program .program").unbind("click");
- 	jQuery("._program .program").click(_noteProgramClick);
+	jQuery("._program .program").off("click");
+ 	jQuery("._program .program").on( "click",_noteProgramClick);
  	</script>
  	<% } %>
  	

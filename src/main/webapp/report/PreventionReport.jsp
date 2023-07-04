@@ -51,7 +51,8 @@ if(!authed) {
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 	<script type="text/javascript" src="<%=request.getContextPath() %>/library/angular.min.js"></script>	
 	<script src="<%=request.getContextPath() %>/web/common/preventionReportServices.js"></script>	
-	<script src="<%=request.getContextPath() %>/js/jquery.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>	
 </head>
 

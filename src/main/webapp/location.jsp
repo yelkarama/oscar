@@ -50,7 +50,8 @@
 <p>&nbsp;</p>
 <h3 align="center"><bean:message key="provider.selectClinicSite" /></h3>
 <head>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 </head>
 <body>
 <%

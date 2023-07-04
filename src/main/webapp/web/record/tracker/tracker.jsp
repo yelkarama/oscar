@@ -44,8 +44,8 @@
 </div>  
 			
 <script>
-$("#save-all").click(function(){
+$("#save-all").on( "click", function(){
 	//document.getElementById('trackerSlim').contentWindow.saveAll();
-	//$('#trackerSlim').contents().find('#trackerForm').submit();
+	//$('#trackerSlim').contents().find('#trackerForm').trigger( "submit" );
 });
 </script>

@@ -49,8 +49,8 @@
 	String demographicNoString = request.getParameter("demographicNo");
 	// Demographic Contacts and Health Care Team are linked bt default
 	boolean linkedHealthCareTeam = oscarProps.getProperty("NEW_CONTACTS_UI_HEALTH_CARE_TEAM_LINKED", "true").equals("true");
-	
-	if ( ! StringUtils.isBlank( demographicNoString ) ) {		
+
+	if ( ! StringUtils.isBlank( demographicNoString ) ) {
 		demographicDao = SpringUtils.getBean(DemographicDao.class);
 		demographic = demographicDao.getClientByDemographicNo( Integer.parseInt(demographicNoString) );
 		// if linked health care team, get all professional contacts
@@ -59,7 +59,7 @@
 		specialtyDao = SpringUtils.getBean(ContactSpecialtyDao.class);
 		specialty = specialtyDao.findAll();
 	}
-	
+
 	pageContext.setAttribute("demographic", demographic);
 	pageContext.setAttribute("demographicContacts", demographicContacts);
 	pageContext.setAttribute("specialty", specialty);
@@ -70,26 +70,31 @@
 
 	<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 	<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-	
+
 	<!DOCTYPE html>
 	<html>
 	<head>
-	
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/OscarStandardLayout.css" />
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.js" ></script>
+
+
+       <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 
 </c:if>
-<%-- END DETACHED VIEW ENABLED  --%> 
+<%-- END DETACHED VIEW ENABLED  --%>
 
 <c:if test="${ param.view ne 'detached' }" >
 	<script type="text/javascript" >
-		jQuery(document).ready( function($) {		
-			//--> Popup effects
-			jQuery(".hovereffect").bind( "mouseover", function(){
-				nhpup.popup( jQuery('#healthCareTeamMemberDetail_' + this.id).html(), { 'width':250 } );			
-			});
-		})
+
+            jQuery(document).ready( function($) {
+                //--> Popup effects
+                $(".hovereffect").on( "mouseover", function(){
+                    $('#healthCareTeamMemberDetail_' + this.id).slideUp( 300 ).delay( 400 ).fadeIn( 400 );
+                    $(this).css("fontWeight", "bold");
+                });
+                $(".hovereffect").on( "mouseout", function(){
+                    $('#healthCareTeamMemberDetail_' + this.id).delay(400).fadeOut(400);
+                    $(this).css("fontWeight", "inherit");
+                });
+            })
 	</script>
 </c:if>
 
@@ -97,13 +102,13 @@
 <c:if test="${ param.view eq 'detached' }" >
 
 	<script type="text/javascript">
-		jQuery(document).ready( function($) {		
+		jQuery(document).ready( function($) {
 			//--> Popup effects
-			$(".hovereffect").mouseover(function(){
+			$(".hovereffect").on( "mouseover", function(){
 				$('#healthCareTeamMemberDetail_' + this.id).toggle();
 				$(this).css("fontWeight", "bold");
 			});
-			$(".hovereffect").mouseout(function(){
+			$(".hovereffect").on( "mouseout", function(){
 				$('#healthCareTeamMemberDetail_' + this.id).toggle();
 				$(this).css("fontWeight", "inherit");
 			});
@@ -111,7 +116,7 @@
 	</script>
 
 	</head>
-	
+
 <body id="${ param.view }View" >
 	<table class="MainTable" >
 	<tr class="MainTableTopRow">
@@ -126,7 +131,7 @@
 					<c:out value="${ demographic.age }" />&nbsp;years
 				</td>
 				<td style="text-align: right">
-					<oscar:help keywords="contact" key="app.top1"/> | 
+					<oscar:help keywords="contact" key="app.top1"/> |
 					<a href="javascript:popupStart(300,400,'About.jsp')">
 					<bean:message key="global.about" /></a> | <a
 					href="javascript:popupStart(300,400,'License.jsp')">
@@ -136,7 +141,7 @@
 		</td>
 	</tr>
 	<tr><td colspan="2">
-		
+
 </c:if>
 <%-- END DETACHED VIEW ENABLED  --%>
 
@@ -147,7 +152,7 @@
 <%-- DETACHED VIEW ENABLED  --%>
 
 	<h4 id="tableTitle">Health Care Team</h3>
-	
+
 <%-- END DETACHED VIEW ENABLED  --%>
 
 	<ul>
@@ -159,24 +164,24 @@
 			<c:if test="${ row.index mod 2 ne 0 }" >
 				<c:set value="odd" var="rowclass" scope="page" />
 			</c:if>
-			
+
 			<li id="${ dContact.id }" class="hovereffect ${ rowclass }" >
-			
-				<span class="label"> 
-					<c:out value="${ dContact.role }" />					
+
+				<span class="label">
+					<c:out value="${ dContact.role }" />
 				</span>
-				
-				<c:if test="${ workPhone eq internal }" > 
+
+				<c:if test="${ workPhone eq internal }" >
 					<span class="label">
 						&#40;<c:out value="${ internal }" />&#41;
 					</span>
-				</c:if>	
-				
-				<span class="info"> 
+				</c:if>
+
+				<span class="info">
 					:&nbsp;<c:out value="${ dContact.contactName }" />
 				</span>
 			</li>
-			
+
 			<table class="healthCareTeamMemberDetailTable" id="healthCareTeamMemberDetail_${ dContact.id }" style="display:none;" >
 				<tr><th class="alignLeft contactName" colspan="2"><c:out value="${ dContact.contactName }" /></th></tr>
 				<tr>
@@ -208,7 +213,7 @@
 					<td><c:out value="${ dContact.details.cpso }" /></td>
 				</tr>
 			</table>
-			
+
 		</c:forEach>
 	</ul>
 </div>

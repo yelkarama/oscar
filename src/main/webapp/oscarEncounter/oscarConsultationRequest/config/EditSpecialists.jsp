@@ -42,6 +42,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<!DOCTYPE html>
 <html:html locale="true">
 <jsp:useBean id="displayServiceUtil" scope="request"
 	class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
@@ -49,17 +50,18 @@ if(!authed) {
 displayServiceUtil.estSpecialistVector();
 %>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message
 	key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.title" />
 </title>
 <html:base />
-<!--<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />-->
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.1.10.11.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 <style>
 .dtable{
     table-layout: fixed;
@@ -71,18 +73,18 @@ displayServiceUtil.estSpecialistVector();
 
 }
 </style>
-</head>
 <script language="javascript">
 function BackToOscar()
 {
        window.close();
 }
 </script>
-<!--<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">-->
-<body class="BodyStyle"  vlink="#0000FF">
+</head>
+<body class="BodyStyle">
 
 <html:errors />
 <!--  -->
+<html:form action="/oscarEncounter/EditSpecialists">
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn"><h4>Consultation</h4></td>
@@ -103,10 +105,7 @@ function BackToOscar()
                   %>
 		</td>
 		<td class="MainTableRightColumn">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%"
-            >
+		<table style="border-collapse: collapse; width: 100%; height: 100%; border-color:#111111;">
 
 			<!----Start new rows here-->
 			<tr>
@@ -119,7 +118,7 @@ function BackToOscar()
 				</td>
 			</tr>
 			<tr>
-				<td><html:form action="/oscarEncounter/EditSpecialists">
+				<td>
 					<%-- input type="submit" name="delete"
 						value="<bean:message key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.btnDeleteSpecialist"/>"--%>
 					<div class="ChooseRecipientsBox1">
@@ -155,8 +154,8 @@ function BackToOscar()
                                  String  phone      = Encode.forHtml(displayServiceUtil.phoneVec.elementAt(i));
                                  String  fax        = Encode.forHtml(displayServiceUtil.faxVec.elementAt(i));
                               %>
-							
-						
+
+
 							<!--<td><input type="checkbox" name="specialists"
 								value="<%=specId%>"></td>-->
 							<td>
@@ -171,15 +170,15 @@ function BackToOscar()
 							<td><%=fax%></td>
 						</tr>
 						<% }%>
-						
+
 </tbody>
 					</table>
 					</div>
-				</html:form></td>
+				</td>
 			</tr>
 			<!----End new rows here-->
 
-			<tr height="100%">
+			<tr style="height:100%">
 				<td></td>
 			</tr>
 		</table>
@@ -190,11 +189,14 @@ function BackToOscar()
 		<td class="MainTableBottomRowRightColumn"></td>
 	</tr>
 </table>
-
+</html:form>
 <script>
 $(document).ready(function() {
     $('#specialistsTbl').DataTable({
-       "pageLength": 15
+       "pageLength": 15,
+        "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
     } );
 } );
 </script>

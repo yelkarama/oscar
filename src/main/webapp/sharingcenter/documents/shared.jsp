@@ -73,7 +73,8 @@
         <title>Shared Documents</title>
 
         <link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css">
-        <script src="${ctx}/js/jquery-1.9.1.min.js"></script>
+        <script src="${ctx}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         <script src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
         <style>

@@ -52,7 +52,8 @@
 		request.setAttribute("defaultId", defaultId);
 		%>
 	
-	<script src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script> 
+	<script src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script> 
 	<script type="text/javascript" charset="utf-8">
 		$(function () {
 			var tabContainers = $('div.tabs > div');
@@ -62,7 +63,7 @@
 			//else if (tab == 'sent') tabContainers.hide().filter('#sent').show();
 			//else tabContainers.hide().filter('#first').show();
 			
-			$('div.tabs ul.tabNavigation a').click(function () {
+			$('div.tabs ul.tabNavigation a').on( "click", function () {
 				tabContainers.hide();
 				tabContainers.filter(this.hash).show();
 				$('div.tabs ul.tabNavigation a').removeClass('selected');

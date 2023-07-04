@@ -49,7 +49,7 @@ ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 
 if(demographicLink != null){
     LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_HRM, ""+hrmReportId, request.getRemoteAddr(),""+demographicLink.getDemographicNo());
-}else{           
+}else{
     LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_HRM, ""+hrmReportId, request.getRemoteAddr());
 }
 
@@ -59,25 +59,25 @@ if(demographicLink != null){
 <html>
 <head>
 <title>HRM Report</title>
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui-1.8.18.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js" ></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../share/javascript/effects.js"></script>
-<script type="text/javascript" src="../share/javascript/controls.js"></script>
 
-<script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
-<script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
-<script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
-<script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
-<script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
+<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js" ></script>
+<script src="${ pageContext.request.contextPath }/share/javascript/prototype.js"></script>
+<script src="${ pageContext.request.contextPath }/share/javascript/effects.js"></script>
+<script src="${ pageContext.request.contextPath }/share/javascript/controls.js"></script>
+
+<script src="${ pageContext.request.contextPath }/share/yui/js/yahoo-dom-event.js"></script>
+<script src="${ pageContext.request.contextPath }/share/yui/js/connection-min.js"></script>
+<script src="${ pageContext.request.contextPath }/share/yui/js/animation-min.js"></script>
+<script src="${ pageContext.request.contextPath }/share/yui/js/datasource-min.js"></script>
+<script src="${ pageContext.request.contextPath }/share/yui/js/autocomplete-min.js"></script>
+<script src="${ pageContext.request.contextPath }/js/demographicProviderAutocomplete.js"></script>
 
 
-<link rel="stylesheet" href="../js/jquery_css/smoothness/jquery-ui-1.7.3.custom.css" type="text/css" />  
-<link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"  />
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/share/yui/css/fonts-min.css"/>
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/share/yui/css/autocomplete.css"/>
+<link rel="stylesheet" media="all" href="${ pageContext.request.contextPath }/share/css/demographicProviderAutocomplete.css"  />
 
 
 <style type="text/css">
@@ -162,7 +162,7 @@ function makeIndependent(reportId) {
 		url: "<%=request.getContextPath() %>/hospitalReportManager/Modify.do",
 		data: "method=makeIndependent&reportId=" + reportId,
 		success: function(data) {
-			
+
 		}
 	});
 }
@@ -188,7 +188,7 @@ function toggleButtonBar(show, reportId) {
 	jQuery("#mainEchart_"+reportId).prop('disabled',!show);
 	jQuery("#mainMaster_"+reportId).prop('disabled',!show);
 	jQuery("#mainApptHistory_"+reportId).prop('disabled',!show);
-	
+
 }
 
 function removeDemoFromHrm(reportId) {
@@ -239,7 +239,7 @@ function makeActiveSubClass(reportId, subClassId) {
 				$("subclassstatus" + reportId).innerHTML = data;
 		}
 	});
-	
+
 	window.location.reload();
 }
 
@@ -275,7 +275,7 @@ function doSignOff(reportId, isSign) {
 		data = "method=signOff&signedOff=1&reportId=" + reportId;
 	else
 		data = "method=signOff&signedOff=0&reportId=" + reportId;
-	
+
 	jQuery.ajax({
 		type: "POST",
 		url: "<%=request.getContextPath() %>/hospitalReportManager/Modify.do",
@@ -287,8 +287,8 @@ function doSignOff(reportId, isSign) {
 }
 
 function signOffHrm(reportId) {
-	
-	doSignOff(reportId, true);	
+
+	doSignOff(reportId, true);
 }
 
 function revokeSignOffHrm(reportId) {
@@ -309,7 +309,7 @@ function setDescription(reportId) {
 }
 
 function popupPatient(height, width, url, windowName, docId, d) {
-	  urlNew = url + d;	
+	  urlNew = url + d;
 	  return popup2(height, width, 0, 0, urlNew, windowName);
 }
 
@@ -344,7 +344,7 @@ popupPage(700,1200,'Display.do?id='+id);
         <h1>HRM report not found! Please check the file location.</h1>
 <%  return;
    } %>
-   
+
 <%
 String btnDisabled = "disabled";
 String demographicNo = "";
@@ -352,7 +352,7 @@ if(demographicLink != null) {
 	btnDisabled="";
 	demographicNo = demographicLink.getDemographicNo();
 }
-String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());	
+String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
 %>
 <div >
@@ -363,7 +363,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 <input type="button" id="mainMaster_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
 <input type="button" id="mainApptHistory_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
 </div>
-                            
+
 <div id="hrmReportContent">
 	<div id="hrmHeader"><b>Demographic Info:</b><br />
 			<%=hrmReport.getLegalName() %> <br />
@@ -378,9 +378,9 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		String reportFileData = hrmReport.getFileData();
 		String noMessageIdFileData = reportFileData.replaceAll("<MessageUniqueID>.*?</MessageUniqueID>", "<MessageUniqueID></MessageUniqueID>");
 		String noMessageIdHash = org.apache.commons.codec.digest.DigestUtils.md5Hex(noMessageIdFileData);
-		
+
 		if(hrmReport.getFileExtension() != null && (".gif".equals(hrmReport.getFileExtension()) || ".jpg".equals(hrmReport.getFileExtension()) || ".png".equals(hrmReport.getFileExtension()))) {
-			%><img src="<%=request.getContextPath() %>/hospitalReportManager/HRMDownloadFile.do?hash=<%=noMessageIdHash%>"/><br/><%	
+			%><img src="<%=request.getContextPath() %>/hospitalReportManager/HRMDownloadFile.do?hash=<%=noMessageIdHash%>"/><br/><%
 		}
 		%><a href="<%=request.getContextPath() %>/hospitalReportManager/HRMDownloadFile.do?hash=<%=noMessageIdHash%>"><%=(hrmReport.getLegalLastName() + "-" + hrmReport.getLegalFirstName() + "-" +  hrmReport.getFirstReportClass() + hrmReport.getFileExtension()).replaceAll("\\s", "_") %></a>&nbsp;&nbsp;
 		<br/>
@@ -390,21 +390,21 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		<span>(Please use the link above to download the attachement.)</span>
 		<%
 		}
-		
+
 		else {
 		%>
 		<span style="color:red">(This report contains an attachment which cannot be viewed in your browser. Please use the link above to view/download the content contained within.)</span>
 		<%
 		}
-		
-		
+
+
 	} else {
 
 %>
 	<%=hrmReport.getFirstReportTextContent().replaceAll("\n", "<br />") %>
-	
+
 	<% } %>
-	
+
 	<%
 	String confidentialityStatement = (String) request.getAttribute("confidentialityStatement");
 	if (confidentialityStatement != null && confidentialityStatement.trim().length() > 0) {
@@ -418,7 +418,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 	<table>
 		<tr>
 			<th>Report Date:</th>
-			<td><%=(hrmReport.getFirstReportEventTime() != null ? hrmReport.getFirstReportEventTime().getTime().toString() : 
+			<td><%=(hrmReport.getFirstReportEventTime() != null ? hrmReport.getFirstReportEventTime().getTime().toString() :
 					((hrmReport.getFirstAccompanyingSubClassDateTime() != null ? hrmReport.getFirstAccompanyingSubClassDateTime().getTime().toString() : ""))) %></td>
 		</tr>
 		<tr>
@@ -452,7 +452,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 				<%
 				List<List<Object>> subClassListFromReport = hrmReport.getAccompanyingSubclassList();
 				List<HRMDocumentSubClass> subClassListFromDb = (List<HRMDocumentSubClass>) request.getAttribute("subClassList");
-				
+
 				if (subClassListFromReport.size() > 0) {
 				%>
 				<i>From the Report</i><br />
@@ -486,7 +486,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 			</td>
 		</tr>
 		<% } %>
-		
+
 		<tr>
 			<th>Source Facility:</th>
 			<td>
@@ -496,16 +496,16 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		<tr>
 			<th>Source Author(s):</th>
 			<td>
-				
+
 					<%
 						for(String author: hrmReport.getFirstReportAuthorPhysician()) {
 					%>
 						<%=author %>&nbsp;
 					<%} %>
-				
+
 			</td>
 		</tr>
-		
+
 		<tr>
 			<td colspan=2><hr /></td>
 		</tr>
@@ -522,7 +522,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 					<input type="hidden" id="routetodemo<%=hrmReportId %>hrm" value="" />
 					<input type="text" id="autocompletedemo<%=hrmReportId %>hrm" onchange="checkSave('<%=hrmReportId%>hrm')" name="demographicKeyword" />
 					<div id="autocomplete_choices<%=hrmReportId%>hrm" class="autocomplete"></div>
-                                            
+
 				<% } %>
 			</td>
 		</tr>
@@ -531,10 +531,10 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 			<td>
 				<div id="provstatus<%=hrmReportId %>"></div>
 				<% if (providerLinkList != null || providerLinkList.size() >= 1) {
-					for (HRMDocumentToProvider p : providerLinkList) { 
+					for (HRMDocumentToProvider p : providerLinkList) {
 						if (!p.getProviderNo().equalsIgnoreCase("-1")) { %>
 						<%=providerDao.getProviderName(p.getProviderNo())%> <%=p.getSignedOff() !=null && p.getSignedOff()  == 1 ? "<abbr title='" + p.getSignedOffTimestamp() + "'>(Signed-Off)</abbr>" : "" %> <a href="#" onclick="removeProvFromHrm('<%=p.getId() %>', '<%=hrmReportId %>')">(remove)</a><br />
-				<%		}  
+				<%		}
 					}
 				} else { %>
 					<i>No providers currently assigned</i><br />
@@ -560,33 +560,33 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 					if (category != null){
 				%>
 				<%=StringEscapeUtils.escapeHtml(category.getCategoryName())%>
-				<%  }%> 
+				<%  }%>
 				 </div>
 				<input type="hidden" name="cati" id="catfind<%=hrmReportId%>hrm" />
 				<input type="text" id="autocompletecat<%=hrmReportId%>hrm" name="categoryKeyword"/>
                 <div id="autocomplete_choicescat<%=hrmReportId%>hrm" class="autocomplete"></div>
-               
+
 			</td>
 		</tr>
 		<tr>
 			<td colspan=2>
 				<input type="button" value="Print" onClick="window.print()" />
 				<input type="button" style="display: none;" value="Save" id="save<%=hrmReportId %>hrm" />
-				<% 
+				<%
 				HRMDocumentToProvider hrmDocumentToProvider = HRMDisplayReportAction.getHRMDocumentFromProvider(loggedInInfo.getLoggedInProviderNo(), hrmReportId);
 				if (hrmDocumentToProvider != null && hrmDocumentToProvider.getSignedOff() != null && hrmDocumentToProvider.getSignedOff() == 1) {
 				%>
 				<input type="button" id="signoff<%=hrmReportId %>" value="Revoke Sign-Off" onClick="revokeSignOffHrm('<%=hrmReportId %>')" />
 				<%
-				} else { 
+				} else {
 				%>
 				<input type="button" id="signoff<%=hrmReportId %>" value="Sign-Off" onClick="signOffHrm('<%=hrmReportId %>')" />
 				<%
-				} 
+				}
 				%>
 			</td>
 		</tr>
-			
+
 	</table>
 </div>
 
@@ -603,13 +603,13 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 	<%
 		List<HRMDocument> children = (List<HRMDocument>)request.getAttribute("children");
 		HRMDocument parent = (HRMDocument) request.getAttribute("parent");
-		
+
 		if(parent != null) {
 			%>
 				NOTE: This report is <b style="color:red">not the most current report available</b> . You can view the latest <a href="javascript:void(0)" onClick="openReport('<%=parent.getId()%>')">Here</a>.
 			<%
 		}
-		
+
 		if(children != null && children.size()>0) {
 			%>
 				This report has replaced the following versions.<br/>
@@ -627,14 +627,14 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 					</tr>
 					<% } %>
 				</table>
-			<%			
+			<%
 		}
 	%>
 
 	<%if(parent != null || (children != null && children.size()>0)) {%>
 		 <div class="boxButton">
 		   <input type="button" onClick="makeIndependent('<%=hrmReportId %>')" value="Make Independent" />
-		 </div>  
+		 </div>
 	<% } %>
 </div>
 <div id="commentBox">
@@ -740,7 +740,7 @@ YAHOO.example.BasicRemote = function() {
              $(str).value = args[2][2];//li.id;
              args[0].getInputEl().value = args[2][0] + "("+args[2][1]+")";
              $("routetodemo<%=hrmReportId %>hrm").value = args[0].getInputEl().value;
-          	 
+
              addDemoToHrm('<%=hrmReportId %>');
           });
 
@@ -751,7 +751,7 @@ YAHOO.example.BasicRemote = function() {
           };
       }
       }();
-      
+
       YAHOO.example.BasicRemote = function() {
           var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
           var oDS = new YAHOO.util.XHRDataSource(url,{connMethodPost:true,connXhrMode:'ignoreStaleResponses'});
@@ -798,8 +798,8 @@ YAHOO.example.BasicRemote = function() {
               oAC: oAC
           };
       }();
-      
-      
+
+
       YAHOO.example.BasicRemote = function() {
           var url = "<%= request.getContextPath() %>/hospitalReportManager/hrm.do?method=searchCategory";
           var oDS = new YAHOO.util.XHRDataSource(url,{connMethodPost:true,connXhrMode:'ignoreStaleResponses'});
@@ -822,9 +822,9 @@ YAHOO.example.BasicRemote = function() {
         		  var id = args[2][0];
         		  var displayName = args[2][1] + ":" + args[2][2];
         		  args[0].getInputEl().value = displayName;
-        		  saveCategory('<%=hrmReportId %>',id);  
+        		  saveCategory('<%=hrmReportId %>',id);
         	  }
-			
+
         	  /*
         	 var myAC = args[0];
              var str = myAC.getInputEl().id.replace("autocompletecat","catfind");
@@ -866,7 +866,7 @@ if (duplicateLabIdsString!=null)
 	%>
 		<hr />
 		Report History:<br />
-		
+
 		<table border="1">
 			<tr>
 				<th>ID</th>
@@ -884,12 +884,12 @@ if (duplicateLabIdsString!=null)
 				<td><%=tempId %></td>
 				<td><%=formatter.format(dupReportDates.get(Integer.parseInt(tempId))) %></td>
 				<td><%=formatter.format(dupTimeReceived.get(Integer.parseInt(tempId))) %></td>
-			    <td><input type="button" value="Open Report" onclick="window.open('?id=<%=tempId%>&segmentId=<%=tempId%>&providerNo=<%=request.getParameter("providerNo")%>&searchProviderNo=<%=request.getParameter("searchProviderNo")%>&status=<%=request.getParameter("status")%>&demoName=<%=StringEscapeUtils.escapeHtml(request.getParameter("demoName"))%>', null)" /> </td> 
+			    <td><input type="button" value="Open Report" onclick="window.open('?id=<%=tempId%>&segmentId=<%=tempId%>&providerNo=<%=request.getParameter("providerNo")%>&searchProviderNo=<%=request.getParameter("searchProviderNo")%>&status=<%=request.getParameter("status")%>&demoName=<%=StringEscapeUtils.escapeHtml(request.getParameter("demoName"))%>', null)" /> </td>
 			</tr>
-			
+
 		<%
 	}
-	
+
 	%></table><%
 }
 %>

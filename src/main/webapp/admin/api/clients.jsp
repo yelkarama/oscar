@@ -55,20 +55,26 @@ if(!authed) {
 <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<!-- migrate needed for jjquery-ui-1.12.1.min.js -->
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+
+
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>  
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
 <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <script>
 	function addNewClient() {
 		$('#new-form').dialog('open');
 	}
-	
+
 	function listClients() {
 		 $("#clientTable tbody").find("tr").remove();
 		jQuery.getJSON("clientManage.json",{method: "list"},
@@ -84,14 +90,14 @@ if(!authed) {
 					}
         });
 	}
-	
+
 	function listTokens() {
 		 $("#tokenTable tbody").find("tr").remove();
-		 
+
 		jQuery.getJSON("clientManage.json",{method: "listTokens"},
                function(data,textStatus){
-					
-						
+
+
 					for(var x=0;x<data.length;x++) {
 						console.log(JSON.stringify(data[x]));
 						var clientId = data[x].clientId;
@@ -103,13 +109,13 @@ if(!authed) {
 						var providerNo = data[x].providerNo;
 						var tokenId = data[x].tokenId;
 						var tokenSecret = data[x].tokenSecret;
-						
+
 						$('#tokenTable > tbody:last').append('<tr><td>'+tokenId+'</td><td>'+lifetime+'</td><td>'+issued+'</td><td>'+providerNo+'</td><td></td></tr>');
 					}
        });
 	}
-	
-	
+
+
 	function deleteClient(id) {
         jQuery.getJSON("clientManage.json", {
 	        method: "delete",
@@ -122,19 +128,20 @@ if(!authed) {
         		alert(xml.error);
         });
 	}
-	
+
 	$(document).ready(function(){
 		listClients();
 		listTokens();
-		
+
 		$( "#new-form" ).dialog({
 			autoOpen: false,
 			height: 400,
 			width: 450,
+closeText: "&time;",
 			modal: true,
 			buttons: {
-				"Add Client": function() {			
-					$( this ).dialog( "close" );	
+				"Add Client": function() {
+					$( this ).dialog( "close" );
 					var name = $("#clientName").val();
 					var uri = $("#clientURI").val();
 					var lifetime = $("#lifetime").val();
@@ -155,17 +162,17 @@ if(!authed) {
 				                		alert(xml.error);
 				                	}
 				                });
-					
+
 				},
 				Cancel: function() {
 					$( this ).dialog( "close" );
 				}
 			},
 			close: function() {
-				
+
 			}
 		});
-		
+
 	});
 </script>
 </head>
@@ -185,7 +192,7 @@ if(!authed) {
 	</thead>
 	<tbody></tbody>
 </table>
-<input type="button" class="btn btn-primary" value="Add New" onClick="addNewClient()"/>	
+<input type="button" class="btn btn-primary" value="Add New" onClick="addNewClient()"/>
 <%
 	String thisUrl = request.getRequestURL().toString();
 	String contextPath = request.getContextPath();

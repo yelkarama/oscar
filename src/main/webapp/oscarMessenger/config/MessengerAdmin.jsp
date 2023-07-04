@@ -36,14 +36,17 @@
 
 <head>
 	<title><bean:message key="oscarMessenger.config.MessengerAdmin.title" /></title>
+
 	<link href="${pageContext.request.contextPath}/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js" ></script>
-	<style type="text/css">
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js" ></script>
+
+
+	<style>
 		summary{ cursor:pointer; }
 		.contact-group-buttons{
 			padding-top: 10px;
 		}
-		
+
 		i.group-member {
 			display:block;
 			float:left;
@@ -64,7 +67,7 @@
 			border-top: 1px solid #d4d4d4;
 			border-bottom: 1px solid #d4d4d4;
 		}
-		
+
 		#addContacts .tab-content, #manageGroups .group-member-list {
 			background-color: #ccc;
 			border-left:#ccc thin solid;
@@ -74,23 +77,23 @@
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
-		
+
 		#addContacts .contact-entry, #manageGroups .group-member-list .contact-entry {
 			background-color: white;
 			margin:1px auto;
 			padding:5px 0px 0px 10px;
 		}
-		
+
 		span.provider-name {
 			display: block;
 		}
 	</style>
-	
-	<script type="text/javascript">
+
+	<script>
 		var ctx = '${pageContext.request.contextPath}';
-	
-		$("input:checkbox").change(function(){
-			if(this.checked) 
+
+		$("input:checkbox").on("change",function(){
+			if(this.checked)
 			{
 				addMember(this.value, 0);
 			}
@@ -99,19 +102,19 @@
 				removeMember(this.value, 0)
 			}
 		});
-		
-		$(".add-member-btn").click(function(){
+
+		$(".add-member-btn").on( "click", function(){
 			var groupId = this.id;
 			groupId = groupId.replace("add-", '');
-			var memberId = $("#add-member-id-" + groupId).val(); 
+			var memberId = $("#add-member-id-" + groupId).val();
 			if(memberId)
 			{
 				addMember(memberId, groupId)
 				$(".search-provider").val('');
 			}
 		});
-		
-		$("i.group-member").click(function(){
+
+		$("i.group-member").on( "click", function(){
 			var memberId = this.id;
 			if(memberId)
 			{
@@ -119,15 +122,15 @@
 				$(this).parent().parent().remove();
 			}
 		});
-		
-		$("#add-group-btn").click(function(){
+
+		$("#add-group-btn").on( "click", function(){
 			var groupName = $("#new-group-name").val();
 			if(groupName){
 				createGroup(groupName);
 			}
 		});
-		
-		$(".delete-group-btn").click(function(){
+
+		$(".delete-group-btn").on( "click", function(){
 			var groupId = this.id;
 			if(groupId)
 			{
@@ -140,16 +143,16 @@
 			$.post(ctx + "/oscarMessenger.do?method=add&member=" + memberId + "&group=" + groupId);
 			$('#group-' + groupId).load(ctx + '/oscarMessenger.do?method=fetch #group-' + groupId);
 		}
-		
+
 		function removeMember(memberId, groupId) {
 			$.post(ctx + "/oscarMessenger.do?method=remove&member=" + memberId + "&group=" + groupId);
 		}
-		
+
 		function createGroup(groupName) {
 			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName);
 			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
 		}
-		
+
 		function deleteGroup(groupId) {
 			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId);
 			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
@@ -158,12 +161,12 @@
 		$(document).ready(function(){
 			// create the provider name array
 			var providers = new Array();
-			
+
 			$("span.provider-name").each(function(){
 				var provider = {value:this.id, label:$(this).text().trim()}
 				providers.push(provider);
 			});
-			
+
 			$(".search-provider").autocomplete({
 		      	source: providers,
 		        focus: function( event, ui ) {
@@ -178,7 +181,7 @@
 		    });
 		});
 	</script>
-	
+
 </head>
 
 <body>
@@ -193,10 +196,10 @@
 	    <ul class="nav nav-tabs">
 	    	<li class="active">
 	    		<a href="#addContacts" data-toggle="tab">Manage Contacts</a>
-	    	</li>  
+	    	</li>
 	    	<li>
 	    		<a href="#manageGroups" data-toggle="tab">Manage Contact Groups</a>
-	    	</li>   
+	    	</li>
 	    </ul>
     </div>
     </div>
@@ -218,10 +221,10 @@
 					</li>
 				</c:if>
 			</ul>
-		
+
 			<div class="tab-content">
 				<div class="tab-pane active" id="local-contacts" >
-					<c:forEach items="${ localContacts }" var="contact" varStatus="count">	
+					<c:forEach items="${ localContacts }" var="contact" varStatus="count">
 						<div class="row-fluid contact-entry">
 							<label class="checkbox ${ count.index%2 == 0 ? 'even' : 'odd' }">
 								<input type="checkbox" value="${ contact.id.compositeId }"
@@ -233,19 +236,19 @@
 									<c:out value="${ contact.providerType }" />
 								</span>
 							</label>
-						</div>				
-					</c:forEach>					
+						</div>
+					</c:forEach>
 				</div>
-				
+
 				<c:if test="${ not empty remoteContacts }">
 					<div class="tab-pane" id="remote-contacts">
 						<c:forEach items="${ remoteContacts }" var="location">
 							<details>
-								<summary>	
+								<summary>
 									<strong><c:out value="${ location.key }" /></strong>
 								</summary>
-								<c:forEach items="${ location.value }" var="contact" varStatus="count">	
-									<div class="row-fluid contact-entry">						
+								<c:forEach items="${ location.value }" var="contact" varStatus="count">
+									<div class="row-fluid contact-entry">
 										<label class="checkbox ${ count.index%2 == 0 ? 'even' : 'odd' }" >
 											<input type="checkbox" value="${ contact.id.compositeId }"
 												${ contact.member ? 'checked="checked"' : '' }/>
@@ -256,13 +259,13 @@
 												<c:out value="${ contact.providerType }" />
 											</span>
 										</label>
-									</div>							
+									</div>
 								</c:forEach>
 							</details>
-						</c:forEach> 
+						</c:forEach>
 					</div>
 				</c:if>
-			</div>	
+			</div>
 		</div>
 		<div class="tab-pane" id="manageGroups">
 			<p>Manage Oscar Messenger contact groups</p>
@@ -270,7 +273,7 @@
 				<c:forEach items="${ groups }" var="group" varStatus="count">
 					<li ${ count.index eq 0 ? 'class="active"' : '' } >
 						<a data-toggle="tab" href="#group-${ group.key.id }" >
-							<c:out value="${ group.key.groupDesc }" />	
+							<c:out value="${ group.key.groupDesc }" />
 						</a>
 					</li>
 				</c:forEach>
@@ -280,14 +283,14 @@
 					</a>
 				</li>
 			</ul>
-		
+
 			<div class="tab-content">
-				<c:forEach items="${ groups }" var="group" varStatus="count">					
+				<c:forEach items="${ groups }" var="group" varStatus="count">
 					<div class="tab-pane form-check ${ count.index eq 0 ? 'active' : '' }" id="group-${ group.key.id }">
 						<div class="group-member-list">
 							<c:forEach items="${ group.value }" var="member">
-								<div class="row-fluid contact-entry">																	
-									<label class="checkbox">								
+								<div class="row-fluid contact-entry">
+									<label class="checkbox">
 										<i class="icon-trash group-member"
 											title="Remove Contact" id="${ member.id.compositeId }" ></i>
 										<span class="provider-name" >
@@ -302,34 +305,34 @@
 						</div>
 						<div class="control-group contact-group-buttons">
 							<div class="input-append">
-								<div class="autocomplete">							
-									<input type='text' placeholder="Last, First" id="${ group.key.id }" class="search-provider" /> 
+								<div class="autocomplete">
+									<input type='text' placeholder="Last, First" id="${ group.key.id }" class="search-provider" />
 									<input type='hidden' id="add-member-id-${ group.key.id }" value="" />
-									<button id="add-${ group.key.id }" class="btn add-member-btn">Add Contact</button>	
-								</div>						
+									<button id="add-${ group.key.id }" class="btn add-member-btn">Add Contact</button>
+								</div>
 							</div>
 						</div>
 						<div class="row-fluid" style="background-color:white;">
-							<button id="delete-${ group.key.id }" class="btn delete-group-btn pull-right">Delete Group</button>	
+							<button id="delete-${ group.key.id }" class="btn delete-group-btn pull-right">Delete Group</button>
 						</div>
 					</div>
 				</c:forEach>
-				
+
 				<div class="tab-pane form-check" id="new-group">
 					<div class="control-group">
-						<div class="input-append">						
-							<input type='text' placeholder="Group Name" class="group-name-input" id="new-group-name" /> 
+						<div class="input-append">
+							<input type='text' placeholder="Group Name" class="group-name-input" id="new-group-name" />
 							<button id="add-group-btn" class="btn">
 								add
-							</button>								
+							</button>
 						</div>
 					</div>
 				</div>
-				
-			</div> 
-		</div>			
+
+			</div>
+		</div>
 	</div>
-</div>	
+</div>
 </body>
 </security:oscarSec>
 </html:html>

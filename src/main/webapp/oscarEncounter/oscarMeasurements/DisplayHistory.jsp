@@ -60,12 +60,12 @@
 </title>
 <html:base />
 
-    <script src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script src="${ pageContext.request.contextPath }/js/global.js"></script>
 
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
-    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
 
     <script>
     // NOTE
@@ -223,10 +223,10 @@
                             <logic:match name="data" property="measuringInstrc" value="NULL" >&nbsp;</logic:match>
                             <logic:notMatch name="data" property="measuringInstrc" value="NULL" ><bean:write name="data" property="measuringInstrc" /></logic:notMatch>
                         </td>
-						<td><bean:write name="data" property="dataField" /></td>
-						<td><bean:write name="data" property="comments" /></td>
-						<td><bean:write name="data" property="dateObservedAsDate" format="yyyy-MM-dd" /></td>
-						<td><bean:write name="data" property="dateEnteredAsDate" format="yyyy-MM-dd"/></td>
+						<td title="data"><bean:write name="data" property="dataField" /></td>
+						<td title="comments"><bean:write name="data" property="comments" /></td>
+						<td title="observed date"><bean:write name="data" property="dateObservedAsDate" format="yyyy-MM-dd" /></td>
+						<td title="entered date"><bean:write name="data" property="dateEnteredAsDate" format="yyyy-MM-dd"/></td>
 						<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
 						<td class="DoNotPrint" >
 						    <logic:present name="data" property="remoteFacility">

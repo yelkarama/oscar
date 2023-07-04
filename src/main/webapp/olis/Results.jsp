@@ -33,7 +33,8 @@
 <html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 <script type="text/javascript">
     jQuery.noConflict();
 </script>
@@ -290,7 +291,7 @@ function openPatient(demographicNo) {
 jQuery(document).ready(function(){
 	alternate(document.getElementById("resultsTable"));
 	
-	jQuery("input[name^='remove_']").bind('change',function(){
+	jQuery("input[name^='remove_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='addToInbox_"+uuid+"']").attr("checked","");
@@ -298,7 +299,7 @@ jQuery(document).ready(function(){
 		}
 	});
 	
-	jQuery("input[name^='addToInbox_']").bind('change',function(){
+	jQuery("input[name^='addToInbox_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='remove_"+uuid+"']").attr("checked","");
@@ -306,7 +307,7 @@ jQuery(document).ready(function(){
 		}
 	});
 	
-	jQuery("input[name^='acknowledge_']").bind('change',function(){
+	jQuery("input[name^='acknowledge_']").on('change',function(){
 		var uuid = (jQuery(this).attr('uuid'));
 		if(jQuery(this).is(":checked")) {
 			jQuery("input[name^='remove_"+uuid+"']").attr("checked","");

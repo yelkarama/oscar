@@ -54,20 +54,21 @@
 %>
 <html:html locale="true">
 <head>
+<html:base />
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Jobs</title>
 
-    <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
-    <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
-    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
-    <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
 
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
-    <script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-    <script src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
-    <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
+    <script src="${pageContext.request.contextPath}/js/DT_bootstrap.js"></script>
+    <script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
 
 <%
 java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = org.oscarehr.common.jobs.OscarJobExecutingManager.getFutures();
@@ -232,7 +233,7 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 	    $('#jobTable').DataTable({
              "order": [],
             "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
         });
         return;
@@ -324,7 +325,7 @@ java.util.Map<Integer,java.util.concurrent.ScheduledFuture<Object>> futures = or
 			}
 		});
 
-		$(":radio").bind('change',function(){
+		$(":radio").on('change',function(){
 			var chooser = $(this).attr('name');
 
 			var checked = $("input:radio[name=" + chooser + "]:checked").val();

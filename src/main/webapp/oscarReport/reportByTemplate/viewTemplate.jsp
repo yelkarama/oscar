@@ -47,15 +47,11 @@
 <html:html locale="true">
 <head>
 	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script>  
-	<script src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
 
 </head>
 <%
 	String templateid = request.getParameter("templateid");
-	if (templateid == null) 
+	if (templateid == null)
 	{
 		templateid = (String) request.getAttribute("templateid");
 	}
@@ -72,7 +68,7 @@
 	<c:out value="${ curreport.title }" /><br />
 	<small><c:out value="${ curreport.description }" /></small>
 </h3>
-	
+
 
 	<%if (templateid == null) { %>
 		<jsp:forward page="homePage.jsp" />
@@ -83,7 +79,7 @@
 	</div>
 
 	<div id="viewTemplateActions" class="form-actions noprint">
-		<input type="button" class="btn" value="Back" onclick="javascript: window.history.back();return false;" /> 
+		<input type="button" class="btn" value="Back" onclick="javascript: window.history.back();return false;" />
 		<input type="button" class="btn" value="Print" onclick="javascript: window.print();" />
 		<input type="button" class="btn btn-primary" value="Edit" onclick="document.location='addEditTemplate.jsp?templateid=<%=templateid%>&opentext=1'" />
 	</div>

@@ -35,7 +35,7 @@
 %>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('input[type=radio][name=contact_bestContact]').change(function() {
+        $('input[type=radio][name=contact_bestContact]').on("change",function() {
             setBestContactMethod($('input[type=radio][name=contact_bestContact]:checked').val());
         });
     });

@@ -106,11 +106,12 @@
 	        font-size: 15pt;
         }
     </style>
-<script src="../js/jquery-1.7.1.min.js"></script>
+<script src="..>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <script language="javascript">
 	$(window).load(function(){
-		$('input[type="checkbox"]').click(function () {
+		$('input[type="checkbox"]').on( "click", function () {
 	   	 var pass = 5; //5 files at a time
 	   	 var numOfFiles = $('input[type="checkbox"]:checked').length;
 	   	 if (numOfFiles == pass) {
@@ -128,7 +129,7 @@
 	  	  }
 		})
 		
-		$("#unSelSent").click(function(){
+		$("#unSelSent").on( "click", function(){
 			$('input[type="checkbox"]').filter(':checked').prop('checked', false);
 			$('input[type="checkbox"]').filter(':disabled').prop('disabled', false);
 			$("#unSelSent").prop('disabled', true);
@@ -214,25 +215,25 @@
 	/* for dialogbox */
 $(document).ready(function ()
         {
-            $("#btnShowSimple").click(function (e)
+            $("#btnShowSimple").on( "click", function (e)
             {
                 ShowDialog(false);
                 e.preventDefault();
             });
 
-            $("#btnShowModal").click(function (e)
+            $("#btnShowModal").on( "click", function (e)
             {
                 ShowDialog(true);
                 e.preventDefault();
             });
 
-            $("#btnClose").click(function (e)
+            $("#btnClose").on( "click", function (e)
             {
                 HideDialog();
                 e.preventDefault();
             });
 
-            $("#btnSubmit").click(function (e)
+            $("#btnSubmit").on( "click", function (e)
             {
             	
             	/* var brand = $("#brands input:radio:checked").val();
@@ -249,11 +250,11 @@ $(document).ready(function ()
 
             if (modal)
             {
-                $("#overlay").unbind("click");
+                $("#overlay").off("click");
             }
             else
             {
-                $("#overlay").click(function (e)
+                $("#overlay").on( "click", function (e)
                 {
                     HideDialog();
                 });

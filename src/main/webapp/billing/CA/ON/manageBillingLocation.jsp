@@ -18,6 +18,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%
 String user_no = (String) session.getAttribute("user");
 String asstProvider_no = "";
@@ -109,8 +110,8 @@ function confirmthis(lno) {
 <div class="container-fluid well">
 <table>
 	<tr>
-		<td width="3%"></td>
-		<td width="30%" align="left" valign="top">
+		<td style="width:3%"></td>
+		<td style="width:30%; text-align:left; vertical-align:top">
 		<form name="serviceform" method="post"
 			action="dbManageBillingLocation.jsp"><B><bean:message
 			key="billing.manageBillingLocation.msgCodeDescription" /></B> <br>
@@ -126,11 +127,11 @@ function confirmthis(lno) {
 		</form>
 		</td>
 
-		<td width="37%" valign="top">
+		<td style="width:37%; vertical-align:top">
 
 		<table class="table table-striped  table-condensed">
 			<tr>
-				<th width="6%"><bean:message
+				<th style="width:6%"><bean:message
 					key="billing.manageBillingLocation.msgClinicLocation" /></th>
 				<th><bean:message
 					key="billing.manageBillingLocation.msgDescription" /></th>

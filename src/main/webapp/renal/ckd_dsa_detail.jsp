@@ -71,7 +71,8 @@ if(!authed) {
     <head>
         <title>Chronic Kidney Disease DSA</title>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/oscarEncounter/decisionSupport/decisionSupport.css" type="text/css"></link>
-        <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 		 
         <script>
         function popupPage(vheight,vwidth,varpage) { //open a new popup window

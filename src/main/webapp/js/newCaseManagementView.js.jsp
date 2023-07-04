@@ -2757,7 +2757,7 @@ function savePage(method, chain) {
             jQuery("#residentMethod").val(method);
             jQuery("#showResident").css('z-index',1);
             jQuery("#showResident").fadeIn(2000);
-            jQuery("#reviewed").focus();
+            jQuery("#reviewed").trigger( "focus" );
             return false;
         }
 
@@ -2862,7 +2862,7 @@ function savePage(method, chain) {
 
 	jQuery("[submit_addon]").each(function()
     		   {
-    		     jQuery("#"+jQuery(this).attr('submit_addon')).click();
+    		     jQuery("#"+jQuery(this).attr('submit_addon')).trigger( "click" );
     		   }
     		 );
 

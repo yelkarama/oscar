@@ -23,9 +23,9 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
-  
+
   String user_no = (String) session.getAttribute("user");
   String creator = (String) session.getAttribute("userlastname")+","+ (String) session.getAttribute("userfirstname");
 %>
@@ -50,9 +50,9 @@
 
 <%@page import="org.oscarehr.util.MiscUtils"%><html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="schedule.scheduledatefinal.title" /></title>
-<link rel="stylesheet" href="../web.css" />
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
 <script language="JavaScript">
 <!--
@@ -69,72 +69,20 @@ function upCaseCtrl(ctrl) {
 //-->
 </script>
 </head>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-	topmargin="0" leftmargin="0" rightmargin="0">
+<body onLoad="setfocus()">
 <form method="post" name="schedule" action="schedulecreatedate.jsp">
-
-<table border="0" width="100%">
-	<tr>
-		<td width="150" bgcolor="#009966"><!--left column-->
-		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<tr bgcolor="#486ebd">
-				<th align="CENTER" bgcolor="#009966">
-				<p>&nbsp;</p>
-				<p><font face="Helvetica" color="#FFFFFF"><bean:message
-					key="schedule.scheduledatefinal.msgMainLabel" /></font></p>
-				</th>
-			</tr>
-		</table>
-		<table width="98%" border="0" cellspacing="0" cellpadding="0">
-			<tr style="color:white;">
-				<td>
-				<p>&nbsp;</p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduledatefinal.msgStepOne" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduledatefinal.msgStepTwo" /></font></p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				</td>
-			</tr>
-		</table>
-
-		</td>
-		<td><br>
-		<center>
-		<p>
-		<table width="95%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td><bean:message
-					key="schedule.scheduledatefinal.msgSettingFinished" /></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-				<div align="left"><input type="button" name="Button"
+<h4><bean:message key="schedule.schedulecreatedate.msgMainLabel" /></h4>
+<div class="alert">
+<bean:message key="schedule.scheduledatefinal.msgStepOne" />
+</div>
+<div class="alert alert-success">
+<bean:message key="schedule.scheduledatefinal.msgSettingFinished" /></td>
+</div>
+<div style="align:left"><input type="button" name="Button" clas="btn"
 					value='<bean:message key="schedule.scheduledatefinal.btnDoAgain"/>'
 					onclick="self.location.href='scheduletemplatesetting.jsp'">
-				</div>
-				</td>
-			</tr>
-		</table>
-		<p>
-		<p>&nbsp;</p>
-		</center>
-		</td>
-	</tr>
-</table>
+</div>
+
 
 </form>
 

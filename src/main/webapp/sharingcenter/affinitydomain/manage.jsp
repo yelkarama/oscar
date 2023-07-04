@@ -57,7 +57,8 @@
         <title>Oscar Sharing Center</title>
 
         <link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css">
-        <script src="${ctx}/js/jquery-1.9.1.min.js"></script>
+        <script src="${ctx}>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         <script src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
         <script>
@@ -77,7 +78,7 @@
             function confirmUpload() {
                 var answer = confirm("Are you sure you want to upload \n this Affinity Domain Configuration?");
                 if (answer) {
-                    $("#configform").submit();
+                    $("#configform").trigger( "submit" );
                 }
             }
         </script>
@@ -115,13 +116,13 @@
 
                             <div class="input-group-btn btn-group">
                                 <span class="input-group-btn"> <a class="btn btn-default"
-                                                                  onclick="$('input[id=file]').click();">Browse</a>
+                                                                  onclick="$('input[id=file]').trigger( "click" );">Browse</a>
                                 </span> <span class="input-group-btn"> <a class="btn btn-primary"
                                                                           onclick="confirmUpload()">Upload</a>
                                 </span>
                             </div>
                             <script type="text/javascript">
-                                $('input[id=file]').change(function() {
+                                $('input[id=file]').on("change",function() {
                                     $('#photoCover').val($(this).val());
                                 });
                             </script>

@@ -31,7 +31,8 @@
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath()%>/js/jquery.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath()%>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
         <link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet">
         <title>PATIENT DETAIL INFO</title>
         <link rel="stylesheet" href="../web.css" />
