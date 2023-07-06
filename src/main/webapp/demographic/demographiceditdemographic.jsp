@@ -2350,7 +2350,7 @@ if( demographic!=null) {
 								      key="demographic.demographiceditdemographic.formHin" />:</span></td>
 							<td style="width:100%"><span class="info" id="hinver" onclick="copyHIN2Clipboard(this.id)" ondblclick="copyHINver2Clipboard(this.id)"><%=StringUtils.trimToEmpty(demographic.getHin())%>&nbsp;<%=StringUtils.trimToEmpty(demographic.getVer())%></span>
                                 <% if (!StringUtils.trimToEmpty(demographic.getVer()).equals("")) { %>
-                                <a class="btn btn-link" href="<%=hin_check_url%>healthNumber=<%=demographic.getHin()%>&versionCode=<%=demographic.getVer()%>" target=”_blank”><bean:message key="oscarReport.manageProvider.msgCheck"/></a>
+                                <a class="btn btn-link" href="<%=hin_check_url%>" target=”_blank”><bean:message key="oscarReport.manageProvider.msgCheck"/></a>
 							    <%}%>
                             </td>
 							</tr>
