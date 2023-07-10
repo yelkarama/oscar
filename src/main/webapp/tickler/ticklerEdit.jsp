@@ -24,7 +24,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@page import="java.util.Set"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.GregorianCalendar"%>
@@ -81,14 +81,14 @@
 
 <%
     Boolean caisiEnabled = OscarProperties.getInstance().isPropertyActive("caisi");
-	String ticklerNoStr = request.getParameter("tickler_no");    
-    
+	String ticklerNoStr = request.getParameter("tickler_no");
+
     Integer ticklerNo = null;
     try {
         ticklerNo = Integer.valueOf(ticklerNoStr);
     }catch (NumberFormatException e) {}
-    
-    
+
+
     Tickler t = null;
     Demographic d = null;
     if (ticklerNo != null) {
@@ -98,22 +98,22 @@
     else {
         response.sendRedirect("../errorpage.jsp");
     }
-             
+
     java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
 
     String selected="";
     String stActive =  LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.stActive");
     String stComplete = LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.stComplete");
     String stDeleted = LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.stDeleted");
-    
+
     String prHigh = LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.priority.high");
     String prNormal = LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.priority.normal");
     String prLow = LocaleUtils.getMessage(request.getLocale(), "tickler.ticklerMain.priority.low");
-    
+
     GregorianCalendar now=new GregorianCalendar();
     int curYear = now.get(Calendar.YEAR);
     int curMonth = (now.get(Calendar.MONTH)+1);
-	int curDay = now.get(Calendar.DAY_OF_MONTH); 
+	int curDay = now.get(Calendar.DAY_OF_MONTH);
 %>
 
 <html:html locale="true">
@@ -124,13 +124,13 @@
                 font-size:10pt;
                 text-align: left;
             }
-            td.lilac {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF;}
+            td.lilac {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #f5f5f5;}
             td.white {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
         </style>
         <title><bean:message key="tickler.ticklerEdit.title"/></title>
         <script language="javascript">
             //open a new popup window
-            function popupPage(vheight,vwidth,varpage) { 
+            function popupPage(vheight,vwidth,varpage) {
                 var page = "" + varpage;
                 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
                 var popup=window.open(page, "attachment", windowprops);
@@ -140,16 +140,16 @@
                     }
                 }
             }
-            
+
             function pasteMessageText() {
                 var selectedIdx = document.serviceform.suggestedText.selectedIndex;
                 document.serviceform.newMessage.value = document.serviceform.suggestedText.options[selectedIdx].text;
             }
-            
-            function openBrWindow(theURL,winName,features) { 
+
+            function openBrWindow(theURL,winName,features) {
                 window.open(theURL,winName,features);
             }
-            
+
             function DateAdd(startDate, numDays, numMonths, numYears){
                 var returnDate = new Date(startDate.getTime());
                 var yearsToAdd = numYears;
@@ -168,7 +168,7 @@
 
                 return returnDate;
             }
-            
+
     Date.prototype.addMonths = function(months) {
   	  var dat = new Date(this.valueOf());
   	  dat.setMonth(dat.getMonth() + months);
@@ -183,20 +183,20 @@
   	  var newD = d.getFullYear() + "-" + mth + "-" + day;
       document.getElementById("xml_appointment_date").value = newD;
     }
- 
+
 	function validate(form){
 		validate(form, false);
 	}
- 
+
 	function validate(form , writeToEncounter){
-               
+
         if (validateDate(form) <%=caisiEnabled?"&& validateSelectedProgram()":""%>){
             if(writeToEncounter) {
                 var windowFeatures = "height=700,width=960";
                    // Open encounter window
                     window.open('../oscarEncounter/IncomingEncounter.do?demographicNo=<%=d.getDemographicNo()%>&providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=&status=', '', windowFeatures);
             }
-            form.submit();                
+            form.submit();
             return true;
         }
                 return false;
@@ -205,7 +205,7 @@
     function IsDate(value) {
       let dateWrapper=new Date(value);
         return !isNaN(dateWrapper.getDate());
-    }	
+    }
 
 	function validateDate() {
 		if (document.serviceform.xml_appointment_date.value == "" || !IsDate(document.serviceform.xml_appointment_date.value)) {
@@ -220,38 +220,37 @@
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
     </head>
-    
     <body>
         <html:form action="/tickler/EditTickler">
             <input type="hidden" name="method" value="editTickler"/>
             <input type="hidden" name="ticklerNo" value="<%=ticklerNo%>"/>
-    <table width="100%">                       
-        <tr style="background-color: black">   
-            <td colspan="4" style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message key="tickler.ticklerEdit.title"/></td>
+    <table style="width:100%">
+        <tr>
+            <td colspan="4"><h4><bean:message key="tickler.ticklerEdit.title"/></h4></td>
         </tr>
     </table>
 <div class="container-fluid well" >
-        <table width="100%">                       
+        <table style="width:100%">
             <thead>
-<tr><td colspan="4"> <p><div id="error" class="alert alert-error" style="display:none;"></div> </td></tr>                 
+<tr><td colspan="4"> <p><div id="error" class="alert alert-error" style="display:none;"></div> </td></tr>
                 <tr>
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.demographicName"/></th>                           
+                    <th><bean:message key="tickler.ticklerEdit.demographicName"/></th>
                     <td><a href=# onClick="popupPage(600,800,'<%=request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=d.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=d.getLastName()%>,<%=d.getFirstName()%></a></td>
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.primaryPhone"/></th>                           
-                    <td><%=d.getPhone()%></td> 
+                    <th><bean:message key="tickler.ticklerEdit.primaryPhone"/></th>
+                    <td><%=d.getPhone()%></td>
                 </tr>
                 <tr>
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.chartNo"/></th>                           
+                    <th><bean:message key="tickler.ticklerEdit.chartNo"/></th>
                     <td><%=d.getChartNo()%></td>
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.secondaryPhone"/></th>
+                    <th><bean:message key="tickler.ticklerEdit.secondaryPhone"/></th>
                     <td><%=d.getPhone2()%></td>
                 </tr>
                 <tr>
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.age"/></th>                           
-                    <td><%=d.getAge()%>(<%=d.getFormattedDob()%>)</td> 
-                    <th style="background-color: #EEEEFF"><bean:message key="tickler.ticklerEdit.email"/></th>
+                    <th><bean:message key="tickler.ticklerEdit.age"/></th>
+                    <td><%=d.getAge()%>(<%=d.getFormattedDob()%>)</td>
+                    <th><bean:message key="tickler.ticklerEdit.email"/></th>
                     <td><%=d.getEmail()%></td>
-                </tr>                
+                </tr>
             </thead>
             <tbody style="width:100%;border-bottom-color:#4d8977;border-top-color:#4d8977;">
                 <tr>
@@ -262,24 +261,24 @@
                     <th style="background-color: #336666;color:white;"><bean:message key="tickler.ticklerEdit.addedBy"/>
                     <th style="background-color: #336666;color:white;"><bean:message key="tickler.ticklerEdit.updateDate"/>
                 </tr>
-                
+
                 <%
                                 	String cellColour = "lilac";
                                 %>
-                
+
                 <tr>
                     <td colspan="2" class="<%=cellColour%>" style="font-weight: bold"><%=t.getMessage()%></td>
                     <td class="<%=cellColour%>" style="font-weight: bold"><%=t.getProvider().getLastName()%>,<%=t.getProvider().getFirstName()%></td>
                     <td class="<%=cellColour%>" style="font-weight: bold"><%=t.getUpdateDate()%></td>
                 </tr>
-                
+
                     <%
-                                    	Set<TicklerComment> tComments = t.getComments(); 
-                                                          for (TicklerComment tc : tComments) { 
+                                    	Set<TicklerComment> tComments = t.getComments();
+                                                          for (TicklerComment tc : tComments) {
                                                                if (cellColour.equals("lilac")) {
                                                                     cellColour = "white";
                                                                 }else{
-                                                                    cellColour = "lilac"; 
+                                                                    cellColour = "lilac";
                                                                 }
                                     %>
                <tr>
@@ -288,7 +287,7 @@
                     <td class="<%=cellColour%>"><%=tc.getUpdateDateTime(vLocale)%></td>
                 </tr>
                     <%}%>
-               
+
             </tbody>
             <tfoot>
                 <tr><td colspan="4" style="padding-top:2em;"></td></tr>
@@ -301,35 +300,35 @@
                     <td>
                         <select name="suggestedText">
                             <option value="">---</option>
-                            <%   
+                            <%
                                 TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) SpringUtils.getBean("ticklerTextSuggestDao");
                                 for (TicklerTextSuggest tTextSuggest : ticklerTextSuggestDao. getActiveTicklerTextSuggests()) { %>
                                 <option><%=tTextSuggest.getSuggestedText()%></option>
                             <% } %>
                         </select>
                     </td>
-                    
+
                     <td colspan="2">
-                        <select name="status"> 
+                        <select name="status">
                             <% if (t.getStatusDesc(vLocale).equals(stActive)){selected="selected";}else{selected="";}%>
                             <option <%=selected%> value="A"><bean:message key="tickler.ticklerMain.stActive"/></option>
                             <% if (t.getStatusDesc(vLocale).equals(stComplete)){selected="selected";}else{selected="";}%>
                             <option <%=selected%> value="C"><bean:message key="tickler.ticklerMain.stComplete"/></option>
                             <% if (t.getStatusDesc(vLocale).equals(stDeleted)){selected="selected";}else{selected="";}%>
-                            <option <%=selected%> value="D"><bean:message key="tickler.ticklerMain.stDeleted"/></option>                           
+                            <option <%=selected%> value="D"><bean:message key="tickler.ticklerMain.stDeleted"/></option>
                         <select>
                     </td>
-                </tr>                
-                <tr>
-                    <td colspan="2"></td>                    
-                    <th colspan="2" style="background-color: #666699;color:white;"><bean:message key="tickler.ticklerEdit.priority"/></th>                   
                 </tr>
-                
-                <tr>   
+                <tr>
+                    <td colspan="2"></td>
+                    <th colspan="2"><bean:message key="tickler.ticklerEdit.priority"/></th>
+                </tr>
+
+                <tr>
                     <td><label for="newMessage" style="font-weight:bold"><bean:message key="tickler.ticklerEdit.messageText"/>:</label></td>
-                    <td style="text-align:right"><input type="button" class="btn" name="pasteMessage" onclick="pasteMessageText()" value="<bean:message key="tickler.ticklerEdit.pasteMessage"/>"/></td>
+                    <td style="text-align:center"><input type="button" class="btn" name="pasteMessage" onclick="pasteMessageText()" value="<bean:message key="tickler.ticklerEdit.pasteMessage"/>"/></td>
                     <td colspan="2">
-                        <select name="priority">  
+                        <select name="priority">
                             <% if (t.getPriorityWeb().equals(prHigh)){selected="selected";}else{selected="";}%>
                             <option <%=selected%> value="<bean:message key="tickler.ticklerMain.priority.high"/>"><bean:message key="tickler.ticklerMain.priority.high"/></option>
                             <% if (t.getPriorityWeb().equals(prNormal)){selected="selected";}else{selected="";}%>
@@ -339,20 +338,20 @@
                         </select>
                     </td>
                 </tr>
-                
+
                 <tr>
-                    <td colspan="2" rowspan="3" style="text-align:right"><textarea style="width:100%;" name="newMessage"></textarea></td>
-                    <th colspan="2" style="background-color: #666699;color:white;"><bean:message key="tickler.ticklerEdit.assignedTo"/></th>         
+                    <td colspan="2" rowspan="3" ><textarea style="width:95%; height:100%" name="newMessage"></textarea></td>
+                    <th colspan="2" ><bean:message key="tickler.ticklerEdit.assignedTo"/></th>
                 </tr>
                 <tr>
-                       
+
                     <td colspan="2">
                         <select name="assignedToProviders">
                             <%
                                 ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-                                List<Provider> providers = providerDao.getActiveProviders(); 
+                                List<Provider> providers = providerDao.getActiveProviders();
                                 for (Provider p: providers) {
-                                    
+
                                     if (p.equals(t.getAssignee())){
                                         selected = "selected";
                                     }
@@ -365,13 +364,13 @@
                         </select>
                     </td>
                 </tr>
-                
+
                 <tr>
-                 
-                    <th colspan="2" style="background-color: #666699;color:white;"><bean:message key="tickler.ticklerEdit.serviceDate"/></th>         
+
+                    <th colspan="2" ><bean:message key="tickler.ticklerEdit.serviceDate"/></th>
                 </tr>
                 <tr>
-                    <td colspan="2"></td>    
+                    <td colspan="2"></td>
 <%
 
 
@@ -379,7 +378,7 @@ DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 String strDate = dateformat.format(t.getServiceDate());
 
 
-%>  
+%>
                     <td colspan="2"><bean:message key="tickler.ticklerEdit.calendarLookup"/><input name="xml_appointment_date" id="xml_appointment_date" type="date" style="height:26px;" maxlength="10" value="<%=strDate%>"/></td>
 
                 </tr>
@@ -396,19 +395,19 @@ String strDate = dateformat.format(t.getServiceDate());
                     <a href="#" onClick="addMonths(60)">5-<bean:message key="global.years"/></a>&nbsp
                     <a href="#" onClick="addMonths(120)">10-<bean:message key="global.years"/></a>&nbsp
                     </td>
-                </tr>                 
+                </tr>
                 <tr>
                     <td colspan="2"> </td>
                     <td colspan="2" style="vertical-align: bottom;text-align:right"><br/>
                          <oscar:oscarPropertiesCheck property="tickler_email_enabled" value="true">
                             <html:checkbox property="emailDemographic"><bean:message key="tickler.ticklerEdit.emailDemographic"/></html:checkbox>
                          </oscar:oscarPropertiesCheck>
-                       
+
                          <input type="button" class="btn btn-primary" name="updateTickler" value="<bean:message key="tickler.ticklerEdit.update"/>" onClick="validate(this.form)"/>
                          <input type="button" class="btn" name="cancelChangeTickler" value="<bean:message key="tickler.ticklerEdit.cancel"/>" onClick="window.close()"/>
 
-                    </td>         
-                </tr>              
+                    </td>
+                </tr>
             </tfoot>
         </table>
         </html:form>
