@@ -226,7 +226,7 @@
             <input type="hidden" name="ticklerNo" value="<%=ticklerNo%>"/>
     <table style="width:100%">
         <tr>
-            <td colspan="4"><h4><bean:message key="tickler.ticklerEdit.title"/></h4></td>
+            <td><h4><bean:message key="tickler.ticklerEdit.title"/></h4></td>
         </tr>
     </table>
 <div class="container-fluid well" >
@@ -316,7 +316,7 @@
                             <option <%=selected%> value="C"><bean:message key="tickler.ticklerMain.stComplete"/></option>
                             <% if (t.getStatusDesc(vLocale).equals(stDeleted)){selected="selected";}else{selected="";}%>
                             <option <%=selected%> value="D"><bean:message key="tickler.ticklerMain.stDeleted"/></option>
-                        <select>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -379,21 +379,21 @@ String strDate = dateformat.format(t.getServiceDate());
 
 
 %>
-                    <td colspan="2"><bean:message key="tickler.ticklerEdit.calendarLookup"/><input name="xml_appointment_date" id="xml_appointment_date" type="date" style="height:26px;" maxlength="10" value="<%=strDate%>"/></td>
+                    <td colspan="2"><bean:message key="tickler.ticklerEdit.calendarLookup"/><input name="xml_appointment_date" id="xml_appointment_date" type="date" style="height:26px;" value="<%=strDate%>"/></td>
 
                 </tr>
                 <tr>
                     <td colspan="2"></td>
-                    <td>+&nbsp;<a href="#" onClick="addMonths(2)">2-<bean:message key="global.months"/></a>&nbsp
-                    <a href="#" onClick="addMonths(3)">3-<bean:message key="global.months"/></a>&nbsp
-                    <a href="#" onClick="addMonths(4)">4-<bean:message key="global.months"/></a>&nbsp
-                    <a href="#" onClick="addMonths(6)">6-<bean:message key="global.months"/></a>&nbsp
-                    <a href="#" onClick="addMonths(8)">8-<bean:message key="global.months"/></a>&nbsp
+                    <td>+&nbsp;<a href="#" onClick="addMonths(2)">2-<bean:message key="global.months"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(3)">3-<bean:message key="global.months"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(4)">4-<bean:message key="global.months"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(6)">6-<bean:message key="global.months"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(8)">8-<bean:message key="global.months"/></a>&nbsp;
                     <a href="#" onClick="addMonths(12)"><bean:message key="tickler.ticklerEdit.add1year"/></a>&nbsp;
-                    <a href="#" onClick="addMonths(24)">2-<bean:message key="global.years"/></a>&nbsp
-                    <a href="#" onClick="addMonths(36)">3-<bean:message key="global.years"/></a>&nbsp
-                    <a href="#" onClick="addMonths(60)">5-<bean:message key="global.years"/></a>&nbsp
-                    <a href="#" onClick="addMonths(120)">10-<bean:message key="global.years"/></a>&nbsp
+                    <a href="#" onClick="addMonths(24)">2-<bean:message key="global.years"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(36)">3-<bean:message key="global.years"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(60)">5-<bean:message key="global.years"/></a>&nbsp;
+                    <a href="#" onClick="addMonths(120)">10-<bean:message key="global.years"/></a>&nbsp;
                     </td>
                 </tr>
                 <tr>
