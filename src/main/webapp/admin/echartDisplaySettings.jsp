@@ -119,6 +119,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><bean:message key="admin.admin.echartDisplaySettings.groupDocumentByType"/>:</td>
+                    <td>
+                        <input type="radio" value="true" name="echart_show_group_document_by_type"
+                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("true")) ? "checked" : ""%> />
+                        <bean:message key="admin.admin.echartDisplaySettings.yes"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="radio" value="false" name="echart_show_group_document_by_type"
+                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("false")) ? "checked" : ""%> />
+                        <bean:message key="admin.admin.echartDisplaySettings.no"/>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+                </tr>
+                <tr>
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_DOB"/>:</td>
                     <td>
                         <input id="echart_show_DOB-true" type="radio" value="true" name="echart_show_DOB"
