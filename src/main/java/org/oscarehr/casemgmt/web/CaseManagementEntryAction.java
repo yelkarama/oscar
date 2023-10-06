@@ -2988,12 +2988,23 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		}
 		boolean printCPP  = request.getParameter("printCPP").equalsIgnoreCase("true");
 		boolean printRx   = request.getParameter("printRx").equalsIgnoreCase("true");
-		boolean printLabs = request.getParameter("printLabs") != null && request.getParameter("printLabs").equalsIgnoreCase("true");		
-		boolean printPreventions = request.getParameter("printPreventions") != null && request.getParameter("printPreventions").equalsIgnoreCase("true");		
-		
-		
+		boolean printLabs = request.getParameter("printLabs") != null && request.getParameter("printLabs").equalsIgnoreCase("true");
+		boolean printMeasurements = "true".equalsIgnoreCase(request.getParameter("printMeasurements"));
+		boolean printNotes = request.getParameter("printNotes").equalsIgnoreCase("true");
+		if(!printNotes){
+			printAllNotes = false;
+			noteIds = new String[]{};
+		}	
+		boolean printPreventions = request.getParameter("printPreventions") != null && request.getParameter("printPreventions").equalsIgnoreCase("true");	
+        boolean printDocuments = request.getParameter("printDocuments") != null
+            && request.getParameter("printDocuments").equalsIgnoreCase("true");
+        boolean printHrms = request.getParameter("printHrms") != null
+            && request.getParameter("printHrms").equalsIgnoreCase("true");	
+
 		CaseManagementPrint cmp = new CaseManagementPrint();
-		cmp.doPrint(loggedInInfo,demographicNo, printAllNotes,noteIds,printCPP,printRx,printLabs,printPreventions,(pType != null && "dates".equals(pType))?true:false,cStartDate,cEndDate,request, response.getOutputStream());
+        cmp.doPrint(loggedInInfo, demographicNo, printAllNotes, noteIds, printCPP, printRx,
+                printLabs, printPreventions, printMeasurements, printDocuments, printHrms,
+                cStartDate, cEndDate, request, response.getOutputStream());
 		
 		return null;
 	}

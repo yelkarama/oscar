@@ -44,10 +44,11 @@
 
 <%
     oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
+    String demographicNo = request.getAttribute("demographicNo") == null ? request.getParameter("demographicNo") : (String) request.getAttribute("demographicNo");
     String beanName = "casemgmt_oscar_bean" + (String) request.getAttribute("demographicNo");
 
     pageContext.setAttribute("providerNo",request.getParameter("providerNo"), PageContext.PAGE_SCOPE);
-    pageContext.setAttribute("demographicNo",request.getParameter("demographicNo"), PageContext.PAGE_SCOPE);
+    pageContext.setAttribute("demographicNo", demographicNo, PageContext.PAGE_SCOPE);
     
     org.oscarehr.casemgmt.model.CaseManagementNoteExt cme = new org.oscarehr.casemgmt.model.CaseManagementNoteExt();
 
@@ -1046,6 +1047,27 @@ window.onbeforeunload = onClosing;
 						src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<bean:message
 							key="oscarEncounter.Preventions.title" /></td>
 				</tr>
+				<tr>
+					<td></td>
+					<td><img style="cursor: pointer;"
+						title="<bean:message key="oscarEncounter.print.title"/>"
+						id='imgPrintDocuments'
+						alt="Toggle Print Documents"
+						onclick="return printInfo(this, 'printDocuments');"
+						src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<bean:message
+							key="oscarEncounter.Index.msgDocuments" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><img style="cursor: pointer;"
+						title="<bean:message key="oscarEncounter.print.title"/>"
+						id='imgPrintHrms'
+						alt="Toggle Print HRM"
+						onclick="return printInfo(this, 'printHrms');"
+						src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<bean:message
+							key="oscarEncounter.Index.msgHRMDocuments" /></td>
+				</tr>	
+                
 				<!--  extension point -->
 				<tr id="printDateRow">
 					<td><input type="radio" id="printopDates" name="printop"

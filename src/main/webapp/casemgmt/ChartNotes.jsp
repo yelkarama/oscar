@@ -581,14 +581,18 @@ try
 	<input type="hidden" name="notes2print" id="notes2print" value="">
 	<input type="hidden" name="printCPP" id="printCPP" value="false">
 	<input type="hidden" name="printRx" id="printRx" value="false">
+	<input type="hidden" name="pType" id="pType" value="">   
 	<input type="hidden" name="printLabs" id="printLabs" value="false">
+	<input type="hidden" name="printMeasurements" id="printMeasurements" value="false">
+	<input type="hidden" name="printNotes" id="printNotes" value="true">
 	<input type="hidden" name="printPreventions" id="printPreventions" value="false">
+	<input type="hidden" name="printDocuments" id="printDocuments" value="false">
+	<input type="hidden" name="printHrms" id="printHrms" value="false">
 	<input type="hidden" name="encType" id="encType" value="">
-	<input type="hidden" name="pType" id="pType" value="">
 	<input type="hidden" name="pStartDate" id="pStartDate" value="">
 	<input type="hidden" name="pEndDate" id="pEndDate" value="">
-	<input type="hidden" id="annotation_attribname" name="annotation_attribname" value="">
-	
+	<input type="hidden" name="selectedSiteIdForPrint" id="selectedSiteIdForPrint" value="">
+	<input type="hidden" id="annotation_attribname" name="annotation_attribname" value="">	
 	
 	<%
  	if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {

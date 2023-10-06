@@ -643,6 +643,53 @@ public final class EDocUtil {
 	    	return currentdoc;
     }
 
+
+	public static String getDocumentFileName(String prefixedFileName) {
+		if(hasSubdir(prefixedFileName))
+			return prefixedFileName.substring(prefixedFileName.indexOf(".")+1, prefixedFileName.length());
+		else return prefixedFileName;
+	}
+
+	public static String getDocumentPath(String filename) {
+		return EDocUtil.getDocumentDir(filename) + EDocUtil.getDocumentFileName(filename);
+	}
+
+	public static String getDocumentDir(String prefixedFileName) {
+        String rootPath_default = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+        rootPath_default = (rootPath_default.endsWith("\\") || rootPath_default.endsWith("/") ? rootPath_default : rootPath_default + "/");
+
+        String rootPath = rootPath_default;        
+        if(hasSubdir(prefixedFileName)) {
+        	String prefix = prefixedFileName.substring(0, prefixedFileName.indexOf("."));
+        	rootPath = rootPath + prefix.substring(0,4) + "/" + prefix.substring(4,6) + "/";
+        	File file = new File(rootPath + prefixedFileName);
+        	String fileNameWithoutPrefix = getDocumentFileName(prefixedFileName);
+        	File file_no_prefix = new File(rootPath + fileNameWithoutPrefix);
+        	if(file.exists())
+        		return rootPath ;
+        	if(file_no_prefix.exists())
+        		return rootPath;
+        	
+        	return rootPath_default;
+        } else 
+        	return rootPath_default;
+	}
+	private static boolean hasSubdir(String fileName) {
+		boolean res = false;
+
+		try {
+        	String prefix = fileName.substring(0, fileName.indexOf("."));
+        	if(prefix.length() == 6) {
+        		SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+        		format.setLenient(false);
+        		Date test = format.parse(prefix);        		
+        		res = true;
+        	}
+		} catch(Exception ex) {}
+
+		return res;
+	}
+
 	public ArrayList<EDoc> getUnmatchedDocuments(String creator, String responsible, Date startDate, Date endDate, boolean unmatchedDemographics) {
 		ArrayList<EDoc> list = new ArrayList<EDoc>();
 
@@ -1305,5 +1352,23 @@ public final class EDocUtil {
         	}       	
         	return pagecount;
         }
+		
+		public static ArrayList<EDoc> listDocsByDateRange(LoggedInInfo loggedInInfo, String module,
+			String moduleid, String docType, boolean publicDoc, String viewstatus,
+			Date since, Date end) {
+		  List<Document> documents = documentDao.findDocumentsByDateRange(module, moduleid, docType,
+			  publicDoc, viewstatus, since, end);
+
+		  ArrayList<EDoc> resultDocs = new ArrayList<EDoc>();
+		  for (Document document : documents) {
+			resultDocs.add(toEDoc(document));
+		  }
+
+		  if (OscarProperties.getInstance().getBooleanProperty("FILTER_ON_FACILITY", "true")) {
+			resultDocs = documentFacilityFiltering(loggedInInfo, resultDocs);
+		  }
+
+		  return resultDocs;
+		}
 
 	}

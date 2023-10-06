@@ -1,7 +1,5 @@
 package org.oscarehr.casemgmt.service;
 
-import java.io.File;
-
 /**
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -26,9 +24,11 @@ import java.io.File;
  * Ontario, Canada
  */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,8 +56,10 @@ import org.oscarehr.casemgmt.util.ExtPrint;
 import org.oscarehr.casemgmt.web.NoteDisplay;
 import org.oscarehr.casemgmt.web.NoteDisplayLocal;
 import org.oscarehr.common.model.Prevention;
+
 import org.oscarehr.managers.PreventionManager;
 import org.oscarehr.managers.ProgramManager2;
+import org.oscarehr.sharingcenter.util.CaseManagementUtil;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -65,6 +67,7 @@ import org.oscarehr.util.SpringUtils;
 import com.lowagie.text.DocumentException;
 
 import oscar.OscarProperties;
+
 import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.oscarLab.ca.all.pageUtil.OLISLabPDFCreator;
 import oscar.oscarLab.ca.all.parsers.Factory;
@@ -96,8 +99,12 @@ public class CaseManagementPrint {
 	 *This method was in CaseManagementEntryAction but has been moved out so that both the classic Echart and the flat echart can use the same printing method.
 	 * 
 	 */
-	public void doPrint(LoggedInInfo loggedInInfo,Integer demographicNo, boolean printAllNotes,String[] noteIds,boolean printCPP,boolean printRx,boolean printLabs, boolean printPreventions, boolean useDateRange, Calendar startDate, Calendar endDate,   HttpServletRequest request, OutputStream os) throws IOException, DocumentException {
-		
+	public void doPrint(LoggedInInfo loggedInInfo, Integer demographicNo, boolean printAllNotes,
+        String[] noteIds, boolean printCPP, boolean printRx, boolean printLabs,
+        boolean printPreventions, boolean printMeasurements, boolean printDocuments,
+        boolean printHrms, Calendar startDate, Calendar endDate, HttpServletRequest request,
+        OutputStream os) throws IOException, DocumentException { 
+			
 		String providerNo=loggedInInfo.getLoggedInProviderNo();
 
 		
@@ -105,9 +112,7 @@ public class CaseManagementPrint {
 			noteIds = getAllNoteIds(loggedInInfo,request,""+demographicNo);
 		}
 		
-		if(useDateRange) {
-			noteIds = getAllNoteIdsWithinDateRange(loggedInInfo,request,""+demographicNo,startDate.getTime(),endDate.getTime());
-		}
+
 		logger.debug("NOTES2PRINT: " + noteIds);
 
 		String demono = ""+demographicNo;
@@ -330,6 +335,17 @@ public class CaseManagementPrint {
 			}
 
 		}
+
+        if (printDocuments) {
+          pdfDocs.addAll(CaseManagementUtil.printDocuments(demono, startDate, endDate, 
+            loggedInInfo));
+        }
+
+        if (printHrms) {
+          pdfDocs.addAll(CaseManagementUtil.printHrms(demono, startDate, endDate,
+            loggedInInfo));
+        }		
+		
 		ConcatPDF.concat(pdfDocs, os);
                 } catch (IOException e)
                 {

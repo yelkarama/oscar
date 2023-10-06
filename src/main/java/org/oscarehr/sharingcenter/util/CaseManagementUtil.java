@@ -27,7 +27,17 @@
 
 package org.oscarehr.sharingcenter.util;
 
+import com.lowagie.text.DocumentException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +53,17 @@ import org.oscarehr.casemgmt.dao.CaseManagementNoteExtDAO;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.hospitalReportManager.HRMPDFCreator;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
+import org.oscarehr.hospitalReportManager.model.HRMDocument;
+import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import oscar.dms.EDoc;
+import oscar.dms.EDocUtil;
 
 import oscar.util.DateUtils;
 
@@ -300,5 +320,73 @@ public class CaseManagementUtil {
 		}
 
 		return map;
-	}	
+	}
+	
+	public static List<String> printDocuments(String demographicNumber,
+																						Calendar startDate,
+																						Calendar endDate,
+																						LoggedInInfo loggedInInfo) throws IOException {
+		ArrayList<EDoc> docList;
+		List<String> documentPaths = new ArrayList<>();
+		List<String> imageFormats = Arrays.asList("image/jpg", "image/png", "image/gif", "image/jpeg");
+		if (startDate != null && endDate != null) {
+			docList =
+					EDocUtil.listDocsByDateRange(loggedInInfo, "demographic", demographicNumber,
+							null, false, "A", startDate.getTime(), endDate.getTime());
+		} else {
+			docList = EDocUtil.listDocsByDateRange(loggedInInfo, "demographic", demographicNumber,
+					null, false, "A", null, null);
+		}
+		for (EDoc doc : docList) {
+			if (!"application/pdf".equalsIgnoreCase(doc.getContentType())) {
+				continue;
+			}
+			// Copy doc to temp folder
+			Path src = Paths.get(EDocUtil.getDocumentPath(doc.getFileName()));
+			File destFile = File.createTempFile(doc.getFileName(), "");
+			Path dest = Paths.get(destFile.getAbsolutePath());
+			Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+
+			documentPaths.add(destFile.getAbsolutePath());
+		}
+		
+		return documentPaths;
+	}
+	
+	public static List<String> printHrms(String demographicNumber,
+																			Calendar startDate,
+																			Calendar endDate,
+																			LoggedInInfo loggedInInfo) throws IOException, 
+																																				DocumentException {
+		List<String> hrmPaths = new ArrayList<>();
+		HRMDocumentDao hrmDao = SpringUtils.getBean(HRMDocumentDao.class);
+		HRMDocumentToDemographicDao hrmToDemoDao =
+				SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+		List<HRMDocumentToDemographic> hList = hrmToDemoDao.findByDemographicNo(demographicNumber);
+		for (HRMDocumentToDemographic htd : hList) {
+			HRMDocument document = hrmDao.findById(Integer.valueOf(htd.getHrmDocumentId())).get(0);
+
+			if (startDate != null && endDate != null) {
+				try {
+					if (document.getTimeReceived().before(startDate.getTime())
+							|| document.getTimeReceived().after(endDate.getTime())) {
+						continue;
+					}
+				} catch (Exception e1) {
+					MiscUtils.getLogger().info(e1);
+					continue;
+				}
+			}
+
+			File fileHrm = File.createTempFile("HRM." + demographicNumber, ".pdf");
+			try (FileOutputStream hrmOs = new FileOutputStream(fileHrm)) {
+				HRMPDFCreator hrmpdfc =
+						new HRMPDFCreator(hrmOs, String.valueOf(htd.getHrmDocumentId()), loggedInInfo);  //public HRMPDFCreator(OutputStream outputStream, String hrmId, LoggedInInfo loggedInInfo)
+				hrmpdfc.printPdf();
+				hrmPaths.add(fileHrm.getAbsolutePath());
+			}
+		}
+
+		return hrmPaths;
+	}
 }

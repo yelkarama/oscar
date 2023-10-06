@@ -27,6 +27,7 @@ package org.oscarehr.common.dao;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,8 +41,11 @@ import org.oscarehr.common.model.ConsultDocs;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.Document;
 import org.oscarehr.common.model.EFormDocs;
+import org.oscarehr.common.model.SystemPreferences;
+import org.oscarehr.util.SpringUtils;
 import org.springframework.stereotype.Repository;
 
+import oscar.dms.EDocUtil;
 import oscar.dms.EDocUtil.EDocSort;
 import oscar.util.ConversionUtils;
 
@@ -334,7 +338,15 @@ public class DocumentDao extends AbstractDao<Document> {
 			params.put("updatedatetime",since);
 		}
 		
-		buf.append(" ORDER BY ").append(sort.getValue());
+		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+		SystemPreferences preference = systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+		boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
+		
+		if (groupByType && docType == null) {
+			buf.append(" ORDER BY d.doctype DESC, ").append(sort.getValue());
+		} else {
+			buf.append(" ORDER BY ").append(sort.getValue());
+		}
 
 		Query query = entityManager.createQuery(buf.toString());
 		for(String key:params.keySet()) {
@@ -480,4 +492,56 @@ public class DocumentDao extends AbstractDao<Document> {
 
 		return getSingleResultOrNull(query);
 	}
+	
+	
+	public List<String> findDocumentDescriptions(String keyword) {
+		Query query = entityManager.createQuery("SELECT DISTINCT d.docdesc FROM Document d WHERE d.docdesc like :keyword ORDER BY d.docdesc");
+		query.setParameter("keyword", keyword+"%");
+
+		return query.getResultList();
+	}
+
+    public List<Document> findDocumentsByDateRange(String module, String moduleId, String docType,
+        boolean publicDoc, String viewStatus, Date startDate, Date endDate) {
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+      Map<String, String> parameters = new HashMap<>();
+      String sql = "SELECT DISTINCT d.* FROM document d " 
+					+ "LEFT JOIN ctl_document c ON c.document_no = d.document_no AND c.module = :module ";
+			parameters.put("module", module);
+
+      if (publicDoc) {
+				sql = sql + "WHERE d.public1 = 1 ";
+      } else {
+				sql = sql + "WHERE d.public1 = 0 AND c.module_id = :moduleId ";
+				parameters.put("moduleId", moduleId);
+      }
+
+      if (docType != null && !docType.equals("all") && !docType.isEmpty()) {
+        sql = sql + "AND d.doctype = :docType ";
+        parameters.put("docType", docType);
+      }
+
+      if (viewStatus != null) {
+        sql += "AND d.status = :viewStatus ";
+        parameters.put("viewStatus", viewStatus);
+      }
+
+      if (startDate != null) {
+        sql += "AND d.observationdate >= :startDate ";
+        parameters.put("startDate",  formatter.format(startDate));
+      }
+
+      if (endDate != null) {
+        sql += "AND d.observationdate <= :endDate ";
+        parameters.put("endDate", formatter.format(endDate));
+      }
+      sql = sql + "ORDER BY " + EDocUtil.SORT_OBSERVATIONDATE;
+      
+      Query query = entityManager.createNativeQuery(sql, Document.class);
+      for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+        query.setParameter(parameter.getKey(), parameter.getValue());
+			}
+      return query.getResultList();
+    }
+
 }
