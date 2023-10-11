@@ -1052,7 +1052,7 @@ window.onbeforeunload = onClosing;
 					<td><img style="cursor: pointer;"
 						title="<bean:message key="oscarEncounter.print.title"/>"
 						id='imgPrintDocuments'
-						alt="Toggle Print Documents"
+						alt="<bean:message key="global.btnToggle"/> <bean:message key="global.btnPrint"/> <bean:message key="oscarEncounter.Index.msgDocuments"/>"
 						onclick="return printInfo(this, 'printDocuments');"
 						src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<bean:message
 							key="oscarEncounter.Index.msgDocuments" /></td>
@@ -1062,10 +1062,10 @@ window.onbeforeunload = onClosing;
 					<td><img style="cursor: pointer;"
 						title="<bean:message key="oscarEncounter.print.title"/>"
 						id='imgPrintHrms'
-						alt="Toggle Print HRM"
+						alt="<bean:message key="global.btnToggle"/>  <bean:message key="global.btnPrint"/>  <bean:message key="oscarEncounter.Index.msgHRMDocuments"/>"
 						onclick="return printInfo(this, 'printHrms');"
 						src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<bean:message
-							key="oscarEncounter.Index.msgHRMDocuments" /></td>
+							key="oscarEncounter.Hrm.title" /></td>
 				</tr>	
                 
 				<!--  extension point -->
