@@ -39,9 +39,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.MessageResources;
+
 import org.oscarehr.common.dao.DocumentDao.DocumentType;
+import org.oscarehr.common.dao.SystemPreferencesDao;
+import org.oscarehr.common.model.SystemPreferences;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import oscar.dms.EDoc;
 import oscar.dms.EDocUtil;
@@ -61,6 +65,11 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     	if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", null)) {
     		return true; // documents link won't show up on new CME screen.
     	} else {
+    		//Group documents by doctype
+    		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+				SystemPreferences preference =
+						systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+				boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
     
     		String omitTypeStr = request.getParameter("omit");
     		omitTypeStr += ("," + DocumentType.ECONSULT.getName());
@@ -94,6 +103,10 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     		StringBuilder javascript = new StringBuilder("<script type=\"text/javascript\">");
     		String js = "";
     		ArrayList<EDoc> docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.OBSERVATIONDATE, "active");
+            if (groupByType)
+			{
+				docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.DOCTYPE, "active");
+			}
     		String dbFormat = "yyyy-MM-dd";
     		String serviceDateStr = "";
     		String key;
@@ -114,12 +127,38 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     		}
     		
     		// sort complete list by date descending
-    		sortByDate(docList);
+    		//sortByDate(docList);
     
     		boolean isURLjavaScript;
+    		String docType = "";
     		for (int i = 0; i < docList.size(); i++) {
     			isURLjavaScript = false;
     			EDoc curDoc = docList.get(i);
+    			
+    			if (groupByType && !docType.equals(curDoc.getType())) {
+    				docType = curDoc.getType();
+    				key = StringEscapeUtils.escapeJavaScript(docType);
+    				NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
+    				url = "popupPage(500,1115,'" + winName + "','" + request.getContextPath() 
+    						+ "/dms/documentReport.jsp?function=demographic&doctype=lab&defaultDocType=" 
+    						+ docType + "&functionid=" + bean.demographicNo + "&curUser=" + bean.providerNo 
+    						+ "&mode=add&parentAjaxId=" + cmd + "');return false;";
+    				
+    				item.setBgColour("#90a6d1");
+    				item.setColour("#ffffff");
+    				if (StringUtils.isNullOrEmpty(docType)) {
+    					item.setLinkTitle("&nbsp;");
+    				}
+    				item.setTitle(docType + "  +");
+    				item.setURL(url);
+    				item.setURLJavaScript(true);
+    				
+    				js = "itemColours['" + key + "'] = 'EE0000'; autoCompleted['" + key + "'] = \"" + url 
+    						+ "\"; autoCompList.push('" + key + "');";
+    				javascript.append(js);
+    				Dao.addItem(item);
+    			}
+    			
     			String dispFilename = org.apache.commons.lang.StringUtils.trimToEmpty(curDoc.getFileName());
     			String dispStatus = String.valueOf(curDoc.getStatus());
     
@@ -153,7 +192,9 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			}
     
     			String user = (String) request.getSession().getAttribute("user");
-    			item.setDate(date);
+    			if (!groupByType) {
+    				item.setDate(date);
+    			}
     			hash = Math.abs(winName.hashCode());
     			
     			if (inboxflag) {
@@ -170,8 +211,13 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			}
     			
     			item.setLinkTitle(title + serviceDateStr);
-    			item.setTitle(title);
-    			key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
+    			if (groupByType) {
+    				item.setTitle(title + "  " + serviceDateStr);
+    			} else {
+    				item.setTitle(title);
+    			}
+    			
+                key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
     			key = StringEscapeUtils.escapeJavaScript(key);
     
     			if (inboxflag) {

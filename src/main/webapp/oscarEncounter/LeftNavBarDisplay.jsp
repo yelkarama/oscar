@@ -47,6 +47,10 @@ if(!authed) {
 <%@ page import="com.quatro.dao.security.SecobjprivilegeDao" %>
 <%@ page import="com.quatro.model.security.Secobjprivilege" %>
 <%@ page import="java.util.List, java.util.regex.Pattern, java.util.regex.Matcher" %>
+<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
+<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
@@ -168,25 +172,62 @@ if(!authed) {
             ArrayList<NavBarDisplayDAO.Item> current = new ArrayList<NavBarDisplayDAO.Item>();
             ArrayList<NavBarDisplayDAO.Item> pastDates = new ArrayList<NavBarDisplayDAO.Item>();
             ArrayList<NavBarDisplayDAO.Item> noDates = new ArrayList<NavBarDisplayDAO.Item>();
+            ArrayList<NavBarDisplayDAO.Item> duePreventions = new ArrayList<NavBarDisplayDAO.Item>();
             Calendar threshold = Calendar.getInstance();
             threshold.add(Calendar.MONTH, -3);
             Date threeMths = threshold.getTime();
             int j;
+            SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+            SystemPreferences preference =
+                systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+            boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
 
             for(j=0; j<numItems; j++) {
                 NavBarDisplayDAO.Item item = dao.getItem(j);
                 Date d = item.getDate();
-                if( d == null )
-                    noDates.add(item);
-                else if( d.compareTo(threeMths) < 0 )
-                    pastDates.add(item);
+                String itemColour = item.getColour();
+
+                if (div.equals("tickler") || div.equals("labs"))
+                {
+                    if( d == null )
+                    {
+                        noDates.add(item);
+                    }
+                    else
+                    {
+                        current.add(item);
+                    }
+                }
                 else
+                {
+                  if (groupByType && request.getAttribute("navbarName").equals("docs")) {
                     current.add(item);
+                  } else {
+                    if( d == null )
+                        noDates.add(item);
+                    else if( d.compareTo(threeMths) < 0)
+                        if(itemColour.equals("#FF0000") && div.equals("preventions"))
+                            duePreventions.add(item);
+                        else
+                            pastDates.add(item);
+                    else
+                        current.add(item);
+                  }
+               }
             }
 
             StringBuilder jscode = new StringBuilder();
-			
-            numDisplayed = display(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
+
+            if(div.equals("preventions")){
+                numDisplayed = display(duePreventions, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(),dao.getDivId(),request,out);
+                numDisplayed += display(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
+            }
+            else if(div.equals("Rx")) {
+                numDisplayed = displayRXList(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
+            }
+else{
+                numDisplayed = display(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
+            }
 
             if( numDisplayed < numToDisplay ){
                numDisplayed += display(current, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
@@ -219,9 +260,9 @@ if(!authed) {
         String stripe,colour,bgColour;
         String imgName;
         String dateFormat = "dd-MMM-yyyy";
-        Pattern pattern = Pattern.compile("'([^']*)'");        
-        
-        
+        Pattern pattern = Pattern.compile("'([^']*)'");
+
+
         String divReloadInfo;
         numToDisplay -= numDisplayed;
 
@@ -233,13 +274,16 @@ if(!authed) {
                 colour = item.getColour().equals("") ? "" : "color: " + item.getColour() + ";";
                 bgColour = item.getBgColour().equals("") ? "background-color: #f3f3f3;" : "background-color: " + item.getBgColour() + ";";
                 String dateColour = "background-color: white;";
-                if ( (j % 2) == 0){
-                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; " + bgColour + "\"";
-                   dateColour = bgColour;
-                }else{
-                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; \"";
+                bgColour = "";
+                if (!item.getBgColour().isEmpty()) {
+                  bgColour = "background-color: " + item.getBgColour() + ";";
+                  dateColour = bgColour;
+                } else if ((j % 2) == 0) {
+                  bgColour = "background-color: #f3f3f3;";
+                  dateColour = bgColour;
                 }
-                out.println("<li " + stripe + ">");
+                out.println("<li style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; "
+                        + bgColour + "\">");
 
                 if( curNum == 0 && xpanded ) {
                     imgName = "img" + request.getAttribute("navbarName") + curNum;
@@ -278,7 +322,7 @@ if(!authed) {
 
                 if( item.getDate() != null ) {
                     out.println("<span style=\"z-index: 100; "+dateColour+" overflow:hidden;   position:relative; height:1.2em; white-space:nowrap; float:right; text-align:right;\">");
-										
+
                     if( item.isURLJavaScript() ) {
                 		divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
                     	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + item.getLinkTitle() + "'>");
@@ -299,19 +343,157 @@ if(!authed) {
 
          return j;
     }
-    
+
+    public int displayRXList(ArrayList<NavBarDisplayDAO.Item>items, int numToDisplay, int numDisplayed,
+            String reloadUrl, boolean xpanded, int numItems, StringBuilder js, int displayThreshold,
+            String divReloadUrl, String cmd, javax.servlet.http.HttpServletRequest request,
+            javax.servlet.jsp.JspWriter out ) throws IOException {
+        String stripe,colour,bgColour;
+        String imgName;
+        String dateFormat = "dd-MMM-yyyy";
+        Pattern pattern = Pattern.compile("'([^']*)'");
+
+        String divReloadInfo;
+        numToDisplay -= numDisplayed;
+        int total = items.size() < numToDisplay ? items.size() : numToDisplay;
+        int j;
+        int curNum = numDisplayed;
+            boolean isConsent = request.getAttribute("consent") != null;
+        for (j = 0 ; j< total; ++j) {
+            NavBarDisplayDAO.Item item = items.get(j);
+            colour = item.getColour().equals("") ? "" : "color: " + item.getColour() + ";";
+            bgColour = item.getBgColour().equals("") ? "background-color: #f3f3f3;" : "background-color: " + item.getBgColour() + ";";
+            String dateColour = "background-color: white;";
+
+            if ((j % 2) == 0) {
+                stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; " + bgColour + "\"";
+                dateColour = bgColour;
+            } else {
+                stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; \"";
+            }
+            out.println("<li " + stripe + ">");
+
+            if (curNum == 0 && xpanded) {
+                imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
+                out.println(
+                    "<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; "
+                    + dateColour
+                    + " position:relative; margin: 0px; padding-bottom: 0px; vertical-align: bottom; display: inline; float: right; clear:both;'><img id='"
+                    + imgName + "' src='" + request.getContextPath()
+                    + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
+
+                js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + (isConsent? "consent" : request.getAttribute("navbarName")) + "', '" + displayThreshold + "');" );
+                js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
+            } else
+                if (j == (numToDisplay-1) && xpanded) {
+                    imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
+                    out.println(
+                        "<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; "
+                        + dateColour
+                        + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='"
+                        + imgName + "' src='" + request.getContextPath()
+                        + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
+
+                    js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + (isConsent? "consent" : request.getAttribute("navbarName")) + "', '" + displayThreshold + "');" );
+                    js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
+            } else
+                if (j == (numToDisplay-1) && numItems > (curNum+1)) {
+                    if (isConsent) {
+                        reloadUrl = reloadUrl.substring(0, reloadUrl.indexOf("cmd")) + "cmd=consent";
+                    }
+                    imgName = "img" + (isConsent ? "consent" : request.getAttribute("navbarName")) + curNum;
+                    out.println(
+                        "<a href='#' onclick=\"return false;\" title='" + String.valueOf(numItems - j - 1)
+                        + " more items' style=' text-decoration:none; width:7px; z-index: 100; " + dateColour
+                        + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='"
+                        + imgName + "' src='" + request.getContextPath()
+                        + "/oscarEncounter/graphics/expand.gif'/>&nbsp;&nbsp;</a>");
+
+                    js.append("imgfunc['" + imgName + "'] = clickLoadDiv.bindAsEventListener(obj,'" + (isConsent ? "consent" : request.getAttribute("navbarName")) + "','" + reloadUrl + "');" );
+                    js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
+            } else {
+                out.println(
+                    "<a border=0 style='text-decoration:none; width:7px; z-index: 100; " + dateColour
+                    + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img  id='img"
+                    + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum
+                    + "' src='" + request.getContextPath() + "/images/clear.gif'/>&nbsp;&nbsp;</a>");
+            }
+
+            ++curNum;
+
+            out.println(
+                "<span style=\" z-index: 1; position:absolute; margin-right:10px; width:90%; overflow:hidden; height:1.2em; white-space:nowrap; float:left; text-align:left; \">");
+
+            SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+            SystemPreferences represcribeName = systemPreferencesDao.findPreferenceByName("represcribe_name");
+            String represcribeNameString = represcribeName != null?  represcribeName.getValue() : "";
+            if (represcribeNameString.equalsIgnoreCase("ReRx")) {
+                out.println(
+                    "<a class='links>' href='#' onclick=\"rePrescribe('" + item.getValue()
+                    + "');writeNewNoteSimple('\\nRe-prescribe: " + StringEscapeUtils.escapeJavaScript(item.getTitle()) + "');return false;\">ReRx</a>");
+            }
+
+            String url = item.getURL();
+            if (item.isURLJavaScript()) {
+                divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
+                out.println(
+                    "<a class='links' style='" + colour
+                    + "' onmouseover=\"this.className='linkhover'\"onmouseout=\"this.className='links'\" href='#' onclick=\""
+                    + divReloadInfo + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "'>");
+            } else {
+                out.println(
+                    "<a class='links' style='" + colour
+                    + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url
+                    + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "' target=\"_blank\">");
+            }
+
+            out.println(item.getTitle());
+            out.println("</a>");
+            out.println("</span>");
+
+            if (item.getDate() != null) {
+                out.println(
+                    "<span style=\"z-index: 100; " + dateColour
+                    + " overflow:hidden; position:relative; height:1.2em; white-space:nowrap; float:right; text-align:right;\">");
+
+                if (item.isURLJavaScript()) {
+                    divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
+                    out.println(
+                        "...<a class='links' style='margin-right: 2px;" + colour
+                        + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\""
+                        + divReloadInfo + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "'>");
+                } else {
+                    out.println(
+                        "...<a class='links' style='margin-right: 2px;" + colour
+                        + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url
+                        + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "' target=\"_blank\">");
+                }
+
+                if (item.getValue() != null && !item.getValue().trim().equals("")) {
+                    out.println(item.getValue());
+                }
+                out.println(DateUtils.getDate(item.getDate(), dateFormat, request.getLocale()));
+                out.println("</a>");
+                out.println("</span>");
+            }
+            out.println("</li>");
+        }
+
+        return j;
+    }
+
     public String trackWindowString(String url, String reloadUrl, String cmd, Pattern pattern) {
 		String windowName, divReloadInfo = "";
-		if( url.startsWith("popupPage") ) {                		    
+		if( url.startsWith("popupPage") ) {
 	    	Matcher matcher = pattern.matcher(url);
-	    	if( matcher.find() ) {                				
+	    	if( matcher.find() ) {
 	    		windowName = matcher.group(1);
 	    		reloadUrl += "&numToDisplay=6&cmd=" + cmd;
-	    		divReloadInfo = "reloadWindows['" + windowName + "'] = '" + reloadUrl + "';reloadWindows['"+ windowName + "div'] = '" + cmd + "';";                		    	
+	    		divReloadInfo = "reloadWindows['" + windowName + "'] = '" + reloadUrl + "';reloadWindows['"+ windowName + "div'] = '" + cmd + "';";
 	    	}
-	   
+
 		}
-		
+
 		return divReloadInfo;
     }
 
