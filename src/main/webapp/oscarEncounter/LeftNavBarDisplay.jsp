@@ -27,14 +27,11 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    String demographic$ = (String)session.getAttribute("casemgmt_DemoNo");
-    boolean authed=true;
-    String eChartObjectName = "_eChart";
-    if (oscar.OscarProperties.getInstance().isPropertyActive("queens_privilege_check_with_priority")) { eChartObjectName += ",_eChart$"+demographic$; }
+      boolean authed=true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="<%=eChartObjectName%>" rights="r" reverse="<%=true%>">
-    <%authed=false; %>
-    <%response.sendRedirect("../securityError.jsp?type="+eChartObjectName);%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
+	<%authed=false; %>
+	<%response.sendRedirect("../securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -49,13 +46,11 @@ if(!authed) {
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="com.quatro.dao.security.SecobjprivilegeDao" %>
 <%@ page import="com.quatro.model.security.Secobjprivilege" %>
-<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
 <%@ page import="java.util.List, java.util.regex.Pattern, java.util.regex.Matcher" %>
-<%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
 <%@ page import="org.oscarehr.common.model.SystemPreferences" %>
+<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
@@ -66,7 +61,8 @@ if(!authed) {
         String js = dao.getJavaScript();
         int maxColumnHeight = 40;  //break into columns after maxColumnHeight items reached
         int menuWidth = 125;
-		
+
+
         //Is there java script to insert in page?  Then do it
         if( js != null ) {
         %>
@@ -78,27 +74,13 @@ if(!authed) {
         String rh = dao.getRightHeadingID();
 		String rhid = dao.getRightHeadingID();
 		com.quatro.service.security.SecurityManager securityMgr = new com.quatro.service.security.SecurityManager();
-		if (rh.equals("blank")) {
-       	 	%> <div id='menuTitle<%=rh%>' style="width: 10%; float: right; text-align: center;">
-  				<h3 style="padding:0px; <%=getBackgroundColor(dao)%>">&nbsp;</h3>
-			</div> <%
-		}
-		else if( !rh.equals("") && securityMgr.hasWriteAccess("_" + ((String)request.getAttribute("cmd")).toLowerCase(),roleName$)) {
+
+		if( !rh.equals("") && securityMgr.hasWriteAccess("_" + ((String)request.getAttribute("cmd")).toLowerCase(),roleName$)) {
         %>
-<div >
-    <div style="clear: left; float: left; width: 90%;">
-        <h3 style="<%= getBackgroundColor(dao) %>">
-            <a href="#" onclick="<%= dao.getLeftURL() %>; return false;"><%= dao.getLeftHeading() %></a>
-        </h3>
-    </div>
-    <div id='menuTitle<%= rh %> ' style="width: 10%; float: right; text-align: center;">
-        <h3 style="padding:0px; <%= getBackgroundColor(dao) %>">
-            <a href="javascript:void(0);"
-                    onclick="<%= dao.getRightURL() %>">
-                    +
-            </a>
-        </h3>
-    </div>
+<div id='menuTitle<%=rh%>'
+	style="width: 10%; float: right; text-align: center;">
+<h3 style="padding:0px; <%=getBackgroundColor(dao)%>"><a href="javascript:void(0);"
+	<%=dao.numPopUpMenuItems() > 0 ? "onmouseover" : "onclick"%>="<%=dao.getRightURL()%>">+</a></h3>
 </div>
 <%
         int num;
@@ -112,13 +94,10 @@ if(!authed) {
         menuWidth *= 2;
         }
         %>
-<div id='menu<%= rh %>' class='menu' style='width:18%' onclick='event.cancelBubble = true;' onmouseleave="hideCurrentPopup();">
-    <h3 style='text-align: center;font-weight: bold;' onmouseover='this.style.color="black"'
-            onmouseout='this.style.color="white"' onclick="<%= dao.getRightURL() %>">
-            <%= dao.getMenuHeader() %>
-    </h3>
-
-    <%
+<div id='menu<%=rh%>' class='menu' style='width: <%=menuWidth%>;px'
+	onclick='event.cancelBubble = true;'>
+<h3 style='text-align: center'><%=dao.getMenuHeader()%></h3>
+<%
             for(int idx = 0; idx < num; ++idx) {
             if( columns )
             style = idx % 2 == 0 ? "menuItemleft" : "menuItemright";
@@ -154,11 +133,13 @@ if(!authed) {
         } }
 
         //left hand module header comes last as it's displayed as a block
-
-         boolean isConsent = request.getAttribute("consent") != null;
         %>
+<div style="clear: left; float: left; width: 90%;">
+<h3 style="width:100%; <%=getBackgroundColor(dao)%>"><a href="#"
+	onclick="<%=dao.getLeftURL()%>; return false;"><%=dao.getLeftHeading()%></a></h3>
+</div>
 
-<ul id="<%=isConsent ? "consent" : request.getAttribute("navbarName")%>list">
+<ul id="<%=request.getAttribute("navbarName")%>list">
 	<%
             //now we display the actual items of the module
             String manageItems = "";
@@ -166,13 +147,12 @@ if(!authed) {
             div = div.trim();
             int numItems = dao.numItems();
             StringBuilder reloadURL = new StringBuilder(request.getParameter("reloadURL") + "&reloadURL=" + request.getParameter("reloadURL"));
-            String currentDisplay = request.getParameter("currentDisplay");
             String strToDisplay = request.getParameter("numToDisplay");
             int numToDisplay;
             boolean xpanded = false;
             int displayThreshold = 6;
 
-            if( strToDisplay != null && currentDisplay == null ) {
+            if( strToDisplay != null ) {
                 numToDisplay = Integer.parseInt(strToDisplay);
 				reloadURL.append("&numToDisplay=" + strToDisplay);
                 if( numItems > numToDisplay ) {
@@ -181,21 +161,8 @@ if(!authed) {
                 }
             }
             else {
-				int numCurrentDisplay = 0;
-				numToDisplay = numItems;
-				
-				if(currentDisplay != null){
-					numCurrentDisplay = Integer.parseInt(currentDisplay);
-
-					// If this was not triggered by the expand arrows, simply set the numToDisplay to whatever is being displayed
-                    if (strToDisplay != null){
-                        numToDisplay = numCurrentDisplay;
-                        String xpandUrl = request.getParameter("reloadURL") + "&reloadURL=" + request.getParameter("reloadURL") + "&cmd=" + div;
-                        manageItems = xpandUrl;
-                    }
-				}
-                
-                if( numToDisplay > displayThreshold || numCurrentDisplay > displayThreshold) {
+                numToDisplay = numItems;
+                if( numToDisplay > displayThreshold ) {
                     xpanded = true;
                 }
             }
@@ -206,24 +173,23 @@ if(!authed) {
             ArrayList<NavBarDisplayDAO.Item> pastDates = new ArrayList<NavBarDisplayDAO.Item>();
             ArrayList<NavBarDisplayDAO.Item> noDates = new ArrayList<NavBarDisplayDAO.Item>();
             ArrayList<NavBarDisplayDAO.Item> duePreventions = new ArrayList<NavBarDisplayDAO.Item>();
-
             Calendar threshold = Calendar.getInstance();
             threshold.add(Calendar.MONTH, -3);
             Date threeMths = threshold.getTime();
             int j;
-
             SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
             SystemPreferences preference =
                 systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
             boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
+
             for(j=0; j<numItems; j++) {
                 NavBarDisplayDAO.Item item = dao.getItem(j);
                 Date d = item.getDate();
                 String itemColour = item.getColour();
-                
+
                 if (div.equals("tickler") || div.equals("labs"))
                 {
-                    if( d == null ) 
+                    if( d == null )
                     {
                         noDates.add(item);
                     }
@@ -247,7 +213,7 @@ if(!authed) {
                     else
                         current.add(item);
                   }
-               } 
+               }
             }
 
             StringBuilder jscode = new StringBuilder();
@@ -255,9 +221,11 @@ if(!authed) {
             if(div.equals("preventions")){
                 numDisplayed = display(duePreventions, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(),dao.getDivId(),request,out);
                 numDisplayed += display(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
-            } else if(div.equals("Rx")) {
+            }
+            else if(div.equals("Rx")) {
                 numDisplayed = displayRXList(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
-            } else{
+            }
+else{
                 numDisplayed = display(noDates, numToDisplay, numDisplayed, manageItems, xpanded, numItems, jscode, displayThreshold, reloadURL.toString(), dao.getDivId(), request, out);
             }
 
@@ -289,13 +257,12 @@ if(!authed) {
     }
 
     public int display(ArrayList<NavBarDisplayDAO.Item>items, int numToDisplay, int numDisplayed, String reloadUrl, boolean xpanded, int numItems, StringBuilder js, int displayThreshold, String divReloadUrl, String cmd, javax.servlet.http.HttpServletRequest request, javax.servlet.jsp.JspWriter out ) throws IOException {
-        String colour;
-        String bgColour;
+        String stripe,colour,bgColour;
         String imgName;
         String dateFormat = "dd-MMM-yyyy";
-        Pattern pattern = Pattern.compile("'([^']*)'");        
-        
-        
+        Pattern pattern = Pattern.compile("'([^']*)'");
+
+
         String divReloadInfo;
         numToDisplay -= numDisplayed;
 
@@ -305,72 +272,60 @@ if(!authed) {
         for(j = 0 ; j< total; ++j ) {
                 NavBarDisplayDAO.Item item = items.get(j);
                 colour = item.getColour().equals("") ? "" : "color: " + item.getColour() + ";";
+                bgColour = item.getBgColour().equals("") ? "background-color: #f3f3f3;" : "background-color: " + item.getBgColour() + ";";
                 String dateColour = "background-color: white;";
-                bgColour = "";
-                if (!item.getBgColour().isEmpty()) {
-                  bgColour = "background-color: " + item.getBgColour() + ";";
-                  dateColour = bgColour;
-                } else if ((j % 2) == 0) {
-                  bgColour = "background-color: #f3f3f3;";
-                  dateColour = bgColour;
+                if ( (j % 2) == 0){
+                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; " + bgColour + "\"";
+                   dateColour = bgColour;
+                }else{
+                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; \"";
                 }
-                out.println("<li style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; "
-                        + bgColour + "\">");
-
-                boolean isConsent = request.getAttribute("consent") != null;
+                out.println("<li " + stripe + ">");
 
                 if( curNum == 0 && xpanded ) {
-                    imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
+                    imgName = "img" + request.getAttribute("navbarName") + curNum;
                     out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; "+dateColour+" position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
-                    js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + (isConsent? "consent" : request.getAttribute("navbarName")) + "', '" + displayThreshold + "');" );
+                    js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + request.getAttribute("navbarName") + "', '" + displayThreshold + "');" );
                     js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
                 }else if( j == (numToDisplay-1) && xpanded ) {
-                    imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
+                    imgName = "img" + request.getAttribute("navbarName") + curNum;
                     out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; "+dateColour+" position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
-                    js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + (isConsent? "consent" : request.getAttribute("navbarName")) + "', '" + displayThreshold + "');" );
+                    js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + request.getAttribute("navbarName") + "', '" + displayThreshold + "');" );
                     js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
                 }else if( j == (numToDisplay-1) && numItems > (curNum+1) ) {
-                    if (isConsent) {
-                        reloadUrl = reloadUrl.substring(0, reloadUrl.indexOf("cmd")) + "cmd=consent";
-                    }
-                    imgName = "img" + (isConsent ? "consent" : request.getAttribute("navbarName")) + curNum;
+                    imgName = "img" + request.getAttribute("navbarName") + curNum;
                     out.println("<a href='#' onclick=\"return false;\" title='" + String.valueOf(numItems - j - 1) + " more items' style=' text-decoration:none; width:7px; z-index: 100; "+dateColour+" position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName +  "' src='" + request.getContextPath() + "/oscarEncounter/graphics/expand.gif'/>&nbsp;&nbsp;</a>");
-                    js.append("imgfunc['" + imgName + "'] = clickLoadDiv.bindAsEventListener(obj,'" + (isConsent ? "consent" : request.getAttribute("navbarName")) + "','" + reloadUrl + "');" );
+                    js.append("imgfunc['" + imgName + "'] = clickLoadDiv.bindAsEventListener(obj,'" + request.getAttribute("navbarName") + "','" + reloadUrl + "');" );
                     js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
                 }else{
-                    out.println("<a border=0 style='text-decoration:none; width:7px; z-index: 100; "+dateColour+" position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img  id='img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum + "' src='" + request.getContextPath() + "/images/clear.gif'/>&nbsp;&nbsp;</a>");
+                    out.println("<a border=0 style='text-decoration:none; width:7px; z-index: 100; "+dateColour+" position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img  id='img" + request.getAttribute("navbarName") + curNum + "' src='" + request.getContextPath() + "/images/clear.gif'/>&nbsp;&nbsp;</a>");
                 }
                 ++curNum;
 
-                out.println("<span style=\" z-index: 1; position:absolute; margin-right:10px; width:90%; overflow:hidden;  height:1.5em; white-space:nowrap; float:left; text-align:left; \">");
+                out.println("<span style=\" z-index: 1; position:absolute; margin-right:10px; width:90%; overflow:hidden;  height:1.2em; white-space:nowrap; float:left; text-align:left; \">");
 				String url = item.getURL();
 				//This should be done in the display classes but I'll keep it here for future reference
 				//url = StringUtils.replaceEach(url, new String[] {"'","\\\""}, new String[] {"\'","\\\""});
                 if( item.isURLJavaScript() ) {
                     divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
-                	out.println("<a class='links' style='" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "'>");
+                	out.println("<a class='links' style='" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + item.getLinkTitle() + "'>");
                 }
                 else {
-                	out.println("<a class='links' style='" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "' target=\"_blank\">");
+                	out.println("<a class='links' style='" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + item.getLinkTitle() + "' target=\"_blank\">");
                 }
-                
-                if (cmd.equals("freeDrawing")) {
-                  out.println(item.getTitle());
-                } else {
-                  out.println(item.getTitleEscaped(EncodeContext.FOR_HTML_CONTENT));
-                }
+                out.println(item.getTitle());
                 out.println("</a>");
                 out.println("</span>");
 
                 if( item.getDate() != null ) {
-                    out.println("<span style=\"z-index: 100; "+dateColour+" overflow:hidden;   position:relative; height:1.5em; white-space:nowrap; float:right; text-align:right;\">");
-										
+                    out.println("<span style=\"z-index: 100; "+dateColour+" overflow:hidden;   position:relative; height:1.2em; white-space:nowrap; float:right; text-align:right;\">");
+
                     if( item.isURLJavaScript() ) {
                 		divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
-                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "'>");
+                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + item.getLinkTitle() + "'>");
                     }
                     else {
-                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "' target=\"_blank\">");
+                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + item.getLinkTitle() + "' target=\"_blank\">");
                     }
 
                     if(item.getValue() != null && !item.getValue().trim().equals("")){
@@ -420,7 +375,7 @@ if(!authed) {
                 imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
                 out.println(
                     "<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; "
-                    + dateColour 
+                    + dateColour
                     + " position:relative; margin: 0px; padding-bottom: 0px; vertical-align: bottom; display: inline; float: right; clear:both;'><img id='"
                     + imgName + "' src='" + request.getContextPath()
                     + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
@@ -447,7 +402,7 @@ if(!authed) {
                     imgName = "img" + (isConsent ? "consent" : request.getAttribute("navbarName")) + curNum;
                     out.println(
                         "<a href='#' onclick=\"return false;\" title='" + String.valueOf(numItems - j - 1)
-                        + " more items' style=' text-decoration:none; width:7px; z-index: 100; " + dateColour 
+                        + " more items' style=' text-decoration:none; width:7px; z-index: 100; " + dateColour
                         + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='"
                         + imgName + "' src='" + request.getContextPath()
                         + "/oscarEncounter/graphics/expand.gif'/>&nbsp;&nbsp;</a>");
@@ -480,7 +435,7 @@ if(!authed) {
             if (item.isURLJavaScript()) {
                 divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
                 out.println(
-                    "<a class='links' style='" + colour 
+                    "<a class='links' style='" + colour
                     + "' onmouseover=\"this.className='linkhover'\"onmouseout=\"this.className='links'\" href='#' onclick=\""
                     + divReloadInfo + url + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "'>");
             } else {
@@ -490,7 +445,7 @@ if(!authed) {
                     + "\" title='" + Encode.forHtmlAttribute(item.getLinkTitle()) + "' target=\"_blank\">");
             }
 
-            out.println(item.getTitleEscaped(EncodeContext.FOR_HTML_CONTENT));
+            out.println(item.getTitle());
             out.println("</a>");
             out.println("</span>");
 
@@ -524,19 +479,19 @@ if(!authed) {
 
         return j;
     }
-    
+
     public String trackWindowString(String url, String reloadUrl, String cmd, Pattern pattern) {
 		String windowName, divReloadInfo = "";
-		if( url.startsWith("popupPage") ) {                		    
+		if( url.startsWith("popupPage") ) {
 	    	Matcher matcher = pattern.matcher(url);
-	    	if( matcher.find() ) {                				
+	    	if( matcher.find() ) {
 	    		windowName = matcher.group(1);
 	    		reloadUrl += "&numToDisplay=6&cmd=" + cmd;
-	    		divReloadInfo = "reloadWindows['" + windowName + "'] = '" + reloadUrl + "';reloadWindows['"+ windowName + "div'] = '" + cmd + "';";                		    	
+	    		divReloadInfo = "reloadWindows['" + windowName + "'] = '" + reloadUrl + "';reloadWindows['"+ windowName + "div'] = '" + cmd + "';";
 	    	}
-	   
+
 		}
-		
+
 		return divReloadInfo;
     }
 
