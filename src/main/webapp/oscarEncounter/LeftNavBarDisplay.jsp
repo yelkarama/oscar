@@ -274,13 +274,16 @@ else{
                 colour = item.getColour().equals("") ? "" : "color: " + item.getColour() + ";";
                 bgColour = item.getBgColour().equals("") ? "background-color: #f3f3f3;" : "background-color: " + item.getBgColour() + ";";
                 String dateColour = "background-color: white;";
-                if ( (j % 2) == 0){
-                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; " + bgColour + "\"";
-                   dateColour = bgColour;
-                }else{
-                   stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; \"";
+                bgColour = "";
+                if (!item.getBgColour().isEmpty()) {
+                  bgColour = "background-color: " + item.getBgColour() + ";";
+                  dateColour = bgColour;
+                } else if ((j % 2) == 0) {
+                  bgColour = "background-color: #f3f3f3;";
+                  dateColour = bgColour;
                 }
-                out.println("<li " + stripe + ">");
+                out.println("<li style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; "
+                        + bgColour + "\">");
 
                 if( curNum == 0 && xpanded ) {
                     imgName = "img" + request.getAttribute("navbarName") + curNum;
@@ -355,6 +358,7 @@ else{
         int total = items.size() < numToDisplay ? items.size() : numToDisplay;
         int j;
         int curNum = numDisplayed;
+            boolean isConsent = request.getAttribute("consent") != null;
         for (j = 0 ; j< total; ++j) {
             NavBarDisplayDAO.Item item = items.get(j);
             colour = item.getColour().equals("") ? "" : "color: " + item.getColour() + ";";
@@ -368,8 +372,6 @@ else{
                 stripe = "style=\"overflow: hidden; clear:both; position:relative; display:block; white-space:nowrap; \"";
             }
             out.println("<li " + stripe + ">");
-
-            boolean isConsent = request.getAttribute("consent") != null;
 
             if (curNum == 0 && xpanded) {
                 imgName = "img" + (isConsent? "consent" : request.getAttribute("navbarName")) + curNum;
