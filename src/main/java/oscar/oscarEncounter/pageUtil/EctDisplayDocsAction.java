@@ -105,7 +105,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     		ArrayList<EDoc> docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.OBSERVATIONDATE, "active");
             if (groupByType)
 			{
-				docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.DOCTYPE, "active");
+				docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.TYPE_OBSERVATIONDATE, "active");
 			}
     		String dbFormat = "yyyy-MM-dd";
     		String serviceDateStr = "";
