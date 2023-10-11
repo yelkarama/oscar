@@ -119,8 +119,9 @@ public final class EDocUtil {
 		CREATOR("d.doccreator, d.updatedatetime DESC"),
 		RESPONSIBLE("d.responsible, d.updatedatetime DESC"),
 		OBSERVATIONDATE("d.observationdate DESC, d.updatedatetime DESC"),
-                CONTENTDATE("d.contentdatetime DESC, d.updatedatetime DESC"),
+        CONTENTDATE("d.contentdatetime DESC, d.updatedatetime DESC"),
 		CONTENTTYPE("d.contenttype, d.updatedatetime DESC"),
+		TYPE_OBSERVATIONDATE("d.doctype, d.observationdate DESC"),
 		REVIEWER("d.reviewer, d.updatedatetime DESC");
 		
 		private String value;
