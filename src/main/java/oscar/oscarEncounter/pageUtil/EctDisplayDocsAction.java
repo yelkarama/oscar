@@ -195,9 +195,8 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			}
     
     			String user = (String) request.getSession().getAttribute("user");
-    			//if (!groupByType) {
-    				item.setDate(date);
-    			//}
+    			item.setDate(date);
+
     			hash = Math.abs(winName.hashCode());
     			
     			if (inboxflag) {
@@ -214,11 +213,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			}
     			
     			item.setLinkTitle(title + serviceDateStr);
-    			if (groupByType) {
-    				item.setTitle(title + "  " + serviceDateStr);
-    			} else {
-    				item.setTitle(title);
-    			}
+    			item.setTitle(title);
     			
                 key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
     			key = StringEscapeUtils.escapeJavaScript(key);
