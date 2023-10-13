@@ -57,19 +57,24 @@ public class EctDisplayDocsAction extends EctDisplayAction {
 	private static Logger logger = MiscUtils.getLogger();
 
 	private static final String cmd = "docs";
-
+    
 	public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {
+    
+    	//Group documents by doctype
+    	SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+		SystemPreferences preference =
+			systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+		boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
+        return getInfo(bean, request, Dao, messages, groupByType);
+     }
+
+	public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages, boolean groupByType) {
     
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 		
     	if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", null)) {
     		return true; // documents link won't show up on new CME screen.
     	} else {
-    		//Group documents by doctype
-    		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
-				SystemPreferences preference =
-						systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
-				boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
     
     		String omitTypeStr = request.getParameter("omit");
     		omitTypeStr += ("," + DocumentType.ECONSULT.getName());
@@ -121,13 +126,11 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			try {
     				ArrayList<EDoc> remoteDocuments = EDocUtil.getRemoteDocuments(loggedInInfo, Integer.parseInt(bean.demographicNo));
     				docList.addAll(remoteDocuments);
+                    sortByDate(docList);
     			} catch (Exception e) {
     				logger.error("error getting remote documents", e);
     			}
     		}
-    		
-    		// sort complete list by date descending
-    		//sortByDate(docList);
     
     		boolean isURLjavaScript;
     		String docType = "";
@@ -192,9 +195,9 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			}
     
     			String user = (String) request.getSession().getAttribute("user");
-    			if (!groupByType) {
+    			//if (!groupByType) {
     				item.setDate(date);
-    			}
+    			//}
     			hash = Math.abs(winName.hashCode());
     			
     			if (inboxflag) {
