@@ -41,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 
 import org.oscarehr.common.dao.DocumentDao.DocumentType;
+import org.oscarehr.common.dao.OscarLogDao;
 import org.oscarehr.common.dao.SystemPreferencesDao;
 import org.oscarehr.common.model.SystemPreferences;
 import org.oscarehr.util.LoggedInInfo;
@@ -116,6 +117,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     		String serviceDateStr = "";
     		String key;
     		String title;
+            String docRead;
     		int hash;
     		String BGCOLOUR = request.getParameter("hC");
     		Date date;
@@ -134,10 +136,12 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     
     		boolean isURLjavaScript;
     		String docType = "";
+            
     		for (int i = 0; i < docList.size(); i++) {
     			isURLjavaScript = false;
     			EDoc curDoc = docList.get(i);
-    			
+    			docRead = "";
+                
     			if (groupByType && !docType.equals(curDoc.getType())) {
     				docType = curDoc.getType();
     				key = StringEscapeUtils.escapeJavaScript(docType);
@@ -178,7 +182,10 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			else if (dispStatus.equals("H")) dispStatus = "html";
     
     			String dispDocNo = curDoc.getDocId();
-    			title = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
+                if(!oscarLogDao.hasRead(bean.providerNo, "document", dispDocNo) {
+                 docRead="*";
+                }
+    			title = StringUtils.maxLenString(docRead+curDoc.getDescription()+docRead, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
     
     			if (EDocUtil.getDocUrgentFlag(dispDocNo)) title = StringUtils.maxLenString("!" + curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
     
