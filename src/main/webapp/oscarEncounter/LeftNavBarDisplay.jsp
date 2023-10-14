@@ -181,7 +181,9 @@ if(!authed) {
             SystemPreferences preference =
                 systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
             boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
-
+                if (groupByType && request.getAttribute("navbarName").equals("docs") && !xpanded) {
+                    dao.sortItems(NavBarDisplayDAO.DATESORT);
+                }
             for(j=0; j<numItems; j++) {
                 NavBarDisplayDAO.Item item = dao.getItem(j);
                 Date d = item.getDate();
