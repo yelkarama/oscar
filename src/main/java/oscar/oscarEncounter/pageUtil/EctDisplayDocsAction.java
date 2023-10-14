@@ -113,6 +113,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
 			{
 				docList = EDocUtil.listDocs(loggedInInfo, "demographic", bean.demographicNo, null, EDocUtil.PRIVATE, EDocSort.TYPE_OBSERVATIONDATE, "active");
 			}
+            OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
     		String dbFormat = "yyyy-MM-dd";
     		String serviceDateStr = "";
     		String key;
