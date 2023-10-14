@@ -182,7 +182,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			else if (dispStatus.equals("H")) dispStatus = "html";
     
     			String dispDocNo = curDoc.getDocId();
-                if(!oscarLogDao.hasRead(bean.providerNo, "document", dispDocNo) {
+                if(!oscarLogDao.hasRead(bean.providerNo, "document", dispDocNo)) {
                  docRead="*";
                 }
     			title = StringUtils.maxLenString(docRead+curDoc.getDescription()+docRead, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
