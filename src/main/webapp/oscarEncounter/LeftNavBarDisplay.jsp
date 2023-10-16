@@ -41,8 +41,12 @@ if(!authed) {
 
 
 <%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page
-	import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO, oscar.util.*, java.util.ArrayList, java.util.Date, java.util.Calendar, java.io.IOException"%>
+<%@page import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO"%>
+<%@page import="oscar.util.*"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.io.IOException"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="com.quatro.dao.security.SecobjprivilegeDao" %>
 <%@ page import="com.quatro.model.security.Secobjprivilege" %>
@@ -181,11 +185,11 @@ if(!authed) {
             SystemPreferences preference =
                 systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
             boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
-            
+
             if (groupByType && request.getAttribute("navbarName").equals("docs") && !xpanded) {
                   dao.sortItems(NavBarDisplayDAO.DATESORT_ASC);
             }
-            
+
             for(j=0; j<numItems; j++) {
                 NavBarDisplayDAO.Item item = dao.getItem(j);
                 Date d = item.getDate();
@@ -205,7 +209,15 @@ if(!authed) {
                 else
                 {
                   if (groupByType && request.getAttribute("navbarName").equals("docs")) {
-                    current.add(item);
+                    if( xpanded) {
+                        // show folder headings when xpanded
+                        current.add(item);
+                    } else {
+                        if( d != null ) {
+                            // hide folder headings when list is compact
+                            current.add(item);
+                        }
+                    }
                   } else {
                     if( d == null )
                         noDates.add(item);
