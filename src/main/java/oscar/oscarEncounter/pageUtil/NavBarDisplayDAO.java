@@ -246,7 +246,7 @@ public class NavBarDisplayDAO {
 		case ALPHASORT:
 			Collections.sort(list);
 			break;
-		case ALPHASORT_DESC:
+		case ALPHASORT_ASC:
 			Collections.sort(list, Collections.reverseOrder()); 
 		}
 
