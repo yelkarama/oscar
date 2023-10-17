@@ -105,7 +105,7 @@ public class NavBarDisplayDAO {
 			dao.addItem(item);
 		}
 
-		dao.sortItems(NavBarDisplayDAO.ALPHASORT);
+		dao.sortItems(NavBarDisplayDAO.ALPHASORT_ASC);
 
 		MiscUtils.getLogger().debug("Alphabetically Sorted:");
 		for( int idx = 0; idx < 10; ++idx)
