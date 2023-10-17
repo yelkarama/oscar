@@ -45,6 +45,7 @@ public class NavBarDisplayDAO {
 	public final static int ALPHASORT = 0;
 	public final static int DATESORT = 1;
 	public final static int DATESORT_ASC = 2;
+	public final static int ALPHASORT_ASC = 3;
 
 	private String LeftHeading;
 	private String RightHeading;
@@ -227,6 +228,9 @@ public class NavBarDisplayDAO {
 			break;
 		case ALPHASORT:
 			Collections.sort(Items);
+			break;
+		case ALPHASORT_ASC:
+			Collections.sort(Items, Collections.reverseOrder()); 
 		}
 
 	}
@@ -241,6 +245,9 @@ public class NavBarDisplayDAO {
 			break;
 		case ALPHASORT:
 			Collections.sort(list);
+			break;
+		case ALPHASORT_DESC:
+			Collections.sort(list, Collections.reverseOrder()); 
 		}
 
 	}
