@@ -121,7 +121,7 @@ public final class EDocUtil {
 		OBSERVATIONDATE("d.observationdate DESC, d.updatedatetime DESC"),
         CONTENTDATE("d.contentdatetime DESC, d.updatedatetime DESC"),
 		CONTENTTYPE("d.contenttype, d.updatedatetime DESC"),
-		TYPE_OBSERVATIONDATE("d.doctype, d.observationdate DESC"),
+		TYPE_OBSERVATIONDATE("d.doctype DESC, d.observationdate DESC"),
 		REVIEWER("d.reviewer, d.updatedatetime DESC");
 		
 		private String value;
@@ -142,7 +142,7 @@ public final class EDocUtil {
 	public static final String SORT_CREATOR = "d.doccreator, d.updatedatetime DESC";
 	public static final String SORT_RESPONSIBLE = "d.responsible, d.updatedatetime DESC";
 	public static final String SORT_OBSERVATIONDATE = "d.observationdate DESC, d.updatedatetime DESC";
-        public static final String SORT_CONTENTDATE = "d.contentdatetime DESC, d.updatedatetime DESC";
+    public static final String SORT_CONTENTDATE = "d.contentdatetime DESC, d.updatedatetime DESC";
 	public static final String SORT_CONTENTTYPE = "d.contenttype, d.updatedatetime DESC";
 	public static final String SORT_REVIEWER = "d.reviewer, d.updatedatetime DESC";
 	
