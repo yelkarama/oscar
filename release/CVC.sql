@@ -202,29 +202,25 @@ UNLOCK TABLES;
 
 -- PHC stuff to activate CVC in OSCAR
 
-ALTER TABLE `property`
-MODIFY COLUMN `value` VARCHAR(4000); 
+-- ALTER TABLE `property` MODIFY COLUMN `value` VARCHAR(4000); 
 
 DELETE FROM `property` WHERE `name`='hide_prevention_item';
 DELETE FROM `property` WHERE `name`='cvc.updated';
 DELETE FROM `property` WHERE `name`='cvc.firstdate';
-
+DELETE FROM `property` WHERE `name`='show_prevention_item';
 
 INSERT INTO `property` (`name`, `value`) VALUES
 ('cvc.updated', '2023-09-28'),
 ('cvc.firstdate', '1617720058179');
 
--- Late breaking AstraZeneca lot numbers
--- INSERT INTO `CVCMedicationLotNumber` (`cvcMedicationId`, `lotNumber`, `expiryDate`) VALUES
--- (131, 'MT0055', '2021-05-31'),
--- (131, 'MT0056', '2021-05-31'),
--- (131, 'NA0079', '2021-06-30');
+INSERT INTO `property` (`name`, `value`, `id`, `provider_no`) VALUES 
+('show_prevention_item', 'Tuberculosis,PAP,HPV-CERVIX,MAM,PSA,FOBT,COLONOSCOPY,BMD,HIV,HepB screen,HepC screen,VDRL,chlamydia,ghonorrhea PCR,PHV,Smoking,OtherB,[Tdap] Tetanus + Diphtheria + Pertussis,[DTaP-IPV-Hib] Diphtheria + Tetanus + Pertussis + Polio + Hib,[Pneu-C-13] Pneumococcal conjugate 13,[Rota-1] Rotavirus monovalent,[Men-C-C] Meningococcal conjugate C,[MMR] Measles + Mumps + Rubella,[Var] Varicella,[Tdap-IPV] Tetanus + Diphtheria + Pertussis + Polio,[MMR-Var] Measles + Mumps + Rubella + Varicella,[Men-C-ACYW-135] Meningococcal conjugate A+C+Y+W135,[HPV-9] Human Papillomavirus,[Td] Tetanus + Diphtheria,[Pneu-P-23] Pneumococcal polysaccharide 23,[Zos] Zoster (Shingles) non-live,[COVID-19] COVID-19 mRNA', NULL, '');
 
 -- Most users are English
 -- DELETE FROM `CVCImmunizationName` WHERE `language`="fr";
 
 -- We do not give expired shots, but we might be late charting jabs given elsewhere
-DELETE FROM `CVCMedicationLotNumber` WHERE `expiryDate`< (NOW() - INTERVAL 3 MONTH);
+-- DELETE FROM `CVCMedicationLotNumber` WHERE `expiryDate`< (NOW() - INTERVAL 3 MONTH);
 
 -- We will delete non marketed immunizations as we don't have access to them
 -- DELETE CVC3 FROM `CVCMedicationGTIN` CVC3 JOIN `CVCMedication` CVC4 ON CVC3.CVCMedicationId = CVC4.id WHERE CVC4.status <> 'Marketed';
