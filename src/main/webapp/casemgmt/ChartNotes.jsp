@@ -665,7 +665,7 @@ padding: 2px;
 
 
 
-  <a tabindex="17" class="btn" id="saveImg" href="#" onclick="" title='<bean:message key="oscarEncounter.Index.btnSave"/>'><i class="icon-save icon-large"></i></a> 
+  <a tabindex="17" class="btn" id="saveImg" href="#" onclick="Event.stop(event);" title='<bean:message key="oscarEncounter.Index.btnSave"/>'><i class="icon-save icon-large"></i></a> 
 		
 		<%
 			if(facility.isEnableGroupNotes()) {
