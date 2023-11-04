@@ -92,8 +92,7 @@ String[] docType = {"D","L", "H", "E"};
 String http_user_agent = request.getHeader("User-Agent");
 boolean onIPad = http_user_agent.indexOf("iPad") >= 0;
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html:html locale="true">
 <head>
 <title><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
@@ -246,12 +245,19 @@ function toggleSelectAll() {
 #documentList a {
     text-decoration:none;
 }
+.item {
+    float:left;
+    height:25px;
+    line-height:25px;
+    width: 100px;
+    white-space:nowrap;
+}
 .item-date {
     float:right;
     height:25px;
     line-height:25px;
-    margin-top:3px;
-    width:100px;
+    text-align:right;
+    width:90px;
     white-space:nowrap;
 }
 
@@ -266,11 +272,11 @@ function toggleSelectAll() {
 	<html:hidden property="requestId" value="<%=requestId%>" />
 	<html:hidden property="demoNo" value="<%=demoNo%>" />
 	<html:hidden property="providerNo" value="<%=providerNo%>" />
-	<table style="width:1080px; font-size: x-small; background-color:white;" >
+	<table style="width:1080px; font-size: x-small; background-color:white; table-layout: fixed;" >
 		<tr>
-			<th style="text-align: center"><bean:message
+			<th style="width:245px;"><bean:message
 				key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.available" /></th>
-			<th style="text-align: center"><bean:message
+			<th><bean:message
 				key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.preview" /></th>
 		</tr>
 		<tr valign="top" style="border-top:thin dotted black;">
@@ -357,12 +363,12 @@ function toggleSelectAll() {
 	                    printAlt   = UNPRINTABLE_ALT;
 	                }
 	                date = DateUtils.getDate(MyDateFormat.getCalendar(curDoc.getObservationDate()).getTime(), "dd-MMM-yyyy", request.getLocale());
-	                truncatedDisplayName = StringUtils.maxLenString(curDoc.getDescription(),14,11,"");
+	                truncatedDisplayName = StringUtils.maxLenString(curDoc.getDescription(),13,10,"...");
 	                if (StringUtils.isNullOrEmpty(truncatedDisplayName)) { truncatedDisplayName = "(none)"; }
 	                %>
 		                <li class="doc" title="<%=curDoc.getDescription()%>" id="<%=docType[0]+curDoc.getDocId()%>">
 		                    <div>
-		                    <div style="float:left; height:20px; line-height:20px;">
+		                    <div><span class="item">
 		                    	<input class="tightCheckbox1"
 				                        type="checkbox" name="docNo" id="docNo<%=curDoc.getDocId()%>"
 				                        value="<%=curDoc.getDocId()%>"
@@ -377,12 +383,11 @@ function toggleSelectAll() {
 			                    <a class="docPreview" href="#" onclick="<%=onClick%>" >
 			                        <span class="text"><%=truncatedDisplayName%></span>
 			                    </a>
-
-			               </div>
-			               <div class="item-date" >
+                            </span>
+			               <span class="item-date">
 			                    <a class="docPreview" href="#" onclick="<%=onClick%>" >
-			                        <span>... <%=date%></span>
-			                    </a>
+			                        <span><%=date%></span>
+			                    </a></span>
 		                   </div>
 		                   <div style="clear:both;"></div>
 		                   </div>
@@ -426,14 +431,14 @@ function toggleSelectAll() {
 	                         truncatedDisplayName = labDisplayName;
 	                     }
 	                     else {
-	                         truncatedDisplayName = StringUtils.maxLenString(labDisplayName,14,11,"");
+	                         truncatedDisplayName = StringUtils.maxLenString(labDisplayName,13,10,"...");
 	                     }
 	                     date = DateUtils.getDate(result.getDateObj(), "dd-MMM-yyyy", request.getLocale());
           				 if (StringUtils.isNullOrEmpty(truncatedDisplayName)) { truncatedDisplayName = "(none)"; }
 	                     %>
 						    <li class="lab" title="<%=labDisplayName%>" id="<%=docType[1]+result.labPatientId%>">
 						        <div>
-							        <div style="float:left; height:20px; line-height:20px; white-space:nowrap;">
+							        <span class="item">
 								        <input class="tightCheckbox1" type="checkbox"
 			                               name="labNo" id="labNo<%=result.segmentID%>"
 			                               value="<%=result.segmentID%>"
@@ -448,12 +453,12 @@ function toggleSelectAll() {
 								           <span class="text"><%=truncatedDisplayName%></span>
 								        </a>
 
-							        </div>
-							        <div class="item-date">
+							        </span>
+							        <span class="item-date">
 							        	<a class="labPreview" href="#" onclick="javascript:previewHTML('<%=url%>');">
-							            <span class="item-date">... <%=date%></span>
+							            <span class="item-date"><%=date%></span>
 							        </a>
-							        </div>
+							        </span>
 							        <div style="clear:both;"></div>
 						        </div>
 						    </li>
@@ -505,7 +510,7 @@ function toggleSelectAll() {
 	                		truncatedDisplayName = hrmDisplayName;
 	                	}
 	                	else {
-	                		truncatedDisplayName = StringUtils.maxLenString(hrmDisplayName,14,11,"");
+	                		truncatedDisplayName = StringUtils.maxLenString(hrmDisplayName,13,10,"...");
 	                	}
 	                	//Gets the url for the display of the HRM Report
 	                	url = request.getContextPath() + "/hospitalReportManager/Display.do?id=" + hrmDocument.getId() + "&segmentID=" + hrmDocument.getId() + "&duplicateLabIds=";
@@ -514,7 +519,7 @@ function toggleSelectAll() {
 	                	%>
 		                	<li class="hrm" title="<%=hrmDisplayName%>" id="hrm<%=hrmDocument.getId()%>">
 								<div>
-									<div style="float:left; height:20px; line-height:20px; white-space:nowrap;">
+									<span class="item">
 										<input class="tightCheckbox1" type="checkbox" name="hrmNo" id="hrmNo<%=hrmDocument.getId()%>" value="<%=hrmDocument.getId()%>" style="margin: 0px; padding: 0px;" />
 										<span class="url" style="display:none">
 											<a href="<%=url%>" title="<%=hrmDisplayName%>" style="color: red; text-decoration: none;" target="_blank">
@@ -526,12 +531,12 @@ function toggleSelectAll() {
 											<span class="text"><%=truncatedDisplayName%></span>
 										</a>
 
-									</div>
-									<div class="item-date">
+									</span>
+									<span class="item-date">
 										<a class="hrmPreview" href="#" onclick="javascript:previewHTML('<%=url%>');">
-											<span class="item-date">... <%=date%></span>
+											<span class="item-date"><%=date%></span>
 										 </a>
-									</div>
+									</span>
 									<div style="clear:both;"></div>
 								</div>
 					    	</li>
@@ -549,7 +554,7 @@ function toggleSelectAll() {
 					%>
 						<li class="eForm" title="<%=eForm.getFormName()%>" id="eForm<%=eForm.getId()%>">
 							<div>
-								<div style="float:left; height:20px; line-height:20px; white-space:nowrap;">
+								<span class="item">
 									<input class="tightCheckbox1" type="checkbox" name="eFormNo" id="eFormNo<%=eForm.getId()%>" value="<%=eForm.getId()%>" style="margin: 0px; padding: 0px;" />
 									<span class="url" style="display:none">
 															<a href="<%=url%>" title="<%=eForm.getFormName()%>" style="color: #917611; text-decoration: none;" target="_blank">
@@ -558,15 +563,15 @@ function toggleSelectAll() {
 														</span>
 									<img title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>">
 									<a class="eFormPreview" href="#" onclick="javascript:previewHTML('<%=url%>', true);">
-										<span class="text"><%=(eForm.getFormName().length()>14)?eForm.getFormName().substring(0, 11)+"...":eForm.getFormName()%></span>
+										<span class="text"><%=(eForm.getFormName().length()>13)?eForm.getFormName().substring(0, 10)+"...":eForm.getFormName()%></span>
 									</a>
 
-								</div>
-								<div class="item-date">
+								</span>
+								<span class="item-date">
 									<a class="eFormPreview" href="#" onclick="javascript:previewHTML('<%=url%>', true);">
-										<span class="item-date">... <%=sdf.format(eForm.getFormDate())%></span>
+										<span class="item-date"><%=sdf.format(eForm.getFormDate())%></span>
 									</a>
-								</div>
+								</span>
 								<div style="clear:both;"></div>
 							</div>
 						</li>
@@ -580,7 +585,7 @@ function toggleSelectAll() {
                 value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit"/>"
                 onclick="return save();" />
             </td>
-            <td style="background-color:white; position:relative; width: 850px;"><iframe id="previewPane" style="width:100%; height: 600px; overflow: auto; border:0;" ></iframe></td>
+            <td style="background-color:white; position:relative; text-align:left;"><iframe id="previewPane" style="width:100%; height: 600px; overflow: auto; border:0;" ></iframe></td>
 		</tr>
 	</table>
 </html:form>
