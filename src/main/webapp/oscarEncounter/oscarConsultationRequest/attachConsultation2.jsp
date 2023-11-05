@@ -60,7 +60,6 @@ String userlastname = (String) session.getAttribute("userlastname");
 <%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic"%>
 <%@ page import="org.oscarehr.common.model.EFormData" %>
 
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%
@@ -92,7 +91,7 @@ String[] docType = {"D","L", "H", "E"};
 String http_user_agent = request.getHeader("User-Agent");
 boolean onIPad = http_user_agent.indexOf("iPad") >= 0;
 %>
-<!DOCTYPE html>
+
 <html:html locale="true">
 <head>
 <title><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
@@ -159,6 +158,7 @@ function checkDocuments(docs) {
 
 
 function save() {
+
 	if (window.opener == null) {
 		window.close();
 	}
@@ -239,9 +239,17 @@ function toggleSelectAll() {
 	$("input[type='checkbox']").prop("checked", $("#selectAll").prop("checked"));
 }
 
+function doShow(elem, aclass) {
+    elem.style.display = "none";
+    var elems = document.querySelectorAll("." + aclass);
+    [].forEach.call(elems, function(el) {
+        el.classList.remove(aclass);
+    });
+}
+
 //-->
 </script>
-<style type="text/css">
+<style>
 #documentList a {
     text-decoration:none;
 }
@@ -259,6 +267,18 @@ function toggleSelectAll() {
     text-align:right;
     width:90px;
     white-space:nowrap;
+}
+.hiddenDoc {
+    display: none;
+}
+.hiddenLab {
+    display: none;
+}
+.hiddenHRM {
+    display: none;
+}
+.hiddeneForm {
+    display: none;
 }
 
 </style>
@@ -279,12 +299,12 @@ function toggleSelectAll() {
 			<th><bean:message
 				key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.preview" /></th>
 		</tr>
-		<tr valign="top" style="border-top:thin dotted black;">
+		<tr style="border-top:thin dotted black; vertical-align:top;">
 			<td style="width: 245px; text-align: left; background-color: white; border-right:thin dotted black; position:absolute; height:600px;" >
 			<input type="submit" class="btn" style="position: absolute; left: 35px; top: 5px;"
                 name="submit"
                 value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit"/>"
-                onclick="return save();" />
+                onclick="return save();" >
 			<ul id="documentList" style="list-style:none; padding:5px; margin-top:35px; height:515px; overflow:auto;">
 
             <%
@@ -312,10 +332,10 @@ function toggleSelectAll() {
                  <input class="tightCheckbox1" id="selectAll"
                         type="checkbox" onclick="toggleSelectAll()"
                         value="" title="Select/un-select all documents."
-                        style="margin: 0px; padding: 0px;"/> <bean:message key="dms.documentReport.msgAll"/>
+                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />
             </li>
             <% if(privatedocs.size() > 0){%>
-            	<h4><bean:message key="global.Document"/></h4>
+            	<li><h4><bean:message key="global.Document"/></h4></li>
             <%}%>
             <%
 	            EDoc curDoc;
@@ -325,6 +345,7 @@ function toggleSelectAll() {
 	            String printAlt;
 	            String date;
 	            String truncatedDisplayName;
+                String hiddenClass = "";
 	            for(int idx = 0; idx < privatedocs.size(); ++idx)
 	            {
 	                curDoc = privatedocs.get(idx);
@@ -337,12 +358,12 @@ function toggleSelectAll() {
 	                if ((curDoc.getStatus() + "").compareTo("A") == 0) dStatus="active";
 	                else if ((curDoc.getStatus() + "").compareTo("H") == 0) dStatus="html";
 	                url = request.getContextPath() + "/oscarEncounter/oscarConsultationRequest/"
-	                    + "documentGetFile.jsp?document=" + StringEscapeUtils.escapeJavaScript(curDoc.getFileName())
+	                    + "documentGetFile.jsp?document=" + Encode.forUriComponent(curDoc.getFileName())
 	                    + "&type=" + dStatus + "&doc_no=" + curDoc.getDocId();
 	                String onClick = "";
 
 	                if (curDoc.isPDF()) {
-	                    onClick = "javascript:previewPDF('" + curDoc.getDocId() + "','" + StringEscapeUtils.escapeJavaScript(url) + "');";
+	                    onClick = "javascript:previewPDF('" + curDoc.getDocId() + "','" + url + "');";
 	                }
 	                else if (curDoc.isImage()) {
 	                    onClick = "javascript:previewImage('" + url + "');";
@@ -365,23 +386,27 @@ function toggleSelectAll() {
 	                date = DateUtils.getDate(MyDateFormat.getCalendar(curDoc.getObservationDate()).getTime(), "dd-MMM-yyyy", request.getLocale());
 	                truncatedDisplayName = StringUtils.maxLenString(curDoc.getDescription(),13,10,"...");
 	                if (StringUtils.isNullOrEmpty(truncatedDisplayName)) { truncatedDisplayName = "(none)"; }
+
+                    if (idx > 8) {
+                        hiddenClass = "hiddenDoc";
+                    }
 	                %>
-		                <li class="doc" title="<%=curDoc.getDescription()%>" id="<%=docType[0]+curDoc.getDocId()%>">
+		                <li class="doc <%=hiddenClass%>" title="<%=Encode.forHtmlAttribute(curDoc.getDescription())%>" id="<%=docType[0]+curDoc.getDocId()%>" >
 		                    <div>
 		                    <div><span class="item">
 		                    	<input class="tightCheckbox1"
 				                        type="checkbox" name="docNo" id="docNo<%=curDoc.getDocId()%>"
 				                        value="<%=curDoc.getDocId()%>"
-				                        style="margin: 0px; padding: 0px;" />
+				                        style="margin: 0px; padding: 0px;" >
 				                <span class="url" style="display:none">
-		                        	<a  title="<%=curDoc.getDescription()%>" href="<%=url%>" target="_blank">
-										<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" />
-										<%=truncatedDisplayName%>
+		                        	<a  title="<%=Encode.forHtmlAttribute(curDoc.getDescription())%>" href="<%=url%>" target="_blank">
+										<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" >
+										<%=Encode.forHtml(truncatedDisplayName)%>
 									</a>
 			                    </span>
 			                    <img title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>">
 			                    <a class="docPreview" href="#" onclick="<%=onClick%>" >
-			                        <span class="text"><%=truncatedDisplayName%></span>
+			                        <span class="text"><%=Encode.forHtml(truncatedDisplayName)%></span>
 			                    </a>
                             </span>
 			               <span class="item-date">
@@ -392,11 +417,16 @@ function toggleSelectAll() {
 		                   <div style="clear:both;"></div>
 		                   </div>
 		                </li>
+                    <%
+                        if (idx == 8 && privatedocs.size() > 8) {
+                    %>
+                        <li><span onclick="doShow(this,'hiddenDoc');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
 	                <%
+                        }
 	                }
 	            	if(labs.size() > 0){
 	            	%>
-	            		<h4><bean:message key="caseload.msgLab"/></h4>
+	            		<li><h4><bean:message key="caseload.msgLab"/></h4></li>
 	            	<%
 	            	}
 
@@ -405,6 +435,7 @@ function toggleSelectAll() {
 	                printImage = PRINTABLE_IMAGE;
 	                printTitle = PRINTABLE_TITLE;
 	                printAlt = PRINTABLE_ALT;
+                    hiddenClass = "";
 	                for(int idx = 0; idx < labs.size(); ++idx)
 	                {
 	                     result = labs.get(idx);
@@ -435,22 +466,23 @@ function toggleSelectAll() {
 	                     }
 	                     date = DateUtils.getDate(result.getDateObj(), "dd-MMM-yyyy", request.getLocale());
           				 if (StringUtils.isNullOrEmpty(truncatedDisplayName)) { truncatedDisplayName = "(none)"; }
+          				 if (idx > 8) { hiddenClass = "hiddenLab"; }
 	                     %>
-						    <li class="lab" title="<%=labDisplayName%>" id="<%=docType[1]+result.labPatientId%>">
+						    <li class="lab <%=hiddenClass%>" title="<%=labDisplayName%>" id="<%=docType[1]+result.segmentID%>">
 						        <div>
 							        <span class="item">
 								        <input class="tightCheckbox1" type="checkbox"
 			                               name="labNo" id="labNo<%=result.segmentID%>"
 			                               value="<%=result.segmentID%>"
-			                               style="margin: 0px; padding: 0px;" />
+			                               style="margin: 0px; padding: 0px;" >
 			                            <span class="url" style="display:none">
-								               <a href="<%=url%>" title="<%=labDisplayName%>" style="color: #CC0099; text-decoration: none;" target="_blank">
-											   <img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" />
-											<%=truncatedDisplayName%></a>
+								               <a href="<%=url%>" title="<%=Encode.forHtmlAttribute(labDisplayName)%>" style="color: #CC0099; text-decoration: none;" target="_blank">
+											   <img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" >
+											<%=Encode.forHtml(truncatedDisplayName)%></a>
 								        </span>
 								        <img title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>">
 								        <a class="labPreview" href="#" onclick="javascript:previewHTML('<%=url%>');">
-								           <span class="text"><%=truncatedDisplayName%></span>
+								           <span class="text"><%=Encode.forHtml(truncatedDisplayName)%></span>
 								        </a>
 
 							        </span>
@@ -463,7 +495,12 @@ function toggleSelectAll() {
 						        </div>
 						    </li>
 
+                    <%
+                        if (idx == 8 && labs.size() > 8) {
+                    %>
+                        <li><span onclick="doShow(this,'hiddenLab');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
 	                <%
+                        }
 	                     }
 
 					printImage = PRINTABLE_IMAGE;
@@ -471,7 +508,7 @@ function toggleSelectAll() {
 					printAlt = PRINTABLE_ALT;
 
 	                if(hrmDocumentToDemographicList.size() > 0) { %>
-						<h4><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.hrmDocuments"/></h4>
+						<li><h4><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.hrmDocuments"/></h4></li>
 				<% 	}
 
 					List<HRMDocument> docs = new ArrayList<HRMDocument>();
@@ -491,6 +528,8 @@ function toggleSelectAll() {
 						}
 					});
 
+                    hiddenClass = "";
+                    Integer idx = 0;
 	                //For each hrmDocumentToDemographic in the list
 	                for (HRMDocument hrmDocument : docs) {
 
@@ -516,19 +555,20 @@ function toggleSelectAll() {
 	                	url = request.getContextPath() + "/hospitalReportManager/Display.do?id=" + hrmDocument.getId() + "&segmentID=" + hrmDocument.getId() + "&duplicateLabIds=";
 	                	//Gets the report date
 	                	date = DateUtils.getDate(hrmDocument.getReportDate(), "dd-MMM-yyyy", request.getLocale());
+          				if (idx > 8) { hiddenClass = "hiddenHRM"; }
 	                	%>
-		                	<li class="hrm" title="<%=hrmDisplayName%>" id="hrm<%=hrmDocument.getId()%>">
+		                	<li class="hrm <%=hiddenClass%>" title="<%=Encode.forHtmlAttribute(hrmDisplayName)%>" id="hrm<%=hrmDocument.getId()%>">
 								<div>
 									<span class="item">
-										<input class="tightCheckbox1" type="checkbox" name="hrmNo" id="hrmNo<%=hrmDocument.getId()%>" value="<%=hrmDocument.getId()%>" style="margin: 0px; padding: 0px;" />
+										<input class="tightCheckbox1" type="checkbox" name="hrmNo" id="hrmNo<%=hrmDocument.getId()%>" value="<%=hrmDocument.getId()%>" style="margin: 0px; padding: 0px;" >
 										<span class="url" style="display:none">
-											<a href="<%=url%>" title="<%=hrmDisplayName%>" style="color: red; text-decoration: none;" target="_blank">
-											<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" />
-											<%=truncatedDisplayName%></a>
+											<a href="<%=url%>" title="<%=Encode.forHtmlAttribute(hrmDisplayName)%>" style="color: red; text-decoration: none;" target="_blank">
+											<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" >
+											<%=Encode.forHtml(truncatedDisplayName)%></a>
 										</span>
 										<img title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>">
 										<a class="hrmPreview" href="#" onclick="javascript:previewHTML('<%=url%>');">
-											<span class="text"><%=truncatedDisplayName%></span>
+											<span class="text"><%=Encode.forHtml(truncatedDisplayName)%></span>
 										</a>
 
 									</span>
@@ -540,30 +580,39 @@ function toggleSelectAll() {
 									<div style="clear:both;"></div>
 								</div>
 					    	</li>
-			    <%
+                    <%
+                        if (idx == 8 && docs.size() > 8) {
+                    %>
+                        <li><span onclick="doShow(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+	                <%
+                        }
+                    idx=idx+1;
 					}
 
 					SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", request.getLocale());
+                    hiddenClass = "";
+                    idx = 0;
 					//Get eforms
 					eForms= EFormUtil.listPatientEformsCurrent(new Integer(demoNo), true, 0, 100);
 					if (!eForms.isEmpty()) { %>
-						<h4><bean:message key="global.eForms"/></h4>
+						<li><h4><bean:message key="global.eForms"/></h4></li>
 					<% }
 					for (EFormData eForm : eForms) {
 						url = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid="+eForm.getId();
+          				if (idx > 8) { hiddenClass = "hiddeneForm"; }
 					%>
-						<li class="eForm" title="<%=eForm.getFormName()%>" id="eForm<%=eForm.getId()%>">
+						<li class="eForm <%=hiddenClass%>" title="<%=eForm.getFormName()%>" id="eForm<%=eForm.getId()%>">
 							<div>
 								<span class="item">
-									<input class="tightCheckbox1" type="checkbox" name="eFormNo" id="eFormNo<%=eForm.getId()%>" value="<%=eForm.getId()%>" style="margin: 0px; padding: 0px;" />
+									<input class="tightCheckbox1" type="checkbox" name="eFormNo" id="eFormNo<%=eForm.getId()%>" value="<%=eForm.getId()%>" style="margin: 0px; padding: 0px;" >
 									<span class="url" style="display:none">
-															<a href="<%=url%>" title="<%=eForm.getFormName()%>" style="color: #917611; text-decoration: none;" target="_blank">
-															<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" />
-															<%=eForm.getFormName()%></a>
+															<a href="<%=url%>" title="<%=Encode.forHtmlAttribute(eForm.getFormName())%>" style="color: #917611; text-decoration: none;" target="_blank">
+															<img style="width:15px;height:15px" title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>" >
+															<%=Encode.forHtml(eForm.getFormName())%></a>
 														</span>
 									<img title="<%= printTitle %>" src="<%= printImage %>" alt="<%= printAlt %>">
 									<a class="eFormPreview" href="#" onclick="javascript:previewHTML('<%=url%>', true);">
-										<span class="text"><%=(eForm.getFormName().length()>13)?eForm.getFormName().substring(0, 10)+"...":eForm.getFormName()%></span>
+										<span class="text"><%=(eForm.getFormName().length()>13)?Encode.forHtml(eForm.getFormName()).substring(0, 10)+"...":Encode.forHtml(eForm.getFormName())%></span>
 									</a>
 
 								</span>
@@ -575,15 +624,21 @@ function toggleSelectAll() {
 								<div style="clear:both;"></div>
 							</div>
 						</li>
-					<%
+                    <%
+                        if (idx == 8 && eForms.size() > 8) {
+                    %>
+                        <li><span onclick="doShow(this,'hiddeneForm');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+	                <%
+                        }
+                    idx=idx+1;
 					}
 				} %>
 
             </ul>
             <input type="submit" class="btn" style="position: absolute; left: 35px; bottom: 5px;"
                 name="submit"
-                value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit"/>"
-                onclick="return save();" />
+                value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit" />"
+                onclick="return save();" >
             </td>
             <td style="background-color:white; position:relative; text-align:left;"><iframe id="previewPane" style="width:100%; height: 600px; overflow: auto; border:0;" ></iframe></td>
 		</tr>
