@@ -240,11 +240,28 @@ function toggleSelectAll() {
 }
 
 function doShow(elem, aclass) {
-    elem.style.display = "none";
+
     var elems = document.querySelectorAll("." + aclass);
     [].forEach.call(elems, function(el) {
+        el.classList.add("un-"+aclass);
         el.classList.remove(aclass);
     });
+    elem.classList.add(aclass);
+
+}
+
+function doHide(elem, aclass) {
+
+    var eltoggle = document.querySelectorAll("." + aclass);
+    var elems = document.querySelectorAll(".un-" + aclass);
+    [].forEach.call(elems, function(el) {
+        el.classList.add(aclass);
+        el.classList.remove("un-"+aclass);
+    });
+    elem.classList.add(aclass);
+    eltoggle[0].classList.remove(aclass);
+    eltoggle[0].classList.add("un-"+aclass);
+
 }
 
 //-->
@@ -423,6 +440,12 @@ function doShow(elem, aclass) {
                         <li><span onclick="doShow(this,'hiddenDoc');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
 	                <%
                         }
+                        if (idx == privatedocs.size()-1  && privatedocs.size() > 8) {
+                    %>
+
+                        <li class="hiddenDoc"><span onclick="doHide(this,'hiddenDoc');" style="color: #0088cc;"><bean:message key="global.btnToggle"/></span></li>
+	                <%
+                        }
 	                }
 	            	if(labs.size() > 0){
 	            	%>
@@ -499,6 +522,12 @@ function doShow(elem, aclass) {
                         if (idx == 8 && labs.size() > 8) {
                     %>
                         <li><span onclick="doShow(this,'hiddenLab');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+	                <%
+                        }
+                        if (idx == labs.size()-1  && labs.size() > 8) {
+                    %>
+
+                        <li class="hiddenLab"><span onclick="doHide(this,'hiddenLab');" style="color: #0088cc;"><bean:message key="global.btnToggle"/></span></li>
 	                <%
                         }
 	                     }
@@ -583,7 +612,13 @@ function doShow(elem, aclass) {
                     <%
                         if (idx == 8 && docs.size() > 8) {
                     %>
-                        <li><span onclick="doShow(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+                        <li onclick="doShow(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.expandall"/></li>
+	                <%
+                        }
+                        if (idx == docs.size()-1  && docs.size() > 8) {
+                    %>
+
+                        <li class="hiddenHRM" onclick="doHide(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.btnToggle"/></li>
 	                <%
                         }
                     idx=idx+1;
@@ -628,6 +663,12 @@ function doShow(elem, aclass) {
                         if (idx == 8 && eForms.size() > 8) {
                     %>
                         <li><span onclick="doShow(this,'hiddeneForm');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+	                <%
+                        }
+                        if (idx == eForms.size()-1  && eForms.size() > 8) {
+                    %>
+
+                        <li class="hiddeneForm"><span onclick="doHide(this,'hiddeneForm');" style="color: #0088cc;"><bean:message key="global.btnToggle"/></span></li>
 	                <%
                         }
                     idx=idx+1;
