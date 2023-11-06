@@ -23,63 +23,117 @@
     Ontario, Canada
 
 --%>
-
-<%@page import="org.oscarehr.common.ISO36612"%>
-<%@page import="org.oscarehr.managers.LookupListManager"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String demographic$ = request.getParameter("demographic_no") ;
     boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
 	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
-<%
-	if(!authed) {
-		return;
-	}
+
+<security:oscarSec roleName="<%=roleName$%>"
+	objectName='<%="_demographic$"+demographic$%>' rights="o"
+	reverse="<%=false%>">
+<bean:message key="demographic.demographiceditdemographic.accessDenied"/>
+<% response.sendRedirect(request.getContextPath() +  "/acctLocked.html");
+authed=false;
 %>
+</security:oscarSec>
+
+<%
+if(!authed) {
+	return;
+}
+
+%>
+
 <!DOCTYPE html>
 <%-- @ taglib uri=request.getContextPath() +  "/WEB-INF/taglibs-log.tld" prefix="log" --%>
-<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil"%>
-<%@page import="oscar.util.ConversionUtils"%>
+
+<%@page import="java.net.*"%>
+<%@page import="java.sql.*"%>
+<%@page import="java.text.DateFormatSymbols"%>
+<%@page import="java.text.DecimalFormat"%>
+<%@page import="java.util.*"%>
+<%@page import="java.util.Locale"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.apache.commons.text.WordUtils"%>
+<%@page import="org.oscarehr.PMmodule.caisi_integrator.ConformanceTestHelper"%>
+<%@page import="org.oscarehr.PMmodule.dao.ProgramDao"%>
+<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
+<%@page import="org.oscarehr.PMmodule.model.Program"%>
+<%@page import="org.oscarehr.PMmodule.model.ProgramProvider"%>
+<%@page import="org.oscarehr.PMmodule.service.AdmissionManager"%>
+<%@page import="org.oscarehr.PMmodule.service.ProgramManager"%>
+<%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction"%>
+<%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink"%>
+<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager"%>
+<%@page import="org.oscarehr.common.Gender"%>
+<%@page import="org.oscarehr.common.OtherIdManager"%>
+<%@page import="org.oscarehr.common.dao.*"%>
+<%@page import="org.oscarehr.common.dao.ContactSpecialtyDao"%>
+<%@page import="org.oscarehr.common.dao.DemographicArchiveDao"%>
+<%@page import="org.oscarehr.common.dao.DemographicCustDao"%>
+<%@page import="org.oscarehr.common.dao.DemographicDao"%>
+<%@page import="org.oscarehr.common.dao.DemographicExtArchiveDao"%>
+<%@page import="org.oscarehr.common.dao.DemographicExtDao"%>
+<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao"%>
+<%@page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao"%>
+<%@page import="org.oscarehr.common.dao.SpecialtyDao"%>
+<%@page import="org.oscarehr.common.dao.WaitingListDao"%>
+<%@page import="org.oscarehr.common.dao.WaitingListNameDao"%>
+<%@page import="org.oscarehr.common.ISO36612"%>
+<%@page import="org.oscarehr.common.model.*"%>
+<%@page import="org.oscarehr.common.model.Consent"%>
+<%@page import="org.oscarehr.common.model.ConsentType"%>
+<%@page import="org.oscarehr.common.model.ContactSpecialty"%>
+<%@page import="org.oscarehr.common.model.Demographic"%>
+<%@page import="org.oscarehr.common.model.DemographicCust"%>
+<%@page import="org.oscarehr.common.model.ProfessionalSpecialist"%>
+<%@page import="org.oscarehr.common.model.Provider"%>
+<%@page import="org.oscarehr.common.model.ScheduleTemplateCode"%>
+<%@page import="org.oscarehr.common.model.Specialty"%>
+<%@page import="org.oscarehr.common.model.WaitingListName"%>
+<%@page import="org.oscarehr.common.web.ContactAction"%>
+<%@page import="org.oscarehr.managers.DemographicManager"%>
+<%@page import="org.oscarehr.managers.LookupListManager"%>
+<%@page import="org.oscarehr.managers.PatientConsentManager"%>
+<%@page import="org.oscarehr.managers.ProgramManager2"%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.util.UtilMisc" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.ConformanceTestHelper"%>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtArchiveDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
-<%@page import="org.oscarehr.common.dao.WaitingListDao" %>
-<%@page import="org.oscarehr.common.dao.WaitingListNameDao" %>
-<%@page import="org.oscarehr.common.model.WaitingListName" %>
-<%@page import="org.oscarehr.common.Gender" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.managers.ProgramManager2" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction" %>
-<%@page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@page import="org.oscarehr.managers.PatientConsentManager" %>
-<%@page import="org.oscarehr.common.model.Consent" %>
-<%@page import="org.oscarehr.common.model.ConsentType" %>
-<%@page import="org.oscarehr.ws.rest.util.QuestimedUtil" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.apache.commons.text.WordUtils"%>
-<%@page import="org.owasp.encoder.Encode" %>
-<%@page import="java.text.DateFormatSymbols"%>
-<%@page import="java.util.Locale"%>
+<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil"%>
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.ws.rest.util.QuestimedUtil"%>
+<%@page import="org.owasp.encoder.Encode"%>
+<%@page import="org.springframework.web.context.*"%>
+<%@page import="org.springframework.web.context.support.*"%>
+<%@page import="oscar.*"%>
+<%@page import="oscar.OscarProperties"%>
+<%@page import="oscar.oscarDemographic.data.*"%>
+<%@page import="oscar.oscarDemographic.data.ProvinceNames"%>
+<%@page import="oscar.oscarDemographic.pageUtil.Util"%>
+<%@page import="oscar.oscarReport.data.DemographicSets,oscar.log.*"%>
+<%@page import="oscar.oscarWaitingList.WaitingList"%>
+<%@page import="oscar.util.ConversionUtils"%>
+<%@page import="oscar.util.UtilMisc"%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/phr-tag.tld" prefix="phr"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
+<%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
+<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
+
 <jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session" />
 <%
 
-    String demographic$ = request.getParameter("demographic_no") ;
 
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
@@ -100,62 +154,7 @@
 	String hin_check_url = (oscarProps.getProperty("HIN_CHECK_URL","https://apps.ontariomd.ca/HCValidationWeb/form.do?")).trim();
     String privateConsentEnabledProperty = oscarProps.getProperty("privateConsentEnabled");
     boolean privateConsentEnabled = (privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true"));
-%>
 
-<security:oscarSec roleName="<%=roleName$%>"
-	objectName='<%="_demographic$"+demographic$%>' rights="o"
-	reverse="<%=false%>">
-<bean:message key="demographic.demographiceditdemographic.accessDenied"/>
-<% response.sendRedirect(request.getContextPath() +  "/acctLocked.html");
-authed=false;
-%>
-</security:oscarSec>
-
-<%
-if(!authed) {
-	return;
-}
-
-%>
-<%@ page import="java.util.*, java.sql.*, java.net.*,java.text.DecimalFormat, oscar.*, oscar.oscarDemographic.data.ProvinceNames, oscar.oscarWaitingList.WaitingList, oscar.oscarReport.data.DemographicSets,oscar.log.*"%>
-<%@ page import="oscar.oscarDemographic.data.*"%>
-<%@ page import="oscar.oscarDemographic.pageUtil.Util" %>
-<%@ page import="org.springframework.web.context.*,org.springframework.web.context.support.*" %>
-<%@ page import="oscar.OscarProperties"%>
-<%@ page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.*" %>
-<%@ page import="org.oscarehr.common.OtherIdManager" %>
-<%@ page import="org.oscarehr.common.web.ContactAction" %>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="org.oscarehr.common.model.DemographicCust" %>
-<%@page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.managers.DemographicManager" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.PMmodule.service.AdmissionManager" %>
-<%@ page import="org.oscarehr.common.dao.SpecialtyDao" %>
-<%@ page import="org.oscarehr.common.model.Specialty" %>
-<%@ page import="org.oscarehr.common.dao.ContactSpecialtyDao" %>
-<%@ page import="org.oscarehr.common.model.ContactSpecialty" %>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
-
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/phr-tag.tld" prefix="phr"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
-
-<%
 	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
 	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
@@ -282,10 +281,8 @@ if(!authed) {
 <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
 <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
-
 <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
-
+<script src="${pageContext.request.contextPath}/js/bootstrap.js"></script><!-- for accordion -->
 <% if (oscarProps.getBooleanProperty("workflow_enhance", "true")) { %>
 <script src="<%=request.getContextPath() %>/hcHandler/hcHandler.js"></script>
 <script src="<%=request.getContextPath() %>/hcHandler/hcHandlerUpdateDemographic.js"></script>
@@ -300,7 +297,7 @@ if(!authed) {
 
 <script src="<%=request.getContextPath() %>/js/check_hin.js"></script>
 
-<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script><!-- for History -->
 
 <% if (isMobileOptimized) { %>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
@@ -363,6 +360,14 @@ if(!authed) {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdowns:hover .dropbtns {background-color: #e6e6e6;}
+
+/* Override Bootstrap */
+legend {
+    margin-bottom: 4px;
+}
+.accordion-heading .accordion-toggle {
+	padding: 2px 15px;
+}
 
 </style>
    <script>
@@ -781,6 +786,14 @@ function showEdit(){
     document.getElementById('swipeButton').style.display = 'block';
     document.getElementById('editBtn').style.display = 'none';
     document.getElementById('closeBtn').style.display = 'inline';
+}
+function closeAccordion() {
+    document.getElementById('demographicSectionContent').style.height='0';
+    document.getElementById('contactSectionContent').style.height='0';
+    document.getElementById('insuranceSectionContent').style.height='0';
+    document.getElementById('teamSectionContent').style.height='0';
+    document.getElementById('wlSectionContent').style.height='0';
+    document.getElementById('additionalSectionContent').style.height='0';
 }
 
 function showHideDetail(){
@@ -1706,7 +1719,7 @@ if (iviewTag!=null && !"".equalsIgnoreCase(iviewTag.trim())){
 				    if( head.equals(demographic_no)) {
 				    %>
 					<a id="editBtn" href="javascript: showHideDetail();" class="btn btn-primary"><bean:message key="demographic.demographiceditdemographic.msgEdit"/></a>
-					<a id="closeBtn" href="javascript: showHideDetail();" style="display:none;" class="btn btn-primary"><bean:message key="global.btnClose" /></a>
+					<a id="closeBtn" href="javascript: showHideDetail(); closeAccordion();" style="display:none;" class="btn btn-primary"><bean:message key="global.btnClose" /></a>
 				   <% } %>
 	      </security:oscarSec>
 
@@ -1816,7 +1829,8 @@ if( demographic!=null) {
 				<div class="xdemographicWrapper container-fluid well span11" >
 				<div class="leftSection span5">
 				<div class="demographicSection" id="demographic" >
-				<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgDemographic"/></h4>
+				<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgDemographic"/>
+                <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('demographicSectionContent').style.height='auto';"></i></h4>
 				<%
 					for (String key : demoExt.keySet()) {
 					    if (key.endsWith("_id")) {
@@ -1910,10 +1924,8 @@ if( demographic!=null) {
 <%if(!oscarProps.isPropertyActive("NEW_CONTACTS_UI")) { %>
 
 						<div class="demographicSection" id="otherContacts">
-						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgOtherContacts"/> <b><a
-							href="javascript: function myFunction() {return false; }"
-							onClick="popup(700,960,'AddAlternateContact.jsp?demo=<%=demographic.getDemographicNo()%>','AddRelation')">
-						<bean:message key="demographic.demographiceditdemographic.msgAddRelation"/><!--i18n--></a></b></h4>
+						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgOtherContacts"/>
+<i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onClick="popup(700,960,'AddAlternateContact.jsp?demo=<%=demographic.getDemographicNo()%>','AddRelation')"></i></h4>
 						<ul>
 							<%DemographicRelationship demoRelation = new DemographicRelationship();
                                           List relList = demoRelation.getDemographicRelationshipsWithNamePhone(loggedInInfo, demographic.getDemographicNo().toString(), loggedInInfo.getCurrentFacility().getId());
@@ -1941,10 +1953,6 @@ if( demographic!=null) {
 						<jsp:include page="displayOtherContacts2.jsp">
 						<jsp:param name="demographicNo" value="<%= demographic_no %>" />
 						</jsp:include>
-						   <!--<div class="demographicSection" id="otherContacts2">
-						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgOtherContacts"/> <input type="button" class="btn btn-link"
-							onClick="popup(700,960,'Contact.do?method=manage&demographic_no=<%=demographic.getDemographicNo()%>','ManageContacts')" value=
-						"<bean:message key="demographic.demographiceditdemographic.msgManageContacts"/>"></h4>-->
 
 						<%
 							ContactDao contactDao = (ContactDao)SpringUtils.getBean("contactDao");
@@ -1964,17 +1972,13 @@ if( demographic!=null) {
                                     masterLink = masterLink + "&nbsp;<a target=\"demographic"+dContact.getContactId()+"\" href=\"" + request.getContextPath() + "/oscarEncounter/IncomingEncounter.do?appointmentNo=&demographicNo="+dContact.getContactId()+"&curProviderNo=&reason=Tel-Progress+Note&encType=&appointmentDate=&startTime=&status=&curDate=\">E</a>";
 								}
 %>
-<!--
-								<li><span class="labels"><%=dContact.getRole()%>:</span>
-                                                            <span class="info"><%=dContact.getContactName() %><%=sdm%><%=ec%> <%=masterLink!=null?masterLink:"" %></span>
-                                                        </li>-->
 
 						<%}   %>
 
 
 						<% } %>
 						<div class="demographicSection" id="clinicStatus">
-						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgClinicStatus"/><input type="button" class="btn btn-link"  onclick="popup(1000, 650, 'EnrollmentHistory.jsp?demographicNo=<%=demographic_no%>', 'enrollmentHistory'); return false;" value="<bean:message key="demographic.demographiceditdemographic.msgEnrollmentHistory"/>"></h4>
+						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgClinicStatus"/><input type="button" class="btn btn-link"  onclick="popup(1000, 650, 'EnrollmentHistory.jsp?demographicNo=<%=demographic_no%>', 'enrollmentHistory'); return false;" value="<bean:message key="demographic.demographiceditdemographic.msgEnrollmentHistory"/>"><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
 						<table style="background-color: #FFFFFF">
 						<% if (!StringUtils.trimToEmpty(demographic.getRosterStatusDisplay()).equals("")) { // don't show roster status if not set %>
 							<tr>
@@ -2094,7 +2098,8 @@ if( demographic!=null) {
 						<%if (!alert.equals("")) { // don't show alert section if no alerts %>
 						<div class="demographicSection" id="alert">
 						<h4>&nbsp;<bean:message
-							key="demographic.demographiceditdemographic.formAlert" /></h4>
+							key="demographic.demographiceditdemographic.formAlert" />
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('additionalSectionContent').style.height='auto';"></i></h4>
 						<table style="background: #FFFFFF;"><tr><td style="width:100%"><b style="color: brown;"><%=Encode.forHtmlContent(alert)%></b>
 									&nbsp;</td><td></td></tr></table>
 						</div>
@@ -2221,7 +2226,7 @@ if( demographic!=null) {
 					</div>
 					<div class="rightSection span5">
 					<div class="demographicSection" id="contactInformation">
-					<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgContactInfo"/></h4>
+					<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgContactInfo"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('contactSectionContent').style.height='auto';"></i></h4>
 					<table style="background-color: #FFFFFF">
 						<tr><td style="white-space:nowrap;"><span class="labels"><bean:message
 							      key="demographic.demographiceditdemographic.formPhoneH" />:</span></td>
@@ -2343,7 +2348,8 @@ if( demographic!=null) {
 						</div>
 						<%if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 						<div class="demographicSection" id="healthInsurance">
-						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgHealthIns"/></h4>
+						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgHealthIns"/>
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
 					        <table style="background-color: #FFFFFF">
 							<% if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
@@ -2376,9 +2382,9 @@ if( demographic!=null) {
 
 <oscar:oscarPropertiesCheck value="true" property="workflow_enhance">
 						<div class="demographicSection">
-                        <h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgInternalProviders"/></h4>
+                        <h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgInternalProviders"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('teamSectionContent').style.height='auto';"></i></h4>
                         <div>
-                        <!--<ul>-->
+
 			<%!	// ===== functions for quick appointment booking =====
 
 				// convert hh:nn:ss format to elapsed minutes (from 00:00:00)
@@ -2737,7 +2743,8 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
 						<h4>&nbsp;<bean:message
 							key="demographic.demographiceditdemographic.formNotes" />
                         <input type="button" class="btn btn-link" onclick="popupOscarRx(800, 1000,'demographicAudit.jsp?demographic_no=<%=demographic_no %>');"
-                        value="<bean:message key="admin.admin.securityLogReport" />"></h4>
+                        value="<bean:message key="admin.admin.securityLogReport" />">
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('additionalSectionContent').style.height='auto';"></i></h4>
 
 						<table style="background-color: #FFFFFF"><tr><td style="width:100%"><%=Encode.forHtmlContent(notes)%>&nbsp;
 <%if (hasImportExtra) { %>
@@ -2829,10 +2836,7 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
     <%
         boolean showCbiReminder=oscarProps.getBooleanProperty("CBI_REMIND_ON_UPDATE_DEMOGRAPHIC", "true");
     %>
-    <input type="submit" <%=(showCbiReminder?"onclick='showCbiReminder()'":"")%> class="btn btn-primary"
-	    id="updaterecord" value="<bean:message key="demographic.demographiceditdemographic.btnUpdate"/>">
-    <input type="submit" name="submit" <%=(showCbiReminder?"onclick='showCbiReminder()'":"")%> class="btn"
-											   value="<bean:message key="demographic.demographiceditdemographic.btnSaveUpdateFamilyMember"/>">
+
 	</security:oscarSec>
 </span>
 <p><p>
@@ -2840,11 +2844,15 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
 
 
 
-<div class="container-fluid well form-horizontal span12" id="editWrapper" style="display:none;">
-    <div  id="demographicSection" class="span11">
-		<fieldset>
-			<legend><bean:message key="demographic.demographiceditdemographic.msgDemographic" /></legend>
+<div class="container-fluid well form-horizontal span12 accordion" id="editWrapper" style="display:none;" >
+    <div  id="demographicSection" class="span11 accordion-group">
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>" id="demotoggle">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#demographicSectionContent">
+                <bean:message key="demographic.demographiceditdemographic.msgDemographic" /><span style="color:red;">*</span>
+                <i id="toggleD" class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
+        <div id="demographicSectionContent" class="accordion-body collapse" >
         <div class="control-group span5"  title='<%=demographic.getDemographicNo()%>'>
             <label class="control-label" for="inputLN"><bean:message
                 key="demographic.demographiceditdemographic.formLastName" /><span style="color:red">*</span></label>
@@ -3022,13 +3030,18 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
               <input type="text" placeholder="<bean:message key="web.record.details.sin" />" name="sin" id="sin" <%=getDisabled("sin")%>
 									value="<%=(demographic.getSin()==null||demographic.getSin().equals("null"))?"":demographic.getSin()%>">
             </div>
-        </div>
-    </div><!--demographicSection -->
+        </div><br>
+        </div><!-- end demographicSectionContent -->
+    </div><!-- end demographicSection -->
 
-    <div id="contactSection" class="span11">
-		<fieldset>
-			<legend><bean:message key="demographic.demographiceditdemographic.msgContactInfo" /></legend>
+    <div id="contactSection" class="span11 accordion-group">
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#contactSectionContent">
+			    <bean:message key="demographic.demographiceditdemographic.msgContactInfo" />
+                <i class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
+        <div id="contactSectionContent" class="accordion-body collapse" >
 <!-- "postalfield" -->
         <div class="control-group span5">
             <label class="control-label" for="addr"><bean:message key="demographic.demographiceditdemographic.formAddr" /></label>
@@ -3418,13 +3431,18 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
 									<sup><input type="button" class="btn btn-link" id="phrConsent" style="display:none;" title="<bean:message key="demographic.demographiceditdemographic.confirmAccount"/>"  value="Confirm" /></sup>
 								<%}%>
             </div>
-        </div>
-    </div><!--end contactSection -->
-    <div id="insurance" class="span11">
-		<fieldset>
-			<legend><bean:message key="demographic.demographiceditdemographic.msgHealthIns"/></legend>
+        </div><br>
+    </div><!-- end contactSectionContent -->
+    </div><!-- end contactSection -->
+    <div id="insurance" class="span11 accordion-group">
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#insuranceSectionContent">
+			    <bean:message key="demographic.demographiceditdemographic.msgHealthIns"/>
+                <i class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
-        </div>
+        <div id="insuranceSectionContent" class="accordion-body collapse" >
+
         <div class="control-group span5">
             <label class="control-label" for="hcType"><bean:message key="demographic.demographiceditdemographic.formHCType" /></label>
             <div class="controls">
@@ -3857,17 +3875,20 @@ function parsedate_joined(){
 <input type="hidden" name="patientstatus_date_month" id="patientstatus_date_month">
 <input type="hidden" name="patientstatus_date_day" id="patientstatus_date_day">
             </div>
-        </div>
-
+        </div><br>
+        </div><!-- end insuranceSectionContent -->
+</div><!-- end insurance -->
 
 <%-- TOGGLE OFF PATIENT CLINIC STATUS --%>
 <oscar:oscarPropertiesCheck property="DEMOGRAPHIC_PATIENT_CLINIC_STATUS" value="true">
-    <div id="team" class="span11"><!--Care Team -->
-		<fieldset>
-			<legend><bean:message key="web.record.details.careTeam" /></legend>
+    <div id="team" class="span11 accordion-group"><!--Care Team -->
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#teamSectionContent">
+			    <bean:message key="web.record.details.careTeam" />
+                <i class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
-
-
+        <div id="teamSectionContent" class="accordion-body collapse" >
         <div class="control-group span5">
             <label class="control-label" for="mrp"><% if(oscarProps.getProperty("demographicLabelDoctor") != null) { out.print(oscarProps.getProperty("demographicLabelDoctor","")); } else { %>
 								<bean:message key="demographic.demographiceditdemographic.formMRP" />
@@ -3989,19 +4010,21 @@ function parsedate_joined(){
                         <bean:message key="demographic.demographiceditdemographic.btnSearch"/>#</a> </sup>
                     <% } %>
             </div>
-        </div>
-
-
-
-    </div><!--end Team -->
+        </div><br>
+    </div><!-- end teamSectionContent -->
+    </div><!-- end Team -->
 </oscar:oscarPropertiesCheck>
 <%-- END TOGGLE OFF PATIENT CLINIC STATUS --%>
 <%-- WAITING LIST MODULE --%>
         <oscar:oscarPropertiesCheck property="DEMOGRAPHIC_WAITING_LIST" value="true">
-    <div id="wl" class="span11"><!--additional -->
-		<fieldset>
-			<legend><bean:message key="demographic.demographiceditdemographic.msgWaitList"/></legend>
+    <div id="wl" class="span11 accordion-group">
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#wlSectionContent">
+			    <bean:message key="demographic.demographiceditdemographic.msgWaitList"/>
+                <i class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
+        <div id="wlSectionContent" class="accordion-body collapse" >
             <div class="control-group span5">
                 <label class="control-label" for="list_id"><bean:message key="demographic.demographiceditdemographic.msgWaitList"/></label>
                 <div class="controls">
@@ -4063,13 +4086,18 @@ function parsedate_joined(){
 						value="<%=wlReferralDate%>" <%=wLReadonly%>>
                 </div>
             </div>
+    </div><!--end wlContentSection -->
     </div><!--end wl -->
         </oscar:oscarPropertiesCheck>
 <%-- END WAITING LIST MODULE --%>
-    <div id="additional" class="span11"><!--additional -->
-		<fieldset>
-			<legend><bean:message key="web.record.details.addInformation" /></legend>
+    <div id="additional" class="span11 accordion-group"><!--additional -->
+		<fieldset class="accordion-heading" title="<bean:message key="global.btnToggle"/>">
+			<legend class="accordion-toggle" data-toggle="collapse" data-parent="#editWrapper" data-target="#additionalSectionContent">
+			    <bean:message key="web.record.details.addInformation" />
+                <i class="icon-edit" style="float: right; margin-top: 10px;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>"></i>
+            </legend>
 		</fieldset>
+        <div id="additionalSectionContent" class="accordion-body collapse" >
         <div class="control-group span5">
             <label class="control-label" for="cyto"><bean:message key="demographic.demographiceditdemographic.cytolNum" /></label>
             <div class="controls">
@@ -4134,7 +4162,7 @@ function parsedate_joined(){
 				<input type="hidden" name="paper_chart_archived_program" id="paper_chart_archived_program" value="<%=paperChartIndicatorProgram%>"/>
             </div>
         </div>
-				<c:forEach items="${ consentTypes }" var="consentType" varStatus="count">
+<c:forEach items="${ consentTypes }" var="consentType" varStatus="count">
 					<c:set var="patientConsent" value="" />
 					<c:forEach items="${ patientConsents }" var="consent" >
 						<c:if test="${ consent.consentType.id eq consentType.id }">
@@ -4169,7 +4197,7 @@ function parsedate_joined(){
                                        <c:out value="checked" />
                                    </c:if>
                             />
-                            Opt-In
+                            <bean:message key="global.optin"/>
                             <input type="radio"
                                    name="${ consentType.type }"
                                    id="optout_${ consentType.type }"
@@ -4178,10 +4206,10 @@ function parsedate_joined(){
                                        <c:out value="checked" />
                                    </c:if>
                             />
-                            Opt-Out
+                             <bean:message key="global.optout"/>
                             <input type="button" class="btn btn-link"
                                    name="clearRadio_${consentType.type}_btn"
-                                   onclick="consentClearBtn('${consentType.type}')" value="Clear" />
+                                   onclick="consentClearBtn('${consentType.type}')" value="<bean:message key="global.clear"/>" />
 
                             <%-- Was this consent set by the user? Or by the database?  --%>
                             <input type="hidden" name="consentPreset_${consentType.type}" id="consentPreset_${consentType.type}"
@@ -4302,11 +4330,13 @@ function parsedate_joined(){
         <div class="control-group span10">
             <label class="control-label" for="inputNote"><bean:message key="demographic.demographiceditdemographic.formNotes" /></label>
             <div class="controls">
-                <textarea name="notes" id="inputNote" class="span7" ><%=notes%></textarea>
+                <textarea name="notes" id="inputNote" class="span7" ><%=notes == null ? "" : notes%></textarea>
             </div>
         </div>
 <%-- END PATIENT NOTES MODULE --%>
+        </div><!--end additionalContentSection -->
     </div><!--end additional -->
+
 </div><!--end editWrapper -->
 
 <table id="editDemographic" style="width:100%; display: none;">
@@ -4327,7 +4357,7 @@ function parsedate_joined(){
 
 <%-- END TOGGLE OFF PATIENT PRIVACY CONSENT --%>
 
-<%-- TOGGLE OFF MEDITECH MODULE --%>
+<%-- TOGGLE MEDITECH MODULE --%>
 <% if (oscarProps.isPropertyActive("meditech_id")) { %>
 
 												<%
@@ -4442,12 +4472,10 @@ if(oscarProps.getProperty("demographicExtJScript") != null) { out.println(oscarP
 
 <%-- BOTTOM TOOLBAR  --%>
 					<tr class="xdarkPurple">
-						<td colspan="1" style="white-space:nowrap;">
+						<td colspan="1" style="white-space:nowrap; padding-left:20px;">
 
 
 								<input type="hidden" name="dboperation" value="update_record">
-
-
 								<input type="hidden" name="displaymode" value="Update Record">
 								<!-- security code block --> <span id="updateButton"
 									style="display: none;"> <security:oscarSec
