@@ -160,8 +160,7 @@
             <%-- DETACHED VIEW ENABLED  --%>
 
         <h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgOtherContacts"/>
-            <input type="button" class="btn btn-link" onClick="popup(700,960,'Contact.do?method=manage&demographic_no=<%=demographic.getDemographicNo()%>','ManageContacts')" value=
-            "<bean:message key="demographic.demographiceditdemographic.msgManageContacts"/>">
+<i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onClick="popup(700,960,'Contact.do?method=manage&demographic_no=<%=demographic.getDemographicNo()%>','ManageContacts')"></i></h4>
         </h4>
 
             <%-- END DETACHED VIEW ENABLED  --%>
