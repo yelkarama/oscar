@@ -42,6 +42,8 @@ import org.apache.struts.util.MessageResources;
 
 import org.oscarehr.common.dao.DocumentDao.DocumentType;
 import org.oscarehr.common.dao.OscarLogDao;
+import org.oscarehr.common.dao.SystemPreferencesDao;
+import org.oscarehr.common.model.SystemPreferences;
 
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -60,7 +62,12 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     
 	public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {
     
-		boolean groupByType = false;
+    	//Group documents by doctype
+    	SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+		SystemPreferences preference =
+			systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+		boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
+
         return getInfo(bean, request, Dao, messages, groupByType);
      }
 
