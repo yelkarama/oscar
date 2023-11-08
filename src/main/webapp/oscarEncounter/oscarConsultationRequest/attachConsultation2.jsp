@@ -35,30 +35,32 @@ String userlastname = (String) session.getAttribute("userlastname");
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <jsp:useBean id="oscarVariables" class="java.util.Properties"
 	scope="page" />
-<%@ page import="java.util.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.math.*" %>
 <%@ page import="java.net.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-
-<%@ page import="oscar.*" %>
-<%@ page import="oscar.util.*" %>
-<%@ page import="oscar.dms.*" %>
-<%@ page import="oscar.dms.data.*" %>
-<%@ page import="oscar.eform.EFormUtil" %>
-<%@ page import="oscar.MyDateFormat" %>
-<%@ page import="oscar.oscarLab.ca.on.*"%>
-<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData"%>
-<%@ page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
-
-<%@ page import="org.oscarehr.util.SessionConstants"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
+<%@ page import="org.oscarehr.common.model.EFormData" %>
+<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
 <%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentDao"%>
 <%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao"%>
 <%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocument"%>
 <%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic"%>
-<%@ page import="org.oscarehr.common.model.EFormData" %>
+<%@ page import="org.oscarehr.util.SessionConstants"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="oscar.*" %>
+<%@ page import="oscar.MyDateFormat" %>
+<%@ page import="oscar.dms.*" %>
+<%@ page import="oscar.dms.data.*" %>
+<%@ page import="oscar.eform.EFormUtil" %>
+<%@ page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
+<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData"%>
+<%@ page import="oscar.oscarLab.ca.on.*"%>
+<%@ page import="oscar.util.*" %>
 
 <%@ page import="org.owasp.encoder.Encode" %>
 
@@ -108,6 +110,7 @@ CommonLabResultData labData = new CommonLabResultData();
 ArrayList<LabResultData> labs = labData.populateLabResultsData(loggedInInfo, demoNo, requestId, CommonLabResultData.ATTACHED);
 ArrayList<EDoc> privatedocs = new ArrayList<EDoc>();
 privatedocs = EDocUtil.listDocs(loggedInInfo, demoNo, requestId, EDocUtil.ATTACHED);
+
 List<HRMDocumentToDemographic> hrmDocumentsToDemographics = hrmDocumentToDemographicDao.findHRMDocumentsAttachedToConsultation(requestId);
 List<EFormData> eForms = EFormUtil.listPatientEformsCurrentAttachedToConsult(requestId);
 String attachedDocs = "";
@@ -362,7 +365,14 @@ function doHide(elem, aclass) {
 	            String printAlt;
 	            String date;
 	            String truncatedDisplayName;
+                String currType = "";
+                String newType;
                 String hiddenClass = "";
+                SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+                SystemPreferences preference =
+                    systemPreferencesDao.findPreferenceByName("echart_show_group_document_by_type");
+                boolean groupByType = preference != null && Boolean.parseBoolean(preference.getValue());
+
 	            for(int idx = 0; idx < privatedocs.size(); ++idx)
 	            {
 	                curDoc = privatedocs.get(idx);
@@ -406,6 +416,14 @@ function doHide(elem, aclass) {
 
                     if (idx > 8) {
                         hiddenClass = "hiddenDoc";
+                    }
+
+                    newType = curDoc.getType();
+                    if (groupByType && !currType.equals(newType) && !newType.isEmpty()){
+                        currType = newType;
+	                %>
+		                <li class="doc <%=hiddenClass%>"><%=Encode.forHtml(currType)%></li>
+                    <%
                     }
 	                %>
 		                <li class="doc <%=hiddenClass%>" title="<%=Encode.forHtmlAttribute(curDoc.getDescription())%>" id="<%=docType[0]+curDoc.getDocId()%>" >
