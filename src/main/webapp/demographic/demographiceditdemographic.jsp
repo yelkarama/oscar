@@ -4573,10 +4573,6 @@ if(oscarProps.getProperty("demographicExtJScript") != null) { out.println(oscarP
 
 <script type="text/javascript">
 
-
-
-//Calendar.setup({ inputField : "paper_chart_archived_date", ifFormat : "%Y-%m-%d", showsTime :false, button : "archive_date_cal", singleClick : true, step : 1 });
-
 function callEligibilityWebService(url,id){
 
        var ran_number=Math.round(Math.random()*1000000);
@@ -4585,12 +4581,12 @@ function callEligibilityWebService(url,id){
        fetch(url+"?"+params, {method:"get"})
        .then(function (response){ return response.text();
        }).then(function(data) {
-           document.getElementById(id).innerHTML=response.responseText ;
+           document.getElementById(id).innerHTML=data;
            document.getElementById('search_spinner').innerHTML="";
        });
 
  }
-
+ 
 <%
 if (privateConsentEnabled) {
 %>
