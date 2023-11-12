@@ -238,10 +238,6 @@ function previewImage(url) {
 	$("#previewPane").attr("src", "<%= request.getContextPath() %>/oscarEncounter/oscarConsultationRequest/displayImage.jsp?url=" + encodeURIComponent(url));
 }
 
-function toggleSelectAll() {
-	$("input[type='checkbox']").prop("checked", $("#selectAll").prop("checked"));
-}
-
 function doShow(elem, aclass) {
 
     var elems = document.querySelectorAll("." + aclass);
@@ -300,6 +296,17 @@ function doHide(elem, aclass) {
 .hiddeneForm {
     display: none;
 }
+.h4 {
+    font-weight:bold;
+    font-size:18px;
+    padding: 0px 8px 0px 1px;
+    line-height: 24px;
+}
+.tgl {
+    float:right;
+    background-color:#eaeaea;
+    padding: 1px 4px 1px 4px;
+}
 
 </style>
 
@@ -348,14 +355,13 @@ function doHide(elem, aclass) {
             <% }
             else {
             %>
-            <li>
-                 <input class="tightCheckbox1" id="selectAll"
-                        type="checkbox" onclick="toggleSelectAll()"
-                        value="" title="Select/un-select all documents."
-                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />
-            </li>
             <% if(privatedocs.size() > 0){%>
-            	<li><h4><bean:message key="global.Document"/></h4></li>
+            	<li><span class="h4"><bean:message key="global.Document"/></span>
+                    <span class="tgl"><input class="tightCheckbox1" id="selectAlldoc"
+                        type="checkbox" onclick="$('[name=docNo]').prop('checked', $(this).prop('checked'));"
+                        value="" title="<bean:message key="dms.incomingDocs.select" />/<bean:message key="admin.fieldNote.unselect" /> <bean:message key="global.Document"/>."
+                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />&nbsp;<%=privatedocs.size()%></span>
+                </li>
             <%}%>
             <%
 	            EDoc curDoc;
@@ -467,7 +473,12 @@ function doHide(elem, aclass) {
 	                }
 	            	if(labs.size() > 0){
 	            	%>
-	            		<li><h4><bean:message key="caseload.msgLab"/></h4></li>
+            	<li><span class="h4"><bean:message key="caseload.msgLab"/></span>
+                    <span class="tgl"><input class="tightCheckbox1" id="selectAlllab"
+                        type="checkbox" onclick="$('[name=labNo]').prop('checked', $(this).prop('checked'));"
+                        value="" title="<bean:message key="dms.incomingDocs.select" />/<bean:message key="admin.fieldNote.unselect" /> <bean:message key="oscarReport.LabReqReport.msgLabDocuments"/>."
+                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />&nbsp;<%=labs.size()%></span>
+                </li>
 	            	<%
 	            	}
 
@@ -555,7 +566,12 @@ function doHide(elem, aclass) {
 					printAlt = PRINTABLE_ALT;
 
 	                if(hrmDocumentToDemographicList.size() > 0) { %>
-						<li><h4><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.hrmDocuments"/></h4></li>
+            	<li><span class="h4">HRM</span>
+                    <span class="tgl"><input class="tightCheckbox1" id="selectAllHRM"
+                        type="checkbox" onclick="$('[name=hrmNo]').prop('checked', $(this).prop('checked'));"
+                        value="" title="<bean:message key="dms.incomingDocs.select" />/<bean:message key="admin.fieldNote.unselect" /> <bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.hrmDocuments"/>."
+                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />&nbsp;<%=hrmDocumentToDemographicList.size()%></span>
+                </li>
 				<% 	}
 
 					List<HRMDocument> docs = new ArrayList<HRMDocument>();
@@ -648,7 +664,13 @@ function doHide(elem, aclass) {
 					//Get eforms
 					eForms= EFormUtil.listPatientEformsCurrent(new Integer(demoNo), true, 0, 100);
 					if (!eForms.isEmpty()) { %>
-						<li><h4><bean:message key="global.eForms"/></h4></li>
+
+            	<li><span class="h4"><bean:message key="global.eForms"/></span>
+                    <span class="tgl"><input class="tightCheckbox1" id="selectAllHRM"
+                        type="checkbox" onclick="$('[name=eFormNo]').prop('checked', $(this).prop('checked'));"
+                        value="" title="<bean:message key="dms.incomingDocs.select" />/<bean:message key="admin.fieldNote.unselect" /> <bean:message key="global.eForms"/>."
+                        style="margin: 0px; padding: 0px;" > <bean:message key="dms.documentReport.msgAll" />&nbsp;<%=eForms.size()%></span>
+                </li>
 					<% }
 					for (EFormData eForm : eForms) {
 						url = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid="+eForm.getId();
