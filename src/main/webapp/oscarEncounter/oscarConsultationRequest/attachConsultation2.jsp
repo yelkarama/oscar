@@ -296,6 +296,12 @@ function doHide(elem, aclass) {
 .hiddeneForm {
     display: none;
 }
+.h3 {
+    font-weight:bold;
+    font-size:22px;
+    padding: 2px 8px 2px 1px;
+    line-height: 34px;
+}
 .h4 {
     font-weight:bold;
     font-size:18px;
@@ -312,13 +318,17 @@ function doHide(elem, aclass) {
 
 </head>
 <body style="font-family: Verdana, Tahoma, Arial, sans-serif; background-color: #f5f5f5" onload="init()" >
-
-    <h3 style="text-align: left">&nbsp;<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.header" />
-        <%=patientName%></h3>
     <html:form action="/oscarConsultationRequest/attachDoc">
 	<html:hidden property="requestId" value="<%=requestId%>" />
 	<html:hidden property="demoNo" value="<%=demoNo%>" />
 	<html:hidden property="providerNo" value="<%=providerNo%>" />
+    <span class="h3" style="text-align: left">&nbsp;<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.header" />
+        <%=patientName%></span><span style="float:right;">
+            <input type="submit" class="btn"
+                name="submit"
+                value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit"/>"
+                onclick="return save();" ></span>
+
 	<table style="width:1080px; font-size: x-small; background-color:white; table-layout: fixed;" >
 		<tr>
 			<th style="width:245px;"><bean:message
@@ -327,12 +337,8 @@ function doHide(elem, aclass) {
 				key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.preview" /></th>
 		</tr>
 		<tr style="border-top:thin dotted black; vertical-align:top;">
-			<td style="width: 245px; text-align: left; background-color: white; border-right:thin dotted black; position:absolute; height:600px;" >
-			<input type="submit" class="btn" style="position: absolute; left: 35px; top: 5px;"
-                name="submit"
-                value="<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.submit"/>"
-                onclick="return save();" >
-			<ul id="documentList" style="list-style:none; padding:5px; margin-top:35px; height:515px; overflow:auto;">
+			<td style="width: 245px; text-align: left; background-color: white; border-right:thin dotted black; position:absolute; height:655px;" >
+			<ul id="documentList" style="list-style:none; padding:5px; margin-top:5px; height:600px; overflow:auto;">
 
             <%
             final String PRINTABLE_IMAGE = request.getContextPath() + "/images/printable.png";
