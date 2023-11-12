@@ -455,7 +455,7 @@ function doHide(elem, aclass) {
                     <%
                         if (idx == 8 && privatedocs.size() > 8) {
                     %>
-                        <li><span onclick="doShow(this,'hiddenDoc');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+                        <li><span onclick="doShow(this,'hiddenDoc');" style="color: #0088cc;"><bean:message key="global.expandall"/>&nbsp;<%=privatedocs.size()%></span></li>
 	                <%
                         }
                         if (idx == privatedocs.size()-1  && privatedocs.size() > 8) {
@@ -539,7 +539,7 @@ function doHide(elem, aclass) {
                     <%
                         if (idx == 8 && labs.size() > 8) {
                     %>
-                        <li><span onclick="doShow(this,'hiddenLab');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+                        <li><span onclick="doShow(this,'hiddenLab');" style="color: #0088cc;"><bean:message key="global.expandall"/>&nbsp;<%=labs.size()%></span></li>
 	                <%
                         }
                         if (idx == labs.size()-1  && labs.size() > 8) {
@@ -630,7 +630,7 @@ function doHide(elem, aclass) {
                     <%
                         if (idx == 8 && docs.size() > 8) {
                     %>
-                        <li onclick="doShow(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.expandall"/></li>
+                        <li onclick="doShow(this,'hiddenHRM');" style="color: #0088cc;"><bean:message key="global.expandall"/>&nbsp;<%=docs.size()%></li>
 	                <%
                         }
                         if (idx == docs.size()-1  && docs.size() > 8) {
@@ -680,7 +680,7 @@ function doHide(elem, aclass) {
                     <%
                         if (idx == 8 && eForms.size() > 8) {
                     %>
-                        <li><span onclick="doShow(this,'hiddeneForm');" style="color: #0088cc;"><bean:message key="global.expandall"/></span></li>
+                        <li><span onclick="doShow(this,'hiddeneForm');" style="color: #0088cc;"><bean:message key="global.expandall"/>&nbsp;<%=eForms.size()%></span></li>
 	                <%
                         }
                         if (idx == eForms.size()-1  && eForms.size() > 8) {
