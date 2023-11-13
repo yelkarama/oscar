@@ -786,9 +786,8 @@ function showEdit(){
     document.getElementById('swipeButton').style.display = 'block';
     document.getElementById('editBtn').style.display = 'none';
     document.getElementById('closeBtn').style.display = 'inline';
-    openAccordion();
+    //openAccordion();
 }
-
 function openAccordion() {
     document.getElementById('demographicSectionContent').style.height='auto';
     document.getElementById('contactSectionContent').style.height='auto';
@@ -805,7 +804,6 @@ function openAccordion() {
         el.classList.add("in");
     });
 }
-
 function closeAccordion() {
     document.getElementById('demographicSectionContent').style.height='0';
     document.getElementById('contactSectionContent').style.height='0';
@@ -824,7 +822,7 @@ function showHideDetail(){
     showHideItem('editWrapper');
     if(document.getElementById('editWrapper').style.display == 'block'){
         setPhone();
-    }
+	}
     showHideBtn('editBtn');
     showHideBtn('closeBtn');
 
@@ -1737,7 +1735,7 @@ if (iviewTag!=null && !"".equalsIgnoreCase(iviewTag.trim())){
 	    <%
 				    if( head.equals(demographic_no)) {
 				    %>
-					<a id="editBtn" href="javascript: showHideDetail();" class="btn btn-primary"><bean:message key="demographic.demographiceditdemographic.msgEdit"/></a>
+					<a id="editBtn" href="javascript: showHideDetail();openAccordion();" class="btn btn-primary"><bean:message key="demographic.demographiceditdemographic.msgEdit"/></a>
 					<a id="closeBtn" href="javascript: showHideDetail(); closeAccordion();" style="display:none;" class="btn btn-primary"><bean:message key="global.btnClose" /></a>
 				   <% } %>
 	      </security:oscarSec>
@@ -1849,7 +1847,7 @@ if( demographic!=null) {
 				<div class="leftSection span5">
 				<div class="demographicSection" id="demographic" >
 				<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgDemographic"/>
-                <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('demographicSectionContent').style.height='auto';"></i></h4>
+                <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('demographicSectionContent').style.height='auto';"></i></h4>
 				<%
 					for (String key : demoExt.keySet()) {
 					    if (key.endsWith("_id")) {
@@ -1997,7 +1995,7 @@ if( demographic!=null) {
 
 						<% } %>
 						<div class="demographicSection" id="clinicStatus">
-						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgClinicStatus"/><input type="button" class="btn btn-link"  onclick="popup(1000, 650, 'EnrollmentHistory.jsp?demographicNo=<%=demographic_no%>', 'enrollmentHistory'); return false;" value="<bean:message key="demographic.demographiceditdemographic.msgEnrollmentHistory"/>"><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
+						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgClinicStatus"/><input type="button" class="btn btn-link"  onclick="popup(1000, 650, 'EnrollmentHistory.jsp?demographicNo=<%=demographic_no%>', 'enrollmentHistory'); return false;" value="<bean:message key="demographic.demographiceditdemographic.msgEnrollmentHistory"/>"><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
 						<table style="background-color: #FFFFFF">
 						<% if (!StringUtils.trimToEmpty(demographic.getRosterStatusDisplay()).equals("")) { // don't show roster status if not set %>
 							<tr>
@@ -2118,7 +2116,7 @@ if( demographic!=null) {
 						<div class="demographicSection" id="alert">
 						<h4>&nbsp;<bean:message
 							key="demographic.demographiceditdemographic.formAlert" />
-                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('additionalSectionContent').style.height='auto';"></i></h4>
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion();getElementById('additionalSectionContent').style.height='auto';"></i></h4>
 						<table style="background: #FFFFFF;"><tr><td style="width:100%"><b style="color: brown;"><%=Encode.forHtmlContent(alert)%></b>
 									&nbsp;</td><td></td></tr></table>
 						</div>
@@ -2245,7 +2243,7 @@ if( demographic!=null) {
 					</div>
 					<div class="rightSection span5">
 					<div class="demographicSection" id="contactInformation">
-					<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgContactInfo"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('contactSectionContent').style.height='auto';"></i></h4>
+					<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgContactInfo"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('contactSectionContent').style.height='auto';"></i></h4>
 					<table style="background-color: #FFFFFF">
 						<tr><td style="white-space:nowrap;"><span class="labels"><bean:message
 							      key="demographic.demographiceditdemographic.formPhoneH" />:</span></td>
@@ -2368,7 +2366,7 @@ if( demographic!=null) {
 						<%if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 						<div class="demographicSection" id="healthInsurance">
 						<h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgHealthIns"/>
-                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('insuranceSectionContent').style.height='auto';"></i></h4>
 					        <table style="background-color: #FFFFFF">
 							<% if (!StringUtils.trimToEmpty(demographic.getHin()).equals("")) { %>
 							<tr><td style="white-space: nowrap;"><span class="labels"><bean:message
@@ -2401,7 +2399,7 @@ if( demographic!=null) {
 
 <oscar:oscarPropertiesCheck value="true" property="workflow_enhance">
 						<div class="demographicSection">
-                        <h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgInternalProviders"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('teamSectionContent').style.height='auto';"></i></h4>
+                        <h4>&nbsp;<bean:message key="demographic.demographiceditdemographic.msgInternalProviders"/><i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('teamSectionContent').style.height='auto';"></i></h4>
                         <div>
 
 			<%!	// ===== functions for quick appointment booking =====
@@ -2763,7 +2761,7 @@ demographicContacts = linkedHealthCareTeam ? ContactAction.getDemographicContact
 							key="demographic.demographiceditdemographic.formNotes" />
                         <input type="button" class="btn btn-link" onclick="popupOscarRx(800, 1000,'demographicAudit.jsp?demographic_no=<%=demographic_no %>');"
                         value="<bean:message key="admin.admin.securityLogReport" />">
-                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="getElementById('editBtn').click(); getElementById('additionalSectionContent').style.height='auto';"></i></h4>
+                        <i class="icon-edit" style="float: right;" title="<bean:message key="demographic.demographiceditdemographic.msgEdit"/>" onclick="showHideDetail();closeAccordion(); getElementById('additionalSectionContent').style.height='auto';"></i></h4>
 
 						<table style="background-color: #FFFFFF"><tr><td style="width:100%"><%=Encode.forHtmlContent(notes)%>&nbsp;
 <%if (hasImportExtra) { %>
