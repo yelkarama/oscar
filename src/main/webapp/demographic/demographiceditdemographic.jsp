@@ -786,7 +786,26 @@ function showEdit(){
     document.getElementById('swipeButton').style.display = 'block';
     document.getElementById('editBtn').style.display = 'none';
     document.getElementById('closeBtn').style.display = 'inline';
+    openAccordion();
 }
+
+function openAccordion() {
+    document.getElementById('demographicSectionContent').style.height='auto';
+    document.getElementById('contactSectionContent').style.height='auto';
+    document.getElementById('insuranceSectionContent').style.height='auto';
+    document.getElementById('teamSectionContent').style.height='auto';
+    document.getElementById('wlSectionContent').style.height='auto';
+    document.getElementById('additionalSectionContent').style.height='auto';
+    var elems = document.querySelectorAll("legend");
+    [].forEach.call(elems, function(el) {
+        el.classList.remove("collapsed");
+    });
+    var elems = document.querySelectorAll(".accordion-body");
+    [].forEach.call(elems, function(el) {
+        el.classList.add("in");
+    });
+}
+
 function closeAccordion() {
     document.getElementById('demographicSectionContent').style.height='0';
     document.getElementById('contactSectionContent').style.height='0';
