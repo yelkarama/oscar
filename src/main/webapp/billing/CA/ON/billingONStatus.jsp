@@ -190,9 +190,11 @@
         <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
         <script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
         <script src="<%=request.getContextPath() %>/js/excellentexport.min.js"></script>
+        <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
         <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
         <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet">
-        <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
+        <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
         <script>
             $( document ).ready(function() {
             var startDate = $("#xml_vdate").datepicker({format : "yyyy-mm-dd"});
@@ -613,14 +615,15 @@
                 <% //
                     if(statusType.equals("_")) { %>
                 <!--  div class="rejected list"-->
-                <table class="table">
+                <table class="table" id="rejectTbl">
+                    <thead>
                     <tr class="warning">
-                        <th>Health#</th>
+                        <th>Insurance#</th>
                         <th>D.O.B</th>
-                        <th>Invoice #</th>
+                        <th>Invoice#</th>
                         <!--th>Type</th-->
-                        <th>Ref #</th>
-                        <th>Hosp #</th>
+                        <th>Ref#</th>
+                        <th>Hosp#</th>
                         <th title="admission date">Admitted</th>
                         <th>Claim Error</th>
                         <th>Code</th>
@@ -633,6 +636,7 @@
                         <th><button class="btn-link hidden-print" type="button" title="Show/Hide Checked" onClick="filterChecked()">Status</button></th>
                         <th>Filename</th>
                     </tr>
+                    </thead>
                     <% //
                         ArrayList<String> aLProviders;
                         if( providerNo == null || providerNo.equals(""))  {
@@ -701,7 +705,7 @@
                     </tr>
                     <% }}} else { %>
                     <!--  div class="tableListing"-->
-                    <table class="table" id="bListTable">
+                    <table class="table" id="bListTable" class="display nowrap">
                         <thead>
                             <tr>
                                 <th><a href="javascript:void();" onClick="updateSort('ServiceDate');return false;">SERVICE DATE</a></th>
@@ -886,6 +890,19 @@
                                 <!--ACTION-->
                             </tr>
                             <% } %>
+                        </tbody>
+                    </table>
+                    <script>
+                    $('#bListTable').DataTable({
+                        "bPaginate": false,
+                        "order": [],
+                        "language": {
+                            "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                            }
+                    });
+
+                    </script>
+                    <table>
                             <tr class="warning">
                                 <td>Count:</td>
                                 <td style="text-align:center"><%=patientCount%></td>
@@ -897,11 +914,11 @@
                                 <td>&nbsp;</td>
                                 <td>Total:</td>
                                 <!--CODE-->
-                                <td style="text-align:right"><%=total.toString()%></td>
+                                <td style="text-align:right">$<%=total.toString()%></td>
                                 <!--BILLED-->
-                                <td style="text-align:right"><%=paidTotal.toString()%></td>
+                                <td style="text-align:right">  Paid: $<%=paidTotal.toString()%></td>
                                 <!--PAID-->
-                                <td style="text-align:right"><%=adjTotal.toString()%></td>
+                                <td style="text-align:right">  Adj:  $<%=adjTotal.toString()%></td>
                                 <!--ADJUSTMENTS-->
                                 <td>&nbsp;</td>
                                 <!--DX-->
@@ -911,8 +928,8 @@
                                 <!--ACCOUNT-->
                                 <td>&nbsp;</td>
                                 <!--MESSAGES-->
-                                <td style="text-align:center">$<%=formatter.format(totalCash)%></td>
-                                <td style="text-align:center">$<%=formatter.format(totalDebit) %></td>
+                                <td style="text-align:center">Cash:  $<%=formatter.format(totalCash)%></td>
+                                <td style="text-align:center">Debit:  $<%=formatter.format(totalDebit) %></td>
                                 <td style="text-align:center">&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <!--PROVIDER-->
@@ -929,14 +946,23 @@
                                     </a>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
+                    </table><!-- inner -->
                     <%if(bList != null && !bList.isEmpty()) {%>
                     <a download="oscar_invoices.xls" href="#" onclick="return ExcellentExport.excel(this, 'bListTable', 'OSCAR Invoices');">Export to Excel</a>
                     <a download="oscar_invoices.csv" href="#" onclick="return ExcellentExport.csv(this, 'bListTable');">Export to CSV</a>
                     <%} %>
                     <% } %>
-                </table>
+                </table> <!-- outer -->
+                <script>
+                $('#rejectTbl').DataTable({
+                    "bPaginate": false,
+                    "order": [],
+                    "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                        }
+                });
+
+                </script>
             </form>
         </div>
         <!-- end container -->
