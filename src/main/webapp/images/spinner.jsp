@@ -42,8 +42,8 @@
 }
 
 #img-spinner {
-    width: 100px;
-    height: 77px;
+    width: 300px;
+    height: 24px;
 }
 
 .screen {
