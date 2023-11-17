@@ -129,7 +129,7 @@ $('#eformTbl').DataTable({
     "columnDefs": [
         { orderable: false, targets: [ 0,-1 ] }
       ],
-    "order": [[1, 'asc']],
+    "order": [],
     "language": {
         "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
         }
