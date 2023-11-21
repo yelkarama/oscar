@@ -317,13 +317,14 @@ public class CaseManagementPrint {
 					olisLabPdfCreator.printPdf();
 				}
 				else {
-					//LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
-					File f = File.createTempFile(String.format("%03d", Integer.parseInt(segmentId)),"pdf");
-					FileOutputStream fos = new FileOutputStream(f);
-					LabPDFCreator pdf = new LabPDFCreator(handler, fos, segmentId, result.multiLabId, "");
-					pdf.printPdf();
-					pdf.addEmbeddedDocuments(f,os2);
-					f.delete();
+					LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
+					File file3 = File.createTempFile(String.format("%03d", Integer.parseInt(segmentId)),"pdf");
+					FileOutputStream fos2 = new FileOutputStream(file3);
+					//LabPDFCreator pdf = new LabPDFCreator(handler, fos, segmentId, result.multiLabId, "");
+					pdfCreator.printPdf();
+					pdfCreator.addEmbeddedDocuments(file3,fos2);
+					file3.delete();
+
 				}
 				// filter labs within specified date range
 				if(startDate != null && endDate !=null){
@@ -364,6 +365,9 @@ public class CaseManagementPrint {
                   }
                   if (fos!=null) {
                       fos.close();
+                  }
+				  if (fos2!=null) {
+                      fos2.close();
                   }
                   if (file!=null) {
                       file.delete();
