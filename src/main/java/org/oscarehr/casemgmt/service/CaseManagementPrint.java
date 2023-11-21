@@ -324,6 +324,7 @@ public class CaseManagementPrint {
 					pdfCreator.printPdf();
 					pdfCreator.addEmbeddedDocuments(file3,fos2);
 					file3.delete();
+					fos2.close();
 
 				}
 				// filter labs within specified date range
@@ -365,9 +366,6 @@ public class CaseManagementPrint {
                   }
                   if (fos!=null) {
                       fos.close();
-                  }
-				  if (fos2!=null) {
-                      fos2.close();
                   }
                   if (file!=null) {
                       file.delete();
