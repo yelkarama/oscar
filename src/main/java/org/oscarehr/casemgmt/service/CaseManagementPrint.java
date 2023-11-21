@@ -306,30 +306,33 @@ public class CaseManagementPrint {
 			}
 			
 			for (LabResultData result : accessionMap.values()) {
-				//Date d = result.getDateObj();
-				// TODO:filter out the ones which aren't in our date range if there's a date range????
+				Date observationDate = result.getDateObj();
 				String segmentId = result.segmentID;
 				MessageHandler handler = Factory.getHandler(segmentId);
 				String fileName2 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.pdf";
-                                file2= new File(fileName2);
+				file2= new File(fileName2);
 				os2 = new FileOutputStream(file2);
 				if (handler instanceof OLISHL7Handler) {
 					OLISLabPDFCreator olisLabPdfCreator = new OLISLabPDFCreator(os2, request, segmentId);
 					olisLabPdfCreator.printPdf();
-					os2.close();
-					pdfDocs.add(fileName2);
 				}
 				else {
-					LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
-					pdfCreator.printPdf();
-					os2.close();
-					String fileName3 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.1.pdf";
-					File file3= new File(fileName3);
-					
-					fos = new FileOutputStream(file3);
-					pdfCreator.addEmbeddedDocuments(file2,fos);
-					
-					pdfDocs.add(fileName3);
+					//LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
+					File f = File.createTempFile(String.format("%03d", Integer.parseInt(segmentId)),"pdf");
+					FileOutputStream fos = new FileOutputStream(f);
+					LabPDFCreator pdf = new LabPDFCreator(handler, fos, segmentId, result.multiLabId, "");
+					pdf.printPdf();
+					pdf.addEmbeddedDocuments(f,os2);
+					f.delete();
+				}
+				// filter labs within specified date range
+				if(startDate != null && endDate !=null){
+					if(startDate.getTime().before(observationDate) && endDate.getTime().after(observationDate)){
+						pdfDocs.add(fileName2);
+					}
+				}
+				else{
+					pdfDocs.add(fileName2);
 				}
 
 			}
