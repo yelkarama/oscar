@@ -24,12 +24,18 @@
 package org.oscarehr.integration.born;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.*;
+import java.util.stream.Collectors;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +88,43 @@ public class CVCTesterAction extends DispatchAction {
 			return null;
 		}
 		logger.info("completed CVC update");
+		return null;
+	}
+	
+	public ActionForward addLotNumberAndExpiryDates(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+		String snomedConceptId = request.getParameter("snomedConceptId");
+		String lot = request.getParameter("lot");
+		String expiry = request.getParameter("expiry");
+		String reply = "fail";
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date lotExpiry = formatter.parse(expiry);
+		
+		if(snomedConceptId != null) {
+			CVCMedication med = cvcManager.getMedicationBySnomedConceptId(snomedConceptId);
+			reply = cvcManager.saveLot(med,lot,lotExpiry);
+		}
+		response.setContentType("text/plain"); 
+		response.setCharacterEncoding("UTF-8"); 
+		response.getWriter().write(reply);
+		return null;
+	}
+	
+	
+	public ActionForward deleteLotNumbers(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+		String snomedConceptId = request.getParameter("snomedConceptId");
+		String lots = request.getParameter("lots");
+		String reply = "";
+		List<String> list =
+		  Stream.of(lots.split(","))
+		  .collect(Collectors.toList());
+		if(snomedConceptId != null) {
+			for(String lot : list) {
+				reply += cvcManager.deleteLot(snomedConceptId,lot) + " ";
+			}
+		}
+		response.setContentType("text/plain"); 
+		response.setCharacterEncoding("UTF-8"); 
+  		response.getWriter().write(reply.trim());
 		return null;
 	}
 	

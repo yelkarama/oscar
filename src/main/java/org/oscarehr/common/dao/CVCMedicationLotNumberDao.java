@@ -42,6 +42,12 @@ public class CVCMedicationLotNumberDao extends AbstractDao<CVCMedicationLotNumbe
 		query.executeUpdate();
 	}
 	
+	public void removeLot(String lotNumber) {
+		Query query = entityManager.createQuery("DELETE FROM CVCMedicationLotNumber x WHERE x.lotNumber = :ln");
+		query.setParameter("ln", lotNumber);
+		query.executeUpdate();
+	}		
+	
 	public CVCMedicationLotNumber findByLotNumber(String lotNumber) {
 		Query query = entityManager.createQuery("SELECT x FROM CVCMedicationLotNumber x WHERE x.lotNumber = :ln");
 		query.setParameter("ln", lotNumber);

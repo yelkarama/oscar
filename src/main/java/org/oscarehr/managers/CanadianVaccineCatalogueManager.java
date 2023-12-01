@@ -26,6 +26,7 @@ package org.oscarehr.managers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,9 +130,24 @@ public class CanadianVaccineCatalogueManager {
 		return results;
 	}
 
-	
 
+	public String saveLot(CVCMedication medication, String lotNumber, Date expiryDate) {
+		medication.getLotNumberList().add(new CVCMedicationLotNumber(medication, lotNumber, expiryDate));
+		Set<CVCMedicationLotNumber> lotNumbers = medication.getLotNumberList();
+		for (CVCMedicationLotNumber l : lotNumbers) {
+			lotNumberDao.saveEntity(l);
+		}
+		return lotNumber;
+	}
 
+	public String deleteLot(String snomedConceptId, String lotNumber) {
+
+		if(snomedConceptId != null) {
+			lotNumberDao.removeLot(lotNumber);	
+			return lotNumber;
+		}
+		return null;
+	}
 
 
 	public void saveMedication(LoggedInInfo loggedInInfo, CVCMedication medication) {
