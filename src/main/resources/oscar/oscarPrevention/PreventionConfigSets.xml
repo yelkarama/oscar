@@ -7,20 +7,23 @@
 	-->
 
 <preventionConfig>
-	<set title="Childhood Immunization" effective="(August 2011)"
-       minAge="0" maxAge="19" prevList="DTaP-IPV,Hib,Pneu-C,MMR,MMRV,MenC-C,VZ,HepB,dTap,Td,Flu,Rot" />
+	<set title="Childhood Immunization" effective="(June 2022)"
+       minAge="0" maxAge="19" prevList="DTaP-IPV,Hib,Pneu-C,MMR,MMRV,MenC-C,VZ,HepB,dTap,Tdap-IPV,Men-C-ACYW-135,HPV Vaccine,Td,Flu,Rot" />
 
 	<set title="Women's Preventive Care" effective="" minAge="20"
-		maxAge="74" sex="F" prevList="PAP,HPV-CERVIX,MAM,Flu,Td" />
+		maxAge="74" sex="F" prevList="PAP,HPV-CERVIX,MAM,Flu,Td,Tdap" />
 
 	<set title="Men's Preventive Care" effective="" minAge="20" maxAge="74"
-		sex="M" prevList="Td,Flu,PSA" />
+		sex="M" prevList="Td,Flu,Pneumovax,PSA" />
 
 	<set title="Preventive Care" effective="" minAge="50" maxAge="74"
 		prevList="FOBT" />
+		
+	<set title="Shingles" effective="" minAge="65"
+		prevList="RZV" />
 
 	<set title="Over 65 Preventive Care" effective="" minAge="65"
-		prevList="Flu,Td" />
+		prevList="Flu,Td,Pneumovax" />
 
 	<set title="Other" effective="" minAge="0" prevList="OtherA,OtherB" />
 </preventionConfig>
