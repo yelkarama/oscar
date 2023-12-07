@@ -285,6 +285,7 @@ function changeCVCName() {
              success: function(data,textStatus) {
             	 if(data != null && data.lots != null && data.lots instanceof Array && data.lots.length > 0) {
             		 $("#cvcLot").show();
+                     table.clear();
          			 data.lots.sort(GetSortOrder("lotNumber")); //Pass the attribute to be sorted
             		 for(var x=0;x<data.lots.length;x++) {
             			 var item = data.lots[x];
