@@ -448,7 +448,7 @@ public class CanadianVaccineCatalogueManager2 {
 					cMed.setDinDisplayName(c.getDisplay());
 					
 				}
-				if ("https://fhir.infoway-inforoute.ca/CodeSystem/snomedctcaextension".equals(c.getSystem())) {
+				if ("https://fhir.infoway-inforoute.ca/codesystem/snomedctcaextension".equals(c.getSystem())) {
 					cMed.setSnomedCode(c.getCode());
 					cMed.setSnomedDisplay(c.getDisplay());
 				}
