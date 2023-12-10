@@ -1,4 +1,4 @@
-/**
+¹/**
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -141,7 +141,7 @@ public class CanadianVaccineCatalogueManager2 {
 				} else if(res.getIdElement().getIdPart().equals("RouteOfAdmin")) {
 					updateRoutes(loggedInInfo,(ValueSet)res);
 				} else {
-					//ShelfStatus, Disease, AntigenAntitoxen, administrative-gender, RepSource, ForecastStatus
+					//Disease, AntigenAntitoxen, AdminGender
 					logger.debug("value-set " + res.getId());
 				}
 			} else if(res.getResourceType() ==  ResourceType.Bundle) {
@@ -209,7 +209,7 @@ public class CanadianVaccineCatalogueManager2 {
 
 				imm.setSnomedConceptId(cc.getCode());
 				imm.setVersionId(0);
-				//cc.getDisplay()
+				logger.info("Loading names for concept "+cc.getCode());
 				
 				for(ConceptReferenceDesignationComponent cr : cc.getDesignation()) {
 					Coding use = cr.getUse();
@@ -219,7 +219,7 @@ public class CanadianVaccineCatalogueManager2 {
 						name.setUseSystem(use.getSystem());
 						name.setUseCode(use.getCode());
 						name.setUseDisplay(use.getDisplay());
-						logger.info(cc.getCode()+" display name "+use.getDisplay()+" cc display "+cc.getDisplay());
+						logger.debug(cc.getCode()+" display name "+use.getDisplay()+" cc display "+cc.getDisplay());
 					}else {
 						logger.error("USE WAS NULL for "+cr.getValue() +" "+c.toString());
 					}
@@ -229,38 +229,39 @@ public class CanadianVaccineCatalogueManager2 {
 				
 				for (Extension ext : cc.getExtension()) {
 
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
 						CodeableConcept shelfStatusConcept = (CodeableConcept)ext.getValue();
 						//active or inactive
 						//String status = ext.getValueAsPrimitive().getValueAsString();
 						for(Coding parentConceptCode :shelfStatusConcept.getCoding()) {                        
-							if("https://cvc.canimmunize.ca/v3/Valueset/ShelfStatus".equals(parentConceptCode.getSystem())) {
+							if("https://api.cvc.canimmunize.ca/v3/Valueset/ShelfStatus".equals(parentConceptCode.getSystem())) {
 								imm.setShelfStatus(parentConceptCode.getDisplay());
+								logger.debug("status: "+parentConceptCode.getDisplay());
 							}
 						}
 					}
 				
 					
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
 						Date lastUpdated = (Date)ext.getValueAsPrimitive().getValue();
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-ontario-ispa-vaccine".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-ontario-ispa-vaccine".equals(ext.getUrl())) {
 						Boolean ispa = (Boolean)ext.getValueAsPrimitive().getValue();
 						imm.setIspa(ispa);	
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-passive-immunizing-agent".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-passive-immunizing-agent".equals(ext.getUrl())) {
 						Boolean passiveImmAgent = (Boolean)ext.getValueAsPrimitive().getValue();
 						
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-contains-antigens".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-contains-antigens".equals(ext.getUrl())) {
 						//more structure
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-protects-against-diseases".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-protects-against-diseases".equals(ext.getUrl())) {
 						//more structure
 					}
 					
@@ -271,7 +272,7 @@ public class CanadianVaccineCatalogueManager2 {
 				
 				/*
 				for (Extension ext : cc.getExtension()) {
-					if ("https://cvc.canimmunize.ca/extensions/prevalence".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/extensions/prevalence".equals(ext.getUrl())) {
 						Integer prevalence = (Integer) ext.getValueAsPrimitive().getValue();
 						imm.setPrevalence(prevalence);
 					}
@@ -299,6 +300,7 @@ public class CanadianVaccineCatalogueManager2 {
 
 				imm.setSnomedConceptId(cc.getCode());
 				imm.setVersionId(0);
+				logger.info("Loading names for brand concept "+cc.getCode());
 				
 				for(ConceptReferenceDesignationComponent cr : cc.getDesignation()) {
 					Coding use = cr.getUse();
@@ -308,8 +310,9 @@ public class CanadianVaccineCatalogueManager2 {
 						name.setUseSystem(use.getSystem());
 						name.setUseCode(use.getCode());
 						name.setUseDisplay(use.getDisplay());
+						logger.debug(cc.getCode()+" display name "+use.getDisplay()+" cc display "+cc.getDisplay());
 					}else {
-						logger.info("USE WAS NULL for "+cr.getValue() +" "+c.toString());
+						logger.error("USE WAS NULL for "+cr.getValue() +" "+c.toString());
 					}
 					name.setValue(cr.getValue());
 					imm.getNames().add(name);
@@ -322,79 +325,79 @@ public class CanadianVaccineCatalogueManager2 {
 
 				for (Extension ext : cc.getExtension()) {
 					/*
-					if ("https://cvc.canimmunize.ca/extensions/prevalence".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/extensions/prevalence".equals(ext.getUrl())) {
 						Integer prevalence = (Integer) ext.getValueAsPrimitive().getValue();
 						imm.setPrevalence(prevalence);
 					}
 					*/
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
 						CodeableConcept shelfStatusConcept = (CodeableConcept)ext.getValue();
 						//active or inactive
 						//String status = ext.getValueAsPrimitive().getValueAsString();
 						for(Coding parentConceptCode :shelfStatusConcept.getCoding()) {                        
-							if("https://cvc.canimmunize.ca/v3/CodeSystem/ShelfStatus".equals(parentConceptCode.getSystem())) {
+							if("https://api.cvc.canimmunize.ca/v3/CodeSystem/ShelfStatus".equals(parentConceptCode.getSystem())) {
 								imm.setShelfStatus(parentConceptCode.getDisplay());
+								logger.debug("status: "+parentConceptCode.getDisplay());
 							}
 						}
 					}
 					
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
 						
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-ontario-ispa-vaccine".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-ontario-ispa-vaccine".equals(ext.getUrl())) {
 						Boolean ispa =  (Boolean)ext.getValueAsPrimitive().getValue();
 						imm.setIspa(ispa);
 					}
+										
 					
-					
-					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-parent-concept".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-parent-concept".equals(ext.getUrl())) {
 						CodeableConcept parentConcept = (CodeableConcept)ext.getValue();
 						for(Coding parentConceptCode :parentConcept.getCoding()) {
-							if("https://cvc.canimmunize.ca/v3/ValueSet/Generic".equals(parentConceptCode.getSystem())) {
+							if("https://api.cvc.canimmunize.ca/v3/ValueSet/Generic".equals(parentConceptCode.getSystem())) {
 								imm.setParentConceptId(parentConceptCode.getCode());
 							}
 						}
 						//String parent = ext.getValue().toString();
 						//imm.setParentConceptId(parent);
 					}
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-din".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-din".equals(ext.getUrl())) {
 						CodeableConcept dinConcept = (CodeableConcept)ext.getValue();
 						if(dinConcept.hasCoding()) {
 							din = dinConcept.getCoding().get(0).getDisplay();
 						}
 					}
-					if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-market-authorization-holder".equals(ext.getUrl())) {
+					if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-market-authorization-holder".equals(ext.getUrl())) {
 						manufactureDisplay = ext.getValue().primitiveValue();
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-typical-dose-size".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-typical-dose-size".equals(ext.getUrl())) {
 						String typicalDose = ext.getValueAsPrimitive().getValueAsString();
 						imm.setTypicalDose(typicalDose);
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-typical-dose-size-uom".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-typical-dose-size-uom".equals(ext.getUrl())) {
 						String typicalDoseUofM = ext.getValueAsPrimitive().getValueAsString();
 						imm.setTypicalDoseUofM(typicalDoseUofM);
 					}
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-strength".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-strength".equals(ext.getUrl())) {
 						String strength = ext.getValueAsPrimitive().getValueAsString();
 						imm.setStrength(strength);
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-passive-immunizing-agent".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-passive-immunizing-agent".equals(ext.getUrl())) {
 						Boolean passiveImmAgent = (Boolean)ext.getValueAsPrimitive().getValue();
 						
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-contains-antigens".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-contains-antigens".equals(ext.getUrl())) {
 						//more structure
 					}
 					
-					if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-protects-against-diseases".equals(ext.getUrl())) {
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-protects-against-diseases".equals(ext.getUrl())) {
 						//more structure
 					}
 					
@@ -456,14 +459,14 @@ public class CanadianVaccineCatalogueManager2 {
 			
 			for (Extension ext : med.getExtension()) {
 				
-				if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-market-authorization-holder".equals(ext.getUrl())) {
+				if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-market-authorization-holder".equals(ext.getUrl())) {
 					cMed.setManufacturerDisplay(ext.getValue().primitiveValue());
 				}
-				
-				if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
+
+				if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-shelf-status".equals(ext.getUrl())) {
 					CodeableConcept shelfStatusConcept = (CodeableConcept)ext.getValue();
 					for(Coding parentConceptCode :shelfStatusConcept.getCoding()) {
-						if("https://cvc.canimmunize.ca/v3/ValueSet/ShelfStatus".equals(parentConceptCode.getSystem())) {
+						if("https://api.cvc.canimmunize.ca/v3/ValueSet/ShelfStatus".equals(parentConceptCode.getSystem())) {
 							cMed.setStatus(parentConceptCode.getDisplay());
 						}
 					}
@@ -471,17 +474,17 @@ public class CanadianVaccineCatalogueManager2 {
 					
 				}
 				
-				if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
+				if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
 					
 				}
 				
-				if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-container".equals(ext.getUrl())) {
+				if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-container".equals(ext.getUrl())) {
 					
 				}
 				
 				
 
-				if ("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-lots".equals(ext.getUrl())) {
+				if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-lots".equals(ext.getUrl())) {
 					for(Extension lotsExt : ext.getExtension()) {
 						if("ca-cvc-lot".equals(lotsExt.getUrl())) {
 							String lotNumber = null;
@@ -578,10 +581,10 @@ public class CanadianVaccineCatalogueManager2 {
 			List<ConceptReferenceComponent> cons = c.getConcept();
 			for (ConceptReferenceComponent cc : cons) {
 				for(Extension ext : cc.getExtension()) {
-					if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-status-extension".equals(ext.getUrl())) {
+					if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-status-extension".equals(ext.getUrl())) {
 						String status = (String)ext.getValueAsPrimitive().getValue();
 					}
-					if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
+					if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
 						Date dateLastUpdated = (Date)ext.getValueAsPrimitive().getValue();
 					}
 				}
@@ -641,10 +644,10 @@ public class CanadianVaccineCatalogueManager2 {
 			List<ConceptReferenceComponent> cons = c.getConcept();
 			for (ConceptReferenceComponent cc : cons) {
 				for(Extension ext : cc.getExtension()) {
-					if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-status-extension".equals(ext.getUrl())) {
+					if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-status-extension".equals(ext.getUrl())) {
 						String status = (String)ext.getValueAsPrimitive().getValue();
 					}
-					if("https://cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
+					if("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-concept-last-updated".equals(ext.getUrl())) {
 						Date dateLastUpdated = (Date)ext.getValueAsPrimitive().getValue();
 					}
 				}
