@@ -58,6 +58,7 @@ public class CVCImmunization extends AbstractModel<Integer> {
 	private String typicalDose;
 	private String typicalDoseUofM;
 	private String strength;
+	private String route;
 	private String shelfStatus;
 
 	public Integer getId() {
@@ -172,6 +173,14 @@ public class CVCImmunization extends AbstractModel<Integer> {
 
 	public void setStrength(String strength) {
 		this.strength = strength;
+	}
+	
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String route) {
+		this.route = route;
 	}
 
 	public String getShelfStatus() {
