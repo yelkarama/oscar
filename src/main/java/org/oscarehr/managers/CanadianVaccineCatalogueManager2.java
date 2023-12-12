@@ -320,7 +320,8 @@ public class CanadianVaccineCatalogueManager2 {
 				
 				String din = null;
 				String manufactureDisplay = null;
-				
+				String routeDisplay = null;
+				String routeCode = null;				
 				
 
 				for (Extension ext : cc.getExtension()) {
