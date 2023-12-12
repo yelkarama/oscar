@@ -320,6 +320,8 @@ public class CanadianVaccineCatalogueManager2 {
 				
 				String din = null;
 				String manufactureDisplay = null;
+				String routeDisplay = null;
+				String routeCode = null;
 				
 				
 
@@ -401,6 +403,13 @@ public class CanadianVaccineCatalogueManager2 {
 						//more structure
 					}
 					
+					if ("https://api.cvc.canimmunize.ca/v3/StructureDefinition/ca-cvc-route-of-admin-maps".equals(ext.getUrl())) {
+						CodeableConcept routeConcept = (CodeableConcept)ext.getValue();
+						if(routeConcept.hasCoding()) {
+							routeDisplay = routeConcept.getCoding().get(0).getDisplay(); //"Intramuscular: IM"
+							routeCode = = routeConcept.getCoding().get(0).getCode(); //"78421000"
+						}
+					}
 				}
 				
 				if(imm.getSnomedConceptId() != null && manufactureDisplay != null) {
