@@ -173,6 +173,14 @@ public class CVCImmunization extends AbstractModel<Integer> {
 	public void setStrength(String strength) {
 		this.strength = strength;
 	}
+	
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String routeCode) {
+		this.route = routeCode;
+	}
 
 	public String getShelfStatus() {
 		return shelfStatus;
