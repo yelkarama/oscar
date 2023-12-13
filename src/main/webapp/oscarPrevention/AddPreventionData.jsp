@@ -88,9 +88,9 @@ if(!authed) {
   CVCMappingDao cvcMappingDao = SpringUtils.getBean(CVCMappingDao.class);
   CVCImmunizationDao cvcImmunizationDao = SpringUtils.getBean(CVCImmunizationDao.class);
   PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
-  
+
    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-  
+
   if(session.getValue("user") == null) response.sendRedirect("../logout.jsp");
   String demographic_no = request.getParameter("demographic_no");
   String snomedId = request.getParameter("snomedId");
@@ -108,15 +108,15 @@ if(!authed) {
   String creatorProviderNo = "";
   String creatorName = "";
   String expiryDate = "";
-  
+
   boolean never = false;
   Map<String,String> extraData = new HashMap<String,String>();
 	boolean hasImportExtra = false;
 	String annotation_display = CaseManagementNoteLink.DISP_PREV;
 
-	
+
 	boolean dhirEnabled=false;
-	  
+
   	if("true".equals(OscarProperties.getInstance().getProperty("dhir.enabled", "false"))) {
   		dhirEnabled=true;
   	}
@@ -128,11 +128,11 @@ if(!authed) {
 
      prevDate = (String) existingPrevention.get("preventionDate");
      prevDate = partialDateDao.getDatePartial(prevDate, PartialDate.PREVENTION,  Integer.parseInt(id), PartialDate.PREVENTION_PREVENTIONDATE);
-     
+
      providerName = (String) existingPrevention.get("providerName");
      provider = (String) existingPrevention.get("provider_no");
      creatorProviderNo = (String) existingPrevention.get("creator");
-     
+
      if ( existingPrevention.get("refused") != null ){
         completed = (String)existingPrevention.get("refused");
      }
@@ -151,28 +151,28 @@ if(!authed) {
 	List<CaseManagementNoteLink> cml = cmm.getLinkByTableId(CaseManagementNoteLink.PREVENTIONS, Long.valueOf(id));
 	hasImportExtra = (cml.size()>0);
 	 snomedId = (String) existingPrevention.get("snomedId");
-	 
+
 	 creationDate = parseDate((String) existingPrevention.get("creationDate"));
-	
+
   }
 
   String prevention = request.getParameter("prevention");
   if (prevention == null && existingPrevention != null){
       prevention = (String) existingPrevention.get("preventionType");
   }
-  
- 
+
+
 
   PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao)SpringUtils.getBean(PreventionsLotNrsDao.class);
   List<String> lotNrList = PreventionsLotNrsDao.findLotNrs(prevention, false);
-  
+
   String prevResultDesc = request.getParameter("prevResultDesc");
 
   String errorsToShow = "";
   boolean foundByLotNumber = false;
   CVCImmunization brandName = null;
   CVCImmunization generic = null;
-  
+
   String addByLotNbr = request.getParameter("lotNumber");
   if(StringUtils.isNotEmpty(addByLotNbr)) {
 	  CVCMedicationLotNumber medLot =  cvcManager.findByLotNumber(loggedInInfo, addByLotNbr);
@@ -183,7 +183,7 @@ if(!authed) {
 		  //Is there an OSCAR mapping for the prevention type
 		  CVCMapping mapping1 = cvcMappingDao.findBySnomedId(generic.getSnomedConceptId());
 		  if(mapping1 != null) {
-			prevention = mapping1.getOscarName();  
+			prevention = mapping1.getOscarName();
 		  } else {
 		  	prevention = generic.getPicklistName();
 		  }
@@ -193,18 +193,18 @@ if(!authed) {
 		  errorsToShow="Could not find this lot number in the system.";
 	  }
   }
-  
+
   String addByLotNbr2 = request.getParameter("search");
   if(StringUtils.isNotEmpty(addByLotNbr2)) {
 	  String brandSnomedId = request.getParameter("brandSnomedId");
-	  
+
 	  generic = cvcManager.getBrandNameImmunizationBySnomedCode(loggedInInfo, snomedId);
 	  if(generic != null) {
 	  	brandName = cvcManager.getBrandNameImmunizationBySnomedCode(loggedInInfo, brandSnomedId);
 	  	prevention = generic.getPicklistName();
 	  	CVCMapping mapping1 = cvcMappingDao.findBySnomedId(generic.getSnomedConceptId());
 		  if(mapping1 != null) {
-			prevention = mapping1.getOscarName();  
+			prevention = mapping1.getOscarName();
 		  } else {
 		  	prevention = generic.getPicklistName();
 		  }
@@ -213,10 +213,10 @@ if(!authed) {
 		  errorsToShow="Could not find this prevention in the system.";
 	  }
   }
-  
+
   boolean isCvc = false;
 	isCvc = snomedId != null;
-  
+
   PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
   HashMap<String,String> prevHash = pdc.getPrevention(prevention);
 
@@ -230,7 +230,7 @@ if(!authed) {
 
 
   if (creatorProviderNo == "")
-  { 
+  {
 	  creatorProviderNo = provider;
   }
 
@@ -240,8 +240,8 @@ if(!authed) {
 	   {
 	   		creatorName = Encode.forHtmlContent((String) ((ArrayList) providers.get(i)).get(2)+", "+(String) ((ArrayList) providers.get(i)).get(1));
 	   }
-  } 
-  
+  }
+
   //calc age at time of prevention
   Date dob = PreventionData.getDemographicDateOfBirth(LoggedInInfo.getLoggedInInfoFromSession(request), Integer.valueOf(demographic_no));
   Date dateOfPrev = parseDate(prevDate);
@@ -249,7 +249,7 @@ if(!authed) {
   DemographicData demoData = new DemographicData();
   String[] demoInfo = demoData.getNameAgeSexArray(LoggedInInfo.getLoggedInInfoFromSession(request), Integer.valueOf(demographic_no));
   String nameage = demoInfo[0] + ", " + demoInfo[1] + " " + demoInfo[2] + " " + age;
-  
+
   Demographic demoObject = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
 
   HashMap<String,String> genders = new HashMap<String,String>();
@@ -434,7 +434,7 @@ clear: left;
 		hideItem('lot');
 	}
    //show "other" in drop-down
-   else if (elem.options[elem.selectedIndex].value == -1) 
+   else if (elem.options[elem.selectedIndex].value == -1)
    {
 	    document.getElementById('lot').value = "";
    		showItem('lot');
@@ -449,22 +449,22 @@ clear: left;
 	  var summary =  document.getElementById('summary');
 	  //existing prevention record
 	  if (typeof(summary) != 'undefined' && summary != null)
-	  { 
+	  {
 	     if (LotNr.length == 0)
 	     {
 	    	 if (elem.options[0].value != -1) //table exists
 	    	 {
 	    		 elem.options[elem.options.length-1].selected = true;
 	    		 return;
-	    	 }	    	 
+	    	 }
 	    	 else
 	    	 {
 	  	       hideItem('lotDrop');
 	  		   showItem('lot');
 	  	       return;
 	  	    }
-	     }	  
-	  }	  
+	     }
+	  }
 	  if (LotNr.length >0)
 	  {
 		  for (var i = 0; i < elem.length; i++) {
@@ -478,7 +478,7 @@ clear: left;
 	  //no preventionslotnrs table
 	  {
 		   hideItem('lotDrop');
-		   showItem('lot');	
+		   showItem('lot');
 	  }
 	 // not in drop-down
 	 else if (!bFound && LotNr.length >0)
@@ -496,11 +496,11 @@ clear: left;
 var warnOnWindowClose=true;
 
 function copyLot() {
-	
+
 	var cvcName = $("#cvcName option:selected").val();
 	if(cvcName !== undefined && cvcName != -1 && $("#cvcLot").is(":visible")) {
 		//$("#lot").val($("#cvcLot").val());
-		$("#name").val($("#cvcName option:selected").text());	
+		$("#name").val($("#cvcName option:selected").text());
 	}
 }
 
@@ -527,25 +527,25 @@ function escapeHtml(unsafe1) {
          .replace(/"/g, "&quot;")
          .replace(/'/g, "&#039;");
  }
- 
+
 var lots;
 var startup = false, startup2 = false;
 
-function GetSortOrder(prop) {    
-    return function(a, b) {    
-        if (a[prop] > b[prop]) {    
-            return -1;    
-        } else if (a[prop] < b[prop]) {    
-            return 1;    
-        }    
-        return 0;    
-    }    
+function GetSortOrder(prop) {
+    return function(a, b) {
+        if (a[prop] > b[prop]) {
+            return -1;
+        } else if (a[prop] < b[prop]) {
+            return 1;
+        }
+        return 0;
+    }
 }
 
 function changeCVCName() {
 	lots = null;
 	$("#typicalDose").html("");
-	
+
 	 var snomedId = $("#cvcName").val();
 	 if(snomedId == "-1") {
 		 $("#lot").show();
@@ -567,10 +567,10 @@ function changeCVCName() {
             		 //$("#lot").hide();
             		 $("#cvcLot").show();
             		 $("#cvcLot").find("option").remove().end();
-            		 
+
             		 $("#cvcLot").append('<option value=""></option>');
-                     
-         			 data.lots.sort(GetSortOrder("lotNumber")); //Pass the attribute to be sorted 
+
+         			 data.lots.sort(GetSortOrder("lotNumber")); //Pass the attribute to be sorted
             		 for(var x=0;x<data.lots.length;x++) {
             			 var item = data.lots[x];
             			 //console.log(JSON.stringify(item));
@@ -579,8 +579,8 @@ function changeCVCName() {
             			var month = ((d.getMonth()+1) > 9) ? (d.getMonth()+1) : ("0" + (d.getMonth()+1));
             			var day = ((d.getDate()) > 9) ? (d.getDate()) : ("0" + (d.getDate()));
             			var output = d.getFullYear() + "-" + month + "-" + day;
-            			 
-            			
+
+
             			if(startup2 && escapeHtml(item.lotNumber) == '<%=addByLotNbr %>') {
             				$("#cvcLot").append('<option selected="selected" value="'+item.lotNumber+'" expiryDate="'+output+'">'+item.lotNumber+'</option>');
             				startup2=false;
@@ -592,36 +592,41 @@ function changeCVCName() {
             			} else {
             				$("#cvcLot").append('<option value="'+escapeHtml(item.lotNumber)+'" expiryDate="'+output+'">'+escapeHtml(item.lotNumber)+'</option>');
             			}
-            			//updateCvcLot();        			 
-            		 }            		 
+            			//updateCvcLot();
+            		 }
             	 } else {
             		 $("#cvcLot").hide();
             		 $("#cvcLot").find("option").remove().end();
-            		 
+
             		// $("#lot").val('');
             		 $("#lot").show();
             	 }
-            	 
+
             	 if(data != null && data.typicalDose != null) {
             		 var dose = data.typicalDose.dose;
             		 var doseUnit = data.typicalDose.UoM;
+                     var doseRoute = data.typicalDose.route;
             		 //console.log("dose = " + dose + ",doseUnit=" + doseUnit);
+            		 if(doseRoute != null ) {
+            		 	//$("#route option[value=doseRoute]").attr('selected','selected');
+            		 	$("#route").val(doseRoute).change();
+            		 }
             		 if(dose != null && doseUnit != null) {
             		 	$("#typicalDose").html(dose + " " + doseUnit);
             		 }
             		 $("#dose").val(dose);
-            		 
+
             		 if(doseUnit == 'ml') {
             			 doseUnit = "mL";
             		 }
             		 $("#doseUnit").val(doseUnit);
-            		 
+
             	 }
              }
           });
-		 
-		 
-		 
+
+
+
 		 $.ajax({
              type: "POST",
              url: "<%=request.getContextPath()%>/cvc.do",
@@ -631,7 +636,7 @@ function changeCVCName() {
             	 if(data != null) {
             		 if(data.din != null) {
             			 $("#din").val(data.din);
-            			 
+
             		 }
             		 if(data.manufacture != null) {
             			 $("#manufacture").val(data.manufacture);
@@ -659,7 +664,7 @@ function updateCvcLot() {
 		startup2=true;
 		changeCVCName();
 	});
-	
+
 <%
 	}
 %>
@@ -742,11 +747,11 @@ function changeSite(el) {
 <%
 	if(request.getAttribute("errors") != null) {
 		List<String> errorList = (List<String>)request.getAttribute("errors");
-		%><ul style="color:red"><% 
+		%><ul style="color:red"><%
 		for(String error:errorList) {
 			%>
 			<li><%=error %></li>
-			<% 
+			<%
 		}
 		%></ul><%
 	}
@@ -765,7 +770,7 @@ function changeSite(el) {
                <% if ( id != null ) { %>
                <input type="hidden" name="id" value="<%=id%>"/>
                <input type="hidden" name="layoutType" value="<%=layoutType%>"/>
-               
+
 	       <div class="prevention">
 		   <fieldset>
 		       <legend>Summary</legend>
@@ -801,20 +806,20 @@ function changeSite(el) {
                                       <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
                                   </select>
                                   <span id="providerNameFormat"><small>External Provider Name Format: FirstName, LastName </small>
-                                 
+
                                   <br/>
                              <label for="creator" class="fields" >Creator:</label> <input type="text" name="creator" value="<%=creatorName%>" readonly/> <br/>
                          </div>
                    </fieldset>
                    <fieldset >
                       <legend >Result</legend>
-             			 
+
              			 <%if(snomedId != null) {
              				List<CVCImmunization> tnList = cvcManager.getImmunizationsByParent(snomedId);
              				if(tnList != null && tnList.size() > 0) {
              					%>
-             				
-             					<label for="cvcName">Trade Name:</label> 
+
+             					<label for="cvcName">Trade Name:</label>
    	             			 <select id="cvcName" name="cvcName" onChange="changeCVCName()">
    	             			 	<option value="-1">Select Below</option>
    	             			 	<%
@@ -822,7 +827,7 @@ function changeSite(el) {
    	             			 		for(CVCImmunization tn:tnList) {
    	             			 			String selected = "";
    	             						if(existingPrevention != null) {
-   		             			 			String brandSnomedId = (String) existingPrevention.get("brandSnomedId");	
+   		             			 			String brandSnomedId = (String) existingPrevention.get("brandSnomedId");
    		             			 			if(brandSnomedId != null && brandSnomedId.equals(tn.getSnomedConceptId())) {
    		             			 				selected = "selected=\"selected\"";
    		             			 			}
@@ -833,28 +838,36 @@ function changeSite(el) {
    		             			 				selected = "selected=\"selected\"";
    		             			 			}
    	             						}
+   	             						if(tnList.size()==1) {
+   	             						   	     selected = "selected=\"selected\"";
+                                        }
+
    	             			 			%><option value="<%=tn.getSnomedConceptId()%>" <%=selected%>><%=tn.getPicklistName() %></option><%
    	             			 		}
    	             			 	%>
-   	             		
+
    	             			 </select>
-   	             			 
-   	             			 <br/>	
+                                <%
+                                        if(tnList.size()==1) {
+   	             						   	     %><script>changeCVCName();</script><%
+                                        }
+                                %>
+   	             			 <br/>
    	             				 <span id="unknownName" style="display:block"><label for="name">Name</label> <input type="text" id="name" name="name" value="<%=str((extraData.get("name")),"")%>"/> <br/><br/></span>
-             		<%			
+             		<%
              				} else {
              					%>  <label for="name">Name:</label> <input type="text" id="name" name="name" value="<%=str((extraData.get("name")),"")%>"/> <br/> <%
              				}
-                        
+
              			 } else {
              			 	%>  <label for="name">Name:</label> <input type="text" id="name" name="name" value="<%=str((extraData.get("name")),prevention)%>"/> <br/>
-             			 
-             			<% } %> 
-             			 
-             			 
-             			 
-             			 <label for="location">Location:</label> 
-             			 
+
+             			<% } %>
+
+
+
+             			 <label for="location">Location:</label>
+
              			 <select name="location" id="location" onChange="changeSite(this)">
              			 	 <option value=""></option>
                          	    <%
@@ -891,7 +904,7 @@ function changeSite(el) {
                          		<option value="Nares (Lt and Rt)" <%="Nares (Lt and Rt)".equals(str((extraData.get("location")),"")) ? locationSelected : "" %>>Nares (Lt and Rt)</option>
                          		<% } %>
              			 </select>
-             			 
+
              			 <%
              			 	String locationDisplay = "none";
              			 	if("Other".equals(str(extraData.get("location"),""))) {
@@ -900,14 +913,14 @@ function changeSite(el) {
              			 %>
              			 <br>
              			 	<div id="locationDiv" style="display:<%=locationDisplay%>">
-             				<label for="location2">Specify Location:</label> 
-             			
-             			 <input type="text" name="location2" id="location2" value="<%=str((extraData.get("location2")),"")%>"/> 
+             				<label for="location2">Specify Location:</label>
+
+             			 <input type="text" name="location2" id="location2" value="<%=str((extraData.get("location2")),"")%>"/>
              			 </div>
-             			 
+
              			 <br/>
-                         <label for="route">Route:</label> 
-                         	
+                         <label for="route">Route:</label>
+
                          	<select name="route" id="route">
                          	    <option value=""></option>
                          	    <%
@@ -930,9 +943,9 @@ function changeSite(el) {
                          		<% } %>
                          	</select>
                          	<br/>
-                         	
-                         	<label for="route">DIN:</label> 
-                         	<input type="text" name="din" id="din" value="<%=str((extraData.get("din")),"")%>"/> 
+
+                         	<label for="route">DIN:</label>
+                         	<input type="text" name="din" id="din" value="<%=str((extraData.get("din")),"")%>"/>
              			 	<br/>
                          	<%
                          		String dose = str((extraData.get("dose")),"");
@@ -949,7 +962,7 @@ function changeSite(el) {
                          		} else {
                          			d1 = dose;
                          		}
-                         		
+
                          		if("".equals(dose)) {
                          			d2 = "mL";
                          		}
@@ -966,9 +979,9 @@ function changeSite(el) {
 							<option value="g" <%="g".equals(d2)?"selected=\"selected\" ":"" %>>g</option>
 							<option value="capsule" <%="capsule".equals(d2)?"selected=\"selected\" ":"" %>>capsule</option>
 							<option value="vial" <%="vial".equals(d2)?"selected=\"selected\" ":"" %>>vial</option>
-                        
+
                           </select>
-                         
+
                           <br/>
                         <%if(!isCvc) { %>
                          <label for="lot">Lot:</label>  <input type="text" name="lot" id="lot" value="<%=str(lot,"")%>" />
@@ -981,11 +994,11 @@ function changeSite(el) {
                          </select><br/>
                          <%} else { %>
                          <div id="cvcLotDiv">
-                         <label for="cvcLot">Lot:</label> 
+                         <label for="cvcLot">Lot:</label>
                           <input type="text" name="lot" id="lot" value="<%=str(lot,"")%>" style="display:block" />
-                          
+
                          <select onchange="javascript:updateCvcLot();" id="cvcLot" name="cvcLot" style="display:none;">
-                             
+
                          </select></div>
                          <label for="expiryDate">Expiry Date:</label> <input type="text" name="expiryDate" id="expiryDate"  value="<%=str((extraData.get("expiryDate")),"")%>"/><br/>
                          <% } %>
@@ -993,7 +1006,7 @@ function changeSite(el) {
                          <% if(generic != null){ %>
                          <label for="shelfStatus">Status:</label> <span name="shelfStatus" id="shelfStatus"  ></span><%=generic.getShelfStatus() %><br/> <%--str((extraData.get("status")),"")--%>
                          <% } %>
-                         
+
                    </fieldset>
                    <fieldset >
                       <legend >Comments</legend>
@@ -1200,16 +1213,16 @@ function changeSite(el) {
    					ConsentDao consentDao = SpringUtils.getBean(ConsentDao.class);
    					Consent ispaConsent =  consentDao.findByDemographicAndConsentType(Integer.parseInt(demographic_no), "dhir_ispa_consent");
    					Consent nonIspaConsent =  consentDao.findByDemographicAndConsentType(Integer.parseInt(demographic_no), "dhir_non_ispa_consent");
-   					
+
    					boolean ispa = Boolean.valueOf((String)prevHash.get("ispa"));
-   					
+
    					boolean isSSOLoggedIn = session.getAttribute("oneIdEmail") != null;
    					boolean hasIspaConsent = ispaConsent != null && !ispaConsent.isOptout();
    					boolean hasNonIspaConsent = nonIspaConsent != null && !nonIspaConsent.isOptout();
 
    					//if(dhirEnabled &&  isSSOLoggedIn) {
    					//	if((ispa && hasIspaConsent) || (!ispa && hasNonIspaConsent)) {
-   						
+
    					if("ON".equalsIgnoreCase(demoObject.getHcType()) && CanadianVaccineCatalogueManager2.getCVCActive(creationDate)){
                %>
                <script type="text/javascript">
@@ -1235,10 +1248,10 @@ function changeSite(el) {
             <% if(dhirEnabled){ %>
                <input type="submit" value="Save & Submit" name="action" onclick="return validateSubmitSave();" <%=(dhirEnabled) ? "title='Send to DHIR'" : "disabled title='DHIR not enabled' disabled" %> >
             <% } %>
-                <% } 
-   					
-   					//} 
-   					
+                <% }
+
+   					//}
+
    					%>
                <% if ( id != null ) { %>
                <input type="submit" name="delete" value="Delete"/>
@@ -1300,7 +1313,7 @@ String checked(String first,String second){
 
   Date parseDate(String dt) {
 	SimpleDateFormat fmt = null;
-			
+
 	if(dt.length() == 4) {
 		fmt = new SimpleDateFormat("yyyy");
 	} else if(dt.length() == 7) {
@@ -1310,7 +1323,7 @@ String checked(String first,String second){
 	} else if(dt.length() == 16) {
 		fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	}
-	
+
 	if(fmt != null) {
 		try {
 			return fmt.parse(dt);

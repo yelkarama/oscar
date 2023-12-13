@@ -148,6 +148,7 @@ public class CVCTesterAction extends DispatchAction {
 				JSONObject t = new JSONObject();
 				t.put("dose",imm.getTypicalDose());
 				t.put("UoM",imm.getTypicalDoseUofM());
+				t.put("route",imm.getRoute());
 				result.put("typicalDose",t);
 			}
 			result.write(response.getWriter());
