@@ -606,13 +606,14 @@ function changeCVCName() {
             		 var dose = data.typicalDose.dose;
             		 var doseUnit = data.typicalDose.UoM;
                      var doseRoute = data.typicalDose.route;
-            		 //console.log("dose = " + dose + ",doseUnit=" + doseUnit);
+                     var routeText = "";
             		 if(doseRoute != null ) {
-            		 	//$("#route option[value=doseRoute]").attr('selected','selected');
             		 	$("#route").val(doseRoute).change();
+                        var routeArray = $("#route option:selected").text().split(":");
+                        routeText = routeArray[0];
             		 }
             		 if(dose != null && doseUnit != null) {
-            		 	$("#typicalDose").html(dose + " " + doseUnit);
+            		 	$("#typicalDose").html("&nbsp;" + dose + " " + doseUnit + " " + routeText);
             		 }
             		 $("#dose").val(dose);
 
