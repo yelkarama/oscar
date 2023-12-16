@@ -23,21 +23,26 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+
 <html>
 <head>
 <title>Do you want a cover page?</title>
+
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!--  bootstrap 2.3 -->
+
 </head>
 <body style="text-align:center">
 
 <h3>Would you like a cover page?</h3>
 <form action="<%=request.getContextPath() + "/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do"%>" method="post">
 
-<input type="hidden" name="reqId" value="<%=request.getAttribute("reqId")==null ? request.getParameter("reqId") : request.getAttribute("reqId") %>"/>
-<input type="hidden" name="transType" value="<%=request.getAttribute("transType") %>"/>
-<input type="hidden" name="demographicNo" value="<%=request.getParameter("demographicNo")%>"/>
-<input type="hidden" name="letterheadFax" value="<%=request.getParameter("letterheadFax")%>"/>
-<input type="hidden" name="fax" value="<%=request.getParameter("fax")%>"/>
+<input type="hidden" name="reqId" value="<%=request.getAttribute("reqId")==null ? request.getParameter("reqId") : request.getAttribute("reqId") %>">
+<input type="hidden" name="transType" value="<%=request.getAttribute("transType") %>">
+<input type="hidden" name="demographicNo" value="<%=request.getParameter("demographicNo")%>">
+<input type="hidden" name="letterheadFax" value="<%=request.getParameter("letterheadFax")%>">
+<input type="hidden" name="fax" value="<%=request.getParameter("fax")%>">
 
 <%
 	String consultResponsePage = request.getParameter("consultResponsePage");
@@ -47,28 +52,30 @@
 	<%
 	}
 %>
-	
+
 <%
 	String[] faxRecipients = request.getParameterValues("faxRecipients");
 
 	if( faxRecipients != null ) {
 		for( String fax : faxRecipients ) {
 %>
-			<input type="hidden" name="faxRecipients" value="<%=fax%>"/>
+			<input type="hidden" name="faxRecipients" value="<%=fax%>">
 <%
 		}
 	}
 %>
 
 
-<div style="border-style:solid; border-width:5px;">
-	Yes<input type="radio" name="coverpage" value="true"/>&nbsp;No<input type="radio" checked="checked" name="coverpage" value="false"/>
-</div>
-<div style="margin-top:25px;">
-Notes<br>
-	<textarea name="note" rows="25" cols="72"></textarea>
+<div class="well">
+    <div class="row">
+	<label class="control-label" for="yes"><bean:message key="consultationList.btn.newConsult" /></label><bean:message key="global.yes" /><input type="radio" name="coverpage" value="true" id="yes">&nbsp;<bean:message key="global.no" /><input type="radio" checked="checked" name="coverpage" value="false">
+    </div>
+    <div style="margin-top:25px;">
+<bean:message key="caseload.msgNotes" /><br>
+	<textarea name="note" style= "width: 80%; height:300px;" onclick="document.getElementById('yes').checked = true;" ></textarea>
 <br>
-	<input type="submit" value="Submit"/>
+	<input class="btn btn-primary" type="submit" value="<bean:message key="global.btnSubmit" />">
+    </div>
 </div>
 
 </form>
