@@ -186,7 +186,7 @@ public class DashboardManager {
 	 */
 	public List<Dashboard> getActiveDashboards( LoggedInInfo loggedInInfo ) {
 		if( ! securityInfoManager.hasPrivilege(loggedInInfo, "_dashboardManager", SecurityInfoManager.READ, null ) ) {	
-			LogAction.addLog(loggedInInfo, "DashboardManager.getActiveDashboards", null, null, null, "User missing _dashboardManager role with read access");
+			//LogAction.addLog(loggedInInfo, "DashboardManager.getActiveDashboards", null, null, null, "User missing _dashboardManager role with read access");
 			return null;
         }
 		
