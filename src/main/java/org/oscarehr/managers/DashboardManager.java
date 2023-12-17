@@ -100,7 +100,7 @@ public class DashboardManager {
 	 */
 	public List<IndicatorTemplate> getIndicatorLibrary( LoggedInInfo loggedInInfo, boolean sharedOnly ) {
 		if( ! securityInfoManager.hasPrivilege(loggedInInfo, "_dashboardManager", SecurityInfoManager.WRITE, null ) ) {	
-			LogAction.addLog(loggedInInfo, "DashboardManager.getIndicatorLibrary", null, null, null, "User missing _dashboardManager role with write access");
+			//LogAction.addLog(loggedInInfo, "DashboardManager.getIndicatorLibrary", null, null, null, "User missing _dashboardManager role with write access");
 			return null;
         }
 		
