@@ -75,7 +75,7 @@ public class WebServiceLoggingAdvice {
 			Object result = joinpoint.proceed();
 			duration = System.currentTimeMillis() - duration;
 			String action = getServiceCallDescription(joinpoint);
-			if (!action.trim().equals("ResourceService.getNotificationsNumber")) {
+			if (!action.trim().equals("ResourceService.getNotificationsNumber") && !action.trim().equals("AppService.isPHRActive")) {
 				logAccess("REST WS: " + action);
 			}
 			return result;
