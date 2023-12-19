@@ -92,6 +92,7 @@ public class EctConsultationFormFaxAction extends Action {
 		String demoNo = request.getParameter("demographicNo");
 		String faxNumber = request.getParameter("letterheadFax");
 		String consultResponsePage = request.getParameter("consultResponsePage");
+		String specialistId = request.getParameter("specialist");
 		boolean doCoverPage = request.getParameter("coverpage").equalsIgnoreCase("true");
 		
 		ArrayList<EDoc> docs;
@@ -128,7 +129,7 @@ public class EctConsultationFormFaxAction extends Action {
 				
 				PdfCoverPageCreator pdfCoverPageCreator = new PdfCoverPageCreator(note);
 				
-				buffer = pdfCoverPageCreator.createCoverPage();
+				buffer = pdfCoverPageCreator.createCoverPage(specialistId);
 				bis = new ByteInputStream(buffer, buffer.length);
 				streams.add(bis);
 				alist.add(bis);

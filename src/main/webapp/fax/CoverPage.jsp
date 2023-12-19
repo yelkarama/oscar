@@ -24,26 +24,87 @@
 
 --%>
 <!DOCTYPE html>
+
+
+<%@ page import="org.oscarehr.common.dao.ClinicDAO"%>
+<%@ page import="org.oscarehr.common.dao.ProfessionalSpecialistDao"%>
+<%@ page import="org.oscarehr.common.model.Clinic"%>
+<%@ page import="org.oscarehr.common.model.ProfessionalSpecialist"%>
+<%@ page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="oscar.OscarProperties"%>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 
+<%
+    ClinicDAO clinicDao = SpringUtils.getBean(ClinicDAO.class);
+	Clinic clinic = clinicDao.getClinic();
+    String clinicName = "OSCAR";
+    String clinicAddress = "";
+    String clinicPhone = "";
+    String clinicFax = "";
+
+    if( clinic != null ) {
+        clinicName = clinic.getClinicName();
+        clinicAddress = clinic.getClinicAddress() +","+  clinic.getClinicCity()  +","+ clinic.getClinicProvince() +" "+  clinic.getClinicPostal();
+        clinicPhone = clinic.getClinicPhone();
+        clinicFax = clinic.getClinicFax();
+    }
+
+    String specialistId = request.getParameter("specialist");
+    String specialistName = "";
+    String specialistPhone = "";
+    String specialistFax = "";
+
+    if (specialistId != null && !specialistId.isEmpty()) {
+        ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
+        ProfessionalSpecialist specialist = professionalSpecialistDao.find(Integer.parseInt(specialistId));
+        specialistName = specialist.getFormattedTitle();
+        specialistPhone = specialist.getPhoneNumber();
+        specialistFax = specialist.getFaxNumber();
+    }
+%>
 <html>
 <head>
-<title>Do you want a cover page?</title>
+<title><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.addCover" /></title>
 
 <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!--  bootstrap 2.3 -->
+<style>
+.header {
+    font-size:28px;
+    font-weight:bold;
+}
+
+.mediumHeader {
+    font-size:16px;
+    font-weight:bold;
+}
+
+.info {
+    font-size:12px;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 24px;
+}
+</style>
 
 </head>
-<body style="text-align:center">
+<body style="text-align:center" onload="document.getElementById('note').focus();
+    <oscar:oscarPropertiesCheck property="faxCover" value="false">document.getElementById('coverpage').submit();</oscar:oscarPropertiesCheck>">
 
-<h3>Would you like a cover page?</h3>
-<form action="<%=request.getContextPath() + "/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do"%>" method="post">
+<h3><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.addCover" /></h3>
+<form id="coverpage" action="<%=request.getContextPath() + "/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do"%>" method="post">
 
 <input type="hidden" name="reqId" value="<%=request.getAttribute("reqId")==null ? request.getParameter("reqId") : request.getAttribute("reqId") %>">
 <input type="hidden" name="transType" value="<%=request.getAttribute("transType") %>">
 <input type="hidden" name="demographicNo" value="<%=request.getParameter("demographicNo")%>">
 <input type="hidden" name="letterheadFax" value="<%=request.getParameter("letterheadFax")%>">
 <input type="hidden" name="fax" value="<%=request.getParameter("fax")%>">
-
+<input type="hidden" name="specialist" value="<%=request.getParameter("specialist")%>">
 <%
 	String consultResponsePage = request.getParameter("consultResponsePage");
 	if (consultResponsePage!=null) {
@@ -55,7 +116,6 @@
 
 <%
 	String[] faxRecipients = request.getParameterValues("faxRecipients");
-
 	if( faxRecipients != null ) {
 		for( String fax : faxRecipients ) {
 %>
@@ -68,11 +128,38 @@
 
 <div class="well">
     <div class="row">
-	<label class="control-label" for="yes"><bean:message key="consultationList.btn.newConsult" /></label><bean:message key="global.yes" /><input type="radio" name="coverpage" value="true" id="yes">&nbsp;<bean:message key="global.no" /><input type="radio" checked="checked" name="coverpage" value="false">
+	<bean:message key="consultationList.btn.newConsult" />&nbsp;<bean:message key="global.yes" /><input type="radio" name="coverpage" value="true" id="yes">&nbsp;<bean:message key="global.no" /><input type="radio" checked="checked" name="coverpage" value="false">
     </div>
-    <div style="margin-top:25px;">
-<bean:message key="caseload.msgNotes" /><br>
-	<textarea name="note" style= "width: 80%; height:300px;" onclick="document.getElementById('yes').checked = true;" ></textarea>
+    <div style="margin-top:25px; align:center; width:600px; margin:auto;">
+
+        <table style= "width: 600px; height:300px; border: 1px solid; text-align:left; background:white;">
+            <tr>
+                <td>
+                    <span class="header"><%=Encode.forHtmlContent(clinicName)%></span><br>
+                    <span class="mediumHeader"><%=Encode.forHtmlContent(clinicAddress)%><br>
+                    <bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formPhone" />:&nbsp;<%=Encode.forHtmlContent(clinicPhone)%>
+                    <bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formFax" />:&nbsp;<%=Encode.forHtmlContent(clinicFax)%></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="mediumHeader"><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formFax" /></span><br>
+                    <span class="info"><bean:message key="oscarMessenger.DisplayMessages.msgTo" />:&nbsp;
+<%=Encode.forHtmlContent(specialistName) %>
+                    <br><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formPhone" />:&nbsp;
+                    <%=Encode.forHtmlContent(specialistPhone)%>
+                    <br><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formFax" />:&nbsp;
+                    <%=Encode.forHtmlContent(specialistFax)%><br><br><br><bean:message key="caseload.msgNotes" />
+                    </span><br>
+                    <textarea name="note" id="note" style="width:98%; height:100px;" oninput="document.getElementById('yes').checked = true;" ></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="info"><bean:message key="oscarEncounter.oscarConsultationRequest.consultationFormPrint.msgFaxFooterMessage" /></span>
+                </td>
+            </tr>
+        </table>
 <br>
 	<input class="btn btn-primary" type="submit" value="<bean:message key="global.btnSubmit" />">
     </div>

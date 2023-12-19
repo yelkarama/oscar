@@ -25,20 +25,26 @@ package org.oscarehr.fax.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import org.oscarehr.common.dao.ClinicDAO;
-import org.oscarehr.common.model.Clinic;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Rectangle;
+
+import org.oscarehr.common.dao.ClinicDAO;
+import org.oscarehr.common.dao.ProfessionalSpecialistDao;
+import org.oscarehr.common.model.Clinic;
+import org.oscarehr.common.model.ProfessionalSpecialist;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 public class PdfCoverPageCreator {
 	
@@ -49,9 +55,22 @@ public class PdfCoverPageCreator {
 	}
 	
 	public byte[] createCoverPage() {
-		
-		Document document = new Document();
+		byte[] bte = createCoverPage(null);
+		return bte;
+	}
+
+	public byte[] createCoverPage(String specialistId) {
+        Document document = new Document();
+        document.setPageSize(new Rectangle(PageSize.LETTER));
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", Locale.getDefault());	
+		
+		String faxno = oscarRec.getString("global.fax.faxno");
+		String to = oscarRec.getString("oscarMessenger.DisplayMessages.msgTo");
+		String footer = oscarRec.getString("oscarEncounter.oscarConsultationRequest.consultationFormPrint.msgFaxFooterMessage");
+		String phone = oscarRec.getString("oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formPhone");
+		String fax = oscarRec.getString("oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formFax");	
+		String labelnote = oscarRec.getString("caseload.msgNotes");
 		
 		try {
 			
@@ -72,35 +91,66 @@ public class PdfCoverPageCreator {
 			BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
 					BaseFont.NOT_EMBEDDED);
 			Font headerFont = new Font(bf, 28, Font.BOLD);
+			Font headerMediumFont = new Font(bf, 16, Font.BOLD);
 			Font infoFont = new Font(bf, 12, Font.NORMAL);
-					
-			
+						
 			if( clinic != null ) {							
 				
-				cell = new PdfPCell(new Phrase(String.format("%s\n %s, %s, %s %s",
-						   clinic.getClinicName(),
+				cell = new PdfPCell();
+				cell.addElement(new Phrase(String.format("%s\n",
+						   clinic.getClinicName()), headerFont));		
+				cell.addElement(new Phrase(String.format("%s, %s, %s %s\n",
 					 	   clinic.getClinicAddress(),  clinic.getClinicCity(),
-						   clinic.getClinicProvince(), clinic.getClinicPostal()), headerFont));				
-			}
-			else {
+						   clinic.getClinicProvince(), 
+						   clinic.getClinicPostal()), headerMediumFont));
+				cell.addElement(new Phrase(String.format("%s: %s, %s: %s\n", 
+					 	   oscarRec.getString("oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formPhone"),
+					 	   clinic.getClinicPhone(),
+						   oscarRec.getString("oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formFax"),
+					 	   clinic.getClinicFax()), headerMediumFont));	
+			} else {
 				
 				cell = new PdfPCell(new Phrase("OSCAR", headerFont));
 			
 			}
 			
-
-			cell.setPaddingTop(100);
+			cell.setPaddingTop(40);
 			cell.setPaddingLeft(25);
 			cell.setPaddingBottom(25);
 			cell.setBorderWidthBottom(1);
 			table.addCell(cell);
 
 			PdfPTable infoTable = new PdfPTable(1);
-			cell = new PdfPCell(new Phrase(note,infoFont));
+			
+			cell = new PdfPCell();
+			cell.addElement(new Phrase(fax,headerFont));
+			
+            if (specialistId != null && !specialistId.isEmpty()) {
+                ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
+                ProfessionalSpecialist specialist = professionalSpecialistDao.find(Integer.parseInt(specialistId));
+                if (specialist != null) {
+                    String clinicInfo = "\n\n"+ to + ": " + specialist.getFormattedTitle() + "\n" +
+                            phone + ": " + specialist.getPhoneNumber() + "\n" +
+                            fax + ": " + specialist.getFaxNumber() + "\n\n\n";
+                    cell.addElement(new Phrase(clinicInfo, infoFont));
+                }
+            }
+			cell.addElement(new Phrase(labelnote,headerMediumFont));
+			cell.addElement(new Phrase(note,infoFont));
 			cell.setPaddingTop(25);
+			cell.setPaddingBottom(25);
 			cell.setPaddingLeft(25);
+			cell.setBorder(0);
 			infoTable.addCell(cell);
 			table.addCell(infoTable);
+			
+			PdfPTable footerTable = new PdfPTable(1);
+			cell = new PdfPCell(new Phrase(footer,infoFont));
+			cell.setPaddingTop(25);
+			cell.setPaddingLeft(25);
+			footerTable.addCell(cell);
+			cell.setBorderWidthTop(1);
+			table.addCell(footerTable);			
 			
 			document.add(table);
 			
@@ -122,4 +172,6 @@ public class PdfCoverPageCreator {
 		
 		return os.toByteArray();
 	}
+
+
 }
