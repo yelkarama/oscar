@@ -149,7 +149,8 @@ public class PdfCoverPageCreator {
 			cell.setPaddingTop(25);
 			cell.setPaddingLeft(25);
 			footerTable.addCell(cell);
-			cell.setBorderWidthTop(1);
+			cell.setBorderWidth(0);
+			cell.setFixedHeight(72f);
 			table.addCell(footerTable);			
 			
 			document.add(table);
