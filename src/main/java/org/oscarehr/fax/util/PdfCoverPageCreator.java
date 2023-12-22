@@ -141,6 +141,7 @@ public class PdfCoverPageCreator {
 			cell.setPaddingBottom(25);
 			cell.setPaddingLeft(25);
 			cell.setBorder(0);
+			cell.setMinimumHeight(500f); //about 7"
 			infoTable.addCell(cell);
 			table.addCell(infoTable);
 			
@@ -149,7 +150,6 @@ public class PdfCoverPageCreator {
 			cell.setPaddingTop(25);
 			cell.setPaddingLeft(25);
 			cell.setBorderWidth(1);
-			cell.setFixedHeight(72f);
 			table.addCell(cell);		
 			
 			document.add(table);
