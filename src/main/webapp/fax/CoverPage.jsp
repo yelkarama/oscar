@@ -58,7 +58,7 @@
     String specialistPhone = "";
     String specialistFax = "";
 
-    if (specialistId != null && !specialistId.isEmpty()) {
+    if (specialistId != null && !specialistId.isEmpty() && !specialistId.equals("-1")) {
         ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
         ProfessionalSpecialist specialist = professionalSpecialistDao.find(Integer.parseInt(specialistId));
         specialistName = specialist.getFormattedTitle();
