@@ -43,7 +43,7 @@
 	}
 %>
 
-<%@ page import="oscar.*" errorPage="errorpage.jsp" %>
+<%@ page import="oscar.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.security.*" %>
@@ -54,6 +54,7 @@
 <%@ page import="org.oscarehr.common.model.Security" %>
 <%@ page import="org.oscarehr.common.dao.SecurityDao" %>
 <%@ page import="com.j256.twofactorauth.TimeBasedOneTimePasswordUtil" %>
+
 <%
 	SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 %>
@@ -62,6 +63,7 @@
 <head>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<script src="<%=request.getContextPath() %>/library/qrcode.min.js"></script>
 <title><bean:message key="admin.securityupdate.description" /></title>
 </head>
 <link rel="stylesheet" href="../web.css" />
@@ -107,21 +109,21 @@
     		s.setPin(sPin);
     		s.setPinUpdateDate(new java.util.Date());
     	}
-    	
+
     	if (request.getParameter("forcePasswordReset") != null && request.getParameter("forcePasswordReset").equals("1")) {
     	    s.setForcePasswordReset(Boolean.TRUE);
     	} else {
-    		s.setForcePasswordReset(Boolean.FALSE);  
+    		s.setForcePasswordReset(Boolean.FALSE);
         }
-    	
+
     	if (request.getParameter("2fa") != null && request.getParameter("2fa").equals("1")) {
     	    s.setTotpEnabled(Boolean.TRUE);
     	} else {
-    		s.setTotpEnabled(Boolean.FALSE);  
+    		s.setTotpEnabled(Boolean.FALSE);
         }
-    	
+
     	s.setLastUpdateDate(new java.util.Date());
-    	
+
     	securityDao.saveEntity(s);
     	rowsAffected=1;
     }
@@ -146,17 +148,30 @@
 <%
   }
 %>
-<% if (request.getParameter("2fa") != null && request.getParameter("2fa").equals("1")) { 
-	String qrUrl =  TimeBasedOneTimePasswordUtil.qrImageUrl("OSCAR",secret);	
+<% if (request.getParameter("2fa") != null && request.getParameter("2fa").equals("1")) {
+    // the default specification will have 6 digits and SHA1 with 30 s validity
+    String authUrl = "otpauth://totp/OSCAR"+request.getParameter("provider_no")+"?secret="+secret+"&issuer=Oscar%20EMR";
 %>
+
 <div class="container-fluid well" >
     <div class="control-group span4">
-	    <p><img src="<%=qrUrl%>" alt="<%=secret%>"></p>
+         <div id="qrcode" class="qrcode"></div>
     </div>
+
+<script type="text/javascript">
+    let qrcodeContainer = document.getElementById("qrcode");
+    qrcodeContainer.innerHTML = "";
+    new QRCode(qrcodeContainer, {
+          text: "<%=authUrl%>",
+          width: 200,
+          height: 200
+        });
+</script>
+
     <div class="control-group span4">
-        <p><bean:message 
+        <p><bean:message
                 key="admin.provider.2fa.qr"/></p><br>
-        <input type="button" class="btn btn-primary" value="<bean:message 
+        <input type="button" class="btn btn-primary" value="<bean:message
                 key="global.btnPrint"/>" onclick="window.print();">
     </div>
 </div>
