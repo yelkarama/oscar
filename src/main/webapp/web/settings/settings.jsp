@@ -334,20 +334,7 @@ width:400px;
 		  </select>
 		</div>
 
-		<div class="form-group">
-		  <label >Print QR Codes:</label>
-		  <div class="controls">
-		    <label class="radio inline" for="radios-rx-4">
-		      <input name="radios-rx-4" id="radios-rx-4" ng-model="pref.printQrCodeOnPrescription" ng-value="true" type="radio">
-		      Enable
-		    </label>
-		    <label class="radio inline" for="radios-rx-5">
-		      <input name="radios-rx-5" id="radios-rx-5" ng-model="pref.printQrCodeOnPrescription" ng-value="false" type="radio">
-		      Disable
-		    </label>  
-		  </div>
-		</div>
-		
+	
 	</div> <!-- end col -->
 	
 	<div class="col-xs-2">
