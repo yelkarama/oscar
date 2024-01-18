@@ -382,10 +382,6 @@ function dxScriptAttach(name2) {
 								<td><%=UserPreferenceAction.getSelect(prefs,"pref."+UserProperty.RX_USE_RX3) %></td>
 							</tr>
 							<tr>
-								<td nowrap="nowrap"><bean:message key="provider.pref.rx.qr"/>: </td>
-								<td><%=UserPreferenceAction.getSelect(prefs,"pref."+UserProperty.RX_SHOW_QR_CODE) %></td>
-							</tr>
-							<tr>
 								<td nowrap="nowrap"><bean:message key="provider.pref.rx.page_size"/>: </td>
 								<td><%=UserPreferenceAction.getSelect(prefs,"pref."+UserProperty.RX_PAGE_SIZE) %></td>
 							</tr>
