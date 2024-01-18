@@ -492,7 +492,7 @@ public class ProviderManager2 {
 		
 		settings.setDefaultDoNotDeleteBilling(pp.getDefaultDoNotDeleteBilling()==1?true:false);
 		
-		settings.setPrintQrCodeOnPrescription(pp.isPrintQrCodeOnPrescriptions());
+		//settings.setPrintQrCodeOnPrescription(pp.isPrintQrCodeOnPrescriptions()); //deprecated
 		settings.seteRxEnabled(pp.isERxEnabled());
 		settings.seteRxTrainingMode(pp.isERxTrainingMode());
 		settings.seteRxFacility(pp.getERxFacility());
@@ -563,7 +563,7 @@ public class ProviderManager2 {
 		
 		pp.setDefaultDoNotDeleteBilling(settings.isDefaultDoNotDeleteBilling()?1:0);
 		
-		pp.setPrintQrCodeOnPrescriptions(settings.isPrintQrCodeOnPrescription());
+		//pp.setPrintQrCodeOnPrescriptions(settings.isPrintQrCodeOnPrescription()); //deprecated
 		pp.setERxEnabled(settings.iseRxEnabled());
 		
 		pp.setERxTrainingMode(settings.iseRxTrainingMode());
