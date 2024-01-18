@@ -726,12 +726,6 @@
             </exclusion>
          </exclusions>
       </dependency>
-      <!-- zxing / 2d bar codes -->
-      <dependency>
-         <groupId>zxing</groupId>
-         <artifactId>zxing-core</artifactId>
-         <version>1.5</version>
-      </dependency>
       <dependency>
          <groupId>zxing</groupId>
          <artifactId>zxing-j2se</artifactId>
