@@ -40,7 +40,7 @@ public class ProviderSettings {
 	private String workloadManagement;
 	private String ticklerWarningProvider;
 	
-	private boolean useCobaltOnLogin;
+	private boolean useCobaltOnLogin; //deprecated
 
 	private int startHour = 8;
 	private int endHour = 18;
@@ -59,7 +59,7 @@ public class ProviderSettings {
 	
 	private boolean useRx3 = true;
 	private boolean showPatientDob;
-	private boolean printQrCodeOnPrescription;
+	private boolean printQrCodeOnPrescription; //deprecated
 	
 	private boolean eRxEnabled;
 	private boolean eRxTrainingMode;
@@ -288,10 +288,10 @@ public class ProviderSettings {
 	public void setShowPatientDob(boolean showPatientDob) {
 		this.showPatientDob = showPatientDob;
 	}
-	public boolean isPrintQrCodeOnPrescription() {
+	public boolean isPrintQrCodeOnPrescription() { //deprecated
 		return printQrCodeOnPrescription;
 	}
-	public void setPrintQrCodeOnPrescription(boolean printQrCodeOnPrescription) {
+	public void setPrintQrCodeOnPrescription(boolean printQrCodeOnPrescription) { //deprecated
 		this.printQrCodeOnPrescription = printQrCodeOnPrescription;
 	}
 	public boolean iseRxEnabled() {
@@ -645,10 +645,10 @@ public class ProviderSettings {
 	public void setUseMyMeds(boolean useMyMeds) {
 		this.useMyMeds = useMyMeds;
 	}
-	public boolean isUseCobaltOnLogin() {
+	public boolean isUseCobaltOnLogin() { //deprecated
 		return useCobaltOnLogin;
 	}
-	public void setUseCobaltOnLogin(boolean useCobaltOnLogin) {
+	public void setUseCobaltOnLogin(boolean useCobaltOnLogin) { //deprecated
 		this.useCobaltOnLogin = useCobaltOnLogin;
 	}
 	public boolean isDisableBornPrompts() {
