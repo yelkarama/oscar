@@ -84,7 +84,7 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
 	private String defaultServiceType="no";
 	private String defaultCaisiPmm="disabled";
 	private String defaultNewOscarCme="disabled";
-	private boolean printQrCodeOnPrescriptions=Boolean.valueOf(OscarProperties.getInstance().getProperty("QR_CODE_ENABLED_PROVIDER_DEFAULT"));
+	private boolean printQrCodeOnPrescriptions=false; //deprecated
 	private int appointmentScreenLinkNameDisplayLength=3;
 	private int defaultDoNotDeleteBilling=0;
 	private String defaultDxCode=null;
