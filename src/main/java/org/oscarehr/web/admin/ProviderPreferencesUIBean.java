@@ -133,7 +133,7 @@ public final class ProviderPreferencesUIBean {
 		temp = StringUtils.trimToNull(request.getParameter("color_template"));
 		if (temp != null) providerPreference.setColourTemplate(temp);
 
-		providerPreference.setPrintQrCodeOnPrescriptions(WebUtils.isChecked(request, "prescriptionQrCodes"));
+		//providerPreference.setPrintQrCodeOnPrescriptions(WebUtils.isChecked(request, "prescriptionQrCodes")); //deprecated
 
 		// get encounterForms for appointment screen
 		temp = StringUtils.trimToNull(request.getParameter("appointmentScreenFormsNameDisplayLength"));
