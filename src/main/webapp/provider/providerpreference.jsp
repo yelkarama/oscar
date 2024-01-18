@@ -51,7 +51,7 @@
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
+
 <%@page import="org.oscarehr.common.model.EForm"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.EncounterForm"%>
@@ -401,19 +401,6 @@ window.opener.location.reload();
 		          </tr>
 
 			</caisi:isModuleLoad>
-
-			<!-- QR Code on prescriptions setting -->
-			<tr>
-				<td class="preferenceLabel">
-					<bean:message key="provider.providerpreference.qrCodeOnPrescriptions" />
-				</td>
-				<td class="preferenceValue">
-					<%
-	            		boolean checked=PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo);
-	            	%>
-	            	<input type="checkbox" name="prescriptionQrCodes" <%=checked?"checked=\"checked\"":""%> />
-	            </td>
-			</tr>
 
 			<%-- links to display on the appointment screen --%>
 			<tr>
