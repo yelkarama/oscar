@@ -283,13 +283,12 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 <html>
     <head>
         <html:base/>
-        
         <title><%=handler.getLastName()+", "+handler.getFirstName()+" Lab Results"%></title>
         <script src="<%=request.getContextPath() %>/share/javascript/Oscar.js" ></script>
         <script src="<%=request.getContextPath() %>/js/global.js"></script>
         <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
         <script>jQuery.noConflict();</script>
-        
+
 	<oscar:customInterface section="labView"/>
 
 	<script>
@@ -870,6 +869,7 @@ input[id^='acklabel_']{
 
         %>
         <script>
+
             jQuery(function() {
           	  jQuery("#createLabel_<%=segmentID%>").on( "click", function() {
           	    jQuery.ajax( {
@@ -882,8 +882,11 @@ input[id^='acklabel_']{
                   document.forms['acknowledgeForm_<%=segmentID%>'].label.value = "";
           	});
           });
+
         </script>
- 		<script>
+
+
+		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
                 var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
@@ -958,7 +961,7 @@ input[id^='acklabel_']{
                                     <input type="hidden" name="multiID" value="<%= multiLabId %>" >
                                     <input type="hidden" name="providerNo" id="providerNo" value="<%= providerNo %>">
                                     <input type="hidden" name="status" value="<%=labStatus%>" id="labStatus_<%=segmentID%>">
-                                    <input type="hidden" name="comment" value="">
+                                    <input type="hidden" name="comment" value="<%=Encode.forHtmlAttribute(providerComment)%>">
                                     <input type="hidden" name="labType" value="HL7">
                                     <%
                                     if ( !ackFlag ) {
@@ -1220,9 +1223,9 @@ input[id^='acklabel_']{
                                                                         <div style="text-align:left; white-space:nowrap;" class="FieldDatas">
                                                 						<% if(demographicID != null && !demographicID.equals("") && !demographicID.equals("0")){
                                                     						if (demographic.getConsentToUseEmailForCare() != null && demographic.getConsentToUseEmailForCare()){ %>
-                                                                            <a href="mailto:<%=demographic.getEmail()%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=demographic.getEmail()%></a>
+                                                                            <a href="mailto:<%=Encode.forHtml(demographic.getEmail())%>?subject=Message from your Doctors Office" target="_blank" rel="noopener noreferrer" ><%=demographic.getEmail()%></a>
                                                                         <% } else { %>
-                                                                            <span id="email"><%=demographic.getEmail()%></span>
+                                                                            <span id="email"><%=Encode.forHtml(demographic.getEmail())%></span>
                                                                         <% } } %>
                                                                         </div>
                                                                     </td>
@@ -1422,7 +1425,7 @@ input[id^='acklabel_']{
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="padding:0px; text-align:center; background-color:white" >
+                                <td colspan="2" style="padding:0px;  background-color:white; text-align:center" >
 <%
 String[] multiID = multiLabId.split(",");
 boolean isTickler = false;
@@ -1470,11 +1473,11 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							       	<tr>
 							       	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
 							       	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>
-							       	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							       	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? Encode.forHtml(tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName()) : "N/A"%></td>
 							       	<td style="width:90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
 							       	</tr>
 							       	<tr>
-							       	<td colspan="4"><%=tickler.getMessage()%></td>
+							       	<td colspan="4"><%=Encode.forHtml(tickler.getMessage())%></td>
 							       	</tr>
 							       	</table>
 							       </div>
@@ -1521,7 +1524,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                                                 <!--center-->
                                                                     <% for (int i=0; i < ackList.size(); i++) {
                                                                         report = ackList.get(i); %>
-                                                                        <%= report.getProviderName() %> :
+                                                                        <%= Encode.forHtml(report.getProviderName()) %> :
 
                                                                         <% String ackStatus = report.getStatus();
                                                                             if(ackStatus.equals("A")){
