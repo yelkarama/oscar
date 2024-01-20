@@ -869,28 +869,21 @@ input[id^='acklabel_']{
         		}
 
         %>
-        <script type="text/javascript">
-
-        jQuery(function() {
-      	  jQuery("#createLabel_<%=segmentID%>").on( "click", function() {
-      	    jQuery.ajax( {
-      	      type: "POST",
-      	      url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",
-      	      dataType: "json",
-      	      data: { lab_no: jQuery("#labNum_<%=segmentID%>").val(),accessionNum: jQuery("#accNum").val(), label: jQuery("#label_<%=segmentID%>").val(), ajaxcall: true },
-      	      success: function(result) {console.log("label applied");
-      	    	jQuery("#labelspan_<%=segmentID%>").children().get(0).innerHTML = "Label: " +  jQuery("#label_<%=segmentID%>").val();
-        	  	document.forms['acknowledgeForm_<%=segmentID%>'].label.value = "";
-      	      }
-      	    }
-      	   );
-      	});
-      });
-
-		</script>
-
-
-		<script>
+        <script>
+            jQuery(function() {
+          	  jQuery("#createLabel_<%=segmentID%>").on( "click", function() {
+          	    jQuery.ajax( {
+          	      type: "POST",
+          	      url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",
+          	      dataType: "json",
+          	      data: { lab_no: jQuery("#labNum_<%=segmentID%>").val(), accessionNum: jQuery("#accNum").val(), label: jQuery("#label_<%=segmentID%>").val(), ajaxcall: true }
+          	    })
+                  jQuery("#labelspan_<%=segmentID%> i").html("Label: " +  jQuery("#label_<%=segmentID%>").val());
+                  document.forms['acknowledgeForm_<%=segmentID%>'].label.value = "";
+          	});
+          });
+        </script>
+ 		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
                 var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
