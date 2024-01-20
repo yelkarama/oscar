@@ -283,11 +283,13 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 <html>
     <head>
         <html:base/>
+        
         <title><%=handler.getLastName()+", "+handler.getFirstName()+" Lab Results"%></title>
-        <script language="javascript" type="text/javascript" src="../../../share/javascript/Oscar.js" ></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-
+        <script src="<%=request.getContextPath() %>/share/javascript/Oscar.js" ></script>
+        <script src="<%=request.getContextPath() %>/js/global.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+        <script>jQuery.noConflict();</script>
+        
 	<oscar:customInterface section="labView"/>
 
 	<script>
@@ -1470,7 +1472,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							  	 ticklerClass="";
 							   }
 							   %>
-							       <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
+							       <div style="text-align:left; background-color:#fff; padding:5px; width:600px; margin-left:auto; margin-right:auto" class="<%=ticklerClass%>">
 							       	<table style="width:100%">
 							       	<tr>
 							       	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
