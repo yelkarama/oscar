@@ -8,18 +8,26 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@page import="java.net.URLEncoder"%>
 <%@ page language="java" %>
+
+<%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*,oscar.util.StringUtils,oscar.util.UtilDateUtilities" %>
 <%@ page import="org.apache.commons.collections.MultiHashMap" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="org.apache.logging.log4j.Logger "%>
+<%@ page import="org.oscarehr.common.dao.OscarLogDao "%>
+<%@ page import="org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils"%>
+<%@ page import="org.oscarehr.util.MiscUtils "%>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ page import="oscar.oscarLab.ca.on.* "%>
+<%@ page import="oscar.oscarMDS.data.* "%>
+<%@ page import="oscar.util.StringUtils "%>
+<%@ page import="oscar.util.UtilDateUtilities" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@page import="org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils"%>
-<%@page import="org.oscarehr.util.MiscUtils,org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.apache.logging.log4j.Logger,org.oscarehr.common.dao.OscarLogDao,org.oscarehr.util.SpringUtils"%>
 
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -467,13 +475,18 @@ String bgcolor="";
         </table>
         <script>
 	        jQuery.tablesorter.addParser({
-		  id: 'dateOfTest',
-		  is: function(s) {return false;},
-		  format: function(s) {
-		    return s.indexOf("/")?s.substr(s.indexOf("/")+2,10):s;
-		  },
-		  type: 'text'
-		});
+			id: 'dateOfTest',
+			is: function(s) {return false;},
+			format: function(s) {
+                //for (2023-09-21 / 2023-09-21), use the 10 characters following the /
+                //for (2023-09-19 12:53:00 ), use the first 10 characters 
+                //for (2023-09-21 17:39:05.0), use the first 10 characters
+                //in any other scenario, just use the original string
+			    return s.indexOf("/")!=-1?s.substr(s.indexOf("/")+2,10):(s.indexOf(" ")!=-1?s.substr(0,10):s);
+			  },
+			type: 'text'
+			});
+
 
 	        jQuery("#summaryView").tablesorter({
 			sortList:[[5,1]],
