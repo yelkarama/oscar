@@ -76,7 +76,7 @@ public class SearchProviderAutoCompleteAction extends DispatchAction{
     	String firstName, lastName;
     	
     	if( searchStr.indexOf(",") != -1 ) {
-    		String[] searchParams = searchStr.split(",");
+    		String[] searchParams = searchStr.split(",",-1);
     		lastName = searchParams[0].trim();
     		firstName = searchParams[1].trim();
     	}
