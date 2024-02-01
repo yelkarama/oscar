@@ -55,10 +55,6 @@
 	PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
 	Prescription prescription = prescriptionManager.getPrescription(loggedInInfo, Integer.parseInt(scriptId));
 %>	
-
-
-<%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
-
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -549,19 +545,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 		                                                    </tr>
 	                                                    <%
                                      					}
-                                                    
-                                                    	if (PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo))
-                                                    	{
-                                                    	%>                                                    
-		                                                    <tr>
-			                                                    <td colspan="2">
-			                                                    	<img src="<%=request.getContextPath()%>/contentRenderingServlet/prescription_qr_code_<%=rx.getScript_no()%>.png?source=prescriptionQrCode&prescriptionId=<%=rx.getScript_no()%>" alt="qr_code" />
-			                                                    </td>
-		                                                    </tr>
-                                                    	<%
-                                                    	}
-                                                    	
-                                                    	
+ 
 	                                     				if (oscar.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null)
 	                                     				{
 	                                     				%>

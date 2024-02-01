@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.web.PrescriptionQrCodeUIBean;
 
 import oscar.log.LogAction;
 import oscar.oscarLab.ca.all.pageUtil.ViewOruR01UIBean;
@@ -97,7 +96,6 @@ public final class ContentRenderingServlet extends HttpServlet {
 
 		try {
 			if (Source.oruR01.name().equals(source)) return (getOruR01Content(request,loggedInInfo));
-			if (Source.prescriptionQrCode.name().equals(source)) return (getPrescriptionQrCodeContent(request,loggedInInfo));
 		} catch (Exception e) {
 			logger.error("Unexpected error.", e);
 		}
@@ -125,16 +123,4 @@ public final class ContentRenderingServlet extends HttpServlet {
 	    return(content);
     }
 
-	private Content getPrescriptionQrCodeContent(HttpServletRequest request,LoggedInInfo loggedInInfo) {
-	    // for prescriptions we need prescriptionId.
-		int prescriptionId=Integer.parseInt(request.getParameter("prescriptionId"));
-	    
-	    Content content=new Content();
-	    content.contentType=getServletContext().getMimeType("prescription_"+prescriptionId+"qr_code.png");
-	    content.data=PrescriptionQrCodeUIBean.getPrescriptionHl7QrCodeImage(prescriptionId);
-	    
-	    LogAction.addLog(loggedInInfo.getLoggedInProviderNo(), getClass().getSimpleName(), "getPrescriptionQrCodeContent", "prescriptionId="+prescriptionId);
-	    
-	    return(content);
-    }
 }

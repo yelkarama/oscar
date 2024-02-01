@@ -298,10 +298,6 @@ public class UserPreferenceAction extends DispatchAction {
 			options.add(new LabelValueBean("Yes","yes"));
 			options.add(new LabelValueBean("No","no"));			
 		}
-		if(key.equals("pref."+UserProperty.RX_SHOW_QR_CODE)) {			
-			options.add(new LabelValueBean("Yes","yes"));
-			options.add(new LabelValueBean("No","no"));			
-		}
 		if(key.equals("pref."+UserProperty.RX_PAGE_SIZE)) {			
 			options.add(new LabelValueBean("A4","A4"));
 			options.add(new LabelValueBean("A6","A6"));			

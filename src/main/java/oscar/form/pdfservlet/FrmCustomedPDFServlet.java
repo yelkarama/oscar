@@ -64,7 +64,6 @@ import org.oscarehr.util.LocaleUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-import org.oscarehr.web.PrescriptionQrCodeUIBean;
 
 import oscar.OscarProperties;
 import oscar.log.LogAction;
@@ -729,15 +728,6 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 				p.setKeepTogether(true);
 				p.setSpacingBefore(10f);
 				document.add(p);
-			}
-
-			// render QrCode
-			if (PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(loggedInInfo.getLoggedInProviderNo()))
-			{
-				Integer scriptId=Integer.parseInt(req.getParameter("scriptId"));
-				byte[] qrCodeImage=PrescriptionQrCodeUIBean.getPrescriptionHl7QrCodeImage(scriptId);
-				Image qrCode=Image.getInstance(qrCodeImage);
-				document.add(qrCode);
 			}
 		}
 		catch (DocumentException dex) {

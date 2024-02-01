@@ -54,7 +54,6 @@
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.oscarehr.util.LocaleUtils"%>
-<%@ page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
 
 <!-- Classes needed for signature injection -->
 <%@ page import="org.oscarehr.util.SessionConstants"%>
@@ -629,20 +628,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 		                                                        </td>
 		                                                    </tr>
 	                                                    <%
-                                     					}
-                                                    
-                                                    	if (PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo))
-                                                    	{
-                                                    	%>                                                    
-		                                                    <tr>
-			                                                    <td colspan="2">
-			                                                    	<img src="<%=request.getContextPath()%>/contentRenderingServlet/prescription_qr_code_<%=rx.getScript_no()%>.png?source=prescriptionQrCode&prescriptionId=<%=rx.getScript_no()%>" alt="qr_code" />
-			                                                    </td>
-		                                                    </tr>
-                                                    	<%
-                                                    	}
-                                                    	
-                                                    	
+                                     					}                                                   	
 	                                     				if (oscar.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null)
 	                                     				{
 	                                     				%>
