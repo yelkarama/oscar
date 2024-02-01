@@ -658,6 +658,7 @@ input[id^='acklabel_']{
                 }
             	else if( window.opener.document.getElementById('labdoc_'+labid) != null ) {
                     // opened from the Inbox
+                    //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
                 	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.refreshCategoryList();
                     window.close();
@@ -924,10 +925,11 @@ input[id^='acklabel_']{
                         success: function(result) {
 	                    	if(closeOnSuccess) {
                                 if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {
+                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN invoke jQuery UI to hide the entry
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
                                 }
-                                window.close();
+                                //window.close();
 	                    	}
 	                    }});
 
