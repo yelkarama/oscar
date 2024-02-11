@@ -107,7 +107,7 @@ th {
 		var demo = $("#demographicNo").val();
 		$.get("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=getPharmacyFromDemographic&demographicNo="%>"+demo,
 			function( data ) {
-				if(data.length > 0){
+                if(data && data.length && data.length > 0){
 					$("#preferredList").html("");
 					var json;
 					var preferredPharmacyInfo;
