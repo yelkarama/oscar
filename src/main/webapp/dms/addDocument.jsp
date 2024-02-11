@@ -110,7 +110,7 @@ formdata = (AddEditDocumentForm) request.getAttribute("completedForm");
     formdata.setDocType(defaultType);
     formdata.setDocDesc(defaultType.equals("")?defaultDesc:defaultType);
     formdata.setDocCreator(user_no);
-    formdata.setObservationDate(UtilDateUtilities.DateToString(new Date(), "yyyy/MM/dd"));
+    formdata.setObservationDate(UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd"));
     formdata.setHtml(defaultHtml);
     formdata.setAppointmentNo(appointment);
 }
@@ -150,7 +150,7 @@ for (String reportClass : reportClasses) {
 
 
 
-<script type="text/javascript" language="JavaScript">
+<script>
 
 
     <%--request attribute "linkhtmlerrors" & "docerrors" is used to check if a document was just submitted --%>
@@ -213,7 +213,7 @@ function showhide(hideelement, button) {
 function submitUpload(object) {
     object.Submit.disabled = true;
     if (!validDate("observationDate")) {
-        alert("Invalid Date: must be in format: yyyy/mm/dd");
+        alert("Invalid Date: must be in format: yyyy-mm-dd");
         object.Submit.disabled = false;
         return false;
     }
@@ -227,7 +227,7 @@ function submitUploadLink(object) {
 
 //clears default values
 function checkDefaultDate(object, defaultValue) {
-   if (object.value == defaultValue) {
+   if (object.value === defaultValue) {
        object.value = "";
    }
 }
@@ -312,11 +312,11 @@ function newDocTypeLink(){
 	<input type="hidden" name="docCreator"
 		value="<%=formdata.getDocCreator()%>" >
 	<span class="fieldlabel" title="Observation Date">Obs Date
-	(yyyy/mm/dd): </span>
+	(yyyy-mm-dd): </span>
 <div class="input-append">
 	<input class="span2" type="text" name="observationDate" id="observationDate"
 		value="<%=formdata.getObservationDate()%>"
-		onclick="checkDefaultDate(this, '<%=UtilDateUtilities.DateToString(new Date(), "yyyy/MM/dd")%>')"
+		onclick="checkDefaultDate(this, '<%=UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd")%>')"
 		>
 <span class="add-on">
 	<a id="obsdate"><img title="Calendar" src="${ pageContext.request.contextPath }/images/cal.gif"
