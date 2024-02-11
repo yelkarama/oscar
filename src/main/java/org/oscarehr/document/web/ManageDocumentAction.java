@@ -188,7 +188,7 @@ public class ManageDocumentAction extends DispatchAction {
 			d.setDocdesc(documentDescription);
 			d.setDoctype(docType);
 			Date obDate = UtilDateUtilities.StringToDate(observationDate);
-			d.setAbnormal(true);
+			d.setAbnormal(isAbnormal);
 			
 			if (obDate != null) {
 				d.setObservationdate(obDate);

@@ -355,32 +355,32 @@ X = deleted (available on request; not always preceded by non-X OBRs in an earli
             			orderStatus = status;
             		}
             		if("C".equals(status)) {
-            			return "Corrected";
+            			return "corrected";
             		}
         		}
         		
         	}
         	
             if("P".equals(orderStatus)) {
-            	return "Preliminary";
+            	return "preliminary";
             }
             if("I".equals(orderStatus)) {
-            	return "Pending";
+            	return "pending";
             }
             if("A".equals(orderStatus)) {
-            	return "Partial results";
+            	return "partial results";
             }
             if("F".equals(orderStatus)) {
-            	return "Complete";
+            	return "complete";
             }
             if("R".equals(orderStatus)) {
-            	return "Retransmitted";
+            	return "retransmitted";
             }
             if("C".equals(orderStatus)) {
-            	return "Corrected";
+            	return "corrected";
             }
             if("X".equals(orderStatus)) {
-            	return "Deleted";
+            	return "deleted";
             }
         }catch(Exception e){
             return("");

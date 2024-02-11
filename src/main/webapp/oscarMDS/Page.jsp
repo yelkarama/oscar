@@ -29,7 +29,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
-<%
+<% // Page.jsp is a fragment likely referenced in index.jsp
+
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
 %>
@@ -84,106 +85,61 @@ String curUser_no = (String) session.getAttribute("user");
 		       	 document.forms['TDISLabelForm'].label.value = document.forms['acknowledgeForm'].label.value;
 	       	}
 		</script>
-		
-        <table  oldclass="MainTable" id="scrollNumber1" border="0" name="encounterTable" cellspacing="0" cellpadding="3" width="100%">
-            <tr oldclass="MainTableTopRow">
-                <td class="subheader" colspan="10" align="left">
-                 <table width="100%">
-                     <tr>
-                           <td align="left" valign="center" > <%-- width="30%" --%>
+
+        <table id="scrollNumber1" style="width:100%">
+            <tr>
+                <td class="subheader" colspan="10" style="text-align:left">
+
                                <% if (labdocs.size() > 0) { %>
                                    <input id="topFBtn" type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="parent.checkSelected(document)">
                                    <% if (ackStatus.equals("N") || ackStatus.isEmpty()) {%>
                                        <input id="topFileBtn" type="button" class="btn" value="File" onclick="parent.submitFile(document)"/>
                                    <% }
-                               }%>
-                               <input type="hidden" id="currentNumberOfPages" value="0"/>
-                           </td>
-                     </tr>
-                 </table>
-                </td>
+                               }%><span style="float:right;">
+                               <label><bean:message key="oscarMDS.index.btnSearch"/>: <input type="text" style="height:20px;" id="myFilterTextField"></label></span>
+                               <input type="hidden" id="currentNumberOfPages" value="0">
+                  </td>
             </tr>
             <tr>
                 <td style="margin:0px;padding:0px;">
-                    <%--
-                    <table width="100%" style="margin:0px;padding:0px;" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <th align="left" valign="bottom" class="cell" nowrap>
-                                <input type="checkbox" onclick="checkAll('lab_form');" name="checkA"/>
-                                <bean:message key="oscarMDS.index.msgHealthNumber"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgPatientName"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgSex"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgResultStatus"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgDateTest"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgOrderPriority"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgRequestingClient"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgDiscipline"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                <bean:message key="oscarMDS.index.msgReportStatus"/>
-                            </th>
-                            <th align="left" valign="bottom" class="cell">
-                                Ack #
-                            </th>
-                        </tr>
-					</table>
-					 --%>
 					<div id="listViewDocs" style="max-height:850px; overflow-y:scroll;" onscroll="handleScroll(this)">
-					<style type="text/css">
-						#summaryView td, #summaryView th {
-							padding: 0px 5px;
-						}
-					</style>
-					<table id="summaryView" class="tablesorter table-striped table-hover" width="100%" style="margin:0px;padding:0px;" cellpadding="0" cellspacing="0">
+
+					<table id="summaryView" class="table-striped table-hover" style="width:100%; margin:0px; padding:0px;">
 					<thead>
 						<tr>
-                            <th align="left" valign="bottom" class="cell" nowrap>
-                                <input type="checkbox" onclick="checkAllLabs('lab_form');" name="checkA"/>
+                            <th class="header-cell">
+                                <input type="checkbox" onclick="checkAllLabs('lab_form');" name="checkA" >
                                 <bean:message key="oscarMDS.index.msgHealthNumber"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgPatientName"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgSex"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgResultStatus"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgDateTest"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgOrderPriority"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgRequestingClient"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgDiscipline"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 <bean:message key="oscarMDS.index.msgReportStatus"/>
                             </th>
-                            <th align="left" valign="bottom" class="cell">
+                            <th class="header-cell">
                                 Ack #
                             </th>
                         </tr>
-                          </thead>    
+                          </thead>
                           <!--<tbody>-->
                                             <%
 							} // End if(pageNum == 1)
@@ -195,8 +151,8 @@ String curUser_no = (String) session.getAttribute("user");
                                 	%> <input type="hidden" name="NoMoreItems" value="true" /> <%
                             		if (isListView) { %>
 		                                <tr>
-		                                    <td colspan="9" align="center">
-		                                        <i>	<% if (pageNum == 1) { %>
+		                                    <td colspan="9" style="text-align:center">
+		                                        <i>	<% if (pageNum == 1 && totalNoPages != null) { %>
 		                                        	<bean:message key="oscarMDS.index.msgNoReports"/>
 		                                        	<% } else { %>
 		                                        	<bean:message key="oscarMDS.index.msgNoMoreReports"/>
@@ -208,15 +164,15 @@ String curUser_no = (String) session.getAttribute("user");
 	                         	<%	}
                             		else {
                             		%>
-                            			<center>
-                            			<div>
+
+                            			<div style="text-align:center">
                             			<% if (pageNum == 1) { %>
                                        	<bean:message key="oscarMDS.index.msgNoReports"/>
                                        	<% } else { %>
                                        	<bean:message key="oscarMDS.index.msgNoMoreReports"/>
                                        	<% } %>
                             			</div>
-                            			</center>
+
                             		<%
                             		}
 
@@ -224,28 +180,22 @@ String curUser_no = (String) session.getAttribute("user");
                             for (int i = 0; i < labdocs.size(); i++) {
 
                                 LabResultData   result =  (LabResultData) labdocs.get(i);
-                                //LabResultData result = (LabResultData) labMap.get(labNoArray.get(i));
 
                                 String segmentID        =  result.getSegmentID();
                                 String status           =  result.getAcknowledgedStatus();
 
-                                //String bgcolor = i % 2 == 0 ? "#e0e0ff" : "#ccccff" ;
-                                //if (!result.isMatchedToPatient()){
-                                //   bgcolor = "#FFCC00";
-                                //}
-String bgcolor="";
 								String labRead = "";
-								
+
                                 if(result.isHRM() && !oscarLogDao.hasRead(curUser_no,"hrm",segmentID)){
-                                	labRead = "*";
+                                	labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>"; // font-awesome
                                 }
-                                
-                                if( !result.isHRM() && result.isDocument() && !oscarLogDao.hasRead(curUser_no,"document",segmentID) ) {                                    
-                                    labRead = "*";
+
+                                if( !result.isHRM() && result.isDocument() && !oscarLogDao.hasRead(curUser_no,"document",segmentID)){
+                                     labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>";
                                 }
-                                
+
                                 if(!result.isHRM() && !result.isDocument() && !oscarLogDao.hasRead(curUser_no,"lab",segmentID)){
-                                	labRead = "*";
+                                	labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>";
                                 }
 
 
@@ -268,8 +218,8 @@ String bgcolor="";
 									<input type="hidden" name="providerNo" value="<%=providerNo%>"/>
 									<input type="hidden" name="searchProviderNo" value="<%=searchProviderNo%>"/>
 									<input type="hidden" name="status" value="<%=status%>"/>
-								</form> 
-                                <div id="document_<%=segmentID%>">                                 	                                		                            
+								</form>
+                                <div id="document_<%=segmentID%>">
                         			<jsp:include page="../dms/showDocument.jsp" flush="true">
                         				<jsp:param name="segmentID" value="<%=segmentID%>"/>
                         				<jsp:param name="demoName" value="<%=demoName%>"/>
@@ -303,7 +253,7 @@ String bgcolor="";
 
 		                        		%>
 		                        		<%--
-		                        				<iframe src="../lab/CA/ALL/labDisplayAjax.jsp?segmentID=<%=segmentID %>" style="height:100%;width:100%;border:0;"></iframe>
+		                        				<iframe src="../lab/CA/ALL/labDisplayAjax.jsp?segmentID=<%=segmentID %>" style="height:100%;width:100%;border:0px;"></iframe>
 		                        		--%>
 		                        		<jsp:include page="../lab/CA/ALL/labDisplayAjax.jsp" flush="true">
 		                        			<jsp:param name="segmentID" value="<%=segmentID%>"/>
@@ -321,20 +271,19 @@ String bgcolor="";
                                 }
                                 else {
                         		%>
-                                <tr id="labdoc_<%=segmentID%>" bgcolor="<%=bgcolor%>" <%if(result.isDocument()){%> name="scannedDoc" <%} else{%> name="HL7lab" <%}%> class="<%= (result.isAbnormal() ? "AbnormalRes error" : "NormalRes" ) + " " + (result.isMatchedToPatient() ? "AssignedRes" : "UnassignedRes") %>">
-                                <td nowrap width="130px">
-                                    <input type="hidden" id="totalNumberRow" value="<%=total_row_index+1%>">
+                                <tr id="labdoc_<%=segmentID%>" <%if(result.isDocument()){%> name="scannedDoc" <%} else{%> name="HL7lab" <%}%> class="<%= (result.isAbnormal() ? "AbnormalRes error" : "NormalRes" ) + " " + (result.isMatchedToPatient() ? "AssignedRes" : "UnassignedRes") %>">
+                                <td style="width:130px; white-space:nowrap;">
                                     <input type="checkbox" name="flaggedLabs" value="<%=segmentID%>">
                                     <input type="hidden" name="labType<%=segmentID+result.labType%>" value="<%=result.labType%>"/>
                                     <input type="hidden" name="ackStatus" value="<%= result.isMatchedToPatient() %>" />
                                     <input type="hidden" name="patientName" value="<%=StringEscapeUtils.escapeHtml(result.patientName) %>"/>
                                     <%=result.getHealthNumber() %>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <% if ( result.isMDS() ){ %>
-                                    <a href="javascript:parent.reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%= StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                    <%=labRead%><a href="javascript:parent.reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%= StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     <% }else if (result.isCML()){ %>
-                                    <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                    <%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     <% }else if (result.isHL7TEXT())
                                    	{
                                     	String categoryType=result.getDiscipline();
@@ -342,25 +291,25 @@ String bgcolor="";
                                     	if ("REF_I12".equals(categoryType))
                                     	{
 	                                    	%>
-                                      			<a href="javascript:parent.popupConsultation('<%=segmentID%>')"><%=labRead%><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                      			<%=labRead%><a href="javascript:parent.popupConsultation('<%=segmentID%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     		<%
                                     	}
                                     	else if (categoryType!=null && categoryType.startsWith("ORU_R01:"))
                                     	{
 	                                    	%>
-                                      			<a href="<%=request.getContextPath()%>/lab/CA/ALL/viewOruR01.jsp?segmentId=<%=segmentID%>"><%=labRead%><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                      			<%=labRead%><a href="<%=request.getContextPath()%>/lab/CA/ALL/viewOruR01.jsp?segmentId=<%=segmentID%>" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     		<%
                                     	}
                                     	else
                                     	{
 	                                    	%>
-	                                    		<a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ALL/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&showLatest=true')"><%=labRead%><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+	                                    		<%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ALL/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&showLatest=true');"  onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
 	                                    	<%
                                     	}
                                     }
-                                    else if (result.isDocument()){ 
+                                    else if (result.isDocument()){
                                 	String patientName = result.getPatientName();
-                                    	StringBuilder url = new StringBuilder(request.getContextPath());                                    	
+                                    	StringBuilder url = new StringBuilder(request.getContextPath());
                                     	url.append("/dms/showDocument.jsp?inWindow=true&segmentID=");
                                     	url.append(segmentID);
                                     	url.append("&providerNo=");
@@ -370,18 +319,18 @@ String bgcolor="";
                                     	url.append("&status=");
                                     	url.append(status);
                                     	url.append("&demoName=");
-                                    	
+
                                     	//the browser html parser does not understand javascript so we need to account for the opening
-                                    	//and closing quotes used in the onclick event handler                                    	
+                                    	//and closing quotes used in the onclick event handler
                                     	patientName = StringEscapeUtils.escapeHtml(patientName);
-                                    	
-                                    	//now that the html parser will pass the correct characters to the javascript engine we need to 
+
+                                    	//now that the html parser will pass the correct characters to the javascript engine we need to
                                     	//escape chars for javascript that are not transformed by the html escape.
-                                    	url.append(StringEscapeUtils.escapeJavaScript(patientName));                                    	                                    	                                    	
-                                    %>                                    
-                                    
-                                    <a href="javascript:void(0);" onclick="reportWindow('<%=url.toString()%>',screen.availHeight, screen.availWidth); return false;" ><%=labRead + StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
-                                    
+                                    	url.append(StringEscapeUtils.escapeJavaScript(patientName));
+                                    %>
+
+                                    <%=labRead%><a href="javascript:void(0);" onclick="reportWindow('<%=url.toString()%>',screen.availHeight, screen.availWidth); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';return false;" ><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+
                                     <% }else if(result.isHRM()){
                                     	StringBuilder duplicateLabIds=new StringBuilder();
                                     	for (Integer duplicateLabId : result.getDuplicateLabIds())
@@ -390,33 +339,33 @@ String bgcolor="";
                                     		duplicateLabIds.append(duplicateLabId);
                                     	}
                                     %>
-                                    <a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=StringEscapeUtils.escapeHtml(demoName)%>&duplicateLabIds=<%=duplicateLabIds.toString()%> ',850,1020)"><%=labRead%><%=result.getPatientName()%></a>
+                                    <%=labRead%><a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=StringEscapeUtils.escapeHtml(demoName)%>&duplicateLabIds=<%=duplicateLabIds.toString()%> ',850,1020)" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=result.getPatientName()%></a>
                                     <% }else {%>
-                                    <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%></a>
+                                    <%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%></a>
                                     <% }%>
                                 </td>
-                                <td nowrap>
-                                    <center><%=result.getSex() %></center>
+                                <td style="white-space:nowrap;">
+                                    <%=result.getSex() %>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <%= (result.isAbnormal() ? "Abnormal" : "" ) %>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <%=result.getDateTime() + (result.isDocument() ? " / " + result.lastUpdateDate : "")%>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <%=result.getPriority()%>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <%=result.getRequestingClient()%>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <%=result.isDocument() ? result.description == null ? "" : result.description : result.getDisciplineDisplayString()%>
                                 </td>
-                                <td nowrap> <!--  -->
+                                <td style="white-space:nowrap;"> <!--  -->
                                     <%= ((result.isReportCancelled())? "Cancelled" : result.isFinal() ? "Final" : "Partial")%>
                                 </td>
-                                <td nowrap>
+                                <td style="white-space:nowrap;">
                                     <% int multiLabCount = result.getMultipleAckCount(); %>
                                     <%= result.getAckCount() %>&#160<% if ( multiLabCount >= 0 ) { %>(<%= result.getMultipleAckCount() %>)<%}%>
                                 </td>
@@ -429,19 +378,19 @@ String bgcolor="";
                             </tbody>
                        	</table>
 
-                       	<table width="100%" style="margin:0px;padding:0px;" cellpadding="0" cellspacing="0">
-                       		<tr><td bgcolor="E0E1FF">
-                       			<div id='loader' style="display:none"><img src='<%=request.getContextPath()%>/images/DMSLoader.gif'> Loading reports...</div>
+                       	<table style="margin:0px;padding:0px; width: 100%;" >
+                       		<tr><td>
+                       			<div id='loader' style="display:none"><img src='<%=request.getContextPath()%>/images/DMSLoader.gif'> <bean:message key="caseload.msgLoading"/></div>
                        		</td></tr>
                        	</table>
                        	</div>
                        	<% if (labdocs.size() > 0) { %>
                        	<table width="100%" style="margin:0px;padding:0px;" cellpadding="0" cellspacing="0">
                             <tr class="MainTableBottomRow">
-                                <td class="subheader"  colspan="10" align="left">
-                                    <table width="100%">
+                                <td class="subheader"  colspan="10" style="text-align:left;">
+                                    <table style="width: 100%;">
                                         <tr>
-                                            <td align="left" valign="middle" width="30%">
+                                            <td style="width: 30%; text-align:left; vertical-align:middle;">
 
                                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="parent.checkSelected(document)">
                                                     <% if (ackStatus.equals("N")) {%>
@@ -473,29 +422,22 @@ String bgcolor="";
                 </td>
             </tr>
         </table>
-        <script>
-	        jQuery.tablesorter.addParser({
-			id: 'dateOfTest',
-			is: function(s) {return false;},
-			format: function(s) {
-                //for (2023-09-21 / 2023-09-21), use the 10 characters following the /
-                //for (2023-09-19 12:53:00 ), use the first 10 characters 
-                //for (2023-09-21 17:39:05.0), use the first 10 characters
-                //in any other scenario, just use the original string
-			    return s.indexOf("/")!=-1?s.substr(s.indexOf("/")+2,10):(s.indexOf(" ")!=-1?s.substr(0,10):s);
-			  },
-			type: 'text'
-			});
+<script>
 
+    jQuery(document).ready(function () {
+	    oTable=jQuery('#summaryView').DataTable({
+            "bPaginate": false,
+            "dom": "lrtip",
+            "order": [],
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+        });
+        jQuery('#myFilterTextField').keyup(function(){
+            oTable.search(jQuery(this).val()).draw();
+        });
+    });
 
-	        jQuery("#summaryView").tablesorter({
-			sortList:[[5,1]],
-			headers:{
-				5:{
-					sorter:'dateOfTest'
-				}
-			}
-	        });
-        </script>
-        
+</script>
+
     <% } // End if (pageNum == 1) %>

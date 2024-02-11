@@ -27,7 +27,7 @@
 <%@ page import="oscar.oscarDemographic.data.DemographicMerged"%>
 <%@ page import="org.owasp.encoder.Encode" %>
 
-	
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -46,7 +46,7 @@ if(!authed) {
 }
 %>
 
-<% 
+<%
 
 // Apologies for the crap code.  Definitely could do with a major rewrite...
 
@@ -107,7 +107,7 @@ function checkTypeIn() {
 	<form method="post" name="titlesearch" action="PatientSearch.jsp"
 		onSubmit="return checkTypeIn();">
 		<input type="hidden"
-		name="from" value="<%=request.getParameter("from")%>" /> 
+		name="from" value="<%=request.getParameter("from")%>" />
 		<input type="hidden"
 		name="labNo" value="<%=request.getParameter("labNo")%>" /> <input
 		type="hidden" name="labType"
@@ -131,7 +131,7 @@ function checkTypeIn() {
 			TYPE="hidden" NAME="dboperation" VALUE="search_titlename"> <INPUT
 			TYPE="hidden" NAME="limit1" VALUE="0"> <INPUT TYPE="hidden"
 			NAME="limit2" VALUE="5"> <input type="hidden"
-			name="displaymode" value="Search "> <input type="submit" class="btn btn-primary" 
+			name="displaymode" value="Search "> <input type="submit" class="btn btn-primary"
 			name="displaymode"
 			value="<bean:message key="oscarMDS.segmentDisplay.patientSearch.btnSearch"/>"
 			size="17"></td>
@@ -164,7 +164,7 @@ function checkTypeIn() {
         function addName(lastname, firstname, chartno) {
           fullname=lastname+","+firstname;
           document.addform.action="<%=request.getParameter("originalpage")%>?name="+fullname+"&chart_no="+chartno+"&bFirstDisp=false";  //+"\"" ;
-          document.addform.submit(); // 
+          document.addform.submit(); //
           //return;
         }
         //-->
@@ -172,10 +172,11 @@ function checkTypeIn() {
 <script>
 function updateOpener(t1,t2) {
 	<%if(request.getParameter("from") != null && "olis".equals(request.getParameter("from"))) {
-		%>window.opener.updateLabDemoStatus2(t1,t2);<%
+		%>if(window.opener.updateLabDemoStatus2(t1,t2)) window.opener.updateLabDemoStatus2(t1,t2);<%
 	} else {
-		%>window.opener.updateLabDemoStatus(t1);<%
+		%>if(window.opener.updateLabDemoStatus(t1)) window.opener.updateLabDemoStatus(t1);<%
 	}%>
+
 }
 </script>
 <CENTER>
@@ -211,26 +212,26 @@ function updateOpener(t1,t2) {
   int curMonth = (now.get(Calendar.MONTH)+1);
   int curDay = now.get(Calendar.DAY_OF_MONTH);
   int age=0;
-  
+
   ResultSet rs=null;
-  Properties props =  oscar.OscarProperties.getInstance(); 
+  Properties props =  oscar.OscarProperties.getInstance();
   DBPreparedHandler db = new DBPreparedHandler();
-  
+
   String keyword="";
-  if ( request.getParameter("keyword") != null ) {        
-    keyword = request.getParameter("keyword").trim();    
+  if ( request.getParameter("keyword") != null ) {
+    keyword = request.getParameter("keyword").trim();
   }
 
   String orderby="", limit="", limit1="", limit2="";
   if(request.getParameter("orderby")!=null) {
- 	if(request.getParameter("orderby").equals("address")) orderby="order by address"; 
-	if(request.getParameter("orderby").equals("phone")) orderby="order by phone"; 
- 	if(request.getParameter("orderby").equals("hin")) orderby="order by hin"; 
-	if(request.getParameter("orderby").equals("chart_no")) orderby="order by chart_no";  
- 	if(request.getParameter("orderby").equals("last_name")) orderby="order by last_name"; 
+ 	if(request.getParameter("orderby").equals("address")) orderby="order by address";
+	if(request.getParameter("orderby").equals("phone")) orderby="order by phone";
+ 	if(request.getParameter("orderby").equals("hin")) orderby="order by hin";
+	if(request.getParameter("orderby").equals("chart_no")) orderby="order by chart_no";
+ 	if(request.getParameter("orderby").equals("last_name")) orderby="order by last_name";
 	if(request.getParameter("orderby").equals("first_name")) orderby="order by first_name";
-	if(request.getParameter("orderby").equals("roster_status")) orderby="order by roster_status";  
- 	if(request.getParameter("orderby").equals("patient_status")) orderby="order by patient_status"; 
+	if(request.getParameter("orderby").equals("roster_status")) orderby="order by roster_status";
+ 	if(request.getParameter("orderby").equals("patient_status")) orderby="order by patient_status";
 	if(request.getParameter("orderby").equals("sex")) orderby="order by sex";
 	// to prevent SQL injection all other values are ignored
   }
@@ -261,17 +262,17 @@ function updateOpener(t1,t2) {
     }
   }
 
-  String sql = "select demographic_no,first_name,last_name,roster_status,patient_status,sex,chart_no,year_of_birth,month_of_birth,date_of_birth,provider_no from demographic where "+fieldname+ " "+regularexp+" ? " +orderby; // + " "+limit;  
-  
-  if(request.getParameter("search_mode").equals("search_name")) {      
+  String sql = "select demographic_no,first_name,last_name,roster_status,patient_status,sex,chart_no,year_of_birth,month_of_birth,date_of_birth,provider_no from demographic where "+fieldname+ " "+regularexp+" ? " +orderby; // + " "+limit;
+
+  if(request.getParameter("search_mode").equals("search_name")) {
       keyword=keyword+"%";
-      if(keyword.indexOf(",")==-1){         
+      if(keyword.indexOf(",")==-1){
          rs = db.queryResults(sql, keyword) ; //lastname
       }
-      else if(keyword.indexOf(",")==(keyword.length()-1)){         
+      else if(keyword.indexOf(",")==(keyword.length()-1)){
          rs = db.queryResults(sql, keyword.substring(0,(keyword.length()-1)));//lastname
       }
-      else { //lastname,firstname         
+      else { //lastname,firstname
     		String[] param;
     		int index = keyword.indexOf(",");
     		if (index != -1) {
@@ -289,23 +290,23 @@ function updateOpener(t1,t2) {
     		}
     		rs = db.queryResults(sql, param);
    	}
-  } else if(request.getParameter("search_mode").equals("search_dob")) {      
+  } else if(request.getParameter("search_mode").equals("search_dob")) {
     		String[] param =new String[3];
 	  		param[0]=""+MyDateFormat.getYearFromStandardDate(keyword)+"%";//(",");
 	  		param[1]=""+MyDateFormat.getMonthFromStandardDate(keyword)+"%";
-	  		param[2]=""+MyDateFormat.getDayFromStandardDate(keyword)+"%";  
+	  		param[2]=""+MyDateFormat.getDayFromStandardDate(keyword)+"%";
 	  		if(param[1].length() == 2) {
 	  			param[1] = "0" + param[1];
 	  		}
     		rs = db.queryResults(sql, param);
-  } else {      
+  } else {
     keyword=keyword+"%";
     rs = db.queryResults(sql, keyword);
   }
- 
+
   boolean bodd=false;
   int nItems=0;
-  
+
   if(rs==null) {
     out.println("failed!!!");
   } else {
@@ -316,8 +317,8 @@ function updateOpener(t1,t2) {
                 idx++;
   	}
   	idx = 0;
-  	
-	
+
+
 	DemographicMerged dmDAO = new DemographicMerged();
 
     while (rs.next() && idx < Integer.parseInt(strLimit2)) {
@@ -340,10 +341,10 @@ function updateOpener(t1,t2) {
     			curDay>Integer.parseInt(oscar.Misc.getString(rs,"date_of_birth"))) {
     			age=curYear-Integer.parseInt(oscar.Misc.getString(rs,"year_of_birth"));
     		} else {
-    			age=curYear-Integer.parseInt(oscar.Misc.getString(rs,"year_of_birth"))-1; 
+    			age=curYear-Integer.parseInt(oscar.Misc.getString(rs,"year_of_birth"))-1;
     		}
-    	}	
-     }	     
+    	}
+     }
 %>
 
 	<tr bgcolor="<%=bodd?"ivory":"white"%>" align="center">
@@ -378,11 +379,11 @@ function updateOpener(t1,t2) {
 <!--
 function last() {
   document.nextform.action="PatientSearch.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nLastPage%>&limit2=<%=strLimit2%>&from=<%=request.getParameter("from")%>" ;
-  //document.nextform.submit();  
+  //document.nextform.submit();
 }
 function next() {
   document.nextform.action="PatientSearch.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nNextPage%>&limit2=<%=strLimit2%>&from=<%=request.getParameter("from")%>" ;
-  //document.nextform.submit();  
+  //document.nextform.submit();
 }
 //-->
 </SCRIPT>

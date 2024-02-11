@@ -99,6 +99,8 @@ if(!authed) {
 <%
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+boolean rememberComment = (!props.hasProperty("REMEMBER_LAST_LAB_COMMENT") || props.isPropertyActive("REMEMBER_LAST_LAB_COMMENT"));
+
 String segmentID = request.getParameter("segmentID");
 String providerNo =request.getParameter("providerNo");
 String curUser_no = (String) session.getAttribute("user");
@@ -296,7 +298,11 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 		function updateLabDemoStatus(labno){
             if(document.getElementById("DemoTable"+labno)){
                 document.getElementById("DemoTable"+labno).style.backgroundColor="#FFF";
-                }
+            }
+            //top.opener.location.reload();
+            if(window.top.opener.document.getElementById("labdoc_"+labno)){
+                window.top.opener.document.getElementById("labdoc_"+labno).remove("UnassignedRes");
+            }
         }
 	</script>
     <style type="text/css">
@@ -445,13 +451,19 @@ input[id^='acklabel_']{
     function getComment(action, segmentId) {
        		var ret = true;
             var comment = "";
-            var selector = "#" + providerNo + "_" + segmentId + "commentText";
-            if( jQuery(selector) != null ) {
-	            comment = jQuery(selector).text();
-	            if( comment == null ) {
-	            	comment = "";
-	            }
+            var version = jQuery("#"+version).val();
+            var selector = "_" + providerNo + "_" + segmentId + "commentText";  // 0_101_866551commentText
+            <% if (rememberComment) { %>
+            if (version > 0 && jQuery("#"+(version -1)+selector).text().length>1){
+	            comment = jQuery("#"+(version -1)+selector).text();
             }
+            <% } %>
+            if( jQuery("#"+version+selector).text().length>1 ) {
+	            comment = jQuery("#"+version+selector).text();
+            }
+            if( comment == null ) {
+	            comment = "";
+	        }
             var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', comment);
 
             if( commentVal == null ) {
@@ -706,7 +718,10 @@ input[id^='acklabel_']{
         			data: dataStr,
         			success: function (data) {
                         // refresh the opening page with new results
-                        top.opener.location.reload();
+                        //top.opener.location.reload();
+                        if(window.top.opener.document.getElementById("labdoc_"+labNo)){
+                            window.top.opener.document.getElementById("labdoc_"+labNo).classList.add("UnassignedRes");
+                        }
                         // refresh the lab display page and offer dialog to rematch.
 					    window.location.reload();
         			}
@@ -925,11 +940,11 @@ input[id^='acklabel_']{
                         success: function(result) {
 	                    	if(closeOnSuccess) {
                                 if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {
-                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN invoke jQuery UI to hide the entry
+                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN 
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
                                 }
-                                //window.close();
+                                window.close();
 	                    	}
 	                    }});
 
@@ -1124,7 +1139,7 @@ input[id^='acklabel_']{
                                     <table style="vertical-align:top; border-width:0px; border-spacing:0px; width:100%;">
                                         <tr style="vertical-align:top;">
                                             <td style="padding:0px; vertical-align:top; width:33%; text-align:left">
-                                                <table style="vertical-align:top; border-width:0px; border-spacing:0px; width:100%; "  <% if ( !isLinkedToDemographic){ %> style="background-color:orange;" <% } %> id="DemoTable<%=segmentID%>" >                                                    <tr>
+                                                <table style="vertical-align:top; border-width:0px; border-spacing:0px; width:100%;  <% if ( !isLinkedToDemographic){ %> background-color:orange; <% } %>" id="DemoTable<%=segmentID%>" >                                                    <tr>
                                                         <td style="vertical-align:top; text-align:left">
                                                             <table style="vertical-align:top; width:100%; text-align:left">
                                                                 <tr>
@@ -1168,9 +1183,12 @@ input[id^='acklabel_']{
                                                                     <td style="white-space:nowrap;">
                                                                         <div class="FieldDatas">
                                                                             <%=handler.getAge()%>
+                                                                        &nbsp;
+                                                                            <bean:message key="oscarMDS.segmentDisplay.formSex"/>:
+                                                                        &nbsp;
+                                                                            <%=handler.getSex()%>
                                                                         </div>
                                                                     </td>
-
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="white-space:nowrap;">
@@ -1192,31 +1210,31 @@ input[id^='acklabel_']{
                                                         <td style="width:33%; vertical-align:top;">
                                                             <table style="width:100%; vertical-align:top; border-width:0px; border-spacing:0px;">
                                                                 <tr>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap; ">
                                                                         <div style="text-align: left" class="FieldDatas">
                                                                             <strong><bean:message key="oscarMDS.segmentDisplay.formHomePhone"/>: </strong>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="text-align:left; white-space:nowrap;" class="FieldDatas" >
                                                                             <%=handler.getHomePhone()%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="text-align:left" class="FieldDatas">
                                                                             <strong><bean:message key="oscarMDS.segmentDisplay.formWorkPhone"/>: </strong>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="white-space:nowrap; text-align:left" class="FieldDatas" >
                                                                             <%=handler.getWorkPhone()%>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="text-align:left" class="FieldDatas">
                                                                             <strong><bean:message key="oscarMDS.segmentDisplay.formEmail"/>: </strong>
                                                                         </div>
@@ -1232,20 +1250,9 @@ input[id^='acklabel_']{
                                                                         </div>
                                                                     </td>
                                                                 </tr>
+
                                                                 <tr>
-                                                                   <td style="white-space:nowrap; padding:3px;">
-                                                                        <div class="FieldDatas">
-                                                                            <strong><bean:message key="oscarMDS.segmentDisplay.formSex"/>: </strong>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td style="text-align: left; white-space:nowrap; padding:3px;">
-                                                                        <div class="FieldDatas">
-                                                                            <%=handler.getSex()%>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="text-align:left" class="FieldDatas">
                                                                          <% if ("ExcellerisON".equals(handler.getMsgType())) { %>
                                                                          	<strong>Reported by:</strong>
@@ -1254,7 +1261,7 @@ input[id^='acklabel_']{
                                                                          <% } %>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="white-space:nowrap; padding:3px;">
+                                                                    <td style="white-space:nowrap;">
                                                                         <div style="text-align:left; white-space:nowrap;" class="FieldDatas">
                                                                             <%=handler.getPatientLocation()%>
                                                                         </div>
@@ -1271,7 +1278,7 @@ input[id^='acklabel_']{
                                 <td style="background-color:white; vertical-align:top">
                                     <table style="width:100%;" >
                                         <tr>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas">
                                                 <% if ("CLS".equals(handler.getMsgType())) { %>
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formDateServiceCLS"/>:</strong>
@@ -1280,7 +1287,7 @@ input[id^='acklabel_']{
 												<% } %>
                                                 </div>
                                             </td>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= handler.getServiceDate() %>
                                                 </div>
@@ -1288,26 +1295,26 @@ input[id^='acklabel_']{
                                         </tr>
 
                                          <tr>
-                                             <td style="padding:1px;">
+                                             <td >
                                                 <div class="FieldDatas">
                                                <strong>Date of Request:</strong>
 
                                                 </div>
                                             </td>
-                                             <td style="padding:1px;">
+                                             <td >
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= handler.getRequestDate(0) %>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr>
-                                        	 <td style="padding:1px;">
+                                        	 <td >
                                         		<div class="FieldDatas">
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formDateReceivedCLS"/>:</strong>
 
                                                 </div>
                                             </td>
-                                             <td style="padding:1px;">
+                                             <td >
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= dateLabReceived %>
                                                 </div>
@@ -1319,35 +1326,31 @@ input[id^='acklabel_']{
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formReportStatus"/>:</strong>
                                                 </div>
                                             </td>
-                                             <td style="padding:1px;">
+                                             <td>
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= ( handler.getOrderStatus().equals("F") ? "Final" : handler.getOrderStatus().equals("C") ? "Corrected" : (handler.getMsgType().equals("PATHL7") && handler.getOrderStatus().equals("P")) ? "Preliminary": handler.getOrderStatus().equals("X") ? "DELETED": handler.getOrderStatus()) %>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style="padding:1px;"></td>
-                                            <td style="padding:1px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="white-space:nowrap; padding:1px;">
+                                            <td style="white-space:nowrap;">
                                                 <div class="FieldDatas">
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formClientRefer"/>:</strong>
                                                 </div>
                                             </td>
-                                            <td style="white-space:nowrap; padding: 1px;">
+                                            <td style="white-space:nowrap;">
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= handler.getClientRef()%>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas">
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formAccession"/>:</strong>
                                                 </div>
                                             </td>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= handler.getAccessionNum()%>
                                                 </div>
@@ -1355,12 +1358,12 @@ input[id^='acklabel_']{
                                         </tr>
                                         <% if (handler.getMsgType().equals("ExcellerisON") && !((ExcellerisOntarioHandler)handler).getAlternativePatientIdentifier().isEmpty()) {  %>
                                           <tr>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas">
                                                     <strong>Reference #:</strong>
                                                 </div>
                                             </td>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                     <%= ((ExcellerisOntarioHandler)handler).getAlternativePatientIdentifier()%>
                                                 </div>
@@ -1369,12 +1372,12 @@ input[id^='acklabel_']{
                                         <% } %>
                                         <% if (handler.getMsgType().equals("MEDVUE")) {  %>
                                         <tr>
-                                        	<td style="padding:1px;">
+                                        	<td>
                                                 <div class="FieldDatas">
                                                     <strong>MEDVUE Encounter Id:</strong>
                                                 </div>
                                             </td>
-                                            <td style="padding:1px;">
+                                            <td>
                                                 <div class="FieldDatas" style="white-space:nowrap;">
                                                    <%= handler.getEncounterId() %>
                                                 </div>
@@ -1409,12 +1412,7 @@ input[id^='acklabel_']{
                                                     <%= handler.getDocName()%>
                                                 </div>
                                             </td>
-                                            <%-- <td style="background-color:white">
-                                    <div class="FieldDatas">
-                                        <strong><bean:message key="oscarMDS.segmentDisplay.formReportToClient"/>: </strong>
-                                            <%= No admitting Doctor for CML messages%>
-                                    </div>
-                                </td> --%>
+
                                             <td style="background-color:white; text-align:right">
                                                 <div class="FieldDatas">
                                                     <strong><bean:message key="oscarMDS.segmentDisplay.formCCClient"/>: </strong>
@@ -1515,7 +1513,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                                         <% if (multiID.length > 1){ %>
                                                             <td style="text-align:center; background-color:white; width:20%; vertical-align:top">
                                                                 <div class="FieldDatas">
-                                                                    <b>Version:</b> v<%= j+1 %>
+                                                                    <b>Version:</b> v<%= j+1 %><input hidden id="version" value="<%=j%>">
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: left; background-color:white; width:80%; vertical-align:top">
@@ -1541,7 +1539,8 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                                                         <% if ( ackStatus.equals("Acknowledged") ) { %>
                                                                             <%= report.getTimestamp() %>,
                                                                         <% } %>
-                                                                        <span id="<%=report.getOscarProviderNo() + "_" + segmentID%>commentLabel"><%=report.getComment() == null || report.getComment().equals("") ? "no comment" : "comment : "%></span><span id="<%=report.getOscarProviderNo() + "_" + segmentID%>commentText"><%=report.getComment()==null ? "" : Encode.forHtmlContent(report.getComment())%></span>
+                                                                        <span id="<%=j + "_" + report.getOscarProviderNo() + "_" + segmentID%>commentLabel"><%=report.getComment() == null || report.getComment().equals("") ? "no comment" : "comment : "%></span>
+                                                                        <span id="<%=j + "_" + report.getOscarProviderNo() + "_" + segmentID%>commentText"><%=report.getComment()==null ? "" : Encode.forHtmlContent(report.getComment())%></span>
                                                                         <br>
                                                                     <% }
                                                                     if (ackList.size() == 0){
@@ -1576,7 +1575,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 <%-- MEDVUE Redirect. --%>
                         <table style="page-break-inside:avoid; border:0px; width:100%" >
                            <tr>
-                               <td colspan="4" style="height:7px">&nbsp;</td>
+                               <td colspan="4" style="height:14px">&nbsp;</td>
                            </tr>
                            <tr>
                                <td style="background-color#FFCC00; width:300px; vertical-align:bottom">
@@ -1584,13 +1583,12 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                       <%=headers.get(0)%>
                                    </div>
                                </td>
-                               <%--<td style="text-align:right; background-color:#FFCC00; width:100px;">&nbsp;</td>--%>
                                <td style="width:9px;">&nbsp;</td>
                                <td style="width:9px;">&nbsp;</td>
                                <td >&nbsp;</td>
                            </tr>
                        </table>
-                       <table style="page-break-inside:avoid; border:0px; width:100%" id="tblDiscs">
+                       <table style="page-break-inside:avoid; border:0px; width:100%" id="tblDiscs1">
                            <tr class="Field2">
                                <td style="width:25%; text-align:center; vertical-align:bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formTestName"/></td>
                                <td style="width:15%; text-align:center; vertical-align:bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formResult"/></td>
@@ -1602,11 +1600,11 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                <td style="width:6%; text-align:center; vertical-align:bottom" class="Cell"><bean:message key="oscarMDS.segmentDisplay.formAnnotate"/></td>
                            </tr>
 	                        <tr class="TDISRes">
-		                      	<td style="vertical-align:top; text-align:left" colspan="8" ><pre  style="margin:0px 0px 0px 100px;"><b>Radiologist: </b><b><%=handler.getRadiologistInfo()%></b></pre></td>
+		                      	<td style="vertical-align:top; text-align:left" colspan="8" ><pre  style="margin:0px 0px 0px 100px;"><b>Radiologist: </b><b><%=handler.getRadiologistInfo()%></b></pre>
 		                      	</td>
 	                     	 </tr>
 	                        <tr class="TDISRes">
-		                       	<td style="vertical-align:top; text-align:left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><b><%=handler.getOBXComment(1, 1, 1)%></b></pre></td>
+		                       	<td style="vertical-align:top; text-align:left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><b><%=handler.getOBXComment(1, 1, 1)%></b></pre>
 		                       	</td>
 		                       	<td style="vertical-align:top; text-align:center">
                                     <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
@@ -1641,30 +1639,34 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 							if( handler.getMsgType().equals("MEDITECH") ) {
 								isUnstructuredDoc = ((MEDITECHHandler) handler).isUnstructured();
 							} %>
-
-		                       <table style="page-break-inside:avoid; width:100%; border:0px">
-	                           <tr>
-	                               <td colspan="4" style="height:7px">&nbsp;</td>
-	                           </tr>
+                    <tr><!-- the following yellow header table is nested so provide a row for it -->
+                        <td>
+		                   <table style="page-break-inside:avoid; width:100%; border:0px">
+                               <tr>
+                                    <td colspan="4" style="height:14px">&nbsp;</td>
+                               </tr>
 	                           <tr>
 	                               <td style="vertical-align:bottom; background-color:#FFCC00; width:300px;">
 	                                   <div class="Title2">
 	                                       <%=headers.get(i)%>
 	                                   </div>
 	                               </td>
-                                   <%--<td style="text-align:right; background-color:#FFCC00; width:100px;">&nbsp;</td>--%>
                                    <td style="width:9px;">&nbsp;</td>
                                    <td style="width:9px;">&nbsp;</td>
                                    <td >&nbsp;</td>
 	                           </tr>
 	                       </table>
+                        </td>
+                    </tr>
+                    <tr><!-- nest for results table tblDisc -->
+                        <td>
 	                   <% if ( ( handler.getMsgType().equals("MEDITECH") && isUnstructuredDoc) ||
 	                		   ( handler.getMsgType().equals("MEDITECH") && ((MEDITECHHandler) handler).isReportData() ) ) { %>
-	                       	<table style="width:100%;border-collapse:collapse;" id="tblDiscs" >
+	                       	<table style="width:100%;border-collapse:collapse;"><!-- id="tblDiscs2" -->
 	                       	<tr><td colspan="4" style="padding-left:10px;">
 
                        	<%} else if( isUnstructuredDoc){%>
-	                       <table style="width:100%; border:0px; " id="tblDiscs">
+	                       <table style="width:100%; border:0px;"> <!-- id="tblDiscs3" -->
 
 	                           <tr class="Field2">
 
@@ -1682,7 +1684,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 
 	                           </tr><%
 						} else {%>
-                       <table style="width:100%; border:0px;" id="tblDiscs">
+                       <table style="width:100%; border:0px;"><!-- id="tblDiscs4"-->
 
                            <% if( handler instanceof MEDITECHHandler && "MIC".equals( ((MEDITECHHandler) handler).getSendingApplication() ) ) { %>
 	                          		<tr>
@@ -2222,12 +2224,16 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 
                            %>
                        </table>
+                       </td>
+                       </tr>
                        <%
 
                        } // end for handler.getMsgType().equals("MEDVUE")
 
                        %>
 <%-- FOOTER --%>
+                    <tr>
+                        <td>
                         <table style="width:100%; border:0px; background-color:silver" class="MainTableBottomRowRightColumn" >
                             <tr>
                                 <td style="text-align: left; width:100%">
@@ -2319,6 +2325,10 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                 </td>
                             </tr>
                         </table>
+                        </td>
+                        </tr>
+                        <tr>
+                        </td>
                         <table>
                         	<%
                         		for(String lName : allLicenseNames) {

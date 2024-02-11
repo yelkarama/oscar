@@ -8,6 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
+<!DOCTYPE html>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*,oscar.util.StringUtils,oscar.util.UtilDateUtilities, oscar.OscarProperties" %>
@@ -104,46 +105,61 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 <head>
     <!-- main calendar program -->
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
+<script src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 <!-- language for the calendar -->
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
+<script src="<%= request.getContextPath() %>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
 <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+<script src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 <!-- calendar style sheet -->
-<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" />
+<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" >
 
 
+   <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script>
+jQuery.noConflict();
+</script>
+
+<script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
+
+       <link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  >
 
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
-
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.tablesorter.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
-
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css"  />
-
-       <link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  />
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" >
+<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" >
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-  <script type="text/javascript" src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
+
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+
+    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+
+<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
+    <!-- <script src="${pageContext.request.contextPath}/js/DT_bootstrap.js"></script> -->
+
+<script src="<%= request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
+
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
+        <script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
+        <script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
+        <script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
+        <script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
+        <script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
+
+        <!--<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css">-->
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css">
+        <link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css">
+
+
+  <script src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
 
 <!-- important leave this last to override the css above -->
 <style>
@@ -165,9 +181,24 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         margin:1px;
     }
 
-    .Cell {
+    dt {
+        line-height: 16px;
+        font-size: 12px;
+
+    }
+    .header-cell {
         background-color:silver;
         border: black;
+        text-align: left;
+        vertical-align:bottom;
+        white-space:nowrap;
+        color: white;
+        padding-bottom: 6px;
+        padding-left: 5px;
+    }
+
+    .Cell {
+        background-color:silver;
     }
 
     .Field2 {
@@ -181,6 +212,17 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         background-color: silver;
     }
 
+	#summaryView td {
+		padding: 0px 5px;
+	}
+
+    .table-striped tbody > tr.UnassignedRes:nth-child(odd) > td {
+         background-color:#F0D04F;
+     }
+
+    .table-striped tbody > tr.UnassignedRes:nth-child(even) > td {
+         background-color:#FFCC00;
+     }
 </style>
 <style>
 /* Dropdown Button */
@@ -227,42 +269,36 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 </style>
 
-        <script type="text/javascript" src="showDocument.js"></script>
+    <script src="showDocument.js"></script>
 
-        		<script>
+    <script>
 
-			function runhl7Macro(name,formid, closeOnSuccess) {
-	          	var url='<%=request.getContextPath()%>/dms/inboxManage.do';
-				var num=formid.split("_");
-				var doclabid=num[1];
-	            var data='method=isLabLinkedToDemographic&labid='+doclabid;
-	            new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-	                 var json=transport.responseText.evalJSON();
-	                 if(json!=null){
-	                     var success=json.isLinkedToDemographic;
-	                     var demoid='';
-	                     if(success){
-	                     	demoid = json.demoId;
-	                     }
-	                     runMacrohl7Internal(name,formid,closeOnSuccess,demoid);
-	                 }
-	                 }});
-			}
-
-			function runMacrohl7Internal(name,formid,closeOnSuccess,demographicNo) {
-				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
-	            var data=$(formid).serialize(true);
-
-	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
-
-                    if(closeOnSuccess) {
-                        refreshCategoryList();
-                        Effect.BlindUp(formid);
-
-	            	}
-	        	}});
-			}
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
+			function runhl7Macro(name, formid, closeOnSuccess) {
+                var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
+                var num=formid.split("_");
+				var doclabid=num[1];
+                var data = 'method=isLabLinkedToDemographic&labid='+doclabid;
+                jQuery.ajax( {
+      	                type: "POST",
+      	                url: url,
+      	                dataType: "json",
+                        data: data,
+                        success: function(result) {
+                            if(result!=null){
+                                var success=result.isLinkedToDemographic;
+                                var demoid='';
+                                if (success) {
+                                    demoid=result.demoId;
+                                    runMacroInternal(name,formid,closeOnSuccess,demoid,"hl7");
+            	                 }
+                            }
+	                    }});
+
+
+			}
+
+			//first check to see if doc is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
 				var num=formid.split("_");
 				var doclabid=num[1];
@@ -272,38 +308,57 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 					if(demoId=='-1'|| saved=='false'){
 						alert('Document is not assigned and saved to a patient,please file it');
 					}else{
-						runMacroInternal(name,formid,closeOnSuccess,demoId);
+						runMacroInternal(name,formid,closeOnSuccess,demoId,"doc");
 					}
 				}
 			}
 
-			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
+			function runMacroInternal(name,formid,closeOnSuccess,demographicNo,type) {
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
-	            var data=$(formid).serialize(true);
+	            var data=jQuery('#'+formid).serialize();
+                var num=formid.split("_");
+	            var doclabid=num[1];
 
-	            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(data){
+                jQuery.ajax( {
+      	                type: "POST",
+      	                url: url,
+      	                dataType: "json",
+                        data: data,
+                        success: function(result) {
+	                    	if(closeOnSuccess) {
+                                if (type == "doc") {
+                        	            refreshCategoryList();
+                                        updateStatus(formid);
+                                }
+                                if (type == "hl7") {
+                        	        refreshCategoryList();
+                                    //jQuery('#'+formid).toggle("blind"); // jQuery "equivalent" but
+                                    Effect.BlindUp(formid);
+                                }
 
-                    if(closeOnSuccess) {
-	            		refreshCategoryList();
-                        updateStatus(formid); //oscarMDSIndex.js
-                        //Effect.BlindUp(formid);
-	            	}
-	        	}});
+                                //window.close();
+	                    	}
+	                    }});
+
 			}
 
-contextpath='<%=request.getContextPath()%>';
+        contextpath='<%=request.getContextPath()%>';
         function handleDocSave(docid,action){
 			var url=contextpath + "/dms/inboxManage.do";
 			var data='method=isDocumentLinkedToDemographic&docId='+docid;
-			new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-                            var json=transport.responseText.evalJSON();
-                            if(json!=null){
-                                var success=json.isLinkedToDemographic;
-                                var demoid='';
-
-                                if(success){
-                                    demoid=json.demoId;
-                                    if(demoid!=null && demoid.length>0) {
+            jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'json',
+                success: function(data) {
+                    var json = data;
+                    if (json != null) {
+                        var success = json.isLinkedToDemographic;
+                        var demoid = '';
+                        if (success) {
+                            demoid=json.demoId;
+                            if(demoid!=null && demoid.length>0) {
             switch(String(action)) {
                 case "msgLab":
                     popupStart(900,1280,contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg', docid);
@@ -377,9 +432,8 @@ contextpath='<%=request.getContextPath()%>';
 </title>
 <html:base/>
 
-<!--<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/oscarMDS/encounterStyles.css">-->
 
-<script type="text/javascript" >
+<script>
 	jQuery.noConflict();
 
 	jQuery(window).on("scroll",handleScroll());
@@ -395,7 +449,7 @@ contextpath='<%=request.getContextPath()%>';
 	}
 
 	var page = 1;
-	var pageSize = 40;
+	var pageSize = 400;
 	var selected_category = <%=(selectedCategory == null ? "1" : selectedCategory)%>;
 	var selected_category_patient = <%=(selectedCategoryPatient == null ? "\"\"" : selectedCategoryPatient)%>;
 	var selected_category_type = <%=(selectedCategoryType == null ? "\"\"" : selectedCategoryType)%>;
@@ -455,6 +509,7 @@ contextpath='<%=request.getContextPath()%>';
 	}
 
 	function updateListView() {
+        jQuery('#summaryView').DataTable().destroy();
 		var query = getQuery();
 		if (page == 1) {
 			document.getElementById("docViews").innerHTML = "";
@@ -484,8 +539,11 @@ contextpath='<%=request.getContextPath()%>';
 			var tmp = jQuery("#tempLoader");
 			if (tmp != null) { tmp.remove(); }
 			if (isListView) {
-				if (page == 1) { jQuery("#tempLoader").remove(); }
+				if (page == 1) {
+                    jQuery("#tempLoader").remove();
+                }
 				else { document.getElementById("loader").style.display = "none"; }
+
 			}
 
 			if (page == 1) {
@@ -498,6 +556,15 @@ contextpath='<%=request.getContextPath()%>';
 			}
 			if (transport.responseText.indexOf("<input type=\"hidden\" name=\"NoMoreItems\" value=\"true\" />") >= 0) {
 				canLoad = false;
+
+                oTable=jQuery('#summaryView').DataTable({
+                    "bPaginate": false,
+                    "dom": "lrtip",
+                    "order": [],
+                    "language": {
+                                "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                            }
+                });
 			}
 			else {
 				// It is possible that the current amount of loaded items has not filled up the page enough
@@ -509,6 +576,11 @@ contextpath='<%=request.getContextPath()%>';
 			jQuery("#listSwitcher").prop("disabled",false);
 		}});
 	}
+        function updateLabDemoStatus(labno){
+            if(document.getElementById("DemoTable"+labno)){
+                document.getElementById("DemoTable"+labno).style.backgroundColor="#FFF";
+            }
+        }
 
 	function getQuery() {
 		var CATEGORY_ALL = 1,CATEGORY_DOCUMENTS = 2,CATEGORY_HL7 = 3,CATEGORY_NORMAL = 4,CATEGORY_ABNORMAL = 5,CATEGORY_PATIENT = 6,CATEGORY_PATIENT_SUB = 7,CATEGORY_TYPE_DOC = 'DOC',CATEGORY_TYPE_HL7 = 'HL7';
@@ -577,7 +649,7 @@ contextpath='<%=request.getContextPath()%>';
 		var view = document.getElementById("readerSwitcher");
 		var active, passive;
 		if (isListView) {
-			pageSize = 40;
+			pageSize = 400;
 			active = view;
 			passive = list;
 		}
@@ -713,40 +785,40 @@ contextpath='<%=request.getContextPath()%>';
 </script>
 </head>
 
-<body oldclass="xBodyStyle"  >
+<body>
     <form name="reassignForm" method="post" action="ReportReassign.do" id="lab_form">
-        <table  oldclass="MainTable" id="scrollNumber1" border="0" name="encounterTable" cellspacing="0" cellpadding="3" width="100%">
-            <tr oldclass="xMainTableTopRow">
-                <td class="xMainTableTopRowRightColumn" colspan="10" align="left">
-                 <table width="100%">
+        <table id="scrollNumber1" style="width:100%; border-width:0px;">
+            <tr>
+                <td style="text-align:left"><!-- colspan="10" -->
+                 <table style="width:100%">
 
                         <tr>
-                            <td align="left" valign="center" > <%-- width="30%" --%>
-                                <input type="hidden" name="providerNo" value="<%= providerNo %>" />
-                                <input type="hidden" name="searchProviderNo" value="<%= searchProviderNo %>" />
+                            <td style="text-align:left; vertical-align:center;" > <%-- width="30%" --%>
+                                <input type="hidden" name="providerNo" value="<%= providerNo %>" >
+                                <input type="hidden" name="searchProviderNo" value="<%= searchProviderNo %>" >
                                 <%= (request.getParameter("lname") == null ? "" : "<input type=\"hidden\" name=\"lname\" value=\""+request.getParameter("lname")+"\">") %>
                                 <%= (request.getParameter("fname") == null ? "" : "<input type=\"hidden\" name=\"fname\" value=\""+request.getParameter("fname")+"\">") %>
                                 <%= (request.getParameter("hnum") == null ? "" : "<input type=\"hidden\" name=\"hnum\" value=\""+request.getParameter("hnum")+"\">") %>
-                                <input type="hidden" name="status" value="<%= ackStatus %>" />
-                                <input type="hidden" name="selectedProviders" />
-                                <input type="hidden" name="favorites" value="" />
-                                <input type="hidden" name="isListView" value="" />
-<table width=100%>
-<tr><td valign="top" width="120px">
+                                <input type="hidden" name="status" value="<%= ackStatus %>" >
+                                <input type="hidden" name="selectedProviders" >
+                                <input type="hidden" name="favorites" value="" >
+                                <input type="hidden" name="isListView" value="" >
+<table style="width:100%;">
+<tr><td style="width:120px; vertical-align:top;">
 <h4><i class= "icon-beaker"></i>&nbsp;<bean:message key="oscarEncounter.Labs.title"/></h4>
 </td><td>
-                                <input id="listSwitcher" type="button" style="display:none;" class="btn" value="<bean:message key="inboxmanager.document.listView"/>" onClick="switchView();" />
-                                <input id="readerSwitcher" type="button" class="btn" value="<bean:message key="inboxmanager.document.readerView"/>" onClick="switchView();" />
+                                <input id="listSwitcher" type="button" style="display:none;" class="btn" value="<bean:message key="inboxmanager.document.listView"/>" onClick="switchView();" >
+                                <input id="readerSwitcher" type="button" class="btn" value="<bean:message key="inboxmanager.document.readerView"/>" onClick="switchView();" >
                                 <% if (demographicNo == null) { %>
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnSearch"/>" onClick="window.location='<%=request.getContextPath()%>/oscarMDS/Search.jsp?providerNo=<%= providerNo %>'" />
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnSearch"/>" onClick="window.location='<%=request.getContextPath()%>/oscarMDS/Search.jsp?providerNo=<%= providerNo %>'" >
                                 <% } %>
-                                <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnClose"/>" onClick="wrapUp()" />
+                                <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnClose"/>" onClick="wrapUp()" >
 </td></tr>
 </table>
 
                       		</td>
 
-                            <td align="right" valign="center" width="40%">
+                            <td style="text-align:right; width:40%;">
 								<span class="HelpAboutLogout">
 									<a href="<%=help_url%>inbox/" target="_blank"><bean:message key="app.top1" /></a>
                                 	| <a href="javascript:popupStart(300,400,'<%=request.getContextPath()%>/oscarEncounter/About.jsp')" ><bean:message key="global.about"/></a>
@@ -758,7 +830,7 @@ contextpath='<%=request.getContextPath()%>';
                                 <% } else { %>
                                 | <a href="javascript:popupStart(800,1000,'<%=request.getContextPath()%>/dms/documentUploader.jsp')"><bean:message key="inboxmanager.document.uploadDoc"/></a>
                                 <% } %>
-								<br />
+								<br>
 								<a href="javascript:popupStart(700,1100,'../dms/inboxManage.do?method=getDocumentsInQueues')" ><bean:message key="inboxmanager.document.pendingDocs"/></a>
                                                                 | <a href="javascript:popupStart(800,1000,'<%=request.getContextPath() %>/dms/incomingDocs.jsp')"  ><bean:message key="inboxmanager.document.incomingDocs"/></a>
 								| <a href="javascript:popupStart(800,1000, '<%=request.getContextPath() %>/oscarMDS/CreateLab.jsp')" ><bean:message key="global.createLab" /></a>
@@ -772,16 +844,18 @@ contextpath='<%=request.getContextPath()%>';
             </tr>
         </table>
 
-        <table id="readerViewTable" style="table-layout: fixed;border-width: thin;border-spacing: 0px;" width="100%" border="1">
-                                                     <col width="120">
-                                                     <col width="100%">
+        <table id="readerViewTable" style="table-layout: fixed; border: solid thin; width:100%; border-color:black;">
+            <colgroup>
+                <col style="width:140px">
+                <col >
+            </colgroup>
           <tr>
-              <td id="categoryList" valign="top" style="overflow:hidden;border-width: thin; max-height: 100vh; min-width: 140px;" >
+              <td id="categoryList" style="overflow:hidden;border:solid thin; max-height: 100vh; min-width: 140px; vertical-align:top;" >
 <% } // end if(!ajax)
    else {
 %>
 					<input type="hidden" id="categoryHash" value="<%=categoryHash%>" />
-                    <div style="height:auto; max-height: 96vh; overflow:auto; min-width: 140px;">
+                    <div style="height:auto; max-height: 96vh; overflow:auto; min-width: 140px; padding-top: 10px;">
                     <%
                     	//Enumeration en=patientIdNames.keys();
                         if((totalNumDocs) > 0){
@@ -842,7 +916,7 @@ contextpath='<%=request.getContextPath()%>';
 
    					   <dt> <img id="plus<%=patientId%>" alt="plus" src="<%=request.getContextPath()%>/images/plus.png" onclick="showhideSubCat('plus','<%=patientId%>');"/>
        					    <img id="minus<%=patientId%>" alt="minus" style="display:none;" src="<%=request.getContextPath()%>/images/minus.png" onclick="showhideSubCat('minus','<%=patientId%>');"/>
-       						<a id="patient<%=patientId%>all" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,<%=patientId%>);"
+       						<a id="patient<%=patientId%>all" class="ptall" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,<%=patientId%>);"
                             title="<%=patientName%>">
                             <%=shortName%> (<span id="patientNumDocs<%=patientId%>"><%=numDocs%></span>)
                             </a>
@@ -971,7 +1045,7 @@ if (patients!=null) {
 	if (!ajax) {
 %>
              </td>
-             <td style="width:100%;height:auto;" valign="top">
+             <td style="width:96%; height:auto; vertical-align:top">
                  <div id="docViews" style="width:100%;height:96vh;overflow:auto;" onscroll="handleScroll(this)">
 
                  </div>
