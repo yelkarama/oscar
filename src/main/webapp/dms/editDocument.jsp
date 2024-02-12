@@ -109,7 +109,7 @@ if (request.getAttribute("completedForm") != null) {
     fileName = currentDoc.getFileName();
     formdata.setAbnormal((currentDoc.getAbnormal())?"checked":"");
     formdata.setReceivedDate(currentDoc.getReceivedDate());
-    
+
     extraReviewers = documentExtraReviewerDao.findByDocumentNo(Integer.parseInt(editDocumentNo));
 }
 
@@ -240,10 +240,10 @@ for (String reportClass : reportClasses) {
 	<input type="hidden" name="reviewerId" value="<%=formdata.getReviewerId()%>" >
 	<input type="hidden" name="reviewDateTime" value="<%=formdata.getReviewDateTime()%>" >
 	<input type="hidden" name="reviewDoc" value="false" >
-	
+
 	<input type="hidden" name="extraReviewerId" value="" >
 	<input type="hidden" name="extraReviewDoc" value="false" >
-	
+
 	<table class="layouttable">
 		<tr>
 			<td><label for="docType">Type:</label> </td>
@@ -334,7 +334,7 @@ for (String reportClass : reportClasses) {
 		<tr>
 			<td>Public?</td>
 			<td><input type="checkbox" name="docPublic"
-				<%==Encode.forHtmlAttribute(formdata.getDocPublic() + " ")%> value="checked"></td>
+				<%=Encode.forHtmlAttribute(formdata.getDocPublic() + " ")%> value="checked"></td>
 		</tr>
 		<%}%>
                 <tr>
@@ -348,7 +348,7 @@ for (String reportClass : reportClasses) {
 				<%=formdata.isRestrictToProgram() %>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<td>Date Received:</td>
 			<td><input id="receivedDate" name="receivedDate"
@@ -356,19 +356,19 @@ for (String reportClass : reportClasses) {
 				id="rdate"><img title="Calendar" src="../images/cal.gif"
 				alt="Calendar" border="0" /></a></td>
 		</tr>
-		
+
 		<tr>
 			<td>Abnormal Result(s):</td>
 			<td><input type="checkbox" name="abnormal"
 				<%=Encode.forHtmlAttribute(formdata.getAbnormal() + " ")%> value="checked"></td>
 		</tr>
-		
+
 		<tr>
                 <% boolean updatableContent=false; %>
                 <oscar:oscarPropertiesCheck property="ALLOW_UPDATE_DOCUMENT_CONTENT" value="true" defaultVal="false">
                     <% updatableContent=true; %>
                 </oscar:oscarPropertiesCheck>
-                    
+
                         <td><div style="<%=updatableContent==true?"":"visibility: hidden"%>">
                                 File: <font class="comment">(blank to keep file)</font>
                             </div>
@@ -378,15 +378,15 @@ for (String reportClass : reportClasses) {
                                 <input type="file" name="docFile" size="20"
                                    <% if (docerrors.containsKey("uploaderror")) {%> class="warning"
                                    <%}%>>
-                            </div>        
+                            </div>
                         </td>
-                    
+
                 </tr>
                 <tr>
 		    <td colspan=2>
-			<% 
+			<%
 			boolean reviewedByMe = false;
-			if (formdata.getReviewerId()!=null && !formdata.getReviewerId().equals("")) { 
+			if (formdata.getReviewerId()!=null && !formdata.getReviewerId().equals("")) {
 				if(formdata.getReviewerId().equals(user_no)) {
 					reviewedByMe=true;
 				}
@@ -394,8 +394,8 @@ for (String reportClass : reportClasses) {
 			Reviewed: &nbsp; <%=Encode.forHtmlContent(EDocUtil.getProviderName(formdata.getReviewerId()))%>
 			&nbsp; [<%=formdata.getReviewDateTime()%>]
 			<% } %>
-			<% 
-			for(DocumentExtraReviewer der : extraReviewers) { 
+			<%
+			for(DocumentExtraReviewer der : extraReviewers) {
 				if(der.getReviewerProviderNo().equals(user_no)) {
 					reviewedByMe=true;
 				}
@@ -404,7 +404,7 @@ for (String reportClass : reportClasses) {
 				Reviewed: &nbsp; <%=Encode.forHtmlContent(EDocUtil.getProviderName(der.getReviewerProviderNo()))%>
 			&nbsp; [<%=der.getReviewDateTime()%>]
 			<% } %>
-			
+
 			<%if(!reviewedByMe) { %>
 			<br/>
 			<input type="button" value="Reviewed" title="Click to set Reviewed" onclick="reviewed(this);" />
