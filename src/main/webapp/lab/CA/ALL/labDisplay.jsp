@@ -451,7 +451,7 @@ input[id^='acklabel_']{
     function getComment(action, segmentId) {
        		var ret = true;
             var comment = "";
-            var version = jQuery("#"+version).val();
+            var version = jQuery("#version_"+segmentId).val();
             var selector = "_" + providerNo + "_" + segmentId + "commentText";  // 0_101_866551commentText
             <% if (rememberComment) { %>
             if (version > 0 && jQuery("#"+(version -1)+selector).text().trim().length > 0){
@@ -1513,7 +1513,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                                         <% if (multiID.length > 1){ %>
                                                             <td style="text-align:center; background-color:white; width:20%; vertical-align:top">
                                                                 <div class="FieldDatas">
-                                                                    <b>Version:</b> v<%= j+1 %><input hidden id="version" value="<%=j%>">
+                                                                    <b>Version:</b> v<%= j+1 %><input hidden id="version_<%=multiID[j]%>" value="<%=j%>">
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: left; background-color:white; width:80%; vertical-align:top">
@@ -2328,7 +2328,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                         </td>
                         </tr>
                         <tr>
-                        </td>
+                        <td>
                         <table>
                         	<%
                         		for(String lName : allLicenseNames) {
