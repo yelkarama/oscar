@@ -91,7 +91,7 @@ if(!authed) {
 <%
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     oscar.OscarProperties props = oscar.OscarProperties.getInstance();
-    
+
     boolean rememberComment = (!props.hasProperty("REMEMBER_LAST_LAB_COMMENT") || props.isPropertyActive("REMEMBER_LAST_LAB_COMMENT"));
     boolean bShortcutForm = props.getProperty("appt_formview", "").equalsIgnoreCase("on") ? true : false;
     String formName = bShortcutForm ? props.getProperty("appt_formview_name") : "";
@@ -269,19 +269,19 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
         	var label = "V" + version + "commentLabel" + labid + jQuery("#providerNo").val(); // providerNo = "101";
         	var text = "commentText" + labid + jQuery("#providerNo").val();
-            
+
             <% if (rememberComment) { %>
             // use as default the comment for the prior version if it exists
             if( version > 0 && jQuery('#V'+(version-1)+text).text().length > 0 ) {
-	            commentVal = jQuery('#V'+(version-1)+text).text();
+	            commentVal = jQuery('#V'+(version-1)+text).text().trim();
             }
             <% } %>
-            
+
             // however the best default is the existing comment for this version
-            if( jQuery('#V'+version+text).text().length >0 ) {
-	            commentVal = jQuery('#V'+version+text).text();
+            if( jQuery('#V'+version+text).text().trim().length > 0 ) {
+	            commentVal = jQuery('#V'+version+text).text().trim();
             }
-            
+
 	        if( commentVal == null ) {
 	            commentVal = "";
 	        }
