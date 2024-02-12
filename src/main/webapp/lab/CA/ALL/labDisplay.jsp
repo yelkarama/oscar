@@ -454,12 +454,12 @@ input[id^='acklabel_']{
             var version = jQuery("#"+version).val();
             var selector = "_" + providerNo + "_" + segmentId + "commentText";  // 0_101_866551commentText
             <% if (rememberComment) { %>
-            if (version > 0 && jQuery("#"+(version -1)+selector).text().length>1){
-	            comment = jQuery("#"+(version -1)+selector).text();
+            if (version > 0 && jQuery("#"+(version -1)+selector).text().trim().length > 0){
+	            comment = jQuery("#"+(version -1)+selector).text().trim();
             }
             <% } %>
-            if( jQuery("#"+version+selector).text().length>1 ) {
-	            comment = jQuery("#"+version+selector).text();
+            if( jQuery("#"+version+selector).text().trim().length > 0 ) {
+	            comment = jQuery("#"+version+selector).text().trim();
             }
             if( comment == null ) {
 	            comment = "";
@@ -940,7 +940,7 @@ input[id^='acklabel_']{
                         success: function(result) {
 	                    	if(closeOnSuccess) {
                                 if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {
-                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN 
+                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
                                 }
