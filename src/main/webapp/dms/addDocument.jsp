@@ -422,6 +422,6 @@ for (String reportClass : reportClasses) {
 		value="<bean:message key="global.btnCancel"/>"
 		onclick="javascript: window.location='documentReport.jsp?function=<%=module%>&functionid=<%=moduleid%>'">
 </html:form> <script type="text/javascript">
-                            Calendar.setup( { inputField : "observationDate", ifFormat : "%Y/%m/%d", showsTime :false, button : "obsdate", singleClick : true, step : 1 } );
+                            Calendar.setup( { inputField : "observationDate", ifFormat : "%Y-%m-%d", showsTime :false, button : "obsdate", singleClick : true, step : 1 } );
                            </script></div>
 </div>
