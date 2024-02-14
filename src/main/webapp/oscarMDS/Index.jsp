@@ -115,51 +115,50 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 <link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" >
 
 
-   <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-<script>
-jQuery.noConflict();
-</script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script> jQuery.noConflict(); </script>
 
 <script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
-<script src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
-<script src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/scriptaculous.js"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>
 
-       <link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  >
-
+<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  >
 
 <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" >
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" >
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 
-    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
 
-    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
 
 <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
-    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
-    <!-- <script src="${pageContext.request.contextPath}/js/DT_bootstrap.js"></script> -->
 
-<script src="<%= request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
+<!-- <script src="${pageContext.request.contextPath}/js/DT_bootstrap.js"></script> -->
 
-<script src="<%= request.getContextPath() %>/js/global.js"></script>
-<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-        <script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
-        <script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
-        <script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
-        <script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
-        <script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
-        <script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
 
-        <!--<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css">-->
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css">
-        <link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css">
+<script src="<%=request.getContextPath() %>/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
+<script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
+<script src="<%=request.getContextPath()%>/js/documentDescriptionTypeahead.js"></script>
+
+<!--<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css">-->
+<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css">
+<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css">
 
 
-  <script src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
+<script src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
 
 <!-- important leave this last to override the css above -->
 <style>

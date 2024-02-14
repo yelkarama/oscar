@@ -469,6 +469,13 @@ public class DocumentDao extends AbstractDao<Document> {
 		
 	}
 	
+	public List<String> findDocumentDescriptions(String keyword) {
+		Query query = entityManager.createQuery("SELECT DISTINCT d.docdesc FROM Document d WHERE d.docdesc like :keyword ORDER BY d.docdesc");
+		query.setParameter("keyword", keyword+"%");
+
+		return query.getResultList();
+	}
+	
 	public List<Document> findByDemographicAndDoctype(int demographicId, DocumentType documentType) {
 		Query query = entityManager.createNativeQuery("SELECT d.* FROM document d, ctl_document c WHERE c.document_no = d.document_no AND d.doctype = :doctype AND d.status NOT LIKE 'D' AND c.module LIKE 'demographic' AND c.module_id = :demographicId", Document.class);		
 		query.setParameter("demographicId", demographicId);
@@ -493,13 +500,6 @@ public class DocumentDao extends AbstractDao<Document> {
 		return getSingleResultOrNull(query);
 	}
 	
-	
-	public List<String> findDocumentDescriptions(String keyword) {
-		Query query = entityManager.createQuery("SELECT DISTINCT d.docdesc FROM Document d WHERE d.docdesc like :keyword ORDER BY d.docdesc");
-		query.setParameter("keyword", keyword+"%");
-
-		return query.getResultList();
-	}
 
     public List<Document> findDocumentsByDateRange(String module, String moduleId, String docType,
         boolean publicDoc, String viewStatus, Date startDate, Date endDate) {

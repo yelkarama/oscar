@@ -6,7 +6,7 @@
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version. 
+    of the License, or (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,7 @@
     as part of the OSCAR McMaster EMR System
 
 --%>
-    
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -38,7 +38,7 @@
 	}
 %>
 
-  
+
 <%@page import="org.oscarehr.common.model.UserProperty"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
@@ -50,7 +50,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
-    
+
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.oscarehr.common.dao.ProviderLabRoutingDao,org.oscarehr.common.dao.DemographicDao, org.oscarehr.PMmodule.dao.ProviderDao" %>
@@ -59,31 +59,31 @@
 <%@page import="org.oscarehr.common.model.Demographic"%>
 <%@page import="org.oscarehr.common.model.ProviderLabRoutingModel" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-    
+
 <%@page import="oscar.dms.IncomingDocUtil" %>
-    
+
 <jsp:useBean id="LastPatientsBean" class="java.util.ArrayList" scope="session" />
-    
-    
+
+
 <style type="text/css">
     .autocomplete_style {
         background: #fff;
         text-align: left;
         z-index:2;
     }
-        
+
     .autocomplete_style ul {
         border: 1px solid #aaa;
         margin: 0px;
         padding: 2px;
         list-style: none;
     }
-        
+
     .autocomplete_style ul li.selected {
         background-color: #ffa;
         text-decoration: underline;
     }
-    
+
     .multiPage {
         background-color: RED;
         color: WHITE;
@@ -92,27 +92,27 @@
         font-size: medium;
     }
     .singlePage {
-        
+
     }
     .topalign {
         vertical-align:text-top;
-    } 
+    }
 </style>
-    
+
 <%
     String user_no = (String) session.getAttribute("user");
-        
+
     String imageType = IncomingDocUtil.getAndSetViewDocumentAs(user_no, request.getParameter("imageType"));
     String queueIdStr = IncomingDocUtil.getAndSetIncomingDocQueue(user_no, request.getParameter("defaultQueue"));
     String entryMode = IncomingDocUtil.getAndSetEntryMode(user_no, request.getParameter("entryMode"));
 
     UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
-    UserProperty uProp = userPropertyDAO.getProp(user_no, UserProperty.DOCUMENT_DESCRIPTION_TEMPLATE);                        
+    UserProperty uProp = userPropertyDAO.getProp(user_no, UserProperty.DOCUMENT_DESCRIPTION_TEMPLATE);
     String useDocumentDescriptionTemplateType=UserProperty.CLINIC;
     if( uProp != null && uProp.getValue().equals(UserProperty.USER)) {
         useDocumentDescriptionTemplateType=UserProperty.USER;
-    }           
-        
+    }
+
     // add to most recent patient list
     int listsize = LastPatientsBean.size();
     String ptid = request.getParameter("lastdemographic_no") == null ? "" : request.getParameter("lastdemographic_no");
@@ -127,7 +127,7 @@
             }
         }
     }
-        
+
     java.util.Locale vLocale = (java.util.Locale) session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
     ProviderLabRoutingDao providerLabRoutingDao = (ProviderLabRoutingDao) ctx.getBean("providerLabRoutingDao");
@@ -149,7 +149,7 @@
         } else {
             subClasses.addAll(subClassList);
         }
-            
+
         if (!consultA.isEmpty() && !consultB.isEmpty()) {
             for (String partA : consultA) {
                 for (String partB : consultB) {
@@ -158,18 +158,18 @@
             }
         }
     }
-        
-        
+
+
     List<Integer> routingIdList=providerLabRoutingDao.findLastRoutingIdGroupedByProviderAndCreatedByDocCreator(user_no);
     Collections.sort(routingIdList,Collections.reverseOrder());
-    
+
     List<Hashtable> queues = queueDao.getQueues();
     int queueId = 1;
     if (queueIdStr != null) {
         queueIdStr = queueIdStr.trim();
         queueId = Integer.parseInt(queueIdStr);
     }
-        
+
     String errorMessage = "";
     String pdfNo = "";
     String pdfDir = request.getParameter("pdfDir") == null ? "Fax" : request.getParameter("pdfDir");
@@ -178,27 +178,27 @@
     String pdfPageNumber = request.getParameter("pdfPageNumber") == null ? "1" : request.getParameter("pdfPageNumber");
     String pdfName = request.getParameter("pdfName") == null ? "" : request.getParameter("pdfName");
     String pdfExtractPageNumber = request.getParameter("pdfExtractPageNumber") == null ? "" : request.getParameter("pdfExtractPageNumber");
-        
+
     try {
         IncomingDocUtil.doPagesAction(pdfAction, queueIdStr, pdfDir, pdfName, pdfPageNumber, pdfExtractPageNumber, vLocale);
     } catch (Exception e) {
         errorMessage= e.getMessage();
     }
-  
-        
+
+
     IncomingDocUtil myIncomingDocUtil = new IncomingDocUtil();
     ArrayList pdfList = myIncomingDocUtil.getDocList(pdfDirectory);
     ArrayList pdfListModifiedDate = myIncomingDocUtil.getPdfListModifiedDate();
-        
+
     pdfNo = request.getParameter("pdfNo") == null ? "1" : request.getParameter("pdfNo");
     if (Integer.parseInt(pdfNo) <= 0) {
-            pdfNo = "1"; 
+            pdfNo = "1";
     }
-    
+
     if (pdfList.size() < Integer.parseInt(pdfNo)) {
         pdfNo = (new Integer(pdfList.size())).toString();
     }
-        
+
     int PdfIndex = Integer.parseInt(pdfNo) - 1;
     if (pdfList.size() >= 1 && PdfIndex <= (pdfList.size() - 1)) {
         pdfName = (String) pdfList.get(PdfIndex);
@@ -210,12 +210,12 @@
 
 
     // iterate through the list of demographic doctypes and remove from
-    // the list in use for this page any that have the status of I, 
+    // the list in use for this page any that have the status of I,
     // inactive.
-       
+
     for (int docIndex = 0; docIndex < docTypes.size(); docIndex++) {
         String docType = (String) docTypes.get(docIndex);
-        if (EDocUtil.getDocStatus("demographic",docType).equals("I")) { 
+        if (EDocUtil.getDocStatus("demographic",docType).equals("I")) {
 		docTypes.remove(docIndex);
        		docIndex--;
         }
@@ -229,7 +229,7 @@
     if (!pdfName.isEmpty()) {
     numOfPage = IncomingDocUtil.getNumOfPages(queueIdStr, pdfDir, pdfName);
     }
-            
+
     if (Integer.parseInt(pdfPageNumber) > numOfPage) {
         pdfPageNumber = String.valueOf(numOfPage);
     }
@@ -250,34 +250,42 @@
         <script type="text/javascript" src="../share/javascript/prototype.js"></script>
         <script type="text/javascript" src="../share/javascript/effects.js"></script>
         <script type="text/javascript" src="../share/javascript/controls.js"></script>
-            
+
         <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
         <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
         <script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
         <script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
         <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
-            
-        <script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script>
-            
+
+        <script src="<%= request.getContextPath() %>/js/documentDescriptionTypeahead.js"></script>
+        <script src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
+
+        <!-- jquery -->
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script> jQuery.noConflict();</script>
+        <!-- migrate needed for some of the syntax used by external scripts for autocomplete provider -->
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
         <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"  />
         <script type="text/javascript">
             var curPage=<%=pdfPageNumber%>;
             var totalPage=<%=numOfPage%>;
-            
-            function popupPage(vheight,vwidth,varpage) { 
+
+            function popupPage(vheight,vwidth,varpage) {
                 var page = "" + varpage;
                 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=0,top=0,left=0";
                 var popup=window.open(page, "PopUp", windowprops);
                 if (popup != null) {
                     if (popup.opener == null) {
                         popup.opener = self;
-                    }    
+                    }
                     popup.focus();
                 }
             }
-    
+
             function loadSelectedPdf(pdfDir) {
                 seldocobj=document.getElementById('SelectPdfList');
                 pdfNo=seldocobj.selectedIndex;
@@ -285,20 +293,20 @@
                     loadPdf(pdfNo,pdfDir);
                 }
                 else {alert("<bean:message key="dms.incomingDocs.nothingSelected" />");}
-                
+
             }
-            
+
             function loadSelectedPage(queueId,pdfDir,pdfName) {
                 seldocobj=document.getElementById('SelectPageList');
                 PageNo=seldocobj.selectedIndex;
-                
+
                 if(PageNo>0) {
                     curPage=PageNo;
                     showPageImg(queueId,pdfDir,pdfName,curPage);
                 }
                 else {alert("<bean:message key="dms.incomingDocs.nothingSelected" />");}
             }
-            
+
             function loadPdf(pdfNo,pdfDir) {
                 if(parseInt(pdfNo, 10)<=0) { pdfNo="1";}
                 document.PdfInfoForm.pdfName.value="";
@@ -306,24 +314,24 @@
                 document.PdfInfoForm.pdfDir.value=pdfDir;
                 document.PdfInfoForm.submit();
             }
-            
+
             function setImageType() {
                 document.PdfInfoForm.imageType.value=document.getElementById('imageTypeList').options[document.getElementById('imageTypeList').selectedIndex].value;
                 document.PdfInfoForm.pdfPageNumber.value=curPage;
                 document.PdfInfoForm.submit();
             }
-            
+
             function setEntryMode() {
                 document.PdfInfoForm.entryMode.value=document.getElementById('entryModeList').options[document.getElementById('entryModeList').selectedIndex].value;
                 document.PdfInfoForm.pdfPageNumber.value=curPage;
                 document.PdfInfoForm.submit();
             }
-            
+
             function setQueue(){
                 document.PdfInfoForm.defaultQueue.value=document.getElementById('queueList').options[document.getElementById('queueList').selectedIndex].value;
                 document.PdfInfoForm.submit();
             }
-            
+
             function rotatePdf(pdfNo,pdfDir,pdfName,degrees) {
                 if(totalPage==0)
                 {
@@ -337,9 +345,9 @@
                     document.PdfInfoForm.pdfAction.value="Rotate"+degrees;
                     document.PdfInfoForm.pdfPageNumber.value=curPage;
                     document.PdfInfoForm.submit();
-                }       
+                }
             }
-            
+
             function rotateAllPagePdf(pdfNo,pdfDir,pdfName,degrees) {
                 if(totalPage==0)
                 {
@@ -354,9 +362,9 @@
                     document.PdfInfoForm.pdfPageNumber.value=curPage;
                     document.PdfInfoForm.submit();
                 }
-                
+
             }
-            
+
             function deletePdf(pdfNo,pdfDir,pdfName) {
                 if(pdfNo<=0)
                 {
@@ -367,16 +375,16 @@
                         document.PdfInfoForm.pdfNo.value=pdfNo;
                         document.PdfInfoForm.pdfDir.value=pdfDir;
                         document.PdfInfoForm.pdfName.value=pdfName;
-                        document.PdfInfoForm.pdfAction.value="DeletePDF";                
+                        document.PdfInfoForm.pdfAction.value="DeletePDF";
                         document.PdfInfoForm.submit();
                     }
                 }
             }
-            
+
             function deletePagePdf(pdfNo,pdfDir,pdfName) {
                 if(totalPage==0) {
                     alert("<bean:message key="dms.incomingDocs.nothingToDelete" />");
-                } 
+                }
                 else if(totalPage==1) {
                     alert("<bean:message key="dms.incomingDocs.onlyOneToDeleteUseDeletePDF" />");
                 }
@@ -392,7 +400,7 @@
                     }
                 }
             }
-            
+
             function extractPagePdf(pdfNo,pdfDir,pdfName) {
                 var validPages=true;
                 if(totalPage<=1) {
@@ -403,10 +411,10 @@
                     var rangestr="";
                     if (range==null || range=="") {validPages=false;}
                     range=trim(range);
-                    
+
                     var numbers = [];
                     var ranges = range.split(',');
-                    
+
                     for (var i = 0; i < ranges.length; i++) {
                         if(ranges[i].length==0) {validPages=false;}
                         if (ranges[i]) {
@@ -426,7 +434,7 @@
                             }
                         }
                     }
-                    
+
                     if(validPages) {
                         var notwholedoc=false;
                         for (var m = 1; m < numbers.length; m++) {
@@ -438,7 +446,7 @@
                             if((numbers.length-1)==<%=numOfPage%>) {validPages=false;}
                         }
                     }
-                    
+
                     if(validPages) {
                         document.PdfInfoForm.pdfNo.value=pdfNo;
                         document.PdfInfoForm.pdfDir.value=pdfDir;
@@ -454,31 +462,31 @@
                     }
                 }
             }
-            
+
             function printPdf(queueId,pdfDir,pdfName) {
                 if(totalPage==0)
                 {
                     alert("<bean:message key="dms.incomingDocs.selectDocumentFirst" />");
-                } 
+                }
                 else {
                     var url='<c:out value="${ctx}"/>/dms/ManageDocument.do?method=displayIncomingDocs'
                         +'&pdfDir='+encodeURIComponent(pdfDir)+'&queueId='+queueId+'&pdfName='+encodeURIComponent(pdfName);
                     popupPage(700,960,url);
                 }
             }
-            
+
             function loadRecentDemo(thisdemoid,thisDemoName)
             {
                 var demogObj = document.getElementById('demofind');
                 var autodemoObj = document.getElementById('autocompletedemo');
                 var saveObj = document.getElementById('save');
-                
+
                 demogObj.value=thisdemoid;
                 autodemoObj.value=thisDemoName;
                 saveObj.disabled=false;
-                
+
             }
-            
+
             function getWidth() {
                 var myWidth = 0;
                 if( typeof( window.innerWidth ) == 'number' ) {
@@ -493,23 +501,23 @@
                 }
                 return myWidth;
             }
-            
-            
+
+
             function getHeight() {
                 var myHeight = 0;
                 if( typeof( window.innerHeight ) == 'number' ) {
-                    //Non-IE                    
+                    //Non-IE
                     myHeight = window.innerHeight;
                 } else if( document.documentElement && document.documentElement.clientHeight  ) {
-                    //IE 6+ in 'standards compliant mode'                    
+                    //IE 6+ in 'standards compliant mode'
                     myHeight = document.documentElement.clientHeight;
                 } else if( document.body && (document.body.clientHeight ) ) {
-                    //IE 4 compatible                    
+                    //IE 4 compatible
                     myHeight = document.body.clientHeight;
                 }
                 return myHeight;
             }
-            
+
             function showPageImg(queueId,pdfDir,pdfName,pn) {
                 var url="";
                 var height=700;
@@ -522,15 +530,15 @@
                 {
                     width=getWidth()-450;
                 }
-                
+
                 if(pdfName.length==0) {
-                    
+
                     url="";
                     document.getElementById('pgnum').innerHTML = '';
                     document.getElementById('docdisp').innerHTML = '<iframe	src=""  width="800" height="900" ></iframe>';
                 } else  {
                     document.getElementById('pgnum').innerHTML = pn+ ' of <span class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">'+totalPage+'</span>';
-                    
+
                     if(document.PdfInfoForm.imageType.value=="Pdf") {
                         url='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewIncomingDocPageAsPdf'
                             +'&curPage='+pn+'&pdfDir='+encodeURIComponent(pdfDir)+'&queueId='+queueId+'&pdfName='+encodeURIComponent(pdfName)+"#view=fitV";
@@ -541,9 +549,9 @@
                             +'&curPage='+pn+'&pdfDir='+encodeURIComponent(pdfDir)+'&queueId='+queueId+'&pdfName='+encodeURIComponent(pdfName);
                     }
                     document.getElementById('docdisp').innerHTML = '<iframe	src="' +url +'"  width="'+(width)+'" height="'+(height)+'" ></iframe>';
-                }    
+                }
             }
-            
+
             function nextPage(queueId,pdfDir,pdfName){
                 curPage++;
                 if(curPage>=totalPage){
@@ -551,7 +559,7 @@
                 }
                 showPageImg(queueId,pdfDir,pdfName,curPage);
             }
-            
+
             function prevPage(queueId,pdfDir,pdfName){
                 curPage--;
                 if(curPage<1){
@@ -559,55 +567,55 @@
                 }
                 showPageImg(queueId,pdfDir,pdfName,curPage);
             }
-            
+
             function firstPage(queueId,pdfDir,pdfName){
                 if(totalPage>0) {curPage=1;} else {curPage=0;}
                 showPageImg(queueId,pdfDir,pdfName,curPage);
             }
-            
+
             function lastPage(queueId,pdfDir,pdfName){
                 curPage=totalPage;
                 showPageImg(queueId,pdfDir,pdfName,curPage);
             }
-            
+
             function selectDocDesc(desc){
-                var docDescObj = document.getElementById('documentDescription');
+                var docDescObj = document.getElementById('docDesc_0');
                 docDescObj.value=desc;
             }
-            
+
             function selectDocType(num) {
                 var selObj = document.getElementById('docType');
                 selObj.selectedIndex = num;
                 addDocumentDescriptionTemplateButton();
-            }    
-                
-            
+            }
+
+
             function trim(stringToTrim) {
                 return stringToTrim.replace(/^\s+|\s+$/g,"");
             }
-            
+
             function checkDocument(){
                 var n="<%=pdfName%>";
                 if(n.length==0) {
                     alert("<bean:message key="dms.incomingDocs.nothingToSave" />");
                     return false;
                 }
-                
-                               
+
+
                 if(totalPage==0) {
                     alert("<bean:message key="dms.incomingDocs.nothingToSave" />");
                     return false;
                 }
-                
+
                 var selObj = document.getElementById('docType');
                 var selIndex = selObj.selectedIndex;
                 if(selIndex==0) {
                     alert("<bean:message key="dms.incomingDocs.missingDocumentType" />");
                     return false;
                 }
-                
-                var docDescObj = document.getElementById('documentDescription');
-                
+
+                var docDescObj = document.getElementById('docDesc_0');
+
                 var a=trim(docDescObj.value);
                 if(a.length==0)
                 {
@@ -620,7 +628,7 @@
                         alert("<bean:message key="dms.incomingDocs.invalidDate" />");
                     return false;
                 }
-                
+
                 if(document.PdfInfoForm.pdfDir.value!="File")  {
                     var flagproviderObj = document.getElementsByName('flagproviders');
                     if(flagproviderObj.length==0) {
@@ -630,18 +638,18 @@
                         }
                     }
                 }
-                
+
 
                 document.getElementById('lastdemographic_no').value=document.getElementById('demofind').value;
                 return true;
             }
-            
+
             function removeThisProv(th){
                 var parent = th.parentNode;
                 var parent1 = parent.parentNode;
                 parent1.removeChild(parent);
             }
-            
+
             function loadMaster()
             {
                 var demogObj = document.getElementById('demofind');
@@ -650,48 +658,47 @@
                     popupPage(710,1024,'<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no='+demo+'&displaymode=edit&dboperation=search_detail');
                 }
             }
-            
+
             function loadApptHistory()
             {
                 var demogObj = document.getElementById('demofind');
                 var demo=demogObj.value;
-                
+
                 if(demo=="-1") {alert("<bean:message key="dms.incomingDocs.selectDemographicFirst" />");} else {
                     popupPage(710,1024,'<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no='+demo+'&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25');
                 }
-            }              
-            
+            }
+
             function setDescriptionIfEmpty()
             {
-                var docDescObj = document.getElementById('documentDescription');
-                
+                var docDescObj = document.getElementById('docDesc_0');
+
                 var a=trim(docDescObj.value);
                 if(a.length==0)
                 {
                     docDescObj.value=document.getElementById('docSubClass').value;
                 }
-                
+
             }
-            
+
             window.onload=function(){
                 new Autocompleter.Local('docSubClass', 'docSubClass_list', docSubClassList);
-                if(!NiftyCheck())
-                    return;
+
             }
-            
+
             var docSubClassList = [
             <% for (int i = 0; i < subClasses.size(); i++) {%>
                     "<%=subClasses.get(i)%>"<%=(i < subClasses.size() - 1) ? "," : ""%>
             <% }%>
                 ];
-                
+
             if(typeof(window.external) != 'undefined'){
                 //yes, this is evil browser sniffing, but only IE has this bug
                 document.getElementsByName = function(name, tag){
                     if(!tag){
                         tag = '*';
                     }
-                    
+
                     var elems = document.getElementsByTagName(tag);
                     var res = [];
                     var att="";
@@ -707,14 +714,14 @@
                     }
                     return res;
                 }
-                
+
             }
-            
+
             renderCalendar=function(id,inputFieldId){
                 Calendar.setup({ inputField : inputFieldId, ifFormat : "%Y-%m-%d", showsTime :false, button : id });
             }
-            
-            
+
+
             function addMRP()
             {
                 var MRPName=document.getElementById('MRPName').value;
@@ -730,23 +737,23 @@
                     }
                 }
             }
-            
+
             function addDocumentDescriptionTemplateButton() {
-                if(document.PdfInfoForm.entryMode.value=="Fast") {   
+                if(document.PdfInfoForm.entryMode.value=="Fast") {
                     var bdoc;
                     var docDescriptionList;
                     var docType=document.getElementById('docType').options[document.getElementById('docType').selectedIndex].value;
 
                     docDescriptionList = $('docDescriptionList');
                     while( docDescriptionList.hasChildNodes() ) { docDescriptionList.removeChild( docDescriptionList.lastChild ); }
-                
+
                     var url="<%=request.getContextPath()%>/DocumentDescriptionTemplate.do";
                     var data='method=getDocumentDescriptionFromDocType&doctype='+docType+"&providerNo=<%=user_no%>&useDocumentDescriptionTemplateType=<%=useDocumentDescriptionTemplateType%>";
                     new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
                         var json=transport.responseText.evalJSON();
                         if(json!=null ){
                             for (var i = 0; i < json.documentDescriptionTemplate.length; i++) {
-                                
+
                                 bdoc = document.createElement('input');
                                 bdoc.setAttribute("type", "button");
                                 bdoc.setAttribute("value", json.documentDescriptionTemplate[i].descriptionShortcut);
@@ -762,9 +769,9 @@
             }
         </script>
     </head>
-    <body> 
-        <table>                
-            <tr>                   
+    <body>
+        <table>
+            <tr>
                 <td align="left" valign="top" >
                     <form  method="post" name="PdfInfoForm" action="incomingDocs.jsp" >
                         <input type="hidden" name="pdfNo" value="<%=pdfNo%>">
@@ -790,11 +797,11 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr><td><input type="button" value="<bean:message key="dms.incomingDocs.fax" />" onclick="loadPdf('1','Fax');"> 
+                            <tr><td><input type="button" value="<bean:message key="dms.incomingDocs.fax" />" onclick="loadPdf('1','Fax');">
                                     <input type="button" value="<bean:message key="dms.incomingDocs.mail" />" onclick="loadPdf('1','Mail');">
                                     <input type="button" value="<bean:message key="dms.incomingDocs.file" />" onclick="loadPdf('1','File');">
                                     <input type="button" value="<bean:message key="dms.incomingDocs.refile" />" onclick="loadPdf('1','Refile');">
-                                        
+
                                 </td>
                             </tr>
                             <tr><td>
@@ -814,7 +821,7 @@
                                             </tr>
                                             <tr><td><input type="button" value="<bean:message key="dms.incomingDocs.first" />" onclick="loadPdf('1','<%=pdfDir%>');">
                                                     <input type="button" value="<bean:message key="dms.incomingDocs.previous" />" onclick="loadPdf('<%=Integer.parseInt(pdfNo) - 1%>','<%=pdfDir%>');" >
-                                                    <input type="button" value="<bean:message key="dms.incomingDocs.next" />" onclick="loadPdf('<%=Integer.parseInt(pdfNo) + 1%>','<%=pdfDir%>');"> 
+                                                    <input type="button" value="<bean:message key="dms.incomingDocs.next" />" onclick="loadPdf('<%=Integer.parseInt(pdfNo) + 1%>','<%=pdfDir%>');">
                                                     <input type="button" value="<bean:message key="dms.incomingDocs.last" />" onclick="loadPdf('<%=pdfList.size()%>','<%=pdfDir%>');">
                                                 </td>
                                             </tr>
@@ -840,7 +847,7 @@
                                                     <input type="button"  value="<bean:message key="dms.incomingDocs.previous" />"  onclick="prevPage('<%=queueIdStr%>','<%=pdfDir%>','<%=pdfName%>');">
                                                     <input type="button"  value="<bean:message key="dms.incomingDocs.next" />" onclick="nextPage('<%=queueIdStr%>','<%=pdfDir%>','<%=pdfName%>');">
                                                     <input type="button"  value="<bean:message key="dms.incomingDocs.last" />" onclick="lastPage('<%=queueIdStr%>','<%=pdfDir%>','<%=pdfName%>');">
-                                                        
+
                                                 </td>
                                             </tr>
                                             <tr><td><bean:message key="dms.incomingDocs.rotateThisPage" />:<input type="button" value="180" onclick="rotatePdf('<%=pdfNo%>','<%=pdfDir%>','<%=pdfName%>','180');">
@@ -860,7 +867,7 @@
                         </table>
                     </form>
                     <fieldset>
-                        <legend><bean:message key="dms.incomingDocs.dataEntryMode" />: 
+                        <legend><bean:message key="dms.incomingDocs.dataEntryMode" />:
                             <select tabIndex="<%=tabIndex++%>" name ="entryModeList" id="entryModeList" onchange="setEntryMode();">
                                 <option value="Normal" <%=entryMode.equals("Normal") ? "selected" : ""%> ><bean:message key="dms.incomingDocs.normal" /></option>
                                 <option value="Fast" <%=entryMode.equals("Fast") ? "selected" : ""%> ><bean:message key="dms.incomingDocs.fast" /></option>
@@ -881,10 +888,10 @@
                                 <tr><td colspan="2" width="350">
                                         <%for (int j = 0; j < docTypes.size(); j++) {
                                                 String docType = (String) docTypes.get(j);
-						%>	
+						%>
                                         		<input type="button" value="<%=docType.length()<3?docType:docType.substring(0, 3)%>" title="<%=docType%>" onclick="selectDocType(<%=j%>+1);">
 						<%
-					}%> 
+					}%>
                                     </td>
                                 </tr> <%}%>
                                 <tr>
@@ -894,9 +901,9 @@
                                             <option value=""><bean:message key="dms.incomingDocs.selectType" /></option>
                                             <%for (int j = 0; j < docTypes.size(); j++) {
                                                     String docType = (String) docTypes.get(j);
-						    if (!EDocUtil.getDocStatus("demographic",docType).equals("I")) { %> 
+						    if (!EDocUtil.getDocStatus("demographic",docType).equals("I")) { %>
 						    <option value="<%= docType%>" ><%= docType%></option>
-						    <%} 
+						    <%}
                                             }%>
                                         </select>
                                     </td>
@@ -929,7 +936,9 @@
                                 <tr><td colspan="2"><div id="docDescriptionList"></div></td></tr>
                                 <tr><td colspan="2"><bean:message key="dms.incomingDocs.description" />:</td></tr>
                                 <tr>
-                                    <td colspan="2"><input tabIndex="<%=tabIndex++%>"  type="text" style="width:100%;" id="documentDescription" name="documentDescription" value=""  onfocus="setDescriptionIfEmpty();" /></td>
+                                    <td colspan="2"><input tabIndex="<%=tabIndex++%>"  type="text" style="width:100%;" id="docDesc_0" name="documentDescription" value=""  onfocus="setDescriptionIfEmpty();" >
+<div id="docDescTypeahead_0" class="autocomplete"></div></td>
+
                                 </tr>
                                 <tr>
                                     <td><bean:message key="dms.incomingDocs.obsDate" />:
@@ -947,17 +956,17 @@
                                                 valueid = LastPatientsBean.get(counter).toString();
                                                 Demographic demo = demographicDao.getDemographic(valueid);
                                                 if (demo != null) {
-                                        %>   
+                                        %>
                                         <input type="button" value="<%=Encode.forHtmlAttribute(demo.getLastName()+", "+demo.getFirstName())%> (<%=demo.getYearOfBirth()%>-<%=demo.getMonthOfBirth()%>-<%=demo.getDateOfBirth()%>)" id="demvalueid<%=valueid%>" onclick="loadRecentDemo('<%=valueid%>','<%=Encode.forHtml(demo.getLastName()+", "+demo.getFirstName())%> (<%=demo.getYearOfBirth()%>-<%=demo.getMonthOfBirth()%>-<%=demo.getDateOfBirth()%>)')" />
                                         <%
-                                            
+
                                                     }
                                                 }
                                             }%>
                                     </td>
                                 </tr> <%}%>
                                 <tr>
-                                    <td colspan="2"><bean:message key="dms.incomingDocs.demographic" />: <input type="button" value="M" onclick="loadMaster()"> <input type="button" value="H" onclick="loadApptHistory();"> 
+                                    <td colspan="2"><bean:message key="dms.incomingDocs.demographic" />: <input type="button" value="M" onclick="loadMaster()"> <input type="button" value="H" onclick="loadApptHistory();">
                                     </td>
                                 </tr>
                                 <tr>
@@ -969,7 +978,7 @@
                                     </td>
                                 </tr>
                                 <tr><td colspan="2"><input type="button" id="createNewDemo" value="<bean:message key="dms.incomingDocs.createNewDemographic" />"  onclick="popupPage(700,960,'<%= request.getContextPath() %>/demographic/demographicaddarecordhtm.jsp','demographic')"/>
-                                    </td>    
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td valign="top" colspan="2"><bean:message key="dms.incomingDocs.flagProvider" />: </td></tr>
@@ -984,14 +993,14 @@
                                                 SortedMap<String, Provider> sm = new TreeMap<String, Provider>();
                                                 String pname = "";
                                                 for (i = 0; (i < routingIdList.size() && i < 10); i++) {
-                                                    
+
                                                     Integer p1 = routingIdList.get(i);
                                                     List<Object[]> searchResult;
                                                     searchResult = providerLabRoutingDao.findProviderAndLabRoutingById(p1);
 
                                                     for (Object[] o : searchResult) {
                                                         Provider provider = (Provider) o[0];
-                                                            
+
                                                         if (provider != null) {
                                                             pname = provider.getLastName() + " " + provider.getFirstName();
                                                             sm.put(pname, provider);
@@ -1000,10 +1009,10 @@
                                                 }
                                                 Set s = sm.entrySet();
                                                 Iterator it = s.iterator();
-                                                    
+
                                                 while (it.hasNext()) {
                                                     Map.Entry m = (Map.Entry) it.next();
-                                                        
+
                                                     Provider sortedprovider = (Provider) m.getValue();
                                                     if (sortedprovider != null) {
                                                         pname = (sortedprovider.getLastName() + " " + sortedprovider.getFirstName()).trim();
@@ -1016,15 +1025,15 @@
                                                         }
                                                         String initials = sbInitials.toString();
                                         %>
-                                        <input type="button" value="<%=initials%>" title="<%=sortedprovider.getFirstName()%> <%=sortedprovider.getLastName()%> " onclick="addflagprovider('<%=sortedprovider.getFirstName()%>','<%=sortedprovider.getLastName()%>','<%=sortedprovider.getProviderNo()%>');">
+                                        <input type="button" value="<%=initials%>" title="<%=Encode.forHtmlAttribute(sortedprovider.getFirstName()+" "+sortedprovider.getLastName())%> " onclick="addflagprovider('<%=Encode.forJavaScript(sortedprovider.getFirstName())%>','<%=Encode.forJavaScript(sortedprovider.getLastName())%>','<%=sortedprovider.getProviderNo()%>');">
                                         <%              }
                                                 }
-                                                    
+
                                             }%>
 
                                         <input tabIndex="<%=tabIndex++%>" type="text" id="autocompleteprov" name="ProvKeyword"/>
                                         <div id="autocomplete_choicesprov" class="autocomplete"></div>
-                                        <div id="providerList"></div> 
+                                        <div id="providerList"></div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1035,82 +1044,82 @@
                     </fieldset>
                 </td>
                 <td  class="topalign">
-                    <div > 
-                        <%if (Integer.parseInt(pdfNo) > 0) {%>Page : <b id="pgnum"><%=pdfPageNumber%> <bean:message key="dms.incomingDocs.of" /><span class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>"> <%=numOfPage%> <%}%></span></b> 
-                        <bean:message key="dms.incomingDocs.viewAs" />: 
+                    <div >
+                        <%if (Integer.parseInt(pdfNo) > 0) {%>Page : <b id="pgnum"><%=pdfPageNumber%> <bean:message key="dms.incomingDocs.of" /><span class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>"> <%=numOfPage%> <%}%></span></b>
+                        <bean:message key="dms.incomingDocs.viewAs" />:
                         <select tabIndex="<%=tabIndex++%>" name ="imageTypeList" id="imageTypeList" onchange="setImageType();">
                             <option value="Pdf" <%=imageType.equals("Pdf") ? "selected" : ""%> ><bean:message key="dms.incomingDocs.PDF" /></option>
                             <option value="Image" <%=imageType.equals("Image") ? "selected" : ""%> ><bean:message key="dms.incomingDocs.image" /></option>
                         </select>
                     </div>
                     <div id="docdisp"></div>
-                </td>                                            
+                </td>
             </tr>
             <script type="text/javascript">
                 YAHOO.example.BasicRemote = function() {
                     var url = "<%= request.getContextPath()%>/provider/SearchProvider.do";
                     var oDS = new YAHOO.util.XHRDataSource(url,{connMethodPost:true,connXhrMode:'ignoreStaleResponses'});
                     oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
-                    
+
                     // Define the schema of the delimited results
                     oDS.responseSchema = {
                         resultsList : "results",
                         fields : ["providerNo","firstName","lastName"]
                     };
-                    
+
                     // Enable caching
                     oDS.maxCacheEntries = 0;
-                    
+
                     // Instantiate the AutoComplete
                     var oAC = new YAHOO.widget.AutoComplete("autocompleteprov", "autocomplete_choicesprov", oDS);
                     oAC.queryMatchSubset = true;
                     oAC.minQueryLength = 3;
                     oAC.maxResultsDisplayed = 25;
                     oAC.formatResult = resultFormatter3;
-                    
+
                     oAC.queryMatchContains = true;
-                    
+
                     oAC.itemSelectEvent.subscribe(function(type, args) {
-                        
+
                         var myAC = args[0];
                         var str = myAC.getInputEl().id.replace("autocompleteprov","provfind");
                         var oData=args[2];
                         $(str).value = args[2][0];
                         myAC.getInputEl().value = args[2][2] + ","+args[2][1];
-                        
+
                         addflagprovider(oData[2],oData[1],oData[0]);
-                        
+
                         myAC.getInputEl().value = '';
-                        
+
                     });
-                    
-                    
+
+
                     return {
                         oDS: oDS,
                         oAC: oAC
                     };
                 }();
-                
+
                 function addflagprovider(pfirstname,plastname,provider_no) {
                     //enable Save button whenever a selection is made
                     var bdoc;
                     if (navigator.appName=="Microsoft Internet Explorer") {
-                        
+
                         var bdoc = document.createElement('<a id="removeProv" onclick="removeThisProv(this)" >');
-                        
+
                     } else
                     {
                         var bdoc = document.createElement('a');
                         bdoc.setAttribute("id", "removeProv");
                         bdoc.setAttribute("onclick", "removeThisProv(this);");
                     }
-                    
+
                     bdoc.appendChild(document.createTextNode(" -remove- "));
-                    
-                    
+
+
                     var adoc = document.createElement('div');
                     adoc.appendChild(document.createTextNode(pfirstname + " " +plastname));
-                    
+
                     var idoc;
                     if (navigator.appName=="Microsoft Internet Explorer") {
                         idoc = document.createElement('<input type="hidden" name=flagproviders   value="'+provider_no+'" >');
@@ -1121,18 +1130,18 @@
                         idoc.setAttribute("name","flagproviders");
                         idoc.setAttribute("value",provider_no);
                     }
-                    
+
                     adoc.appendChild(idoc);
-                    
+
                     adoc.appendChild(bdoc);
                     var providerList = $('providerList');
-                    
+
                     providerList.appendChild(adoc);
-                    
+
                 }
 var resultFormatter2 = function(oResultData, sQuery, sResultMatch) {
 	var output = '';
-	
+
 	if(oResultData[3]=="AC") {
 		output = '<b>' + oResultData[0]+" ("+oResultData[1]+") "+oResultData[3] + '</b>';
 	} else {
@@ -1142,46 +1151,46 @@ var resultFormatter2 = function(oResultData, sQuery, sResultMatch) {
 }
                 YAHOO.example.BasicRemote = function() {
                     if($("autocompletedemo") && $("autocomplete_choices")){
-                        
+
                         var url = "../demographic/SearchDemographic.do";
                         var oDS = new YAHOO.util.XHRDataSource(url,{connMethodPost:true,connXhrMode:'ignoreStaleResponses'});
                         oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
-                        
+
                         // Define the schema of the delimited results
                         oDS.responseSchema = {
                             resultsList : "results",
                             fields : ["formattedName","fomattedDob","demographicNo","status","providerNo","providerName"]
                         };
-                        
+
                         // Enable caching
                         oDS.maxCacheEntries = 0;
-                        
+
                         var oAC = new YAHOO.widget.AutoComplete("autocompletedemo","autocomplete_choices",oDS);
-                        
+
                         oAC.queryMatchSubset = true;
                         oAC.minQueryLength = 3;
                         oAC.maxResultsDisplayed = 25;
                         oAC.formatResult = resultFormatter2;
                         oAC.queryMatchContains = true;
 
-                        
+
                         oAC.itemSelectEvent.subscribe(function(type, args) {
-                           
+
                             var str = args[0].getInputEl().id.replace("autocompletedemo","demofind");
-                            
-                            
+
+
                             document.getElementById('MRPNo').value=args[2][4];
                             document.getElementById('MRPName').value=args[2][5];
-                            
+
                             $(str).value = args[2][2];
-                            
+
                             args[0].getInputEl().value = args[2][0] + " ("+args[2][1]+")";
-                            
+
                             selectedDemos.push(args[0].getInputEl().value);
-                            
+
                             //enable Save button whenever a selection is made
                             $('save').enable();
-                            
+
                             if(document.PdfInfoForm.pdfDir.value!="File")  {
                                 var MRPName=document.getElementById('MRPName').value;
                                 var MRPNo=document.getElementById('MRPNo').value;
@@ -1190,8 +1199,8 @@ var resultFormatter2 = function(oResultData, sQuery, sResultMatch) {
                                 }
                             }
                         });
-                        
-                        
+
+
                         return {
                             oDS: oDS,
                             oAC: oAC
@@ -1202,6 +1211,7 @@ var resultFormatter2 = function(oResultData, sQuery, sResultMatch) {
         </table>
         <script type="text/javascript">
             showPageImg('<%=queueIdStr%>','<%=pdfDir%>','<%=pdfName%>','<%=pdfPageNumber%>');
+            jQuery(setupDocDescriptionTypeahead(0));
         </script>
     </body>
 </html>

@@ -173,6 +173,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/animation-min.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/datasource-min.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/autocomplete-min.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/documentDescriptionTypeahead.js"></script> 
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script> 
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>       
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
@@ -284,7 +285,10 @@ font-size: 14px;
                                     </tr>
                                     <tr>
                                         <td><bean:message key="dms.documentReport.msgDocDesc" />:</td>
-                                        <td><input tabindex="<%=tabindex++%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" /></td>
+                                        <td>
+                                            <input id="docDesc_<%=docId%>" tabindex="<%=tabindex++%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" />
+                                            <div id="docDescTypeahead_<%=docId%>" class="autocomplete"></div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Observation Date:</td>
@@ -731,6 +735,8 @@ function sendMRP(ele){
                             }
                             return true;
                           }
+                          
+                          jQuery(setupDocDescriptionTypeahead(<%=docId%>));
 
                                             </script>
                                             <div id="providerList<%=docId%>"></div>

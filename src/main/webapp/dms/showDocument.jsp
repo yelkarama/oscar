@@ -257,6 +257,7 @@ if (openInTabs){
 
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/documentDescriptionTypeahead.js"></script>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script>
@@ -729,7 +730,10 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                     </tr>
                                     <tr>
                                         <td><bean:message key="dms.documentReport.msgDocDesc" />:</td>
-                                        <td><input id="docDesc_<%=docId%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" /></td>
+                                        <td>
+                                            <input id="docDesc_<%=docId%>" type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" />
+                                            <div id="docDescTypeahead_<%=docId%>" class="autocomplete"></div>
+                                        </td>                                        
                                     </tr>
                                     <tr>
                                         <td><bean:message key="inboxmanager.document.ObservationDateMsg" /></td>
@@ -1269,6 +1273,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 
 
         jQuery(setupDemoAutoCompletion());
+        jQuery(setupDocDescriptionTypeahead(<%=docId%>));
 
         function setupProviderAutoCompletion() {
         	var url = "<%= request.getContextPath() %>/provider/SearchProvider.do?method=labSearch";
