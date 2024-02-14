@@ -150,7 +150,7 @@ String curUser_no = (String) session.getAttribute("user");
                             if (total_row_index < 0 || (totalNoPages != null && totalNoPages.intValue() == (pageNum+1))) {
                                 	%> <input type="hidden" name="NoMoreItems" value="true" /> <%
                             		if (isListView) { %>
-		                                <tr>
+		                                <!--<tr>
 		                                    <td colspan="9" style="text-align:center">
 		                                        <i>	<% if (pageNum == 1 && totalNoPages != null) { %>
 		                                        	<bean:message key="oscarMDS.index.msgNoReports"/>
@@ -160,16 +160,16 @@ String curUser_no = (String) session.getAttribute("user");
 		                                        </i>
 
 		                                    </td>
-		                                </tr>
+		                                </tr>-->
 	                         	<%	}
                             		else {
                             		%>
 
                             			<div style="text-align:center">
-                            			<% if (pageNum == 1) { %>
+                            			<% if (pageNum < 1) { %>
                                        	<bean:message key="oscarMDS.index.msgNoReports"/>
                                        	<% } else { %>
-                                       	<bean:message key="oscarMDS.index.msgNoMoreReports"/>
+                                       	<bean:message key="oscarMDS.index.msgNoMoreReports"/><%=pageNum%>
                                        	<% } %>
                             			</div>
 
