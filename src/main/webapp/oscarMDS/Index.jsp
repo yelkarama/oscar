@@ -257,6 +257,14 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
   display: block;
 }
 
+.dropdowns-content a.disabled {
+  pointer-events: none;
+  color: grey;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+
 /* Change color of dropdown links on hover */
 .dropdowns-content a:hover {background-color: #ddd;}
 
