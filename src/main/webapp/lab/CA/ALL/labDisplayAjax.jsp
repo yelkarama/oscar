@@ -956,62 +956,78 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                             </tr>
                             <tr>
                                 <td colspan="2" style="padding:0px;  background-color:white; text-align:center" >
-<% if(demographicID!=null && !demographicID.equals("")){
+<%
+
+                        String[] multiID = multiLabId.split(",");
+                        boolean isTickler = false;
+	                    if(demographicID!=null && !demographicID.equals("")){
+                            for(int mcount=0; mcount<multiID.length; mcount++){
 
 							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(segmentID), Integer.valueOf(demographicID));
-
+							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabIdAnyProvider(loggedInInfo, Integer.valueOf(multiID[mcount]), Integer.valueOf(demographicID));
 							    if(LabTicklers!=null && LabTicklers.size()>0){
-							    %>
-							    <div id="ticklerWrap<%= segmentID %>" class="DoNotPrint">
-							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklersp<%= segmentID %>" onclick="showHideItem('ticklerDisplay<%= segmentID %>')">View Ticklers</a> Linked to this Lab</h4>
+                                    if(!isTickler){
+%>
+                            <div id="ticklerWrap" class="DoNotPrint">
+							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4>
+                                <div id="ticklerDisplay" style="display:none">
+<%
 
-							           <div id="ticklerDisplay<%= segmentID %>" style="display:none">
-							   <%
+                                        isTickler = true;
+                                    } // end isTickler wrap start for first tickler
+
 							   String flag;
 							   String ticklerClass;
 							   String ticklerStatus;
 							   for(Tickler tickler:LabTicklers){
 
-							   ticklerStatus = tickler.getStatus().toString();
-							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
-							   	flag="<span style='color:red'>&#9873;</span>";
-							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
-							   	flag="<span>&#9873;</span>";
-							   }else{
-							   	flag="";
-							   }
+							       ticklerStatus = tickler.getStatus().toString();
+							       if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
+							       	flag="<span style='color:red'>&#9873;</span>";
+							       }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
+							       	flag="<span>&#9873;</span>";
+							       }else{
+							       	flag="";
+							       }
 
-							   if(ticklerStatus.equals("C")){
-							  	 ticklerClass = "completedTickler";
-							   }else{
-							  	 ticklerClass="";
-							   }
+							       if(ticklerStatus.equals("C")){
+							      	 ticklerClass = "completedTickler";
+							       }else{
+							      	 ticklerClass="";
+							       }
 							   %>
-							   <div style="text-align:left; background-color:#fff; padding:5px; width:600px; margin-left:auto; margin-right:auto" class="<%=ticklerClass%>">
+							       <div style="text-align:left; background-color:#fff; padding:5px; width:600px; margin-left:auto; margin-right:auto" class="<%=ticklerClass%>">
 							       	<table style="width:100%">
-							   	<tr>
-							   	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>
-							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? Encode.forHtml(tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName()) : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
-							   	</tr>
-							   	<tr>
-							   	<td colspan="4"><%=Encode.forHtml(tickler.getMessage())%></td>
-							   	</tr>
-							   	</table>
-							   </div>
-							   <br>
+							       	<tr>
+							       	<td><b>Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
+							       	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>
+							       	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? Encode.forHtml(tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName()) : "N/A"%></td>
+							       	<td style="width:90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
+							       	</tr>
+							       	<tr>
+							       	<td colspan="4"><%=Encode.forHtml(tickler.getMessage())%></td>
+							       	</tr>
+							       	</table>
+							       </div>
+							       <br>
 							   <%
-							   }
+							   } //end for loop for each tickler in LabTicklers
 							   %>
-							   		</div><!-- end ticklerDisplay -->
-							   </div>
-							   <%}//no ticklers to display
+							   		<!-- end ticklers for this v-->
 
-}%>
+							   <%
+	                            } // if there are ticklers
+                            } // end of mcount loop
+	                    } // end if valid demographicID
 
-                                    <%String[] multiID = multiLabId.split(",");
+    if(isTickler){
+    %>
+                                </div><!-- end ticklerDisplay-->
+                            </div><!-- end ticklerWrap-->
+    <%
+    } // if isTickler you need to close the wrapper
+
+
                                     ReportStatus report;
                                     boolean startFlag = false;
                                     for (int j=multiID.length-1; j >=0; j--){
