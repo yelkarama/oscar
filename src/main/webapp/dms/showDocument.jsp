@@ -325,6 +325,14 @@ if (openInTabs){
   display: block;
 }
 
+.dropdowns-content a.disabled {
+  pointer-events: none;
+  color: grey;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+
 /* Change color of dropdown links on hover */
 .dropdowns-content a:hover {background-color: #ddd;}
 
@@ -618,13 +626,13 @@ if (openInTabs){
                                                 <% } %>
                                                 <a href="javascript:void(0);" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                 <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
-                                                        <a href="javascript:void(0);" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=' + getDocumentType() + '&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=' + getDocumentType() + '&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
                                                 <% } %>
-                                                        <a href="javascript:void(0);" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
-                                                        <a href="javascript:void(0);" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
 
                                            <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
-                                                        <a href="javascript:void(0);" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
                                             <% } %>
                                                 <a href="javascript:void(0);" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                         <a href="javascript:void(0);" onClick="popup(700,960,'<%=url2%>','file download')"><bean:message key="global.btnPDF"/></a>
@@ -733,7 +741,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                         <td>
                                             <input id="docDesc_<%=docId%>" type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" />
                                             <div id="docDescTypeahead_<%=docId%>" class="autocomplete"></div>
-                                        </td>                                        
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><bean:message key="inboxmanager.document.ObservationDateMsg" /></td>
@@ -1190,12 +1198,12 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                 <% } %>
                                                 <a href="javascript:void(0);" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                 <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
-                                                        <a href="javascript:void(0);" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=' + getDocumentType() + '&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=' + getDocumentType() + '&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>', <%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnEChart"/></a>
                                                 <% } %>
-                                                        <a href="javascript:void(0);" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
-                                                        <a href="javascript:void(0);" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onClick="popupPatient(800,1280,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>',<%=openInTabs%>); return false;" <%=btnDisabled %>><bean:message key="oscarMDS.segmentDisplay.btnMaster"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/><bean:message key="global.prescriptions"/></a>
                                             <% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
-                                                        <a href="javascript:void(0);" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
+                                                        <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:void(0);" onclick="popupPatient(710,1024,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=<%=demographicID%>&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&','billing','<%=docId%>',<%=openInTabs%>);return false;"><bean:message key="global.billingtag"/></a>
                                             <% } %>
                                                 <a href="javascript:void(0);" class="divider" style="padding: 1px;"><hr style="border: 1px solid #d5d3d3;margin: 1px;"></a>
                                                         <a href="javascript:void(0);" onClick="popup(700,960,'<%=url2%>','file download')"><bean:message key="global.btnPDF"/></a>
