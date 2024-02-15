@@ -169,7 +169,7 @@ String curUser_no = (String) session.getAttribute("user");
                             			<% if (pageNum < 1) { %>
                                        	<bean:message key="oscarMDS.index.msgNoReports"/>
                                        	<% } else { %>
-                                       	<bean:message key="oscarMDS.index.msgNoMoreReports"/><%=pageNum%>
+                                       	<bean:message key="oscarMDS.index.msgNoMoreReports"/>
                                        	<% } %>
                             			</div>
 
