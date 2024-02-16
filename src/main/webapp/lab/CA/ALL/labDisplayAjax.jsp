@@ -969,8 +969,8 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                     if(!isTickler){
 %>
                             <div id="ticklerWrap" class="DoNotPrint">
-							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay')">View Ticklers</a> Linked to this Lab</h4>
-                                <div id="ticklerDisplay" style="display:none">
+							    <h4 style="color:#fff"><a href="javascript:void(0)" id="open-ticklers" onclick="showHideItem('ticklerDisplay<%=segmentID%>')">View Ticklers</a> Linked to this Lab</h4>
+                                <div id="ticklerDisplay<%=segmentID%>" style="display:none">
 <%
 
                                         isTickler = true;
