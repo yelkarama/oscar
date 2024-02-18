@@ -1264,15 +1264,8 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 	            	  }
 
 	            	  //enable Save button whenever a selection is made
-	                  jQuery('#save<%=docId%>').removeAttr('disabled');
-	                  jQuery('#saveNext<%=docId%>').removeAttr('disabled');
-	                  jQuery('#dropdown_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#dropdown2_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#msgBtn_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainTickler_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainEchart_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainMaster_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainApptHistory_<%=docId%>').removeAttr('disabled');
+	                  document.getElementById('save<%=docId%>').removeAttribute('disabled');
+                      //enable pid dependent buttons once saved in oscarMDSIndex.js
 	                  return false;
 	              }
 	            });

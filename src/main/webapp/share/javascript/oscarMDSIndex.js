@@ -287,7 +287,7 @@ function sendMRP(ele){
 function forwardDocument(docId) {
 	var frm = "#reassignForm_" + docId;
 	var query = jQuery(frm).serialize();
-	
+
 	jQuery.ajax({
 		type: "POST",
 		url:  contextpath + "/oscarMDS/ReportReassign.do",
@@ -367,7 +367,7 @@ function split(id) {
         	var loc = contextpath+"/oscarMDS/Split.jsp?document=" + id;
         	popupStart(1400, 1400, loc, "Splitter");
         }
-        
+
 function hideTopBtn(){
 	$('topFRBtn').hide();
 	if($('topFBtn') && $('topFileBtn')){
@@ -437,7 +437,7 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 	var popup=window.open(varpage, windowname, windowprops);
 }
 
-function reportWindow(page,height,width) {	
+function reportWindow(page,height,width) {
 	//console.log(page);
 	if(height && width){
 		windowprops="height="+height+", width="+width+", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0" ;
@@ -547,13 +547,19 @@ function clearDocView(){
 }
 function showhideSubCat(plus_minus,patientId){
 	if(plus_minus=='plus'){
-		$('plus'+patientId).hide();
-		$('minus'+patientId).show();
-		$('labdoc'+patientId+'showSublist').show();
+		//$('plus'+patientId).hide();
+		//$('minus'+patientId).show();
+		//$('labdoc'+patientId+'showSublist').show();
+        jQuery('#plus'+patientId).hide();
+		jQuery('#minus'+patientId).show();
+		jQuery('#labdoc'+patientId+'showSublist').show();
 	}else{
-		$('minus'+patientId).hide();
-		$('plus'+patientId).show();
-		$('labdoc'+patientId+'showSublist').hide();
+		//$('minus'+patientId).hide();
+		//$('plus'+patientId).show();
+		//$('labdoc'+patientId+'showSublist').hide();
+		jQuery('#minus'+patientId).hide();
+		jQuery('#plus'+patientId).show();
+		jQuery('#labdoc'+patientId+'showSublist').hide();
 	}
 }
 function un_bold(ele){
@@ -588,25 +594,25 @@ function showPageNumber(page){
 	for(var i=0;i<totalNoRow;i++){
 		if($('row'+i) && parseInt(newStartIndex)<=i && i<=parseInt(newEndIndex)) {
 			//oscarLog("show row-"+i);
-			$('row'+i).show();
-		}else if($('row'+i)){
+			jQuery('#row'+i).show();
+		}else if(jQuery('#row'+i)){
 			//oscarLog("hide row-"+i);
-			$('row'+i).hide();
+			jQuery('#row'+i).hide();
 		}
 	}
 	//update current page
-	$('currentPageNum').innerHTML=page;
+	jQuery('#currentPageNum').html()=page;
 	if(page==1)
 	{
-		if($('msgPrevious')) $('msgPrevious').hide();
+		if(jQuery('#msgPrevious')) jQuery('#msgPrevious').hide();
 	}else if(page>1){
-		if($('msgPrevious')) $('msgPrevious').show();
+		if(jQuery('#msgPrevious')) jQuery('#msgPrevious').show();
 	}
 	if(isLastPage){
-		if($('msgNext'))    $('msgNext').hide();
+		if(jQuery('#msgNext'))    jQuery('#msgNext').hide();
 	}
 	else{
-		if($('msgNext'))    $('msgNext').show();
+		if(jQuery('#msgNext'))    jQuery('#msgNext').show();
 	}
 }
 function showTypePageNumber(page,type){
@@ -751,20 +757,20 @@ function setTotalRows(){
 function checkBox(){
 	var view = "all";
 
-	if($('documentCB').checked==1){
+	if(jQuery('#documentCB').checked==1){
 		view = "documents";
 	}
-	else if($('hl7CB').checked==1){
+	else if(jQuery('#hl7CB').checked==1){
 		view = "labs";
 	}
-	else if($('normalCB').checked==1){
+	else if(jQuery('#normalCB').checked==1){
 		checkedArray.push('normal');
 		view = "normal";
 	}
-	else if($('abnormalCB').checked==1){
+	else if(jQuery('#abnormalCB').checked==1){
 		view = "abnormal";
 	}
-	else if($('unassignedCB').checked==1){
+	else if(jQuery('#unassignedCB').checked==1){
 		view = "unassigned";
 	}
 	window.location.search = replaceQueryString(window.location.search, "view", view);
@@ -895,27 +901,26 @@ function displayCategoryPage(page){
 }
 
 function initializeNavigation(){
-	$('currentPageNum').innerHTML=1;
+	jQuery('#currentPageNum').html()=1;
 	//update the page number shown and update previous and next words
 	if(current_numberofpages>1){
-		if ($('msgNext') != null) $('msgNext').show();
-		if ($('msgPrevious') != null) $('msgPrevious').hide();
+		jQuery('#msgNext').show();
+		jQuery('#msgPrevious').hide();
 	}else if(current_numberofpages<1){
-		if ($('msgNext') != null) $('msgNext').hide();
-		if ($('msgPrevious') != null) $('msgPrevious').hide();
+		jQuery('#msgNext').hide();
+		jQuery('#msgPrevious').hide();
 	}else if(current_numberofpages==1){
-		if ($('msgNext') != null) $('msgNext').hide();
-		if ($('msgPrevious') != null) $('msgPrevious').hide();
+		jQuery('#msgNext').hide();
+		jQuery('#msgPrevious').hide();
 	}
 	//oscarLog("current_numberofpages "+current_numberofpages);
-	if ($('current_individual_pages') != null) {
-		$('current_individual_pages').innerHTML="";
+	jQuery('#current_individual_pages').html()="";
 		if(current_numberofpages>1){
 			for(var i=1;i<=current_numberofpages;i++){
-				$('current_individual_pages').innerHTML+='<a style="text-decoration:none;" href="javascript:void(0);" onclick="navigatePage('+i+')> [ '+i+' ] </a>';
+				jQuery('#current_individual_pages').html()+='<a style="text-decoration:none;" href="javascript:void(0);" onclick="navigatePage('+i+')> [ '+i+' ] </a>';
 			}
 		}
-	}
+
 }
 function sortRowId(a){
 	var numArray=new Array();
@@ -953,7 +958,7 @@ function uniqueArray(a){
 }
 
 function navigatePage(p){
-	var pagenum=parseInt($('currentPageNum').innerHTML);
+	var pagenum=parseInt(jQuery('#currentPageNum').html());
 	if(p=='Previous'){
 		navigatePage(pagenum-1);
 	}
@@ -967,21 +972,21 @@ function navigatePage(p){
 
 // TODO: Remove unused function.
 function changeNavigationBar(){
-	var pagenum=parseInt($('currentPageNum').innerHTML);
+	var pagenum=parseInt(jQuery('#currentPageNum').html());
 	if(current_numberofpages==1){
-		$('msgNext').hide();
-		$('msgPrevious').hide();
+		jQuery('#msgNext').hide();
+		jQuery('#msgPrevious').hide();
 	}
 	else if(current_numberofpages>1 && current_numberofpages==pagenum){
-		$('msgNext').hide();
-		$('msgPrevious').show();
+		jQuery('#msgNext').hide();
+		jQuery('#msgPrevious').show();
 	}
 	else if(current_numberofpages>1 && pagenum==1){
-		$('msgNext').show();
-		$('msgPrevious').hide();
+		jQuery('#msgNext').show();
+		jQuery('#msgPrevious').hide();
 	}else if(pagenum<current_numberofpages && pagenum>1){
-		$('msgNext').show();
-		$('msgPrevious').show();
+		jQuery('#msgNext').show();
+		jQuery('#msgPrevious').show();
 	}
 }
 function syncCB(ele){
@@ -1414,7 +1419,7 @@ function focusFirstDocLab(){
 /***methos for showDocument.jsp***/
 function updateGlobalDataAndSideNav(doclabid,patientId){
 	doclabid=doclabid.replace(/\s/g,'');
-	
+
 	if(doclabid.length>0){
 		//delete doclabid from not assigned list
 		var na=patientDocs['-1'];
@@ -1572,25 +1577,25 @@ function updateDocumentAndNext(eleId){//save doc info
 					//oscarLog(json);
 					if(json!=null ){
 						patientId=json.patientId;
-						
+
 						var ar=eleId.split("_");
 						var num=ar[1];
 						num=num.replace(/\s/g,'');
 						$("saveSucessMsg_"+num).show();
 						$('saved'+num).value='true';
 						$("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
-						//Hide document						
-						Effect.BlindUp('labdoc_'+num);											
+						//Hide document
+						Effect.BlindUp('labdoc_'+num);
 						updateDocStatusInQueue(num);
 						var success= updateGlobalDataAndSideNav(num,patientId);
 						if(success){
-						
+
 							success=updatePatientDocLabNav(num,patientId);
 							if(success){
 								//disable demo input
 								$('autocompletedemo'+num).disabled=true;
-								
-								
+
+
 								//console.log('updated by save');
 								//console.log(patientDocs);
 							}
@@ -1621,16 +1626,25 @@ function updateDocument(eleId){
 			$("saveSucessMsg_"+num).show();
 			$('saved'+num).value='true';
 			$("msgBtn_"+num).onclick = function() { popup(700,960,contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
-			
+            // enable buttons that need a pid
+	        jQuery('a').removeClass('disabled');
+            document.getElementById('save'+num).removeAttribute('disabled');
+	        document.getElementById('saveNext'+num).removeAttribute('disabled');
+	        document.getElementById('dropdown_'+num).removeAttribute('disabled');
+	        document.getElementById('dropdown2_'+num).removeAttribute('disabled');
+	        document.getElementById('msgBtn_'+num).removeAttribute('disabled');
+	        document.getElementById('ticklerBtn_'+num).removeAttribute('disabled');
+	        document.getElementById('recallBtn_'+num).removeAttribute('disabled');
+	        document.getElementById('rxBtn_'+num).removeAttribute('disabled');
 			updateDocStatusInQueue(num);
 			var success= updateGlobalDataAndSideNav(num,patientId);
-			
+
 			if(success){
 				success=updatePatientDocLabNav(num,patientId);
 				if(success){
 					//disable demo input
 					$('autocompletedemo'+num).disabled=true;
-					
+
 					//console.log('updated by save');
 					//console.log(patientDocs);
 				}
@@ -1651,7 +1665,7 @@ function checkObservationDate(formid) {
 		form.elements["observationDate"].focus();
 		return false;
     }
-    
+
     if(!form.elements["observationDate"].value.match(re)) {
     	if(!form.elements["observationDate"].value.match(re2)) {
     		alert("Invalid date format: " + form.elements["observationDate"].value);
@@ -1761,7 +1775,7 @@ function refileDoc(id) {
         fileDoc(id);
     }});
  }
- 
+
 function addDocToList(provNo, provName, docId) {
 	var bdoc = document.createElement('a');
 	bdoc.setAttribute("onclick", "removeProv(this);");
@@ -1951,7 +1965,7 @@ function nextPage(docid,cp){
 	}
 	$('curPage_'+docid).value=curPage;
 	$('viewedPage_'+docid).innerHTML = curPage;
-  
+
         showPageImg(docid,curPage,cp);
         if(curPage+1>totalPage){
             hideNext(docid);
@@ -1971,7 +1985,7 @@ function prevPage(docid,cp){
     }
     $('curPage_'+docid).value=curPage;
     $('viewedPage_'+docid).innerHTML = curPage;
-    
+
         showPageImg(docid,curPage,cp);
        if(curPage==1){
            hidePrev(docid);
@@ -2032,7 +2046,7 @@ function showNext(docid){
 }
 
 function addDocComment(docId, providerNo,sync) {
-	
+
 	var ret = true;
     var comment = "";
     var text = jQuery("#comment_"+docId + "_" + providerNo);
@@ -2048,9 +2062,9 @@ function addDocComment(docId, providerNo,sync) {
     	ret = false;
     }
     else if( commentVal != null && commentVal.length > 0 )
-    	jQuery("#" + "comment_" + docId).val(commentVal);                
+    	jQuery("#" + "comment_" + docId).val(commentVal);
     else
-    	jQuery("#" + "comment_" + docId).val(comment);            	
+    	jQuery("#" + "comment_" + docId).val(comment);
 
     if( ret ) {
     	$("status_"+docId).value = 'N';
@@ -2075,7 +2089,7 @@ function addDocComment(docId, providerNo,sync) {
 }
 
 function getDocComment(docId, providerNo, inQueueB) {
-	
+
 	var ret = true;
     var comment = "";
     var text = jQuery("#comment_"+docId + "_" + providerNo);
@@ -2091,13 +2105,12 @@ function getDocComment(docId, providerNo, inQueueB) {
     	ret = false;
     }
     else if( commentVal != null && commentVal.length > 0 )
-    	jQuery("#" + "comment_" + docId).val(commentVal);                
+    	jQuery("#" + "comment_" + docId).val(commentVal);
     else
-    	jQuery("#" + "comment_" + docId).val(comment);            	
+    	jQuery("#" + "comment_" + docId).val(comment);
 
-   if(ret) {	   
+   if(ret) {
 	   updateStatus("acknowledgeForm_" + docId ,inQueueB);
-   }                    	
-	
-}
+   }
 
+}
