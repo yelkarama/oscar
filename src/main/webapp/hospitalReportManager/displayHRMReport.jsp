@@ -33,7 +33,7 @@ if(!authed) {
 %>
 
 <%@page import="java.util.LinkedList, org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.*, java.util.List, org.oscarehr.util.SpringUtils, org.oscarehr.PMmodule.dao.ProviderDao, java.util.Date" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <%
 
@@ -79,7 +79,7 @@ if(demographicLink != null){
 <link rel="stylesheet" href="${ pageContext.request.contextPath }/share/yui/css/autocomplete.css"/>
 <link rel="stylesheet" media="all" href="${ pageContext.request.contextPath }/share/css/demographicProviderAutocomplete.css"  />
 
-
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 #hrmReportContent {
 	position: relative;
@@ -281,7 +281,20 @@ function doSignOff(reportId, isSign) {
 		url: "<%=request.getContextPath() %>/hospitalReportManager/Modify.do",
 		data: data,
 		success: function(data) {
-			window.location.reload();
+			if (!isSign) {
+                window.location.reload();
+            } else
+            if( window.opener.document.getElementById('labdoc_'+reportId) != null ) {
+                    // opened from the Inbox
+                    //window.opener.jQuery('#labdoc'+reportId).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
+                	window.opener.Effect.BlindUp('labdoc_'+reportId); // invoke script.aculo.us to hide the entry
+                    window.opener.refreshCategoryList();
+                    close = window.opener.openNext(reportId);
+                    if (close == "close" ) { window.close(); }
+
+             } else {
+                	window.close();
+             }
 		}
 	});
 }
@@ -335,10 +348,22 @@ popupPage(700,1200,'Display.do?id='+id);
 
 }
 
+    function next() {
+
+        if(!window.opener || (typeof window.opener.openNext != 'function')){
+            document.getElementById('next').style.display="none";
+            console.log("not called from inbox so disabling Next");
+
+        } else if (!window.opener.document.getElementById('ack_next_chk').checked) {
+            document.getElementById('next').style.display="none";
+            console.log("check box currently unchecked so disabling Next");
+            }
+
+    }
 
 </script>
 </head>
-<body>
+<body onload="next();">
 
 <% if (hrmReport==null) { %>
         <h1>HRM report not found! Please check the file location.</h1>
@@ -356,12 +381,12 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
 %>
 <div >
-<input type="button" id="msgBtn_<%=hrmReportId%>" value="Msg" onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>/>
-<!--input type="button" id="ticklerBtn_<%=hrmReportId%>" value="Tickler" onclick="handleDocSave('<%=hrmReportId%>','addTickler')"/-->
-<input type="button" id="mainTickler_<%=hrmReportId%>" value="Tickler" onClick="popupPatientTickler(710, 1024,'<%= request.getContextPath() %>/Tickler.do?', 'Tickler','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
-<input type="button" id="mainEchart_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
-<input type="button" id="mainMaster_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
-<input type="button" id="mainApptHistory_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
+<input type="button" class="btn" id="msgBtn_<%=hrmReportId%>" value="Msg" onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>/>
+<!--input type="button" class="btn" id="ticklerBtn_<%=hrmReportId%>" value="Tickler" onclick="handleDocSave('<%=hrmReportId%>','addTickler')"/-->
+<input type="button" class="btn" id="mainTickler_<%=hrmReportId%>" value="Tickler" onClick="popupPatientTickler(710, 1024,'<%= request.getContextPath() %>/Tickler.do?', 'Tickler','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
+<input type="button" class="btn" id="mainEchart_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
+<input type="button" class="btn" id="mainMaster_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
+<input type="button" class="btn" id="mainApptHistory_<%=hrmReportId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
 </div>
 
 <div id="hrmReportContent">
@@ -570,20 +595,21 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		</tr>
 		<tr>
 			<td colspan=2>
-				<input type="button" value="Print" onClick="window.print()" />
-				<input type="button" style="display: none;" value="Save" id="save<%=hrmReportId %>hrm" />
+				<input type="button" class="btn" value="Print" onClick="window.print()" />
+				<input type="button" class="btn" style="display: none;" value="Save" id="save<%=hrmReportId %>hrm" />
 				<%
 				HRMDocumentToProvider hrmDocumentToProvider = HRMDisplayReportAction.getHRMDocumentFromProvider(loggedInInfo.getLoggedInProviderNo(), hrmReportId);
 				if (hrmDocumentToProvider != null && hrmDocumentToProvider.getSignedOff() != null && hrmDocumentToProvider.getSignedOff() == 1) {
 				%>
-				<input type="button" id="signoff<%=hrmReportId %>" value="Revoke Sign-Off" onClick="revokeSignOffHrm('<%=hrmReportId %>')" />
+				<input type="button" class="btn" id="signoff<%=hrmReportId %>" value="Revoke Sign-Off" onClick="revokeSignOffHrm('<%=hrmReportId %>')" />
 				<%
 				} else {
 				%>
-				<input type="button" id="signoff<%=hrmReportId %>" value="Sign-Off" onClick="signOffHrm('<%=hrmReportId %>')" />
+				<input type="button" class="btn-primary" id="signoff<%=hrmReportId %>" value="Sign-Off" onClick="signOffHrm('<%=hrmReportId %>')" />
 				<%
 				}
 				%>
+                <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick="close = window.opener.openNext(<%=hrmReportId%>); if (close == 'close'){window.close();}">
 			</td>
 		</tr>
 
@@ -633,7 +659,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
 	<%if(parent != null || (children != null && children.size()>0)) {%>
 		 <div class="boxButton">
-		   <input type="button" onClick="makeIndependent('<%=hrmReportId %>')" value="Make Independent" />
+		   <input type="button" class="btn" onClick="makeIndependent('<%=hrmReportId %>')" value="Make Independent" />
 		 </div>
 	<% } %>
 </div>
@@ -642,7 +668,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 <input placeholder="Description" type="text" id="descriptionField_<%=hrmReportId %>_hrm" size="100" value="<%=StringEscapeUtils.escapeHtml(hrmDocument.getDescription())%>"/><br />
 
  <div class="boxButton">
-   <input type="button" onClick="setDescription('<%=hrmReportId %>')" value="Set Description" /><span id="descriptionstatus<%=hrmReportId %>"></span><br /><br />
+   <input type="button" class="btn" onClick="setDescription('<%=hrmReportId %>')" value="Set Description" /><span id="descriptionstatus<%=hrmReportId %>"></span><br /><br />
  </div>
 
 </div>
@@ -652,7 +678,7 @@ String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 <textarea rows="10" cols="50" id="commentField_<%=hrmReportId %>_hrm"></textarea><br />
 
  <div class="boxButton">
-   <input type="button" onClick="addComment('<%=hrmReportId %>')" value="Add Comment" /><span id="commentstatus<%=hrmReportId %>"></span><br /><br />
+   <input type="button" class="btn" onClick="addComment('<%=hrmReportId %>')" value="Add Comment" /><span id="commentstatus<%=hrmReportId %>"></span><br /><br />
  </div>
 <%
 List<HRMDocumentComment> documentComments = (List<HRMDocumentComment>) request.getAttribute("hrmDocumentComments");
@@ -884,7 +910,7 @@ if (duplicateLabIdsString!=null)
 				<td><%=tempId %></td>
 				<td><%=formatter.format(dupReportDates.get(Integer.parseInt(tempId))) %></td>
 				<td><%=formatter.format(dupTimeReceived.get(Integer.parseInt(tempId))) %></td>
-			    <td><input type="button" value="Open Report" onclick="window.open('?id=<%=tempId%>&segmentId=<%=tempId%>&providerNo=<%=request.getParameter("providerNo")%>&searchProviderNo=<%=request.getParameter("searchProviderNo")%>&status=<%=request.getParameter("status")%>&demoName=<%=StringEscapeUtils.escapeHtml(request.getParameter("demoName"))%>', null)" /> </td>
+			    <td><input type="button" class="btn" value="Open Report" onclick="window.open('?id=<%=tempId%>&segmentId=<%=tempId%>&providerNo=<%=request.getParameter("providerNo")%>&searchProviderNo=<%=request.getParameter("searchProviderNo")%>&status=<%=request.getParameter("status")%>&demoName=<%=StringEscapeUtils.escapeHtml(request.getParameter("demoName"))%>', null)" /> </td>
 			</tr>
 
 		<%
