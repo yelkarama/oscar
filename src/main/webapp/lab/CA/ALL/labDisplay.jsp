@@ -697,8 +697,8 @@ input[id^='acklabel_']{
                     //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
                 	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.refreshCategoryList();
+                    jQuery('#loader').show();
                     close = window.opener.openNext(labid);
-                    if (close == "close" ) { window.close(); }
 
             	}
                 else {
@@ -875,6 +875,7 @@ input[id^='acklabel_']{
 
 </style>
     <body onLoad="matchMe();next();">
+<div id='loader' style="display:none"><img src='<%=request.getContextPath()%>/images/DMSLoader.gif'> <bean:message key="caseload.msgLoading"/></div>
         <!-- form forwarding of the lab -->
         <%
         	for( int idx = 0; idx < segmentIDs.length; ++idx ) {
@@ -977,10 +978,10 @@ input[id^='acklabel_']{
                                     //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
+                                    jQuery('#loader').show();
                                     close = window.opener.openNext(doclabid);
-                                    if (close == "close" ) { window.close(); }
                                 } else {
-                                    window.close();
+                                    if(parent.popup) parent.popup.close();
                                 }
 	                    	}
 	                    }});
@@ -1112,7 +1113,7 @@ input[id^='acklabel_']{
 						                 if (label!="" && label!=null) {
 						                 	labelval = label;
 						                 }else {
-						                	 labelval = oscarRec.containsKey("oscarMDS.index.notset")? oscarRec.getString("oscarMDS.index.notset") : "(not set)";
+						                	 labelval = oscarRec.getString("oscarMDS.index.notset");
 
 						                 } %>
 					                 <span id="labelspan_<%=segmentID%>" class="Field2"><i><bean:message key="global.Label"/>: <%=labelval %> </i></span><br>
@@ -1180,12 +1181,12 @@ input[id^='acklabel_']{
                                                         <td style="vertical-align:top; text-align:left">
                                                             <table style="vertical-align:top; width:100%; text-align:left">
                                                                 <tr>
-                                                                    <td style="white-space:nowrap;">
+                                                                    <td style="white-space:nowrap; width:25%;">
                                                                         <div class="FieldDatas">
                                                                             <strong><bean:message key="oscarMDS.segmentDisplay.formPatientName"/>: </strong>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="white-space:nowrap;">
+                                                                    <td style="white-space:nowrap; width:25%;">
                                                                         <div class="FieldDatas" style="white-space:nowrap;">
                                                                             <% if ( searchProviderNo == null ) { // we were called from e-chart%>
                                                                             <a href="javascript:window.close()">
@@ -1242,9 +1243,18 @@ input[id^='acklabel_']{
                                                                     </td>
 
                                                                 </tr>
+                                                                <tr>
+                                                                    <td style="white-space:nowrap;">
+
+                                                                    </td>
+                                                                    <td style="white-space:nowrap;">
+
+                                                                    </td>
+
+                                                                </tr>
                                                             </table>
                                                         </td>
-                                                        <td style="width:33%; vertical-align:top;">
+                                                        <td style="width:50%; vertical-align:top;">
                                                             <table style="width:100%; vertical-align:top; border-width:0px; border-spacing:0px;">
                                                                 <tr>
                                                                     <td style="white-space:nowrap; ">
@@ -2359,7 +2369,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 									<input type="button" <%=isLinkedToDemographic ? "" : "disabled" %> class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" >
 									<% } %>
 									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
-                                    <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick=" close = window.opener.openNext(<%=segmentID%>); if (close == 'close'){window.close();}">
+                                    <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick="jQuery('#loader').show(); close = window.opener.openNext(<%=segmentID%>);">
                                 </td>
                             </tr><tr>
                                 <td style="text-align:center">
