@@ -110,13 +110,6 @@ if(!authed) {
         openInTabs = oscar.OscarProperties.getInstance().getBooleanProperty("open_in_tabs", "true") || Boolean.parseBoolean(tabViewProp.getValue());
     }
 
-    if (openInTabs){
-%>
-<script language="JavaScript">
-    console.log("openInTabs is active");
-</script>
-<% }
-
 String segmentID = request.getParameter("segmentID");
 String providerNo = request.getParameter("providerNo");
 String searchProviderNo = request.getParameter("searchProviderNo");
@@ -157,11 +150,14 @@ session.setAttribute("labSex","");
 String ackLabFunc;
 if( skipComment ) {
 	ackLabFunc = "handleLab('acknowledgeForm_" + segmentID + "','" + segmentID + "','ackLab');";
+} else {
+	ackLabFunc = "getComment('ackLab','" + segmentID + "');";
 }
-else {
-	ackLabFunc = "getComment('" + segmentID + "','ackLab');";
-}
-
+%>
+<script language="JavaScript">
+    console.log("openInTabs is <%=openInTabs%>, skipComment is <%=skipComment%> with an ackLabFunc of:\n<%=ackLabFunc%>");
+</script>
+<%
 Long reqIDL = LabRequestReportLink.getIdByReport("hl7TextMessage",Long.valueOf(segmentID.trim()));
 String reqID = reqIDL==null ? "" : reqIDL.toString();
 reqIDL = LabRequestReportLink.getRequestTableIdByReport("hl7TextMessage",Long.valueOf(segmentID.trim()));
@@ -259,16 +255,16 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
      		}
      	%>
 
-         getComment=function(labid, action) {
+         getComment=function(action, segmentId) {
             //the comment gets put into a hidden INPUT named comment with the id of comment_865969 ie comment_ + labid for update
             //the commment is displayed in a SPAN V0commentText865517101
 
             var ret = true;
             var commentVal = "";
-            version=jQuery("#version_"+labid).val();
+            version=jQuery("#version_"+segmentId).val();
 
-        	var label = "V" + version + "commentLabel" + labid + jQuery("#providerNo").val(); // providerNo = "101";
-        	var text = "commentText" + labid + jQuery("#providerNo").val();
+        	var label = "V" + version + "commentLabel" + segmentId + jQuery("#providerNo").val(); // providerNo = "101";
+        	var text = "commentText" + segmentId + jQuery("#providerNo").val();
 
             <% if (rememberComment) { %>
             // use as default the comment for the prior version if it exists
@@ -286,23 +282,35 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 	            commentVal = "";
 	        }
 
-            var commentID = "comment_" + labid;
+            var commentID = "comment_" + segmentId;
 
-            var comment = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
+            if ( action == "msgLabRecall") {
+                if (commentVal == "" ) {
+                    commentVal = "Recall";
+                    jQuery("#"+commentID).val(commentVal);
+                    addComment('acknowledgeForm_'+segmentId,segmentId);
+                }
+                handleLab('acknowledgeForm_'+segmentId,segmentId,action);
+                return;
+            } else {
+                var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
+            }
 
-            if( comment == null )
+            if( commentVal == null ) {
                 // note that you can overwrite a comment but not delete it
                 ret = false;
-            else if ( comment != null && comment.length > 0 ){
-                jQuery("#"+commentID).val(comment);
+            } else if ( commentVal.length > 0 ){
+                jQuery("#"+commentID).val(commentVal);
                 //jQuery('#'+label).text("comment: ");
-                //jQuery(('#V'+version+text).text(comment);
+                //jQuery(('#V'+version+text).text(commentVal);
+
             }
             else {
             	jQuery("#"+commentID).val(commentVal);
             }
+
             if(ret)
-                handleLab('acknowledgeForm_'+labid,labid,action);
+                handleLab('acknowledgeForm_'+segmentId,segmentId,action);
 
             return false;
         }
@@ -483,7 +491,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
         function addComment(formid,labid) {
         	var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do?method=addComment";
-        	var status = "status_" + labid;
+        	//var status = "status_" + labid;
 
 			if( jQuery("#status_"+labid).val() == "" ) {
 				jQuery("#status_"+labid).val("N");
@@ -619,7 +627,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									<% } %>
                                     <input type="button" class="btn btn-primary" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
 
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment','<%=segmentID%>');">
 
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
@@ -628,7 +636,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+                                     <input type="button" class="btn" value="Recall" onclick="getComment('msgLabRecall','<%=segmentID%>');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
@@ -1446,7 +1454,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 									<% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>">
 
-                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('<%=segmentID%>','addComment');">
+                                    <input type="button" class="btn" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment','<%=segmentID%>');">
 
                                     <% } %>
                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popupStart(300, 400, '<%=request.getContextPath()%>/oscarMDS/SelectProviderAltView.jsp?doc_no=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>', 'providerselect')">
@@ -1455,7 +1463,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+                                     <input type="button" class="btn" value="Recall" onclick="getComment('msgLabRecall','<%=segmentID%>');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>

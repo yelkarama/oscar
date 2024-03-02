@@ -76,7 +76,7 @@ if(!authed) {
         <script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
         <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
         <script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script>
-        
+
 <script type="text/javascript">
 
 var contextpath = "<%=request.getContextPath()%>";
@@ -94,13 +94,13 @@ function removeLink(docType, docId, providerNo, e) {
 function forwardDocument(docId) {
 	var frm = "#reassignForm_" + docId;
 	var query = jQuery(frm).serialize();
-	
+
 	jQuery.ajax({
 		type: "POST",
 		url:  "<%= request.getContextPath()%>/oscarMDS/ReportReassign.do",
 		data: query,
-		success: function (data) {    				
-			refreshView();				    				
+		success: function (data) {
+			refreshView();
 		},
 		error: function(jqXHR, err, exception) {
 			alert("Error " + jqXHR.status + " " + err);
@@ -110,7 +110,7 @@ function forwardDocument(docId) {
 
 function renderCalendar(id,inputFieldId){
     Calendar.setup({ inputField : inputFieldId, ifFormat : "%Y-%m-%d", showsTime :false, button : id });
-    
+
 }
 
 function removeReport(labid) {
@@ -123,7 +123,7 @@ function refreshView() {
 }
 
 function refreshAndFile(docId) {
-	forceFileDoc(docId);	
+	forceFileDoc(docId);
 }
 
 function addDocToList(provNo, provName, docId) {
@@ -452,7 +452,7 @@ function initPatientIds(s){
                              for(var i=0;i<patientIds.length;i++){
                                  var pid=patientIds[i];
                                  var e=patientDocs[pid];
-                                 
+
                                  if(!e){
                                      notUsedPid.push(pid);
                                  }
@@ -650,9 +650,9 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 function reportWindow(page,height,width) {
     //console.log(page);
     if(height && width){
-        windowprops="height="+660+", width="+width+", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0" ;
+        windowprops="height="+height+", width="+width+", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0" ;
     }else{
-        windowprops="height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
+        windowprops="height=800, width=1200, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     }
     var popup = window.open(page, "labreport", windowprops);
     popup.focus();
@@ -723,12 +723,12 @@ function isNeedShowMore(wh,sd){//input window height and scrool distance , retur
     var r=false;
     if(wh*nowMultiple < sd){
         r=true;
-        nowMultiple++;        
+        nowMultiple++;
     }
     return r;
 }
 function showFirstTime(){//show first five doc labs
-    
+
                 for(var i=0;i<5;i++){//show 5
                 if(nowDocLabIds.length>0){
                     var id=nowDocLabIds.pop();
@@ -916,14 +916,14 @@ function f_filterResults(n_win, n_docel, n_body) {
                                    }
                                    //hide all labs
                                    eles=document.getElementsByClassName('NormalRes');
-                                   eles = eles.concat(document.getElementsByClassName('AbnormalRes')); 
+                                   eles = eles.concat(document.getElementsByClassName('AbnormalRes'));
                                    for(i=0;i<eles.length;i++){
                                         var ele=eles[i];
                                         ele.setStyle({display:'none'});
                                    }
                                }else if (type=='H'){
                             	   eles=document.getElementsByClassName('NormalRes');
-                                   eles = eles.concat(document.getElementsByClassName('AbnormalRes')); 
+                                   eles = eles.concat(document.getElementsByClassName('AbnormalRes'));
                                    var length=eles.length;
                                    var startindex=(parseInt(page)-1)*numberPerPage;
                                    var endindex=startindex+numberPerPage-1;
@@ -1044,9 +1044,9 @@ function f_filterResults(n_win, n_docel, n_body) {
                                var ds=document.getElementsByClassName('assignedDoc');
                                var ls=document.getElementsByClassName('NormalRes');
                                ls = ls.concat(document.getElementsByClassName('AbnormalRes'));
-                               
+
                                var nd=document.getElementsByClassName('notAssignedDoc');
-                               
+
                                for(var i=0;i<ds.length;i++){
                                    var ele=ds[i];
                                    total_rows.push(ele.id);
@@ -1060,17 +1060,17 @@ function f_filterResults(n_win, n_docel, n_body) {
                                    total_rows.push(ele.id);
                                }
                                total_rows=sortRowId(uniqueArray(total_rows));
-                               
+
                                current_category=new Array();
                                                         current_category[0]=document.getElementsByClassName('assignedDoc');
                                                         current_category[1]=ls;
                                                         current_category[2]=filterAb_normal('normal');
                                                         current_category[3]=filterAb_normal('abnormal');
                                                         current_category[4]=document.getElementsByClassName('notAssignedDoc');
-                                                        
+
                            }
                            function checkBox(){
-                        	  
+
                                                     //oscarLog("in checkBox");
                                                     var checkedArray=new Array();
                                                     if($('documentCB').checked==1){
@@ -1090,7 +1090,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                     }
                                                     //console.log('length='+checkedArray.length);
                                          if(checkedArray.length==5){//show all
-                                        	 
+
                                                         var endindex= number_of_row_per_page-1;
                                                         if(endindex>=total_rows.length)
                                                             endindex=total_rows.length-1;
@@ -1098,7 +1098,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                         //show all
                                                         for(var i=0;i<endindex+1;i++){
                                                             var id=total_rows[i];
-                                                            if($(id)){                                                            	
+                                                            if($(id)){
                                                                 $(id).show();
                                                             }
                                                         }
@@ -1113,7 +1113,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                         current_category=new Array();
                                                         current_category[0]=document.getElementsByClassName('assignedDoc');
                                                         var labs=document.getElementsByClassName('NormalRes');
-                                                        labs = labs.concat(document.getElementsByClassName('AbnormalRes')); 
+                                                        labs = labs.concat(document.getElementsByClassName('AbnormalRes'));
                                                         current_category[1]=labs;
                                                         current_category[2]=filterAb_normal('normal');
                                                         current_category[3]=filterAb_normal('abnormal');
@@ -1131,12 +1131,12 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                         var type=checkedArray[i];
 
                                                         if(type=='assignedDoc'){
-                                                            var docs=document.getElementsByClassName('assignedDoc');                                                            
+                                                            var docs=document.getElementsByClassName('assignedDoc');
                                                             eles.push(docs);
                                                         }
-                                                        else if(type=='hl7'){                                                        	
+                                                        else if(type=='hl7'){
                                                             var labs=document.getElementsByClassName('NormalRes');
-                                                            labs = labs.concat(document.getElementsByClassName('AbnormalRes'));                                                            
+                                                            labs = labs.concat(document.getElementsByClassName('AbnormalRes'));
                                                             eles.push(labs);
                                                         }
                                                         else if(type=='normal'){
@@ -1151,7 +1151,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                             var nd=document.getElementsByClassName('notAssignedDoc');
                                                             eles.push(nd);
                                                         }
-                                                    }                                               
+                                                    }
                                                     current_category=eles;
                                                     displayCategoryPage(1);
                                                     initializeNavigation();
@@ -1159,16 +1159,16 @@ function f_filterResults(n_win, n_docel, n_body) {
                                             }
 
                                             function displayCategoryPage(page){
-                                            	
+
                                                 //oscarLog('in displaycategorypage, page='+page);
                                                 //write all row ids to an array
                                                 var displayrowids=new Array();
-                                                
+
                                                     for(var p=0;p<current_category.length;p++){
                                                         var elements=new Array();
                                                         elements=current_category[p];
                                                         //oscarLog("elements.lenght="+elements.length);
-                                                        
+
                                                         for(var j=0;j<elements.length;j++){
                                                             var e=elements[j];
                                                             var rowid=e.id;
@@ -1191,14 +1191,14 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                     }
                                                     //set current displaying rows
                                                     current_rows=new Array();
-                                                    
+
                                                     for(var i=startIndex;i<endIndex+1;i++){
                                                         if($(displayrowids[i])){
                                                             current_rows.push(displayrowids[i]);
                                                         }
                                                     }
-                                                    
-                                                    if(current_rows.length<20)//show blank row to fill in empty space 
+
+                                                    if(current_rows.length<20)//show blank row to fill in empty space
                                                         $('blankrow').show();
                                                     else $('blankrow').hide();
                                                     //loop through every thing,if it's in displayrowids, show it , if it's not hide it.
@@ -1418,12 +1418,12 @@ function f_filterResults(n_win, n_docel, n_body) {
                                             labdoc=labdoc.replace(' ','');
                                             //oscarLog('check type input='+labdoc);
                                             var type=checkType(labdoc);
-                                            
+
                                             //oscarLog("type="+type+"--subType="+subType);
                                             if(type==subType){
                                                 nowDocLabIds.push(labdoc);
                                             }
-                                            
+
                                         }
                                         showFirstTime();
                                         //toggleMarker('subtype'+subType+patientId+'show');
@@ -1461,7 +1461,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                             function showAllDocLabs(){
 
 
-                                
+
                                 clearDocView();
                                 var childId='showTotalDocLabs';
                                 createNewElement('docViews',childId);
@@ -1651,7 +1651,7 @@ function removeDocFromQueue(docid){
     //console.log(queueDocNos);
     var found=false;
     for(i in queueDocNos){
-        var r=queueDocNos[i];     
+        var r=queueDocNos[i];
         //console.log('when r is ');
         //console.log(r);
         for(var j=0;j<r.length;j++){
@@ -1664,7 +1664,7 @@ function removeDocFromQueue(docid){
                 found=true;
                 break;
             }else{
-                
+
             }
         }
         if(found)
@@ -1999,7 +1999,7 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                                                             //blind up
                                                                              Effect.BlindUp('labdoc_'+num);
                                                                             //make the document out of the queue
-                                                                            updateDocStatusInQueue(num);                                                                            
+                                                                            updateDocStatusInQueue(num);
                                                                             //update side navigation for queue
                                                                             updateSideNav(num,true);
                                                                             //remove doc from queueDocNos
@@ -2045,7 +2045,7 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                                             }
                                                         }});
                                                     }
-                                             }                                             
+                                             }
                                                 }
 
                                        function fileDoc(docId){
@@ -2072,12 +2072,12 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                                }
                                             }
                                        }
-                                       
+
                                        function forceFileDoc(docId){
                                            if(docId){
                                                 docId=docId.replace(/\s/,'');
                                                 if(docId.length>0){
-	                                       
+
 	                                                var type='DOC';
 	                                                if(type){
 	                                                    var url='../oscarMDS/FileLabs.do';
@@ -2090,7 +2090,7 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
 	                                           }
 	                                       	}
                                          }
-                                            
+
                                        }
                                        function showPatientPreview(pid,providerNo,searchProviderNo,ackStatus){
                                            var labdocsArr=getLabDocFromPatientId(pid);
@@ -2099,7 +2099,7 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                            for(var i=0;i<labdocsArr.length;i++){
                                                 var labdoc=labdocsArr[i];
                                                 labdoc=labdoc.replace(' ','');
-                                                
+
                                                 var type=checkType(labdoc);
                                                 if(type=='DOC')
                                                     docs+=labdoc+",";
@@ -2204,8 +2204,8 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                                     $("lastP_"+docid).setStyle({display:'inline'});
                                                 }
 </script>
-<script type="text/javascript" src="../dms/showDocument.js"></script>        
-        
+<script type="text/javascript" src="../dms/showDocument.js"></script>
+
         <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
         <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"  />
@@ -2241,7 +2241,7 @@ List<String> normals=(List<String>)request.getAttribute("normals");
 List<String> abnormals=(List<String>)request.getAttribute("abnormals");
 
 %>
-        
+
         <table id="pendingDocs" width="100%">
              <tr oldclass="MainTableTopRow">
                 <td class="MainTableTopRowRightColumn" colspan="2" align="left">
@@ -2262,7 +2262,7 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
                                 <input type="button" class="smallButton" onclick="window.close();" value="<bean:message key="oscarMDS.index.btnClose"/>">
 
                             </td>
-                            
+
                             <td align="right" valign="center" width="30%">
                                 <oscar:help keywords="inbox queue" key="app.top1"/>
                                 | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>
@@ -2304,7 +2304,7 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
                            var patientIds=initPatientIds('<%=patientIdStr%>');
                         var queueDocNos=initHashtblWithList('<%=queueDocNos%>');
                         var providerNo='<%=providerNo%>';
-                        
+
                         var searchProviderNo='<%=searchProviderNo%>';
  /*console.log(typeDocLab);
  console.log(docType);

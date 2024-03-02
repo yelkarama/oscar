@@ -101,7 +101,7 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 }
 
 function reportWindow(page) {
-    windowprops="height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
+    windowprops="height=800, width=1200, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     var popup = window.open(page, "labreport", windowprops);
     popup.focus();
 }
@@ -164,7 +164,7 @@ function checkAll(formId){
                 String providerNo=(String)request.getAttribute("providerNo");
                 String searchProviderNo=(String)request.getAttribute("searchProviderNo");
                 String ackStatus=(String)request.getAttribute("ackStatus");
-                
+
                 if ( ackStatus == null ) { ackStatus = "N"; } // default to only new lab reports
                 if ( providerNo == null ) { providerNo = ""; }
                 if ( searchProviderNo == null ) { searchProviderNo = providerNo; }
@@ -177,20 +177,20 @@ function checkAll(formId){
 	style="margin: 0px;">
 	<tr>
 		<td class="MainTableRightColumn" colspan="2" valign="top">
-                    <html:form action="/dms/combinePDFs">			
+                    <html:form action="/dms/combinePDFs">
 			<div class="documentLists"><%-- STUFF TO DISPLAY --%>
                              <%
-                for (int i=0; i<categories.size();i++) {                   
+                for (int i=0; i<categories.size();i++) {
                     ArrayList category = (ArrayList) categories.get(i);
              %>
-			<div class="doclist">			
+			<div class="doclist">
 			<div id="documentsInnerDiv<%=i%>" style="background-color: #f2f7ff;">
 			<table id="privateDocs" class="docTable" >
                             <tr>
                                 <th align="center" colspan="7"><a style="color:black;"><%=demoName%>'s Documents</a></th>
 
                             </tr>
-				<tr>					
+				<tr>
 					<th width="30%" ><b><a style="color:black;"><bean:message
 						key="dms.documentReport.msgDocDesc" /></a></b></th>
 					<th width="8%"><b><a style="color:black;">
@@ -226,8 +226,8 @@ function checkAll(formId){
                     String docId=curdoc.getDocId();
             %>
 				<tr>
-					
-					<td><a> 
+
+					<td><a>
                                                <%=curdoc.getDescription()%></a></td>
 					<td><%=contentType%></td>
 					<td><%=curdoc.getType()%></td>
@@ -248,7 +248,7 @@ function checkAll(formId){
 			</div>
 			</div>
 			<%}%>
-			</div>			
+			</div>
 		</html:form></td>
 	</tr>
 </table>
@@ -302,7 +302,7 @@ function checkAll(formId){
                 %>
 
 	<tr bgcolor="<%=bgcolor%>"
-		class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">		
+		class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">
 		<td nowrap>
 		<% if (result.isHL7TEXT()) {%> <a>
 			<!--href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"--><%=(String) result.getDiscipline()%></a>
@@ -324,7 +324,7 @@ function checkAll(formId){
 		<td colspan="9" align="center"><i><bean:message
 			key="oscarMDS.index.msgNoReports" /></i></td>
 	</tr>
-	<% } %>	
+	<% } %>
 </table>
 </form>
 

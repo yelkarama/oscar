@@ -27,6 +27,7 @@
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="java.util.ResourceBundle" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -88,6 +89,7 @@
 
 <%
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
     displayServiceUtil.estSpecialist();
     String providerNoFromChart = null;
     String demoNo = request.getParameter("demographicNo");
@@ -345,8 +347,20 @@ if (openInTabs){
 </style>
 
 
-        <script type="text/javascript">
+    <script type="text/javascript">
 
+    function next() {
+
+        if(!window.opener || (typeof window.opener.openNext != 'function')){
+            document.getElementById('next').style.display="none";
+            console.log("not called from inbox so disabling Next");
+
+        } else if (!window.opener.document.getElementById('ack_next_chk').checked) {
+            document.getElementById('next').style.display="none";
+            console.log("check box currently unchecked so disabling Next");
+            }
+
+    }
 
         jQuery.noConflict();
 
@@ -444,7 +458,7 @@ if (openInTabs){
 
                                 }
                                 else {
-                                    alert("Make sure demographic is linked and document changes saved!");
+                                    alert("<bean:message key="oscarMDS.index.msgNotAttached"/>");
                                 }
                             }
 			}});
@@ -484,7 +498,7 @@ if (openInTabs){
 					var demoId=$('demofind'+doclabid).value;
 					var saved=$('saved'+doclabid).value;
 					if(demoId=='-1'|| saved=='false'){
-						alert('Document is not assigned and saved to a patient,please file it');
+						alert('<bean:message key="oscarMDS.index.msgNotAttached"/>');
 					}else{
 						runMacroInternal(name,formid,closeOnSuccess,demoId);
 					}
@@ -505,7 +519,7 @@ if (openInTabs){
 			}
 		</script>
 </head>
-<body>
+<body onLoad="next();">
 <% } %>
 
         <div id="labdoc_<%=docId%>">
@@ -552,7 +566,7 @@ if (openInTabs){
 
 									%>
 											<div class="dropdowns">
-											  <button class="dropbtns btn">Macros&nbsp;<span class="caret"></span></button>
+											  <button class="dropbtns btn"><bean:message key='global.macro'/>&nbsp;<span class="caret"></span></button>
 											  <div class="dropdowns-content">
 											  <%
 											    try {
@@ -609,7 +623,7 @@ if (openInTabs){
                                                         <input type="button" id="ticklerBtn_<%=docId%>" class="btn" value="<bean:message key="global.tickler"/>"onclick="handleDocSave('<%=docId%>','addTickler');return false;" <%=btnDisabled %> />
                                                 <% } %>
                                                 <% if(recall){%>
-                                                        <input type="button" id="recallBtn_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
+                                                        <input type="button" id="recallBtn_<%=docId%>" class="btn" value="<bean:message key='oscarMDS.index.Recall'/>" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
 
                                                 <div class="dropdowns" id="dropdown_<%=docId%>" disabled>
@@ -663,10 +677,10 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                     <td colspan="8">
                         <div style="text-align: right;font-weight: bold">
                         <% if( numOfPage > 1 && displayDocumentAs.equals(UserProperty.IMAGE) ) {%>
-                        	<a id="firstP_<%=docId%>" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>','<%=cp%>');">First</a>
-                            <a id="prevP_<%=docId%>" style="display: none;"  href="javascript:void(0);" onclick="prevPage('<%=docId%>','<%=cp%>');">Prev</a>
-                            <a id="nextP_<%=docId%>" href="javascript:void(0);" onclick="nextPage('<%=docId%>','<%=cp%>');">Next</a>
-                            <a id="lastP_<%=docId%>" href="javascript:void(0);" onclick="lastPage('<%=docId%>','<%=cp%>');">Last</a>
+                        	<a id="firstP_<%=docId%>" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>','<%=cp%>');"><bean:message key='global.First'/></a>
+                            <a id="prevP_<%=docId%>" style="display: none;"  href="javascript:void(0);" onclick="prevPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Prev'/></a>
+                            <a id="nextP_<%=docId%>" href="javascript:void(0);" onclick="nextPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Next'/></a>
+                            <a id="lastP_<%=docId%>" href="javascript:void(0);" onclick="lastPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Last'/></a>
                             <%} %>
                         </div>
                         <% if (displayDocumentAs.equals(UserProperty.IMAGE)) { %>
@@ -693,7 +707,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                     <td>
                                     	<input id="shownPage_<%=docId %>" type="hidden" value="1" />
                                         <%if (displayDocumentAs.equals(UserProperty.IMAGE)) { %>
-                                            <span id="viewedPage_<%=docId%>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">1</span>&nbsp; of &nbsp;<%}%>
+                                            <span id="viewedPage_<%=docId%>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">1</span>&nbsp; <bean:message key="global.of"/> &nbsp;<%}%>
                                         <span id="numPages_<%=docId %>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>"><%=numOfPageStr%></span>
                                     </td>
                                 </tr>
@@ -772,7 +786,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                             <div id="autocomplete_choices<%=docId%>" class="autocomplete"></div>
 
                                             <%}%>
-											<input type="button" id="createNewDemo" value="Create New Demographic"  class="btn" onclick="popup(700,960,'<%= request.getContextPath() %>/demographic/demographicaddarecordhtm.jsp','demographic')"/>
+											<input type="button" id="createNewDemo" value="<bean:message key="inboxmanager.document.CreateNewDemographic" />"  class="btn" onclick="popup(700,960,'<%= request.getContextPath() %>/demographic/demographicaddarecordhtm.jsp','demographic')"/>
 
                                                    <input id="saved_<%=docId%>" type="hidden" name="saved" value="false"/>
                                                    <br><input id="mrp_<%=docId%>" style="display: none;" type="checkbox" onclick="sendMRP(this)"  name="demoLink" >
@@ -809,11 +823,11 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                         <td width="30%" colspan="1" align="left"><a id="saveSucessMsg_<%=docId%>" style="display:none;color:blue;"><bean:message key="inboxmanager.document.SuccessfullySavedMsg"/></a></td>
                                         <td width="30%" colspan="1" align="left">
 <%if(demographicID.equals("-1")){%>
-    <input type="submit" class="btn" name="save" disabled id="save<%=docId%>" value="Save" />
+    <input type="submit" class="btn" name="save" disabled id="save<%=docId%>" value="<bean:message key="global.btnSave"/>" />
     <input type="button" class="btn" name="save" id="saveNext<%=docId%>" onclick="saveNext(<%=docId%>)" disabled value='<bean:message key="inboxmanager.document.SaveAndNext"/>' />
 <%}
             else{%>
-<input type="submit" class="btn" name="save" id="save<%=docId%>" value="Save" />
+<input type="submit" class="btn" name="save" id="save<%=docId%>" value="<bean:message key="global.btnSave"/>" />
 <input type="button" class="btn" name="save" onclick="saveNext(<%=docId%>)" id="saveNext<%=docId%>" value='<bean:message key="inboxmanager.document.SaveAndNext"/>' />
 <%}%>
 
@@ -911,17 +925,19 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                                         <%= report.getProviderName() %> :
 
                                                                         <% String ackStatus = report.getStatus();
-                                                                            if(ackStatus.equals("A")){
-                                                                                ackStatus = "Acknowledged";
+                                                                           if(ackStatus.equals("A")){
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.Acknowledged") : "Acknowledged";
                                                                             }else if(ackStatus.equals("F")){
-                                                                                ackStatus = "Filed but not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.FiledbutnotAcknowledged") : "Filed but not Acknowledged";
                                                                             }else{
-                                                                                ackStatus = "Not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.NotAcknowledged") : "Not Acknowledged";
                                                                             }
+                                                                            String nocom = oscarRec.containsKey("oscarMDS.index.nocomment")? oscarRec.getString("oscarMDS.index.nocomment") : "no comment";
+                                                                            String com = oscarRec.containsKey("oscarMDS.index.comment")? oscarRec.getString("oscarMDS.index.comment") : "comment";
                                                                         %>
                                                                         <font color="red"><%= ackStatus %></font>
                                                                             <span id="timestamp_<%=docId + "_" + report.getOscarProviderNo()%>"><%= report.getTimestamp() == null ? "&nbsp;" : report.getTimestamp() + "&nbsp;"%></span>,
-                                                                            comment: <span id="comment_<%=docId + "_" + report.getOscarProviderNo()%>"><%=report.getComment() == null || report.getComment().equals("") ? "no comment" : report.getComment()%></span>
+                                                                            <span id="comment_<%=docId + "_" + report.getOscarProviderNo()%>"><%=report.getComment() == null || report.getComment().equals("") ?  nocom : com +": "%></span>
 
                                                                         <br>
                                                                     <% }
@@ -1112,10 +1128,10 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                 	<td colspan="8">
                         <div style="text-align: right;font-weight: bold">
                             <% if( numOfPage > 1 && displayDocumentAs.equals(UserProperty.IMAGE)) {%>
-                        	<a id="firstP2_<%=docId%>" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>','<%=cp%>');">First</a>
-                            <a id="prevP2_<%=docId%>" style="display: none;"  href="javascript:void(0);" onclick="prevPage('<%=docId%>','<%=cp%>');">Prev</a>
-                            <a id="nextP2_<%=docId%>" href="javascript:void(0);" onclick="nextPage('<%=docId%>','<%=cp%>');">Next</a>
-                            <a id="lastP2_<%=docId%>" href="javascript:void(0);" onclick="lastPage('<%=docId%>','<%=cp%>');">Last</a>
+                        	<a id="firstP2_<%=docId%>" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>','<%=cp%>');"><bean:message key='global.First'/></a>
+                            <a id="prevP2_<%=docId%>" style="display: none;"  href="javascript:void(0);" onclick="prevPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Prev'/></a>
+                            <a id="nextP2_<%=docId%>" href="javascript:void(0);" onclick="nextPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Next'/></a>
+                            <a id="lastP2_<%=docId%>" href="javascript:void(0);" onclick="lastPage('<%=docId%>','<%=cp%>');"><bean:message key='global.Last'/></a>
                             <%} %>
                         </div>
                     </td>
@@ -1133,7 +1149,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 
 									%>
 											<div class="dropdowns">
-											  <button class="dropbtns btn">Macros&nbsp;<span class="caret" ></span></button>
+											  <button class="dropbtns btn"><bean:message key='global.macro'/>&nbsp;<span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 											  <%
 											    try {
@@ -1181,7 +1197,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                         <input type="button" id="ticklerBtn2_<%=docId%>" class="btn" value="<bean:message key="global.tickler"/>"onclick="handleDocSave('<%=docId%>','addTickler');return false;" <%=btnDisabled %> />
                                                 <% } %>
                                                 <% if(recall){%>
-                                                        <input type="button" id="recallBtn2_<%=docId%>" class="btn" value="Recall" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
+                                                        <input type="button" id="recallBtn2_<%=docId%>" class="btn" value="<bean:message key='oscarMDS.index.Recall'/>" onclick="handleDocSave('<%=docId%>','msgLabRecall'); return false;" <%=btnDisabled %>/>
                                                 <% } %>
 
                                                 <div class="dropdowns" id="dropdown2_<%=docId%>" disabled>
@@ -1216,6 +1232,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                         <input type="button" id="rxBtn2_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
 
                                                         <input type="button" id="refileDoc2_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=Refile', 'Refile<%=docId%>');refileDoc('<%=docId%>'); return(false);">
+                                                        <input type="button" class="btn" id="next" value="<bean:message key='global.Next'/>" onclick=" close = window.opener.openNext(<%=docId%>); if (close == 'close'){window.close();}">
 
 
 

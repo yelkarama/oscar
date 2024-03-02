@@ -11,17 +11,24 @@
 <!DOCTYPE html>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*,oscar.util.StringUtils,oscar.util.UtilDateUtilities, oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
+<%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*" %>
+<%@ page import="oscar.util.StringUtils,oscar.util.UtilDateUtilities" %>
+<%@ page import="oscar.OscarProperties" %>
+<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
+<%@ page import="org.oscarehr.common.model.UserProperty" %>
+
+<%@ page import="org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils"%>
+<%@ page import="org.oscarehr.util.MiscUtils,org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.apache.commons.collections.MultiHashMap" %>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@page import="org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils"%>
-<%@page import="org.oscarehr.util.MiscUtils,org.apache.commons.lang.StringEscapeUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -72,6 +79,7 @@ ArrayList<PatientInfo> patients = (ArrayList<PatientInfo>) request.getAttribute(
 if (patients!=null) {
 	Collections.sort(patients);
 }
+
 Integer unmatchedDocs   = (Integer) request.getAttribute("unmatchedDocs");
 Integer unmatchedLabs   = (Integer) request.getAttribute("unmatchedLabs");
 Integer totalDocs		= (Integer) request.getAttribute("totalDocs");
@@ -85,6 +93,7 @@ Long categoryHash       = (Long) request.getAttribute("categoryHash");
 String searchProviderNo = (String) request.getAttribute("searchProviderNo");
 String demographicNo	= (String) request.getAttribute("demographicNo");
 String ackStatus 		= (String) request.getAttribute("ackStatus");
+String abnormalStatus   = (String) request.getAttribute("abnormalStatus");
 
 String selectedCategory        = request.getParameter("selectedCategory");
 String selectedCategoryPatient = request.getParameter("selectedCategoryPatient");
@@ -280,6 +289,31 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
     <script>
 
+        function openNext(segmentID){
+            if (!document.getElementById('ack_next_chk').checked) { return "close"; }
+            var nextTr = jQuery('#labdoc_'+segmentID).next('tr');
+
+            //skip those that have display none
+            while (nextTr.css('display') == 'none') {
+                nextTr = nextTr.next('tr');
+                if (typeof nextTr.attr('id') === "undefined" ){ break; }
+            }
+
+            //if we are at the end of the list indicate that the window can be closed
+            if (typeof nextTr.attr('id') === "undefined" ) {
+                return "close";
+            }
+
+            var nextId = nextTr.attr('id');
+            var nextName = nextTr.attr('name'); //eg HL7lab, scannedDoc
+            console.log("passed segmentID:"+segmentID+"\n and the next segment:"+nextId+" of type "+ nextName);
+            var nextLink = nextTr.find('td').find('a').first();
+
+            nextLink.trigger('click'); //this will run the onclick for the nextLink element to remove any * and navigate
+            return "rapidClick";
+
+        }
+
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runhl7Macro(name, formid, closeOnSuccess) {
                 var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
@@ -313,7 +347,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 					var demoId=$('demofind'+doclabid).value;
 					var saved=$('saved'+doclabid).value;
 					if(demoId=='-1'|| saved=='false'){
-						alert('Document is not assigned and saved to a patient,please file it');
+						alert('<bean:message key="oscarMDS.index.msgNotAttached"/>');
 					}else{
 						runMacroInternal(name,formid,closeOnSuccess,demoId,"doc");
 					}
@@ -427,7 +461,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
                                 }
                                 else {
-                                    alert("Make sure demographic is linked and document changes saved!");
+                                    alert("<bean:message key="oscarMDS.index.msgNotAttached"/>");
                                 }
                             }
 			}});
@@ -466,6 +500,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	var hin = "<%=(patientHealthNumber == null ? "" : patientHealthNumber)%>";
 	var providerNo = "<%=(providerNo == null ? "" : providerNo)%>";
 	var searchStatus = "<%=(ackStatus == null ? "": ackStatus)%>";
+	var abnormalStatus = "<%=abnormalStatus == null || "all".equals(abnormalStatus) ? "L" : (abnormalStatus.equals("normalOnly") ? "N" : "A")%>"
 	var url = "<%=request.getContextPath()%>/dms/inboxManage.do?";
 	var contextpath = "<%=request.getContextPath()%>";
 	var startDate = "<%= startDate %>";
@@ -590,7 +625,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         }
 
 	function getQuery() {
-		var CATEGORY_ALL = 1,CATEGORY_DOCUMENTS = 2,CATEGORY_HL7 = 3,CATEGORY_NORMAL = 4,CATEGORY_ABNORMAL = 5,CATEGORY_PATIENT = 6,CATEGORY_PATIENT_SUB = 7,CATEGORY_TYPE_DOC = 'DOC',CATEGORY_TYPE_HL7 = 'HL7';
+		var CATEGORY_ALL = 1,CATEGORY_DOCUMENTS = 2,CATEGORY_HL7 = 3,CATEGORY_NORMAL = 4,CATEGORY_ABNORMAL = 5,CATEGORY_PATIENT = 6,CATEGORY_PATIENT_SUB = 7,CATEGORY_HRM = 8,CATEGORY_TYPE_DOC = 'DOC',CATEGORY_TYPE_HL7 = 'HL7';
 		var query = "method=prepareForContentPage";
 		query +="&searchProviderNo="+searchProviderNo+"&providerNo="+providerNo+"&status="+searchStatus+"&page="+page
 			   +"&pageSize="+pageSize+"&isListView="+(isListView?"true":"false")
@@ -603,10 +638,23 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 		case CATEGORY_DOCUMENTS:
 			query  += "&view=documents";
 			query  += "&fname=" + firstName + "&lname=" + lastName + "&hnum=" + hin;
+			if (abnormalStatus !== '') {
+				query += "&abnormalStatus=" + abnormalStatus;
+			}
+			break;
+		case CATEGORY_HRM:
+			query  += "&view=hrms";
+			query  += "&fname=" + firstName + "&lname=" + lastName + "&hnum=" + hin;
+			if (abnormalStatus !== '') {
+				query += "&abnormalStatus=" + abnormalStatus;
+			}
 			break;
 		case CATEGORY_HL7:
 			query  += "&view=labs";
 			query  += "&fname=" + firstName + "&lname=" + lastName + "&hnum=" + hin;
+			if (abnormalStatus !== '') {
+				query += "&abnormalStatus=" + abnormalStatus;
+			}
 			break;
 		case CATEGORY_NORMAL:
 			query  += "&view=normal";
@@ -830,7 +878,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 									<a href="<%=help_url%>inbox/" target="_blank"><bean:message key="app.top1" /></a>
                                 	| <a href="javascript:popupStart(300,400,'<%=request.getContextPath()%>/oscarEncounter/About.jsp')" ><bean:message key="global.about"/></a>
 								</span>
-                                | <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/oscarMDS/ForwardingRules.jsp?providerNo=<%= providerNo %>');"  >Forwarding Rules</a>
+                                | <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/oscarMDS/ForwardingRules.jsp?providerNo=<%= providerNo %>');"  ><bean:message key="oscarMDS.index.ForwardingRules"/></a>
                                 | <a href="javascript:popupStart(800,1000,'<%=request.getContextPath()%>/lab/CA/ALL/testUploader.jsp')" ><bean:message key="admin.admin.hl7LabUpload"/></a>
                                 <% if (OscarProperties.getInstance().getBooleanProperty("legacy_document_upload_enabled", "true")) { %>
                                 | <a href="javascript:popupStart(600,500,'<%=request.getContextPath()%>/dms/html5AddDocuments.jsp')" ><bean:message key="inboxmanager.document.uploadDoc"/></a>
@@ -842,7 +890,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
                                                                 | <a href="javascript:popupStart(800,1000,'<%=request.getContextPath() %>/dms/incomingDocs.jsp')"  ><bean:message key="inboxmanager.document.incomingDocs"/></a>
 								| <a href="javascript:popupStart(800,1000, '<%=request.getContextPath() %>/oscarMDS/CreateLab.jsp')" ><bean:message key="global.createLab" /></a>
                                 | <a href="javascript:popupStart(1000,1300, '<%=request.getContextPath() %>/olis/Search.jsp')" ><bean:message key="olis.olisSearch" /></a>
-                                | <a href="javascript:popupPage(400, 400,'<html:rewrite page="/hospitalReportManager/hospitalReportManager.jsp"/>')" >HRM Status/Upload</a>
+                                | <a href="javascript:popupPage(400, 400,'<html:rewrite page="/hospitalReportManager/hospitalReportManager.jsp"/>')" ><bean:message key="oscarMDS.index.HRMupload" /></a>
 
                             </td>
                         </tr>
@@ -868,8 +916,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
                         if((totalNumDocs) > 0){
                     %>
                         <div>
-                        	<a id="totalAll" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_ALL);">
-                        		All (<span id="totalNumDocs"><%=totalNumDocs%></span>)</a>
+                        	<a id="totalAll" href="javascript:void(0);" title="<bean:message key="global.All"/> <%=totalNumDocs%>" onclick="un_bold(this);changeView(CATEGORY_ALL);">
+                        		<bean:message key="global.All"/></a>
                         </div>
                         <br>
 
@@ -879,7 +927,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 					%>
 						<div>
 							<a id="totalDocs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_DOCUMENTS);"
-							   title="Documents">Documents (<span id="totalDocsNum"><%=totalDocs%></span>)
+							   title="<bean:message key="global.Documents"/> "><bean:message key="global.Documents"/> (<span id="totalDocsNum"><%=totalDocs%></span>)
 						   </a>
 					   </div>
                      <%} if((totalLabs)>0){%>
@@ -894,20 +942,20 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 					%>
 					    <div>
-					    	<a id="totalNormals" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_NORMAL);" title="Normal">
-					    		Normal
+					    	<a id="totalNormals" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_NORMAL);" title="<bean:message key="global.normal"/>">
+					    		<bean:message key="global.normal"/>
 				    		</a>
 		    			</div>
 
 						<div>
-    						<a id="totalAbnormals" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_ABNORMAL);" title="Abnormal">
-    							Abnormal
+    						<a id="totalAbnormals" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_ABNORMAL);" title="<bean:message key="global.Abnormal"/>">
+    							<bean:message key="global.Abnormal"/>
    							</a>
 
 						</div>
 						<div>
     						<a id="sortbynum" href="javascript:void(0);" onclick="document.getElementById('patientsdoclabs').toggle(); document.getElementById('patientsdoclabsB').toggle();un_bold(this);" title="Toggle sort by number of results or by name">
-    							Toggle By #
+    							<bean:message key="oscarMDS.index.ToggleByNo"/>
    							</a>
 
 						</div>
@@ -930,8 +978,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
                     		<dl id="labdoc<%=patientId%>showSublist" style="display:none" >
                    <%if (info.getDocCount() > 0) {%>
                         		<dt>
-                        			<a id="patient<%=patientId%>docs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_DOC);" title="Documents">
-                        				Documents (<span id="pDocNum_<%=patientId%>"><%=info.getDocCount()%></span>)
+                        			<a id="patient<%=patientId%>docs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_DOC);" title="<bean:message key="global.Documents"/> ">
+                        				<bean:message key="global.Documents"/>  (<span id="pDocNum_<%=patientId%>"><%=info.getDocCount()%></span>)
                        				</a>
                         		</dt>
                    <%} if (info.getLabCount() > 0) {%>
@@ -955,12 +1003,12 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 				   <% if (unmatchedDocs > 0 || unmatchedLabs > 0) { %>
 						<dt> <img id="plus0" alt="plus" src="<%=request.getContextPath()%>/images/plus.png" onclick="showhideSubCat('plus','0');"/>
        					    <img id="minus0" alt="minus" style="display:none;" src="<%=request.getContextPath()%>/images/minus.png" onclick="showhideSubCat('minus','0');"/>
-       						<a id="patient0all" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,0)" title="Unmatched">Unmatched (<span id="patientNumDocs0"><%=unmatchedDocs + unmatchedLabs%></span>)</a>
+       						<a id="patient0all" href="javascript:void(0);"  onclick="un_bold(this);changeView(CATEGORY_PATIENT,0)" title="<bean:message key="global.Unmatched"/>"><bean:message key="global.Unmatched"/> (<span id="patientNumDocs0"><%=unmatchedDocs + unmatchedLabs%></span>)</a>
                     		<dl id="labdoc0showSublist" style="display:none" >
                    <%if (unmatchedDocs > 0) {%>
                         		<dt>
-                        			<a id="patient0docs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="Documents">
-                        				Documents (<span id="pDocNum_0"><%=unmatchedDocs%></span>)
+                        			<a id="patient0docs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="<bean:message key="global.Documents"/> ">
+                        				<bean:message key="global.Documents"/> (<span id="pDocNum_0"><%=unmatchedDocs%></span>)
                        				</a>
                         		</dt>
                    <%} if (unmatchedLabs > 0) {%>
@@ -999,8 +1047,8 @@ if (patients!=null) {
                     		<dl id="labdoc<%=patientId%>showSublistB" style="display:none" >
                    <%if (info.getDocCount() > 0) {%>
                         		<dt>
-                        			<a id="patient<%=patientId%>docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_DOC);" title="Documents">
-                        				Documents (<span id="pDocNum_<%=patientId%>"><%=info.getDocCount()%></span>)
+                        			<a id="patient<%=patientId%>docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,<%=patientId%>,CATEGORY_TYPE_DOC);" title="<bean:message key="global.Documents"/>">
+                        				<bean:message key="global.Documents"/> (<span id="pDocNum_<%=patientId%>"><%=info.getDocCount()%></span>)
                        				</a>
                         		</dt>
                    <%} if (info.getLabCount() > 0) {%>
@@ -1028,8 +1076,8 @@ if (patients!=null) {
                     		<dl id="labdoc0showSublistB" style="display:none" >
                    <%if (unmatchedDocs > 0) {%>
                         		<dt>
-                        			<a id="patient0docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="Documents">
-                        				Documents (<span id="pDocNum_0"><%=unmatchedDocs%></span>)
+                        			<a id="patient0docsB" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="<bean:message key="global.Documents"/>">
+                        				<bean:message key="global.Documents"/> (<span id="pDocNum_0"><%=unmatchedDocs%></span>)
                        				</a>
                         		</dt>
                    <%} if (unmatchedLabs > 0) {%>

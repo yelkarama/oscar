@@ -28,6 +28,7 @@
 <%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page import="javax.swing.text.rtf.RTFEditorKit"%>
 <%@ page import="net.sf.json.JSONArray"%>
 <%@ page import="net.sf.json.JSONException"%>
@@ -100,7 +101,7 @@ if(!authed) {
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 oscar.OscarProperties props = oscar.OscarProperties.getInstance();
 boolean rememberComment = (!props.hasProperty("REMEMBER_LAST_LAB_COMMENT") || props.isPropertyActive("REMEMBER_LAST_LAB_COMMENT"));
-
+ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
 String segmentID = request.getParameter("segmentID");
 String providerNo =request.getParameter("providerNo");
 String curUser_no = (String) session.getAttribute("user");
@@ -301,7 +302,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
             }
             //top.opener.location.reload();
             if(window.top.opener.document.getElementById("labdoc_"+labno)){
-                window.top.opener.document.getElementById("labdoc_"+labno).remove("UnassignedRes");
+                window.top.opener.document.getElementById("labdoc_"+labno).classList.remove("UnassignedRes");
             }
         }
 	</script>
@@ -450,29 +451,40 @@ input[id^='acklabel_']{
 
     function getComment(action, segmentId) {
        		var ret = true;
-            var comment = "";
+            var commentVal = jQuery('input[name="comment"]').val();
             var version = jQuery("#version_"+segmentId).val();
             var selector = "_" + providerNo + "_" + segmentId + "commentText";  // 0_101_866551commentText
             <% if (rememberComment) { %>
             if (version > 0 && jQuery("#"+(version -1)+selector).text().trim().length > 0){
-	            comment = jQuery("#"+(version -1)+selector).text().trim();
+	            commentVal = jQuery("#"+(version -1)+selector).text().trim();
             }
             <% } %>
             if( jQuery("#"+version+selector).text().trim().length > 0 ) {
-	            comment = jQuery("#"+version+selector).text().trim();
+	            commentVal = jQuery("#"+version+selector).text().trim();
             }
-            if( comment == null ) {
-	            comment = "";
+            if( commentVal == null ) {
+	            commentVal = "";
 	        }
-            var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', comment);
+
+            if ( action == "msgLabRecall") {
+                if (commentVal == "" ) {
+                    commentVal = "Recall";
+                    document.forms['acknowledgeForm_'+ segmentId].comment.value = commentVal;
+                    addComment('acknowledgeForm_'+segmentId,segmentId);
+                }
+                handleLab('acknowledgeForm_'+segmentId,segmentId,action);
+                return;
+            } else {
+                var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
+            }
 
             if( commentVal == null ) {
             	ret = false;
+            } else {
+                if( commentVal.length > 0 ){
+                    document.forms['acknowledgeForm_'+ segmentId].comment.value = commentVal;
+                }
             }
-            else if( commentVal != null && commentVal.length > 0 )
-                document.forms['acknowledgeForm_'+ segmentId].comment.value = commentVal;
-            else
-            	document.forms['acknowledgeForm_'+ segmentId].comment.value = comment;
 
            if(ret) handleLab('acknowledgeForm_'+segmentId,segmentId, action);
 
@@ -525,6 +537,18 @@ input[id^='acklabel_']{
             <% } %>
 	}
 
+    function next() {
+
+        if(!window.opener || (typeof window.opener.openNext != 'function')){
+            document.getElementById('next').style.display="none";
+            console.log("not called from inbox so disabling Next");
+
+        } else if (!window.opener.document.getElementById('ack_next_chk').checked) {
+            document.getElementById('next').style.display="none";
+            console.log("check box currently unchecked so disabling Next");
+            }
+
+    }
 
     function handleLab(formid, labid, action) {
         var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
@@ -630,7 +654,7 @@ input[id^='acklabel_']{
                             }
 
                         } else {
-                            alert("Please relate lab to a patient");
+                            alert("<bean:message key="oscarMDS.index.msgNotAttached"/>");
                             matchMe();
                         }
                     } //json.isLinkedToDemographic
@@ -673,7 +697,9 @@ input[id^='acklabel_']{
                     //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
                 	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.refreshCategoryList();
-                    window.close();
+                    close = window.opener.openNext(labid);
+                    if (close == "close" ) { window.close(); }
+
             	}
                 else {
                 	window.close();
@@ -848,7 +874,7 @@ input[id^='acklabel_']{
 .dropdowns:hover .dropbtns {background-color: #e6e6e6;}
 
 </style>
-    <body onLoad="javascript:matchMe();">
+    <body onLoad="matchMe();next();">
         <!-- form forwarding of the lab -->
         <%
         	for( int idx = 0; idx < segmentIDs.length; ++idx ) {
@@ -951,8 +977,11 @@ input[id^='acklabel_']{
                                     //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
+                                    close = window.opener.openNext(doclabid);
+                                    if (close == "close" ) { window.close(); }
+                                } else {
+                                    window.close();
                                 }
-                                window.close();
 	                    	}
 	                    }});
 
@@ -997,7 +1026,7 @@ input[id^='acklabel_']{
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
 									%>
 											  <div class="dropdowns">
-											  <button class="dropbtns btn">Macros<span class="caret" ></span></button>
+											  <button class="dropbtns btn"><bean:message key="global.macro"/><span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 
 
@@ -1033,7 +1062,7 @@ input[id^='acklabel_']{
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');">
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.Recall"/>" onclick="getComment('msgLabRecall','<%=segmentID%>');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
@@ -1072,9 +1101,9 @@ input[id^='acklabel_']{
 									%>
 
                                     <% if (!label.equals(null) && !label.equals("")) { %>
-										<input type="button" class="btn" id="createLabel_<%=segmentID%>" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">
+										<input type="button" class="btn" id="createLabel_<%=segmentID%>" value="<bean:message key="global.Label"/>" onclick="submitLabel(this, '<%=segmentID%>');">
 										<%} else { %>
-										<input type="button" class="btn" id="createLabel_<%=segmentID%>" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">
+										<input type="button" class="btn" id="createLabel_<%=segmentID%>" value="<bean:message key="global.Label"/>" onclick="submitLabel(this, '<%=segmentID%>');">
 										<%} %>
 										<input type="hidden"  name="lab_no" value="<%=lab_no%>"> <!-- id="labNum_<%=segmentID %>"-->
 						                <input type="text" name="label" value="" class="input-small"> <!-- id="acklabel_<%=segmentID %>"-->
@@ -1083,13 +1112,13 @@ input[id^='acklabel_']{
 						                 if (label!="" && label!=null) {
 						                 	labelval = label;
 						                 }else {
-						                	 labelval = "(not set)";
+						                	 labelval = oscarRec.containsKey("oscarMDS.index.notset")? oscarRec.getString("oscarMDS.index.notset") : "(not set)";
 
 						                 } %>
-					                 <span id="labelspan_<%=segmentID%>" class="Field2"><i>Label: <%=labelval %> </i></span><br>
+					                 <span id="labelspan_<%=segmentID%>" class="Field2"><i><bean:message key="global.Label"/>: <%=labelval %> </i></span><br>
 
 									<% } %>
-                                    <span class="Field2" onclick="javascript:popupStart('600','800','<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&last_name=<%=java.net.URLEncoder.encode(handler.getFirstName())%>&first_name=<%=java.net.URLEncoder.encode(handler.getLastName())%>&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25')" style="cursor:pointer;"><i>Next Appointment: <oscar:nextAppt demographicNo="<%=demographicID%>"/></i></span>
+                                    <span class="Field2" onclick="javascript:popupStart('600','800','<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicID%>&last_name=<%=java.net.URLEncoder.encode(handler.getFirstName())%>&first_name=<%=java.net.URLEncoder.encode(handler.getLastName())%>&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25')" style="cursor:pointer;"><i><bean:message key="global.nextAppt"/>: <oscar:nextAppt demographicNo="<%=demographicID%>"/></i></span>
                                 </td>
                             </tr>
                         </table>
@@ -1102,7 +1131,7 @@ input[id^='acklabel_']{
                                     <tr>
                                         <td class="Cell" colspan="2" style="padding: 3px; text-align:center">
                                             <div class="Field2">
-                                                Version:&#160;&#160;
+                                                <bean:message key="global.Version"/>:&#160;&#160;
                                                 <%
                                                 for (int i=0; i < multiID.length; i++){
                                                     if (multiID[i].equals(segmentID)){
@@ -1117,7 +1146,7 @@ input[id^='acklabel_']{
                                                 }
                                                 if( multiID.length > 1 ) {
                                                     if ( searchProviderNo != null ) { // null if we were called from e-chart
-                                                        %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
+                                                        %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true"><bean:message key="global.All"/></a>&#160;<%
                                                     }else{
                                                         %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
                                                     }
@@ -1521,7 +1550,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                                         <% if (multiID.length > 1){ %>
                                                             <td style="text-align:center; background-color:white; width:20%; vertical-align:top">
                                                                 <div class="FieldDatas">
-                                                                    <b>Version:</b> v<%= j+1 %><input hidden id="version_<%=multiID[j]%>" value="<%=j%>">
+                                                                    <b><bean:message key="global.Version"/>:</b> v<%= j+1 %><input hidden id="version_<%=multiID[j]%>" value="<%=j%>">
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: left; background-color:white; width:80%; vertical-align:top">
@@ -1536,18 +1565,20 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 
                                                                         <% String ackStatus = report.getStatus();
                                                                             if(ackStatus.equals("A")){
-                                                                                ackStatus = "Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.Acknowledged") : "Acknowledged";
                                                                             }else if(ackStatus.equals("F")){
-                                                                                ackStatus = "Filed but not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.FiledbutnotAcknowledged") : "Filed but not Acknowledged";
                                                                             }else{
-                                                                                ackStatus = "Not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.NotAcknowledged") : "Not Acknowledged";
                                                                             }
+                                                                            String nocom = oscarRec.containsKey("oscarMDS.index.nocomment")? oscarRec.getString("oscarMDS.index.nocomment") : "no comment";
+                                                                            String com = oscarRec.containsKey("oscarMDS.index.comment")? oscarRec.getString("oscarMDS.index.comment") : "comment";
                                                                         %>
                                                                         <span style="color:red"><%= ackStatus %></span>
-                                                                        <% if ( ackStatus.equals("Acknowledged") ) { %>
+                                                                        <% if ( report.getStatus().equals("A") ) { %>
                                                                             <%= report.getTimestamp() %>,
                                                                         <% } %>
-                                                                        <span id="<%=j + "_" + report.getOscarProviderNo() + "_" + segmentID%>commentLabel"><%=report.getComment() == null || report.getComment().equals("") ? "no comment" : "comment : "%></span>
+                                                                        <span id="<%=j + "_" + report.getOscarProviderNo() + "_" + segmentID%>commentLabel"><%=report.getComment() == null || report.getComment().equals("") ? nocom : com +": "%></span>
                                                                         <span id="<%=j + "_" + report.getOscarProviderNo() + "_" + segmentID%>commentText"><%=report.getComment()==null ? "" : Encode.forHtmlContent(report.getComment())%></span>
                                                                         <br>
                                                                     <% }
@@ -2260,7 +2291,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 										if(up != null && !StringUtils.isEmpty(up.getValue())) {
 									%>
 											  <div class="dropdowns">
-											  <button class="dropbtns btn">Macros<span class="caret" ></span></button>
+											  <button class="dropbtns btn"><bean:message key="global.macro"/><span class="caret" ></span></button>
 											  <div class="dropdowns-content">
 
 
@@ -2296,7 +2327,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 
                                      <input type="button" class="btn" value="<bean:message key="global.tickler"/>"  onclick="handleLab('','<%=segmentID%>','ticklerLab');">
                             <% if(recall){%>
-                                     <input type="button" class="btn" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.Recall"/>" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
                             <%}%>
                             <div class="dropdowns" >
                                 <button class="dropbtns btn"  ><bean:message key="global.other"/>&nbsp;<span class="caret" ></span></button>
@@ -2328,6 +2359,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 									<input type="button" <%=isLinkedToDemographic ? "" : "disabled" %> class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" >
 									<% } %>
 									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
+                                    <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick=" close = window.opener.openNext(<%=segmentID%>); if (close == 'close'){window.close();}">
                                 </td>
                             </tr><tr>
                                 <td style="text-align:center">

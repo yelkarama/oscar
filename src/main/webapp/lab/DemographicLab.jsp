@@ -122,7 +122,7 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 }
 
 function reportWindow(page) {
-    windowprops="height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
+    windowprops="height=800, width=1200, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     var popup = window.open(page, "labreport", windowprops);
     popup.focus();
 }

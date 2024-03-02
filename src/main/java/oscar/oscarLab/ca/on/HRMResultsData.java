@@ -153,6 +153,17 @@ public class HRMResultsData {
 		return labResults.values();
 	}
 
+	public static LabResultData populateHrmResultWithDemographicFromReport(LoggedInInfo loggedInInfo, LabResultData resultData) {
+		HRMReport report = HRMReportParser.parseReport(loggedInInfo, resultData.segmentID);
+		if (report != null) {
+			if (report.getLegalName() != null && !report.getLegalName().replaceAll(",", "").trim().isEmpty()) {
+				resultData.patientName = report.getLegalName();
+			}
+		}
+
+		return resultData;
+	}
+
 	public static String getMessageDate(String messageUniqueId) {
 		String[] parts = messageUniqueId.split("\\^");
 		if(parts.length > 5) {

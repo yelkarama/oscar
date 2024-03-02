@@ -442,7 +442,7 @@ function reportWindow(page,height,width) {
 	if(height && width){
 		windowprops="height="+height+", width="+width+", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0" ;
 	}else{
-		windowprops="height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
+		windowprops="height=800, width=1200, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
 	}
 	var popup = window.open(encodeURI(page), "labreport", windowprops);
 	popup.focus();
@@ -1698,7 +1698,7 @@ function checkObservationDate(formid) {
     return true;
   }
 
-function updateStatus(formid){//acknowledge
+function updateStatus(formid){//acknowledge Document
 	var num=formid.split("_");
 	var doclabid=num[1];
 	if(doclabid){
@@ -1719,8 +1719,9 @@ function updateStatus(formid){//acknowledge
 				}
 
 				if (_in_window) {
+					close = window.opener.openNext(doclabid);
+					if (close == "close" ) { window.close(); }
 					self.opener.removeReport(doclabid);
-					window.close();
 				}
 				else {
 					refreshCategoryList();
@@ -1753,8 +1754,10 @@ function fileDoc(docId){
 							Effect.Fade('labdoc_'+docId);
 						}
 						if (_in_window) {
+
+							close = window.opener.openNext(docId);
+							if (close == "close" ) { window.close(); }
 							self.opener.removeReport(docId);
-							window.close();
 						}
 						else {
 							refreshCategoryList();
@@ -1822,6 +1825,7 @@ CATEGORY_NORMAL = 4,
 CATEGORY_ABNORMAL = 5,
 CATEGORY_PATIENT = 6,
 CATEGORY_PATIENT_SUB = 7,
+CATEGORY_HRM = 8,
 CATEGORY_TYPE_DOC = 'DOC',
 CATEGORY_TYPE_HL7 = 'HL7';
 

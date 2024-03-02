@@ -23,13 +23,14 @@
 <%@ page import="oscar.oscarMDS.data.* "%>
 <%@ page import="oscar.util.StringUtils "%>
 <%@ page import="oscar.util.UtilDateUtilities" %>
+<%@ page import="oscar.OscarProperties" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
-<% // Page.jsp is a fragment likely referenced in index.jsp
+<% // Page.jsp is a fragment referenced in index.jsp
 
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
@@ -47,6 +48,8 @@ if(!authed) {
 <%
 Logger logger=MiscUtils.getLogger();
 
+oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+String rapid_review = (props.getProperty("RAPID_REVIEW","")).trim();
 String view = (String)request.getAttribute("view");
 Integer pageSize=(Integer)request.getAttribute("pageSize");
 Integer pageNum=(Integer)request.getAttribute("pageNum");
@@ -84,6 +87,7 @@ String curUser_no = (String) session.getAttribute("user");
 			function submitLabel(lblval){
 		       	 document.forms['TDISLabelForm'].label.value = document.forms['acknowledgeForm'].label.value;
 	       	}
+
 		</script>
 
         <table id="scrollNumber1" style="width:100%">
@@ -93,8 +97,11 @@ String curUser_no = (String) session.getAttribute("user");
                                <% if (labdocs.size() > 0) { %>
                                    <input id="topFBtn" type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="parent.checkSelected(document)">
                                    <% if (ackStatus.equals("N") || ackStatus.isEmpty()) {%>
-                                       <input id="topFileBtn" type="button" class="btn" value="File" onclick="parent.submitFile(document)"/>
+                                       <input id="topFileBtn" type="button" class="btn" value="<bean:message key="global.File"/>" onclick="parent.submitFile(document)"/>
                                    <% }
+                                    %>
+                                       &nbsp; <bean:message key="oscarMDS.index.RapidReview"/>: <input type="checkbox" id="ack_next_chk" <%=rapid_review%>>
+                                    <%
                                }%><span style="float:right;">
                                <label><bean:message key="oscarMDS.index.btnSearch"/>: <input type="text" style="height:20px;" id="myFilterTextField"></label></span>
                                <input type="hidden" id="currentNumberOfPages" value="0">
@@ -281,9 +288,9 @@ String curUser_no = (String) session.getAttribute("user");
                                 </td>
                                 <td style="white-space:nowrap;">
                                     <% if ( result.isMDS() ){ %>
-                                    <%=labRead%><a href="javascript:parent.reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%= StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                    <%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)"  onclick="parent.reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>'); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%= StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     <% }else if (result.isCML()){ %>
-                                    <%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                    <%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)"  onclick="parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>'); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     <% }else if (result.isHL7TEXT())
                                    	{
                                     	String categoryType=result.getDiscipline();
@@ -291,19 +298,19 @@ String curUser_no = (String) session.getAttribute("user");
                                     	if ("REF_I12".equals(categoryType))
                                     	{
 	                                    	%>
-                                      			<%=labRead%><a href="javascript:parent.popupConsultation('<%=segmentID%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                      			<%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)"  onclick="parent.popupConsultation('<%=segmentID%>'); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     		<%
                                     	}
                                     	else if (categoryType!=null && categoryType.startsWith("ORU_R01:"))
                                     	{
 	                                    	%>
-                                      			<%=labRead%><a href="<%=request.getContextPath()%>/lab/CA/ALL/viewOruR01.jsp?segmentId=<%=segmentID%>" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                      			<%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)" onclick="parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ALL/viewOruR01.jsp?segmentId=<%=segmentID%>)'; if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     		<%
                                     	}
                                     	else
                                     	{
 	                                    	%>
-	                                    		<%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ALL/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&showLatest=true');"  onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+	                                    		<%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)"  onclick="parent.reportWindow('<%=request.getContextPath()%>/lab/CA/ALL/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&showLatest=true'); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
 	                                    	<%
                                     	}
                                     }
@@ -329,7 +336,7 @@ String curUser_no = (String) session.getAttribute("user");
                                     	url.append(StringEscapeUtils.escapeJavaScript(patientName));
                                     %>
 
-                                    <%=labRead%><a href="javascript:void(0);" onclick="reportWindow('<%=url.toString()%>',screen.availHeight, screen.availWidth); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';return false;" ><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
+                                    <%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)" onclick="javascript:parent.reportWindow('<%=url.toString()%>'); if(this.previousElementSibling) this.previousElementSibling.outerHTML=''" ><%=StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
 
                                     <% }else if(result.isHRM()){
                                     	StringBuilder duplicateLabIds=new StringBuilder();
@@ -339,9 +346,9 @@ String curUser_no = (String) session.getAttribute("user");
                                     		duplicateLabIds.append(duplicateLabId);
                                     	}
                                     %>
-                                    <%=labRead%><a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=StringEscapeUtils.escapeHtml(demoName)%>&duplicateLabIds=<%=duplicateLabIds.toString()%> ',850,1020)" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=result.getPatientName()%></a>
+                                    <%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)" onclick="parent.reportWindow('<%=request.getContextPath()%>/hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=StringEscapeUtils.escapeHtml(demoName)%>&duplicateLabIds=<%=duplicateLabIds.toString()%> '); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=result.getPatientName()%></a>
                                     <% }else {%>
-                                    <%=labRead%><a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')" onclick="if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%></a>
+                                    <%=labRead%><a id="a<%=segmentID%>" href="javascript:void(0)" onclick="parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>'); if(this.previousElementSibling) this.previousElementSibling.outerHTML='';"><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%></a>
                                     <% }%>
                                 </td>
                                 <td style="white-space:nowrap;">
@@ -394,7 +401,7 @@ String curUser_no = (String) session.getAttribute("user");
 
                                                     <input type="button" class="btn" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="parent.checkSelected(document)">
                                                     <% if (ackStatus.equals("N")) {%>
-                                                        <input type="button" class="btn" value="File" onclick="parent.submitFile(document)"/>
+                                                        <input type="button" class="btn" value="<bean:message key="global.File"/>" onclick="parent.submitFile(document)"/>
                                                     <% }  %>
                                             </td>
                                         <script type="text/javascript">
