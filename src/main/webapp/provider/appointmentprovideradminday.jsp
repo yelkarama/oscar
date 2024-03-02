@@ -587,11 +587,11 @@ th, td {
 }
 
 .topbar a:hover {
-    color: red;
+    color: <%=(showClassicSchedule? "red" : "black")%>;
 }
 
 .tabalert {
-	color: red;
+	color: <%=(showClassicSchedule? "red" : "#97ff00")%>;
 }
 
 .quick {
@@ -601,21 +601,21 @@ th, td {
     padding:0px;
     font-weight: bold;
     color: <%=(showClassicSchedule? "black" : "white")%>;
-    background-color: <%=(showClassicSchedule? "ivory" : "steelblue")%>; 
+    background-color: <%=(showClassicSchedule? "ivory" : "steelblue")%>;
 }
 
 .quick:hover {
-    color: red;
+    color: <%=(showClassicSchedule? "red" : "black")%>;
     cursor: pointer;
 }
 
 #theday {
-    color: <%=(showClassicSchedule? "black" : "white")%>;  
+    color: <%=(showClassicSchedule? "black" : "white")%>;
 }
 
 #theday:hover {
-    color: red; 
-    cursor: pointer;   
+    color: <%=(showClassicSchedule? "red" : "black")%>;
+    cursor: pointer;
 }
 
 
@@ -633,8 +633,8 @@ th, td {
     display: inline;
 }
 
-#navlist li:hover { color: red; }
-#navlist li a:hover { color: red; }
+#navlist li:hover { color:  <%=(showClassicSchedule? "red" : "red")%>; }
+#navlist li a:hover { color:  <%=(showClassicSchedule? "red" : "black")%>; }
 #navlist #logoutMobile { display:none; }
 
 .dropdown {
@@ -664,7 +664,7 @@ th, td {
 
 
 #providerSchedule {
-    background-color: <%=(showClassicSchedule? "#486ebd;" : "gainsboro;")%> 
+    background-color: <%=(showClassicSchedule? "#486ebd;" : "gainsboro;")%>
 	font-weight: bold;
 	font-size: 13px;
     border-spacing: 0px 1px;
@@ -693,11 +693,11 @@ th, td {
     padding: 2px 4px;
 }
 
-.scheduleTime00 { 
-    background-color: <%=(showClassicSchedule? "#3EA4E1;" : "gainsboro;")%> 
+.scheduleTime00 {
+    background-color: <%=(showClassicSchedule? "#3EA4E1;" : "gainsboro;")%>
 }
-.scheduleTimeNot00 { 
-    background-color: <%=(showClassicSchedule? "#00A488;" : "#E8E8E8;")%> 
+.scheduleTimeNot00 {
+    background-color: <%=(showClassicSchedule? "#00A488;" : "#E8E8E8;")%>
 }
 
 .scheduleTime00 a, .scheduleTimeNot00 a {
@@ -718,7 +718,7 @@ th, td {
     font-weight: bold;
     height: 30px;
     padding: 3px;
-    background-color: <%=(showClassicSchedule? "ivory;" : "steelblue;")%>  
+    background-color: <%=(showClassicSchedule? "ivory;" : "steelblue;")%>
 }
 
 @media print {
