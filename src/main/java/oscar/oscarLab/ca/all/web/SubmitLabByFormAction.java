@@ -246,9 +246,9 @@ public class SubmitLabByFormAction extends DispatchAction {
 			if(test.getRefRangeText().length()>0) {
 				refRange = test.getRefRangeText();
 			}
-			sb.append("OBX|" + testNo + "|" + test.getCodeType() + "|" + test.getCode() + "^" + test.getName() + "^" + test.getDescription() + "|GENERAL|" + test.getCodeValue() + "|" + test.getCodeUnit() + "|" + refRange + "|"+test.getFlag()+"|||" + test.getStat() + "||" + test.getBlocked() + "|" + sdf.format(test.getDate()));
-
--		if(test.getNotes().length()>0) {
+			sb.append("OBX|" + testNo + "|" + test.getCodeType() + "|" + test.getCode() + "^" + test.getName() + "^" + test.getDescription() 
+				+ "|GENERAL|" + test.getCodeValue() + "|" + test.getCodeUnit() + "|" + refRange + "|"+test.getFlag()
+				+"|||" + test.getStat() + "||" + test.getBlocked() + "|" + sdf.format(test.getDate()));
 			if(test.getNotes().length()>0) {
 				sb.append("\n");
 				sb.append("NTE|1|L|NOTE: " + test.getNotes());
