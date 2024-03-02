@@ -24,7 +24,7 @@
 
 /************init global data methods*****************/
 var oldestLab = null;
-
+var popup;
 function  updateDocStatusInQueue(docid){//change status of queue document link row to I=inactive
     //console.log('in updateDocStatusInQueue, docid '+docid);
           var url="../dms/inboxManage.do",data="docid="+docid+"&method=updateDocStatusInQueue";
@@ -434,7 +434,7 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 	//console.log(vheight+"--"+ vwidth+"--"+ varpage+"--"+ windowname);
 	var page = varpage;
 	windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-	var popup=window.open(varpage, windowname, windowprops);
+	popup=window.open(varpage, windowname, windowprops);
 }
 
 function reportWindow(page,height,width) {
@@ -444,7 +444,7 @@ function reportWindow(page,height,width) {
 	}else{
 		windowprops="height=800, width=1200, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
 	}
-	var popup = window.open(encodeURI(page), "labreport", windowprops);
+	popup = window.open(encodeURI(page), "labreport", windowprops);
 	popup.focus();
 }
 
@@ -1219,7 +1219,7 @@ function showThisPatientDocs(patientId,keepPrevious){
 function popupConsultation(segmentId) {
 	var page =contextpath+ '/oscarEncounter/ViewRequest.do?segmentId='+segmentId;
 	var windowprops = "height=960,width=700,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
-	var popup=window.open(page, msgConsReq, windowprops);
+	popup=window.open(page, msgConsReq, windowprops);
 	if (popup != null) {
 		if (popup.opener == null) {
 			popup.opener = self;
@@ -1562,7 +1562,7 @@ function  popupStart(vheight,vwidth,varpage,windowname) {
 	//oscarLog(varpage);
 	//oscarLog(windowname);
 	//oscarLog(windowprops);
-	var popup=window.open(varpage, windowname, windowprops);
+	popup=window.open(varpage, windowname, windowprops);
 }
 
 function updateDocumentAndNext(eleId){//save doc info
@@ -1719,9 +1719,10 @@ function updateStatus(formid){//acknowledge Document
 				}
 
 				if (_in_window) {
+					jQuery('#loader').show();
 					close = window.opener.openNext(doclabid);
-					if (close == "close" ) { window.close(); }
 					self.opener.removeReport(doclabid);
+					//if (close == "close" ) { popup.close(); }
 				}
 				else {
 					refreshCategoryList();
