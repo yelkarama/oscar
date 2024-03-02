@@ -290,17 +290,24 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
     <script>
 
         function openNext(segmentID){
-            if (!document.getElementById('ack_next_chk').checked) { return "close"; }
+            //console.log(segmentID);
+            if (!document.getElementById('ack_next_chk').checked) {
+                console.log("not feeling checked");
+                if (popup) { popup.close(); }
+                return "close";
+            }
             var nextTr = jQuery('#labdoc_'+segmentID).next('tr');
 
             //skip those that have display none
             while (nextTr.css('display') == 'none') {
+                console.log("not seeing the next tr");
                 nextTr = nextTr.next('tr');
                 if (typeof nextTr.attr('id') === "undefined" ){ break; }
             }
 
             //if we are at the end of the list indicate that the window can be closed
             if (typeof nextTr.attr('id') === "undefined" ) {
+                if (popup) { popup.close(); }
                 return "close";
             }
 
