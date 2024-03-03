@@ -182,7 +182,7 @@ if(!authed) {
 	                		</select>
 	                	</td>
 	                </tr>
-	                <tr><td><label>Accession #</label></td><td><input type="text" name="accession" id="accession"/></td></tr>
+	                <tr><td><label>Accession #</label></td><td><input type="text" name="accession" id="accession" placeholder="laboratory provided"></td></tr>
                     <tr><td><label>Lab Req Date/Time:</label></td><td class="input-append"><input type="text" class="input-medium" name="lab_req_date" id="lab_req_date"  required><img src="<%=request.getContextPath()%>/images/cal.gif" id="lab_req_date_cal" class="add-on"></td></tr>
                 </table>
             </fieldset>
@@ -191,10 +191,10 @@ if(!authed) {
             <fieldset>
                 <legend>Ordering Provider</legend>
                 <table>
-	                <tr><td><label>Billing #</label></td><td><input type="text" name="billingNo" id="billingNo"/></td></tr>
-	                <tr><td><label>Last Name</label></td><td><input type="text" name="pLastname" id="pLastname"/></td></tr>
-	                <tr><td><label>First Name</label></td><td><input type="text" name="pFirstname" id="pFirstname"/></td></tr>
-	                <tr><td><label>CC</label></td><td><input type="text" name="cc" id="cc" size="50"/></td></tr>
+	                <tr><td><label>Billing #</label></td><td><input type="text" name="billingNo" id="billingNo"></td></tr>
+	                <tr><td><label>Last Name</label></td><td><input type="text" name="pLastname" id="pLastname"></td></tr>
+	                <tr><td><label>First Name</label></td><td><input type="text" name="pFirstname" id="pFirstname"></td></tr>
+	                <tr><td><label>CC</label></td><td><input type="text" name="cc" id="cc" placeholder="nnnnnn^last^first"></td></tr>
                 </table>
             </fieldset>
 			</td></tr></table>
@@ -205,7 +205,7 @@ if(!authed) {
                 <table>
 	                <tr>
 	                	<td><label>Last Name:</label></td><td><input type="text" name="lastname" id="lastname" required></td>
-	                	<td><label>First Name:</label></td><td><input type="text" name="firstname" id="firstname"/></td>
+	                	<td><label>First Name:</label></td><td><input type="text" name="firstname" id="firstname"></td>
 	                	<td><label>Sex:</label></td>
 	                	<td><select  name="sex" id="sex">
 	                    	<option value="M">Male</option>
@@ -214,18 +214,18 @@ if(!authed) {
 	                    </td>
 	                </tr>
 	                <tr>
-	               <td><label>DOB:</label></td><td class="input-append"><input type="text" class="input-medium" required name="dob" id="dob"/><img src="<%=request.getContextPath()%>/images/cal.gif" id="dob_cal" class="add-on"></td>
-	               <td><label>HIN:</label></td><td><input type="text" name="hin" id="hin"/></td>
+	               <td><label>DOB:</label></td><td class="input-append"><input type="text" class="input-medium" required name="dob" id="dob"><img src="<%=request.getContextPath()%>/images/cal.gif" id="dob_cal" class="add-on"></td>
+	               <td><label>HIN:</label></td><td><input type="text" name="hin" id="hin"></td>
 
-	                 <td><label>Phone:</label></td><td><input type="text" name="phone" id="phone"/></td></tr>
+	                 <td><label>Phone:</label></td><td><input type="text" name="phone" id="phone"></td></tr>
                 </table>
             </fieldset>
 
 
-			<b>Tests:</b>
-			<br />
+
+			<br/>
 			<div id="test_container"></div>
-			<input type="hidden" id="test_num" name="test_num" value="0"/>
+			<input type="hidden" id="test_num" name="test_num" value="0">
 			<a href="#" onclick="addTest();">[ADD]</a>
 
 			<br/><br/>
