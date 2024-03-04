@@ -942,7 +942,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                                         %>
                                                                         <font color="red"><%= ackStatus %></font>
                                                                             <span id="timestamp_<%=docId + "_" + report.getOscarProviderNo()%>"><%= report.getTimestamp() == null ? "&nbsp;" : report.getTimestamp() + "&nbsp;"%></span>,
-                                                                            <span id="comment_<%=docId + "_" + report.getOscarProviderNo()%>"><%=report.getComment() == null || report.getComment().equals("") ?  nocom : com +": "%></span>
+                                                                            <span id="comment_<%=docId + "_" + report.getOscarProviderNo()%>"><%=report.getComment() == null || report.getComment().equals("") ?  nocom : report.getComment()%></span>
 
                                                                         <br>
                                                                     <% }
