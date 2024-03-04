@@ -272,7 +272,15 @@
             return druglist;
         }
 
-        async function getInteractions(drugs) {
+        function getInteractions(drugs) {
+            let drugsStr = drugs.toString().replace(/,/gi,', ');
+            let alertlist = "<strong>"+ drugsStr +" <br> the interactions service has been discontinued by RxNorm. </strong>";
+            //document.getElementById('interactionsRxMyD').innerHTML += alertlist;
+            document.getElementById('interactionsRxMyD').innerHTML ='<div style="background-color:silver;margin-right:100px;margin-left:20px;margin-top:10px;padding-left:10px;padding-top:10px;padding-bottom:5px;border-bottom: 2px solid gray;border-right: 2px solid #999;border-top: 1px solid #CCC;border-left: 1px solid #CCC;width:300px;">' + alertlist + ' Use a publically available alternative <a href="https://go.drugbank.com/drug-interaction-checker" target="blank_">Drugbank Interaction checker</a></div>';
+
+        }
+
+        async function getInteractionsDEFUNCT(drugs) {
             if (drugs.length < 1) {
                 alert("You must have existing current drugs or some Rx set to perscribe prior to checking");
                 return;
