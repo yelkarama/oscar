@@ -1237,7 +1237,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                                         <input type="button" id="rxBtn2_<%=docId%>" class="btn" value="<bean:message key="global.rx"/>" onclick="popupPatientRx(1024,500,'<%= request.getContextPath() %>/oscarRx/choosePatient.do?providerNo=<%= providerNo%>&demographicNo=','Rx<%=demographicID%>', '<%=docId%>', true); return false;" <%=btnDisabled %>/>
 
                                                         <input type="button" id="refileDoc2_<%=docId%>" class="btn" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=Refile', 'Refile<%=docId%>');refileDoc('<%=docId%>'); return(false);">
-                                                        <input type="button" class="btn" id="next_<%=docId%>" value="<bean:message key='global.Next'/>" onclick="jQuery('#loader').show(); close = window.opener.openNext(<%=docId%>); ">
+                                                        <input type="button" class="btn" id="next_<%=docId%>" value="<bean:message key='global.Next'/>" onclick="jQuery(':submit').prop('disabled',true); jQuery(':button').prop('disabled',true); jQuery('#loader').show(); close = window.opener.openNext(<%=docId%>); ">
 
 
 
