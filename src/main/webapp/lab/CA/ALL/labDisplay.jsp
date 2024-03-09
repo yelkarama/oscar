@@ -697,6 +697,7 @@ input[id^='acklabel_']{
                     //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
                 	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.refreshCategoryList();
+                    jQuery(':button').prop('disabled',true);
                     jQuery('#loader').show();
                     close = window.opener.openNext(labid);
 
@@ -979,6 +980,7 @@ input[id^='acklabel_']{
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
                                     jQuery('#loader').show();
+                                    jQuery(':button').prop('disabled',true);
                                     close = window.opener.openNext(doclabid);
                                 } else {
                                     if(parent.popup) parent.popup.close();
@@ -2369,7 +2371,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 									<input type="button" <%=isLinkedToDemographic ? "" : "disabled" %> class="btn" value="<%=formName2Short%>" onClick="popupStart(700, 1024, '../../../form/forwardshortcutname.jsp?formname=<%=formName2%>&demographic_no=<%=demographicID%>', '<%=formName2Short%>')" >
 									<% } %>
 									<input type="button" class="btn" value="<bean:message key="global.btnPDF"/>" onClick="printPDF('<%=segmentID%>')">
-                                    <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick="jQuery('#loader').show(); close = window.opener.openNext(<%=segmentID%>);">
+                                    <input type="button" class="btn" id="next" value="<bean:message key="global.Next"/>" onclick="jQuery(':button').prop('disabled',true); jQuery('#loader').show(); close = window.opener.openNext(<%=segmentID%>);">
                                 </td>
                             </tr><tr>
                                 <td style="text-align:center">
