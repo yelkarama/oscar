@@ -429,22 +429,5 @@ String curUser_no = (String) session.getAttribute("user");
                 </td>
             </tr>
         </table>
-<script>
-
-    jQuery(document).ready(function () {
-	    oTable=jQuery('#summaryView').DataTable({
-            "bPaginate": false,
-            "dom": "lrtip",
-            "order": [],
-            "language": {
-                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
-                    }
-        });
-        jQuery('#myFilterTextField').keyup(function(){
-            oTable.search(jQuery(this).val()).draw();
-        });
-    });
-
-</script>
 
     <% } // End if (pageNum == 1) %>
