@@ -1719,6 +1719,8 @@ function updateStatus(formid){//acknowledge Document
 				}
 
 				if (_in_window) {
+					jQuery(':button').prop('disabled',true);
+					jQuery(':submit').prop('disabled',true);
 					jQuery('#loader').show();
 					close = window.opener.openNext(doclabid);
 					self.opener.removeReport(doclabid);
@@ -2050,7 +2052,7 @@ function showNext(docid){
 
 }
 
-function addDocComment(docId, providerNo,sync) {
+function addDocComment(docId, providerNo, sync) {
 
 	var ret = true;
     var comment = "";
@@ -2060,6 +2062,7 @@ function addDocComment(docId, providerNo,sync) {
         if( comment == null || comment == "no comment" ) {
         	comment = "";
         }
+    console.log("existing comment is:"+comment);
     }
     var commentVal = prompt("Please enter a comment (max. 255 characters)", comment);
 
@@ -2072,24 +2075,28 @@ function addDocComment(docId, providerNo,sync) {
     	jQuery("#" + "comment_" + docId).val(comment);
 
     if( ret ) {
-    	$("status_"+docId).value = 'N';
+
+    	jQuery("#" + "status_" + docId).val('N');
     	var url=contextpath+"/oscarMDS/UpdateStatus.do";
     	var formid = "acknowledgeForm_" + docId;
-    	var data=$(formid).serialize();
+    	var data=jQuery("#" + formid).serialize();
     	data += "&method=addComment";
 
-    	new Ajax.Request(url,{method:'post',parameters:data,asynchronous:sync,onSuccess:function(transport){
-    				var json=transport.responseText.evalJSON();
-    				if(json!=null ){
-    					var date = json.date;
-    					$("timestamp_"+docId+"_"+providerNo).update(date);
-    				}
-					$("status_"+docId).value = "A";
-					$("comment_"+docId+"_"+providerNo).update($("comment_"+docId).value);
-					$("comment_"+docId).update("");
-				}
-			}
-    	);
+	    jQuery.ajax({
+		    type: "POST",
+		    url:  url,
+		    data: data,
+		    success: function (json) {
+			    if(json!=null ){
+        		    var date = json.date;
+        			jQuery("#" + "timestamp_"+docId+"_"+providerNo).html(date);
+        				}
+					jQuery("#" + "status_"+docId).val("A");
+					jQuery("#" + "comment_"+docId+"_"+providerNo).html(jQuery("#" + "comment_"+docId).val());
+					jQuery("#" + "comment_"+docId).html("");
+              }
+        });
+
     }
 }
 
