@@ -364,7 +364,7 @@ String curUser_no = (String) session.getAttribute("user");
                                     <%=result.getPriority()%>
                                 </td>
                                 <td style="white-space:nowrap;">
-                                    <%=result.getRequestingClient()%>
+                                    <%=(result.getRequestingClient() == "null" ? "" : result.getRequestingClient())%>
                                 </td>
                                 <td style="white-space:nowrap;">
                                     <%=result.isDocument() ? result.description == null ? "" : result.description : result.getDisciplineDisplayString()%>
