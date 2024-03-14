@@ -87,7 +87,16 @@ String curUser_no = (String) session.getAttribute("user");
 			function submitLabel(lblval){
 		       	 document.forms['TDISLabelForm'].label.value = document.forms['acknowledgeForm'].label.value;
 	       	}
-
+            if (!DataTable.isDataTable('#summaryView')) {
+                oTable=jQuery('#summaryView').DataTable({
+                    "bPaginate": false,
+                    "dom": "lrtip",
+                    "order": [],
+                    "language": {
+                                "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                            }
+                });
+            }
 		</script>
 
         <table id="scrollNumber1" style="width:100%">
@@ -192,16 +201,20 @@ String curUser_no = (String) session.getAttribute("user");
                                 String status           =  result.getAcknowledgedStatus();
 
 								String labRead = "";
+                                Boolean newLab = false;
 
                                 if(result.isHRM() && !oscarLogDao.hasRead(curUser_no,"hrm",segmentID)){
+                                    newLab = true;
                                 	labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>"; // font-awesome
                                 }
 
                                 if( !result.isHRM() && result.isDocument() && !oscarLogDao.hasRead(curUser_no,"document",segmentID)){
-                                     labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>";
+                                    newLab = true;
+                                    labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>";
                                 }
 
                                 if(!result.isHRM() && !result.isDocument() && !oscarLogDao.hasRead(curUser_no,"lab",segmentID)){
+                                    newLab = true;
                                 	labRead = "<i class='icon-asterisk' style='font-size: 8px; color:gray; padding-right: 4px;'></i>";
                                 }
 
@@ -355,7 +368,16 @@ String curUser_no = (String) session.getAttribute("user");
                                     <%=result.getSex() %>
                                 </td>
                                 <td style="white-space:nowrap;">
-                                    <%= (result.isAbnormal() ? "Abnormal" : "" ) %>
+                                    <%
+                                    if(newLab) {
+                                    %>
+                                    <bean:message key="WriteScript.msgRxStatus.New"/>&nbsp;
+                                    <%
+                                    }
+                                    if (result.isAbnormal()) {
+                                    %>
+                                    <bean:message key="global.Abnormal"/>
+                                    <% } %>
                                 </td>
                                 <td style="white-space:nowrap;">
                                     <%=result.getDateTime() + (result.isDocument() ? " / " + result.lastUpdateDate : "")%>

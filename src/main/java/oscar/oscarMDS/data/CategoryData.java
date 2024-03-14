@@ -320,23 +320,18 @@ public class CategoryData {
 	public int getLabCountForPatientSearch() throws SQLException {
 		PatientInfo info;
 		String dateSearchType = getDateSearchType();
-		String sql = " SELECT HIGH_PRIORITY d.demographic_no, d.last_name, d.first_name, COUNT(*) as count "
-        	+ " FROM patientLabRouting cd" 
-			+ " LEFT JOIN demographic d ON cd.demographic_no = d.demographic_no" 
-			+ " LEFT JOIN providerLabRouting plr ON cd.lab_no = plr.lab_no"
-			+ " LEFT JOIN hl7TextInfo info ON cd.lab_no = info.lab_no"
-			+ (dateSearchType.equals("receivedCreated")?" LEFT JOIN hl7TextMessage message ON cd.lab_no = message.lab_id":"")
-        	+ " WHERE   d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : "  like '%"+patientLastName+"%' ")
-        	+ " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%"+patientFirstName+"%' ")
-        	+ " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%"+patientHealthNumber+"%' ")
+		String sql = " SELECT HIGH_PRIORITY d.demographic_no, d.last_name, d.first_name, COUNT(1) as count "
+        	+ " FROM patientLabRouting cd,  demographic d, providerLabRouting plr "
+        	+ " WHERE   d.last_name like '%"+patientLastName+"%' "
+        	+ " 	AND d.first_name like '%"+patientFirstName+"%' "
+        	+ " 	AND d.hin like '%"+patientHealthNumber+"%' "
+        	+ " 	AND cd.demographic_no = d.demographic_no "
+        	+ " 	AND cd.lab_no = plr.lab_no "
         	+ " 	AND plr.lab_type = 'HL7' "
         	+ " 	AND cd.lab_type = 'HL7' "
-        	+ " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '"+status+"' ")
-			+ (dateSearchType.equals("receivedCreated")?" AND message.lab_id IS NOT NULL ":" AND info.lab_no IS NOT NULL ")
-        	+ (providerSearch ? " AND plr.provider_no = '"+searchProviderNo+"' " : "")
-			+ labAbnormalSql
-			+ labDateSql
-        	+ " GROUP BY demographic_no, info.accessionNum ";
+        	+ " 	AND plr.status like '%"+status+"%' "
+        	+ (providerSearch ? "AND plr.provider_no = '"+searchProviderNo+"' " : "")
+        	+ " GROUP BY demographic_no ";
 
 		Connection c  = DbConnectionFilter.getThreadLocalDbConnection();
 		PreparedStatement ps = c.prepareStatement(sql);
