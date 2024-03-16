@@ -1257,49 +1257,49 @@ function checkSelected(doc) {
 }
 
 function updateDocLabData(doclabid){//remove doclabid from global variables
-//	console.log('in updatedoclabdata='+doclabid);
+	console.log('in updatedoclabdata='+doclabid);
 		var doclabidNum = doclabid
-		if (checkType(doclabid +"d") == "DOC") {
-			doclabid += "d";
-		}
+		//if (checkType(doclabid +"d") == "DOC") {
+		//	doclabid += "d";
+		//}
 
-		//console.log('aa');
+		console.log('aa');
 		//trim doclabid
 		doclabid=doclabid.replace(/\s/g,'');
 		updateSideNav(doclabid);
-		//console.log('aa_aa11');
+		console.log('aa_aa11');
 		hideRowUsingId(doclabidNum);
-//		console.log('aa_aa');
+		console.log('aa_aa');
 		//change typeDocLab
 		removeIdFromTypeDocLab(doclabid);
-//		console.log('bb');
+		console.log('bb');
 		//change docType
 		removeIdFromDocType(doclabid);
-		//console.log('cc');
+		console.log('cc');
 		//change patientDocs
 		removeIdFromPatientDocs(doclabid);
-		//console.log('dd');
+		console.log('dd');
 
 		//change patientIdNames and patientIdStr
 		removeEmptyPairFromPatientDocs();
-		//console.log('ee');
+		console.log('ee');
 
 		//change docStatus
 		removeIdFromDocStatus(doclabid);
-		//console.log('ff');
+		console.log('ff');
 
 		//remove from normals
 		removeNormal(doclabid);
 		//remove from abnormals
 		removeAbnormal(doclabid);
 
-		/*console.log(typeDocLab);
+		console.log(typeDocLab);
                            console.log(docType);
                            console.log(patientDocs);
                            console.log(patientIdNames);
                            console.log(patientIds);
                            console.log(docStatus);
-                           console.log(normals);*/
+                           console.log(normals);
 
 
 }
@@ -1715,7 +1715,7 @@ function updateStatus(formid){//acknowledge Document
 				if(doclabid){
 					Effect.BlindUp('labdoc_'+doclabid);
 					updateDocStatusInQueue(doclabid);
-					//updateDocLabData(doclabid);
+
 				}
 
 				if (_in_window) {
@@ -1723,6 +1723,8 @@ function updateStatus(formid){//acknowledge Document
 					jQuery(':submit').prop('disabled',true);
 					jQuery('#loader').show();
 					close = window.opener.openNext(doclabid);
+					window.opener.refreshCategoryList();
+					window.opener.updateCountTotal();
 					self.opener.removeReport(doclabid);
 					//if (close == "close" ) { popup.close(); }
 				}

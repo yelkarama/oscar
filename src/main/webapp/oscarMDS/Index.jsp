@@ -290,14 +290,14 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
     <script>
 
         function openNext(segmentID){
-            //console.log(segmentID);
+
             if (!document.getElementById('ack_next_chk').checked) {
                 console.log("not feeling checked");
                 if (popup) { popup.close(); }
                 return "close";
             }
             var nextTr = jQuery('#labdoc_'+segmentID).next('tr');
-
+console.log("passed segmentID:"+segmentID);
             //skip those that have display none
             while (nextTr.css('display') == 'none') {
                 console.log("not seeing the next tr");
@@ -318,6 +318,31 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
             nextLink.trigger('click'); //this will run the onclick for the nextLink element to remove any * and navigate
             return "rapidClick";
+
+        }
+
+        function updateCountTotal() {
+          // updates two different formats of DataTables footer to reflect visible count
+          // ... regardless of language
+
+          var info = jQuery('#summaryView_info').html();
+          var n = jQuery('[id^="labdoc_"]:not([style*="display: none"])').length  // the number of visible rows
+
+          var regex = /(^.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*$)/;
+          if (regex.test(info)) { //unfiltered list format
+            // eg "Affichage de 1 à 36 sur 36 entrées"
+            var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3");
+            jQuery('#summaryView_info').html(updatedinfo);
+            return;
+          }
+          // eg "Afichage de 1 à 12 sur 12 entrées (filtrées depuis un total de 34 entrées)"
+          var myRe = /(\d+)(?!.*\d)/;  // the last number in the string
+          var myArray = myRe.exec(info);
+          curTotal = myArray[1];
+          total = curTotal -1;
+          var regex = /(.*1\s.*\s)\d*(\s.*\s)\d*(\s[^0-9]*)\d*(\s.*)/;
+          var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3" + total + "$4");
+          jQuery('#summaryView_info').html(updatedinfo);
 
         }
 

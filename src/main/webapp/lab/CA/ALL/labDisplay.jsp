@@ -979,6 +979,7 @@ input[id^='acklabel_']{
                                     //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN
                         	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
                                     window.opener.refreshCategoryList();
+                                    window.opener.updateCountTotal();
                                     jQuery('#loader').show();
                                     jQuery(':button').prop('disabled',true);
                                     close = window.opener.openNext(doclabid);
