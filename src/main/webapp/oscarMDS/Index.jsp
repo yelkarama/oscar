@@ -790,7 +790,8 @@ console.log("passed segmentID:"+segmentID);
 			url:  "<%= request.getContextPath()%>/oscarMDS/FileLabs.do",
 			data: query,
 			success: function (data) {
-				updateCategoryList();
+				updateCategoryList(); //left side panel
+				updateCountTotal(); //Datatables counts
 
 				jQuery("input[name='flaggedLabs']:checked").each(function () {
 					jQuery(this).parent().parent().remove();
@@ -805,7 +806,8 @@ console.log("passed segmentID:"+segmentID);
 
 	function refreshCategoryList() {
 		jQuery("#categoryHash").val("-1");
-		updateCategoryList();
+		updateCategoryList(); //left side panel
+		updateCountTotal(); //Datatables counts
 	}
 
 	function updateCategoryList() {
