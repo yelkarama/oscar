@@ -697,6 +697,7 @@ input[id^='acklabel_']{
                     //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
                 	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.refreshCategoryList();
+                    window.opener.updateCountTotal();
                     jQuery(':button').prop('disabled',true);
                     jQuery('#loader').show();
                     close = window.opener.openNext(labid);
