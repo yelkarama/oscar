@@ -96,6 +96,9 @@ String curUser_no = (String) session.getAttribute("user");
                                 "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                             }
                 });
+                jQuery('#myFilterTextField').keyup(function(){
+                    oTable.search(jQuery(this).val()).draw();
+                });
             }
 		</script>
 
