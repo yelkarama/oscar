@@ -326,6 +326,7 @@ console.log("passed segmentID:"+segmentID);
           // ... regardless of language
 
           var info = jQuery('#summaryView_info').html();
+          console.log(info);
           var n = jQuery('[id^="labdoc_"]:not([style*="display: none"])').length  // the number of visible rows
 
           var regex = /(^.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*$)/;
@@ -337,13 +338,16 @@ console.log("passed segmentID:"+segmentID);
           }
           // eg "Afichage de 1 à 12 sur 12 entrées (filtrées depuis un total de 34 entrées)"
           var myRe = /(\d+)(?!.*\d)/;  // the last number in the string
-          var myArray = myRe.exec(info);
-          curTotal = myArray[1];
-          total = curTotal -1;
-          var regex = /(.*1\s.*\s)\d*(\s.*\s)\d*(\s[^0-9]*)\d*(\s.*)/;
-          var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3" + total + "$4");
-          jQuery('#summaryView_info').html(updatedinfo);
-
+          if (myRe.test(info)) {
+            var myArray = myRe.exec(info);
+            curTotal = myArray[1];
+            total = curTotal -1;
+            var regex = /(.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*)\d*(\s.*)/;
+            if (regex.test(info)) { //filtered list format
+              var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3" + total + "$4");
+              jQuery('#summaryView_info').html(updatedinfo);
+            }
+          }
         }
 
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
