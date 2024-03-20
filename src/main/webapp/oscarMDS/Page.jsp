@@ -100,6 +100,7 @@ String curUser_no = (String) session.getAttribute("user");
                     oTable.search(jQuery(this).val()).draw();
                 });
             }
+
 		</script>
 
         <table id="scrollNumber1" style="width:100%">
@@ -113,6 +114,7 @@ String curUser_no = (String) session.getAttribute("user");
                                    <% }
                                     %>
                                        &nbsp; <bean:message key="oscarMDS.index.RapidReview"/>: <input type="checkbox" id="ack_next_chk" <%=rapid_review%>>
+&nbsp; <bean:message key="oscarMDS.search.formReportStatusAcknowledged"/>: <input type="checkbox" id="showAck" onclick='toggleReviewed()'>
                                     <%
                                }%><span style="float:right;">
                                <label><bean:message key="oscarMDS.index.btnSearch"/>: <input type="text" style="height:20px;" id="myFilterTextField"></label></span>
