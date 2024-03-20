@@ -833,7 +833,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 <%}
             else{%>
 <input type="submit" class="btn" name="save" id="save<%=docId%>" value="<bean:message key="global.btnSave"/>" />
-<input type="button" class="btn" name="save" onclick="saveNext(<%=docId%>)" id="saveNext<%=docId%>" value='<bean:message key="inboxmanager.document.SaveAndNext"/>' />
+<!--<input type="button" class="btn" name="save" onclick="saveNext(<%=docId%>)" id="saveNext<%=docId%>" value='<bean:message key="inboxmanager.document.SaveAndNext"/>' />  -->
 <%}%>
 
                                     </tr>
