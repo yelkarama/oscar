@@ -231,6 +231,13 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
     .table-striped tbody > tr.UnassignedRes:nth-child(even) > td {
          background-color:#FFCC00;
      }
+
+    .table-striped tbody > tr.acknowledged:nth-child(odd) > td {
+         background-color: lightblue;
+     }
+    .table-striped tbody > tr.acknowledged:nth-child(even) > td {
+         background-color: #d9f1f9;
+     }
 </style>
 <style>
 /* Dropdown Button */
@@ -297,7 +304,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
                 return "close";
             }
             var nextTr = jQuery('#labdoc_'+segmentID).next('tr');
-console.log("passed segmentID:"+segmentID);
+            console.log("passed segmentID:"+segmentID);
             //skip those that have display none
             while (nextTr.css('display') == 'none') {
                 console.log("not seeing the next tr");
@@ -321,18 +328,20 @@ console.log("passed segmentID:"+segmentID);
 
         }
 
-        function updateCountTotal() {
+        function updateCountTotal(offset) {
           // updates two different formats of DataTables footer to reflect visible count
           // ... regardless of language
-
           var info = jQuery('#summaryView_info').html();
-          console.log(info);
           var n = jQuery('[id^="labdoc_"]:not([style*="display: none"])').length  // the number of visible rows
-
+          var n2 = jQuery('[id^="labdoc_"]').length  // the number of total rows
+          if (jQuery('#showAck').is(':checked')) { n = n2 }
+          console.log(info+" n:"+n+" n2:"+n2+" offset: "+offset);
+          n = n + offset;
+          n2 = n2;
           var regex = /(^.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*$)/;
           if (regex.test(info)) { //unfiltered list format
             // eg "Affichage de 1 à 36 sur 36 entrées"
-            var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3");
+            var updatedinfo = info.replace(regex, "$1" + n + "$2" + n2 + "$3");
             jQuery('#summaryView_info').html(updatedinfo);
             return;
           }
@@ -341,13 +350,28 @@ console.log("passed segmentID:"+segmentID);
           if (myRe.test(info)) {
             var myArray = myRe.exec(info);
             curTotal = myArray[1];
-            total = curTotal -1;
+            total = curTotal + offset;
             var regex = /(.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*)\d*(\s.*)/;
             if (regex.test(info)) { //filtered list format
-              var updatedinfo = info.replace(regex, "$1" + (n-1) + "$2" + (n-1) + "$3" + total + "$4");
+              var updatedinfo = info.replace(regex, "$1" + n + "$2" + n + "$3" + n2 + "$4");
               jQuery('#summaryView_info').html(updatedinfo);
             }
           }
+        }
+
+        function toggleReviewed() {
+console.log("toggleReviewed");
+            jQuery('.acknowledged').toggle(600);
+            setTimeout(updateCountTotal(0),5000);
+        }
+
+        function hideLab(id) {
+            jQuery('#'+id).addClass('acknowledged');
+            if (!document.getElementById('showAck').checked) {
+                jQuery('#'+id).toggle(600,updateCountTotal(-1));
+            } else {
+                updateCountTotal(0);
+            }
         }
 
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
@@ -795,7 +819,7 @@ console.log("passed segmentID:"+segmentID);
 			data: query,
 			success: function (data) {
 				updateCategoryList(); //left side panel
-				updateCountTotal(); //Datatables counts
+				updateCountTotal(-1*i); //Datatables counts
 
 				jQuery("input[name='flaggedLabs']:checked").each(function () {
 					jQuery(this).parent().parent().remove();
@@ -811,7 +835,7 @@ console.log("passed segmentID:"+segmentID);
 	function refreshCategoryList() {
 		jQuery("#categoryHash").val("-1");
 		updateCategoryList(); //left side panel
-		updateCountTotal(); //Datatables counts
+		updateCountTotal(-1); //Datatables counts
 	}
 
 	function updateCategoryList() {
@@ -827,13 +851,14 @@ console.log("passed segmentID:"+segmentID);
 			}
 		});
 	}
-
+/* deprecated
 	window.removeReport = function (reportId) {
 		var el = jQuery("#labdoc_" + reportId);
 		if (el != null) {
 			el.remove();
 		}
 	}
+*/
 </script>
 
 
