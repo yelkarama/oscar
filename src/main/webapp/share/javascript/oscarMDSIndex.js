@@ -1724,8 +1724,9 @@ function updateStatus(formid){//acknowledge Document
 					jQuery('#loader').show();
 					close = window.opener.openNext(doclabid);
 					window.opener.refreshCategoryList();
-					window.opener.updateCountTotal();
-					self.opener.removeReport(doclabid);
+					window.opener.updateCountTotal(-1);
+					window.opener.hideLab('labdoc_'+doclabid);
+					//self.opener.removeReport(doclabid);
 					//if (close == "close" ) { popup.close(); }
 				}
 				else {
@@ -1762,7 +1763,9 @@ function fileDoc(docId){
 
 							close = window.opener.openNext(docId);
 							if (close == "close" ) { window.close(); }
-							self.opener.removeReport(docId);
+							window.opener.updateCountTotal(-1);
+							window.opener.hideLab('labdoc_'+docId);
+							//self.opener.removeReport(docId);
 						}
 						else {
 							refreshCategoryList();
