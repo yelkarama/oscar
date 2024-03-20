@@ -694,10 +694,10 @@ input[id^='acklabel_']{
                 }
             	else if( window.opener.document.getElementById('labdoc_'+labid) != null ) {
                     // opened from the Inbox
-                    //window.opener.jQuery('#labdoc'+labid).toggle("blind"); //brokeninvoke jQuery UI to hide the entry
-                	window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
+                	//window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
+                    window.opener.hideLab('labdoc_'+labid);
                     window.opener.refreshCategoryList();
-                    window.opener.updateCountTotal();
+                    window.opener.updateCountTotal(-1);
                     jQuery(':button').prop('disabled',true);
                     jQuery('#loader').show();
                     close = window.opener.openNext(labid);
@@ -967,7 +967,7 @@ input[id^='acklabel_']{
 				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
 	            var data=jQuery('#'+formid).serialize();
                 var num=formid.split("_");
-	            var doclabid=num[1];
+	            var labid=num[1];
 
                 jQuery.ajax( {
       	                type: "POST",
@@ -977,13 +977,13 @@ input[id^='acklabel_']{
                         success: function(result) {
 	                    	if(closeOnSuccess) {
                                 if(window.opener && (typeof window.opener.refreshCategoryList == 'function')) {
-                                    //window.opener.jQuery('#labdoc'+doclabid).toggle("blind"); //BROKEN
-                        	        window.opener.Effect.BlindUp('labdoc_'+doclabid);
+                        	        //window.opener.Effect.BlindUp('labdoc_'+labid);
+                                    window.opener.hideLab('labdoc_'+labid);
                                     window.opener.refreshCategoryList();
-                                    window.opener.updateCountTotal();
+                                    window.opener.updateCountTotal(-1);
                                     jQuery('#loader').show();
                                     jQuery(':button').prop('disabled',true);
-                                    close = window.opener.openNext(doclabid);
+                                    close = window.opener.openNext(labid);
                                 } else {
                                     if(parent.popup) parent.popup.close();
                                 }
