@@ -329,13 +329,14 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         }
 
         function updateCountTotal(offset) {
+
           // updates two different formats of DataTables footer to reflect visible count
           // ... regardless of language
           var info = jQuery('#summaryView_info').html();
           var n = jQuery('[id^="labdoc_"]:not([style*="display: none"])').length  // the number of visible rows
           var n2 = jQuery('[id^="labdoc_"]').length  // the number of total rows
           if (jQuery('#showAck').is(':checked')) { n = n2 }
-          console.log(info+" n:"+n+" n2:"+n2+" offset: "+offset);
+          console.log(info+" n:"+n+" n2:"+n2+" offset:"+offset+" checked at "+Date.now());
           n = n + offset;
           n2 = n2;
           var regex = /(^.*1\s[^0-9]*\s)\d*(\s[^0-9]*\s)\d*(\s[^0-9]*$)/;
@@ -360,15 +361,13 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         }
 
         function toggleReviewed() {
-console.log("toggleReviewed");
-            jQuery('.acknowledged').toggle(600);
-            setTimeout(updateCountTotal(0),5000);
+            jQuery('.acknowledged').toggle(600,"swing",function(){updateCountTotal(0)});
         }
 
         function hideLab(id) {
             jQuery('#'+id).addClass('acknowledged');
             if (!document.getElementById('showAck').checked) {
-                jQuery('#'+id).toggle(600,updateCountTotal(-1));
+                jQuery('#'+id).toggle(600,"swing",function(){updateCountTotal(-1)});
             } else {
                 updateCountTotal(0);
             }
