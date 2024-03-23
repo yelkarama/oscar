@@ -367,7 +367,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
         function hideLab(id) {
             jQuery('#'+id).addClass('acknowledged');
             if (!document.getElementById('showAck').checked) {
-                jQuery('#'+id).toggle(600,"swing",function(){updateCountTotal(-1)});
+                jQuery('#'+id).toggle(600,"swing",function(){updateCountTotal(0)});
             } else {
                 updateCountTotal(0);
             }
