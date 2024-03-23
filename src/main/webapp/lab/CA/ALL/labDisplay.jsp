@@ -697,7 +697,7 @@ input[id^='acklabel_']{
                 	//window.opener.Effect.BlindUp('labdoc_'+labid); // invoke script.aculo.us to hide the entry
                     window.opener.hideLab('labdoc_'+labid);
                     window.opener.refreshCategoryList();
-                    window.opener.updateCountTotal(-1);
+                    window.opener.updateCountTotal(0);
                     jQuery(':button').prop('disabled',true);
                     jQuery('#loader').show();
                     close = window.opener.openNext(labid);
@@ -980,7 +980,7 @@ input[id^='acklabel_']{
                         	        //window.opener.Effect.BlindUp('labdoc_'+labid);
                                     window.opener.hideLab('labdoc_'+labid);
                                     window.opener.refreshCategoryList();
-                                    window.opener.updateCountTotal(-1);
+                                    window.opener.updateCountTotal(0);
                                     jQuery('#loader').show();
                                     jQuery(':button').prop('disabled',true);
                                     close = window.opener.openNext(labid);
