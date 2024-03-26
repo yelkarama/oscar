@@ -101,7 +101,7 @@ function searchOutOfDomain() {
              </select>
         </label>
         <label class="text">
-            <input type="text" name="keyword" value="<%=StringEscapeUtils.escapeHtml(keyWord)%>" MAXLENGTH="100" placeholder="Enter Search Keyword..." required>
+            <input type="text" name="keyword" value="<%=StringEscapeUtils.escapeHtml(keyWord)%>" MAXLENGTH="100" placeholder='<bean:message key="Appointment.formNamePlaceholder" />' required>
         </label>
             <input type="hidden" name="orderby" value="last_name, first_name">
             <input type="hidden" name="dboperation" value="search_titlename">
