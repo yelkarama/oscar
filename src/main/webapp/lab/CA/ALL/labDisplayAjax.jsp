@@ -207,28 +207,42 @@ String sISOservice = handler.getServiceDate().substring(0,9);
 // check for errors printing
 if (request.getAttribute("printError") != null && (Boolean) request.getAttribute("printError")){
 %>
-<script language="JavaScript">
+<script>
     alert("The lab could not be printed due to an error. Please see the server logs for more detail.");
 </script>
 <%}
 %>
-<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-
-    <script language="JavaScript">
-         popupStart=function(vheight,vwidth,varpage,windowname) {
-            var page = varpage;
-            windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-            var popup=window.open(varpage, windowname, windowprops);
+    <%
+    int version = 0;
+    if (multiLabId != null) {
+        String[] multiID = multiLabId.split(",");
+        if (multiID.length > 1) {
+            for (int k = 0; k < multiID.length; ++k) {
+                if (multiID[k].equals(segmentID)) {
+                    version = k;
+                }
+            }
         }
+    } %>
+<!-- jQuery is referenced in Index.jsp that inserts this fragment, don't reference it here -->
 
-        pop4=function(vheight, vwidth, varpage, windowName) {
-            windowName  = typeof(windowName)!= 'undefined' ? windowName : 'demoEdit';
+
+<script>
+
+    function popupStart(vheight, vwidth, varpage, windowname) {
+        var page = varpage;
+        windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
+        var popup = window.open(varpage, windowname, windowprops);
+    }
+
+    function pop4(vheight, vwidth, varpage, windowName) {
+        windowName = typeof(windowName) != 'undefined' ? windowName : 'demoEdit';
         <% if (!openInTabs) { %>
-            vheight     = typeof(vheight)   != 'undefined' ? vheight : '700px';
-            vwidth      = typeof(vwidth)    != 'undefined' ? vwidth : '1024px';
+            vheight = typeof(vheight) != 'undefined' ? vheight : '700px';
+            vwidth = typeof(vwidth) != 'undefined' ? vwidth : '1024px';
             var page = "" + varpage;
-            windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0,noreferrer";
-            var popup=window.open(varpage, windowName, windowprops);
+            windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0,noreferrer";
+            var popup = window.open(varpage, windowName, windowprops);
             if (popup != null) {
                 if (popup.opener == null) {
                     popup.opener = self;
@@ -236,331 +250,253 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                 popup.focus();
             }
         <% } else { %>
-          window.open(varpage,windowName);
+            window.open(varpage, windowName);
         <% } %>
-        }
+    }
 
+    function getComment(action, segmentId) {
+        //the comment gets put into a hidden INPUT named comment with the id of comment_865969 ie comment_ + labid for update
+        //the commment is displayed in a SPAN V0commentText865517101
 
-     	<%
-     		int version = 0;
-     		if( multiLabId != null ) {
-     		String[] multiID = multiLabId.split(",");
-     		    if( multiID.length > 1 ) {
-     		    	for( int k = 0; k < multiID.length; ++k ) {
-     					if( multiID[k].equals(segmentID)) {
-     						version = k;
-     					}
-     				}
-     			}
-     		}
-     	%>
+        var ret = true;
+        var commentVal = "";
+        version = jQuery("#version_" + segmentId).val();
 
-         getComment=function(action, segmentId) {
-            //the comment gets put into a hidden INPUT named comment with the id of comment_865969 ie comment_ + labid for update
-            //the commment is displayed in a SPAN V0commentText865517101
+        var label = "V" + version + "commentLabel" + segmentId + jQuery("#providerNo").val(); // providerNo = "101";
+        var text = "commentText" + segmentId + jQuery("#providerNo").val();
 
-            var ret = true;
-            var commentVal = "";
-            version=jQuery("#version_"+segmentId).val();
-
-        	var label = "V" + version + "commentLabel" + segmentId + jQuery("#providerNo").val(); // providerNo = "101";
-        	var text = "commentText" + segmentId + jQuery("#providerNo").val();
-
-            <% if (rememberComment) { %>
+        <% if (rememberComment) { %>
             // use as default the comment for the prior version if it exists
-            if( version > 0 && jQuery('#V'+(version-1)+text).text().length > 0 ) {
-	            commentVal = jQuery('#V'+(version-1)+text).text().trim();
+            if (version > 0 && jQuery('#V' + (version - 1) + text).text().length > 0) {
+                commentVal = jQuery('#V' + (version - 1) + text).text().trim();
             }
-            <% } %>
+        <%  } %>
 
-            // however the best default is the existing comment for this version
-            if( jQuery('#V'+version+text).text().trim().length > 0 ) {
-	            commentVal = jQuery('#V'+version+text).text().trim();
+        // however the best default is the existing comment for this version
+        if (jQuery('#V' + version + text).text().trim().length > 0) {
+            commentVal = jQuery('#V' + version + text).text().trim();
+        }
+
+        if (commentVal == null) {
+            commentVal = "";
+        }
+
+        var commentID = "comment_" + segmentId;
+
+        if (action == "msgLabRecall") {
+            if (commentVal == "") {
+                commentVal = "Recall";
+                jQuery("#" + commentID).val(commentVal);
+                addComment('acknowledgeForm_' + segmentId, segmentId);
             }
+            handleLab('acknowledgeForm_' + segmentId, segmentId, action);
+            return;
+        } else {
+            var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
+        }
 
-	        if( commentVal == null ) {
-	            commentVal = "";
-	        }
+        if (commentVal == null) {
+            // note that you can overwrite a comment but not delete it
+            ret = false;
+        } else if (commentVal.length > 0) {
+            jQuery("#" + commentID).val(commentVal);
+            //jQuery('#'+label).text("comment: ");
+            //jQuery(('#V'+version+text).text(commentVal);
 
-            var commentID = "comment_" + segmentId;
+        } else {
+            jQuery("#" + commentID).val(commentVal);
+        }
 
-            if ( action == "msgLabRecall") {
-                if (commentVal == "" ) {
-                    commentVal = "Recall";
-                    jQuery("#"+commentID).val(commentVal);
-                    addComment('acknowledgeForm_'+segmentId,segmentId);
+        if (ret)
+            handleLab('acknowledgeForm_' + segmentId, segmentId, action);
+
+        return false;
+    }
+
+    function printPDF(doclabid) {
+        document.forms['acknowledgeForm_' + doclabid].action = "<%=request.getContextPath()%>/lab/CA/ALL/PrintPDF.do";
+        document.forms['acknowledgeForm_' + doclabid].submit();
+    }
+
+    function linkreq(rptId, reqId) {
+        var link = "<%=request.getContextPath()%>/lab/LinkReq.jsp?table=hl7TextMessage&rptid=" + rptId + "&reqid=" + reqId + "<%=demographicID != null ? " & demographicNo = " + demographicID : ""%>";
+        window.open(link, "linkwin", "width=500, height=200");
+    }
+
+    sendToPHR = function(labId, demographicNo) {
+        popup(300, 600, "<%=request.getContextPath()%>/phr/SendToPhrPreview.jsp?labId=" + labId + "&demographic_no=" + demographicNo, "sendtophr");
+    }
+
+    function handleLab(formid, labid, action) {
+        var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
+        var data = 'method=isLabLinkedToDemographic&labid=' + labid;
+        jQuery.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+                    var json = data;
+                    if (json != null) {
+                        var success = json.isLinkedToDemographic;
+                        var demoid = json.demoId;
+                        if (success && demoid && demoid.length > 0) {
+                            switch (action) {
+                                case 'ackLab':
+                                    if (confirmAck()) {
+                                        document.getElementById("status_" + labid).value = "A";
+                                        updateStatus(formid);
+                                    }
+                                    break;
+                                case 'msgLab':
+                                    popup(700, 960, '<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
+                                    break;
+                                case 'msgLabRecall':
+                                    popup(700, 980, '<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
+                                    popup(450, 600, '<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid + '<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall', 'ticklerRecall');
+                                    break;
+                                case 'ticklerLab':
+                                    window.popup(530, 600, '<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid, 'tickler');
+                                    break;
+                                case 'addComment':
+                                    addComment(formid, labid);
+                                    break;
+                                case 'unlinkDemo':
+                                    unlinkDemographic(labid);
+                                    break;
+                                case 'msgLabMAM':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=MAM', 'prevention'); <%
+                                    if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                        window.popup(700, 1280, '<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=' + demoid + '&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A', 'billing'); <%
+                                    } %>
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabPAP':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=PAP', 'prevention'); <%
+                                    if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                        window.popup(700, 1280, '<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=' + demoid + '&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A', 'billing'); <%
+                                    } %>
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabFIT':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=FOBT', 'prevention');
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabFIT':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=FOBT', 'prevention');
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabCOLONOSCOPY':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=COLONOSCOPY', 'prevention'); <%
+                                    if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
+                                        window.popup(700, 1280, '<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no=' + demoid + '&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A', 'billing'); <%
+                                    } %>
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabBMD':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=BMD', 'prevention');
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                                    break;
+                                case 'msgLabPSA':
+                                    window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=PSA', 'prevention');
+                                    window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
+                            } //end switch
+                        } else { //not success no demo
+                            if (action == 'ackLab') {
+                                if (confirmAckUnmatched()) {
+                                    document.getElementById("status_" + labid).value = "A";
+                                    updateStatus(formid);
+                                } else {
+                                    var pn = document.getElementById("demoName" + labid).value;
+                                    if (pn) popupStart(360, 680, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=' + labid + '&name=' + pn, 'searchPatientWindow');
+                                }
+                            } else {
+                                alert("Please relate lab to a demographic.");
+                                //pop up relate demo window
+                                var pn = document.getElementById("demoName" + labid).value;
+                                if (pn) popupStart(360, 680, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=' + labid + '&name=' + pn, 'searchPatientWindow');
+                            }
+                        } // end no demo
+                    } //end json check
+                } // end success function
+        }); //end ajax call
+    }
+
+    function addComment(formid, labid) {
+        var url = '<%=request.getContextPath()%>' + "/oscarMDS/UpdateStatus.do?method=addComment";
+        //var status = "status_" + labid;
+
+        if (jQuery("#status_" + labid).val() == "") {
+            jQuery("#status_" + labid).val("N");
+        }
+
+        version = jQuery("#version_" + labid).val();
+
+        var label = "V" + version + "commentLabel" + labid + jQuery("#providerNo").val(); // providerNo = "101";
+        var text = "V" + version + "commentText" + labid + jQuery("#providerNo").val();
+
+        var commentID = "comment_" + labid;
+        var newComment;
+        var data = jQuery("#" + formid).serialize();
+
+        jQuery.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function(data) {
+                newComment = jQuery('#' + commentID).val();
+                // note that the following are SPANs and not inputs
+                jQuery('#' + label).text("comment: ");
+                jQuery('#' + text).text(newComment);
+            }
+        });
+
+    }
+
+    function confirmAck() { <%
+        if (props.getProperty("confirmAck", "").equals("yes")) { %>
+            return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledge"/>'); <%
+        } else { %>
+            return true; <%
+        } %>
+    }
+    confirmAckUnmatched = function() {
+        return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledgeUnmatched"/>');
+    }
+    updateStatus = function(formid) {
+        var url = '<%=request.getContextPath()%>' + "/oscarMDS/UpdateStatus.do";
+        var data = jQuery('#' + formid).serialize();
+        jQuery.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function(data) {
+                var num = formid.split("_");
+                if (num[1]) {
+                    jQuery('#labdoc_'+num[1]).hide('fade'); // blind, clip, scale, puff, fade
+                    refreshCategoryList();
                 }
-                handleLab('acknowledgeForm_'+segmentId,segmentId,action);
-                return;
-            } else {
-                var commentVal = prompt('<bean:message key="oscarMDS.segmentDisplay.msgComment"/>', commentVal);
             }
+        });
 
-            if( commentVal == null ) {
-                // note that you can overwrite a comment but not delete it
-                ret = false;
-            } else if ( commentVal.length > 0 ){
-                jQuery("#"+commentID).val(commentVal);
-                //jQuery('#'+label).text("comment: ");
-                //jQuery(('#V'+version+text).text(commentVal);
-
-            }
-            else {
-            	jQuery("#"+commentID).val(commentVal);
-            }
-
-            if(ret)
-                handleLab('acknowledgeForm_'+segmentId,segmentId,action);
-
-            return false;
-        }
-
-         printPDF=function(doclabid){
-            document.forms['acknowledgeForm_'+doclabid].action="<%=request.getContextPath()%>/lab/CA/ALL/PrintPDF.do";
-            document.forms['acknowledgeForm_'+doclabid].submit();
-        }
-
-	 linkreq=function(rptId, reqId) {
-	    var link = "<%=request.getContextPath()%>/lab/LinkReq.jsp?table=hl7TextMessage&rptid="+rptId+"&reqid="+reqId + "<%=demographicID != null ? "&demographicNo=" + demographicID : ""%>";
-	    window.open(link, "linkwin", "width=500, height=200");
-	}
-
-         sendToPHR=function(labId, demographicNo) {
-            popup(300, 600, "<%=request.getContextPath()%>/phr/SendToPhrPreview.jsp?labId=" + labId + "&demographic_no=" + demographicNo, "sendtophr");
-        }
-
-        handleLab=function(formid,labid,action){
-            var url='<%=request.getContextPath()%>/dms/inboxManage.do';
-                                           var data='method=isLabLinkedToDemographic&labid='+labid;
-                                           new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-                                                                    var json=transport.responseText.evalJSON();
-                                                                    if(json!=null){
-                                                                        var success=json.isLinkedToDemographic;
-                                                                        var demoid='';
-                                                                        //check if lab is linked to a provider
-                                                                        if(success){
-                                                                            if(action=='ackLab'){
-                                                                                if(confirmAck()){
-                                                                                	$("status_"+labid).value = "A";
-                                                                                    updateStatus(formid);
-                                                                                }
-                                                                            }else if(action=='msgLab'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    popup(700,960,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg');
-                                                                            }else if(action=='msgLabRecall'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    popup(700,980,'<%=request.getContextPath()%>/oscarMessenger/SendDemoMessage.do?demographic_no='+demoid+"&recall",'msgRecall');
-                                                                                    popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall','ticklerRecall');
-                                                                            }else if(action=='ticklerLab'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(530,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid,'tickler')
-                                                                            }else if(action == 'addComment') {
-                                                                            	addComment(formid,labid);
-                                                                            }else if (action == 'unlinkDemo') {
-                                                                                unlinkDemographic(labid);
-                                                                            }else if(action=='msgLabMAM'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=MAM','prevention');
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q131A','billing');
-<% } %>
-    //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabPAP'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PAP','prevention');
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q011A','billing');
-<% } %>
-    //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabFIT'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
-    //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabFIT'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=FOBT','prevention');
-    //window.popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=&recall','ticklerRecall');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabCOLONOSCOPY'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=COLONOSCOPY','prevention');
-<% if (props.getProperty("billregion", "").trim().toUpperCase().equals("ON")) { %>
-    window.popup(700,1280,'<%=request.getContextPath()%>/billing/CA/ON/billingOB.jsp?billRegion=ON&billForm=MFP&hotclick=&appointment_no=0&demographic_name=&status=a&demographic_no='+demoid+'&providerview=<%=curUser_no%>&user_no=<%=curUser_no%>&apptProvider_no=<%=curUser_no%>&appointment_date=&start_time=00:00:00&bNewForm=1&serviceCode0=Q142A','billing');
-<% } %>
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabBMD'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=BMD','prevention');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }else if(action=='msgLabPSA'){
-                                                                                demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0){
-    window.popup(700,980,'<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no='+demoid+'&prevention=PSA','prevention');
-    window.popup(450,1280,'<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview='+demoid);
-    }
-                                                                            }
-
-                                                                        }else{
-                                                                            if(action=='ackLab'){
-                                                                                if(confirmAckUnmatched()) {
-                                                                                	$("status_"+labid).value = "A";
-                                                                                    updateStatus(formid);
-                                                                                }
-                                                                                else{
-                                                                                    var pn=$("demoName"+labid).value;
-                                                                                    if(pn) popupStart(360, 680, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&segmentID='+labid+'&name='+pn, 'searchPatientWindow');
-                                                                                }
-                                                                            }else{
-                                                                                alert("Please relate lab to a demographic.");
-                                                                                //pop up relate demo window
-                                                                                var pn=$("demoName"+labid).value;
-                                                                                if(pn) popupStart(360, 680, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&segmentID='+labid+'&name='+pn, 'searchPatientWindow');
-                                                                            }
-                                                                        }
-                                                                    }
-                                                            }});
-        }
-    function unlinkDemographic(labNo){
-            var reason = "Incorrect demographic";
-            reason = prompt('<bean:message key="oscarMDS.segmentDisplay.msgUnlink"/>', reason);
-            //must include reason
-            if( reason == null || reason.length == 0) {
-            	return false;
-            }
-
-            var all = '<%=request.getParameter("all") != null ? request.getParameter("all") : ""%>';
-        	if("true" == all) {
-        		var multiID = '<%=request.getParameter("multiID") != null ? request.getParameter("multiID") : ""%>';
-        		for(var x=0;x<multiID.split(",").length;x++) {
-        			console.log('unlinking '  +multiID.split(",")[x] );
-        			var urlStr='<%=request.getContextPath()%>'+"/lab/CA/ALL/UnlinkDemographic.do";
-                    var dataStr="reason="+reason+"&labNo="+multiID.split(",")[x];
-                    jQuery.ajax({
-            			type: "POST",
-            			url:  urlStr,
-            			data: dataStr,
-            			success: function (data) {
-                            // refresh the opening page with new results
-                            top.opener.location.reload();
-                            // refresh the lab display page and offer dialog to rematch.
-					        //window.location.reload();
-            			}
-                    });
-        		}
-        	} else {
-                console.log("unlinking " +labNo);
-        		var urlStr='<%=request.getContextPath()%>'+"/lab/CA/ALL/UnlinkDemographic.do";
-                var dataStr="reason="+reason+"&labNo="+labNo;
-                jQuery.ajax({
-        			type: "POST",
-        			url:  urlStr,
-        			data: dataStr,
-        			success: function (data) {
-                        // refresh the opening page with new results
-                        //top.opener.location.reload();
-                        if(window.top.opener.document.getElementById("labdoc_"+labNo)){
-                            window.top.opener.document.getElementById("labdoc_"+labNo).classList.add("UnassignedRes");
-                        }
-                        // refresh the lab display page and offer dialog to rematch.
-                        jQuery("#DemoTable"+labNo).css("background-color","orange");
-
-					    //window.location.reload();
-        			}
-                });
-        	}
     }
 
+    createTdisLabel = function(tdisformid, ackformid, labelspanid, labelid) {
+        document.forms[tdisformid].label.value = document.forms[ackformid].label.value;
+        var url = '<%=request.getContextPath()%>' + "/lab/CA/ALL/createLabelTDIS.do";
+        var data = jQuery('#' + tdisformid).serialize();
+        jQuery.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+        });
 
-        function addComment(formid,labid) {
-        	var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do?method=addComment";
-        	//var status = "status_" + labid;
+        document.getElementById(labelspanid).innerHTML = "<i> Label: " + document.getElementById(labelid).value + "</i>";
+        document.getElementById(labelid).value = "";
 
-			if( jQuery("#status_"+labid).val() == "" ) {
-				jQuery("#status_"+labid).val("N");
-			}
-
-            version=jQuery("#version_"+labid).val();
-
-        	var label = "V" + version + "commentLabel" + labid + jQuery("#providerNo").val(); // providerNo = "101";
-        	var text = "V" + version + "commentText" + labid + jQuery("#providerNo").val();
-
-			var commentID = "comment_" + labid;
-			var newComment;
-        	var data=jQuery("#"+formid).serialize();
-
-            jQuery.ajax({
-                type: "POST",
-            	url:  url,
-            	data: data,
-            	success: function (data) {
-                    newComment = jQuery('#'+commentID).val();
-                    // note that the following are SPANs and not inputs
-                    jQuery('#'+label).text("comment: ");
-                    jQuery('#'+text).text(newComment);
-            	}
-              });
-
-        }
-
-       function confirmAck(){
-		<% if (props.getProperty("confirmAck", "").equals("yes")) { %>
-            		return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledge"/>');
-            	<% } else { %>
-            		return true;
-            	<% } %>
-	}
-        confirmAckUnmatched=function(){
-            return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledgeUnmatched"/>');
-        }
-        updateStatus=function(formid){
-            var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do";
-            var data=$(formid).serialize(true);
-
-            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                    var num=formid.split("_");
-                 if(num[1]){
-                     Effect.BlindUp('labdoc_'+num[1]);
-                     //updateDocLabData(num[1]);
-                     refreshCategoryList();
-
-                }
-        }});
-
-        }
-
-        createTdisLabel=function(tdisformid,ackformid,labelspanid,labelid){
-        	document.forms[tdisformid].label.value = document.forms[ackformid].label.value;
-        	var url = '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do";
-        	var data=$(tdisformid).serialize(true);
-        	new Ajax.Request(url,{method:'post', parameters:data
-
-        	});
-        	document.getElementById(labelspanid).innerHTML= "<i> Label: "+document.getElementById(labelid).value+"</i>";
-        	document.getElementById(labelid).value="";
-
-        };
-
-
-        </script>
-
+    };
+</script>
+<div id="hl7_<%=segmentID%>">
     <div id="labdoc_<%=segmentID%>">
         <!-- form forwarding of the lab -->
         <form name="reassignForm_<%=segmentID%>" >
@@ -1510,3 +1446,4 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
         </form>
 
     </div>
+</div>

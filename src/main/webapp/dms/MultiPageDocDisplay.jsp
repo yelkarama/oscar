@@ -73,6 +73,7 @@
 <jsp:useBean id="displayServiceUtil" scope="request" class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
 <%
             LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+            ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
             WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
             ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean("providerInboxRoutingDAO");
             ProviderDao providerDao = (ProviderDao) ctx.getBean("providerDao");
@@ -92,14 +93,14 @@
                          searchProviderNo = request.getParameter("searchProviderNo");
                          status = request.getParameter("status");
             }
-            
+
             Provider provider = providerDao.getProvider(providerNo);
             String creator = (String) session.getAttribute("user");
             ArrayList doctypes = EDocUtil.getActiveDocTypes("demographic");
             EDoc curdoc = EDocUtil.getDoc(documentNo);
 
             String demographicID = curdoc.getModuleId();
-            
+
             if(demoName == null || "".equals(demoName)) {
             	Demographic d = demographicDao.getDemographic(demographicID);
             	if(d != null) {
@@ -151,38 +152,43 @@
         }
     }
 %>
-
+<!DOCTYPE html>
 <html>
     <head>
-            <!-- main calendar program -->
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="../share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-       adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1" />
-        <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js" ></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/effects.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/controls.js"></script>
+    <title><bean:message key='global.Document'/></title>
+<!-- i18n calendar -->
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
+    <link href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" rel="stylesheet" type="text/css" media="all" >
 
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/connection-min.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/animation-min.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/datasource-min.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/autocomplete-min.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/documentDescriptionTypeahead.js"></script> 
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script> 
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>       
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/casemgmt/faxControl.js"> </script>
-        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
-        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"  />
-        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">  
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap.js"></script>      
-        <style type="text/css">
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+<!-- oscar -->
+    <script src="<%=request.getContextPath()%>/share/javascript/Oscar.js" ></script>
+    <script src="<%=request.getContextPath()%>/share/javascript/casemgmt/faxControl.js"> </script>
+    <script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
+    <script src="<%=request.getContextPath()%>/js/documentDescriptionTypeahead.js"></script>
+    <script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>
+
+<!-- yui -->
+    <script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
+    <script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
+    <script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
+    <script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
+    <script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+
+    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css" rel="stylesheet" media="all" >
+    <link href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css" rel="stylesheet" >
+        <style>
         	.multiPage {
         		background-color: RED;
         		color: WHITE;
@@ -197,11 +203,11 @@
 font-size: 14px;
 
         	}
- 
-        </style>               
-        
+
+        </style>
+
         <script>
-    
+
         	//?segmentID=1&providerNo=999998&searchProviderNo=999998&status=A&demoName=
        	   function checkDelete(url, docDescription){
         	// revision Apr 05 2004 - we now allow anyone to delete documents
@@ -222,34 +228,26 @@ font-size: 14px;
 				}
 			%>
         </script>
-        <script type="text/javascript">
 
-               
-
-        </script>
     </head>
     <body >
         <div id="labdoc_<%=docId%>">
             <table class="docTable">
                 <tr>
-
-
-                    <td colspan="8">
-                        <div style="text-align: right; font-weight: bold"> 
-                        <% if( numOfPage > 1 ) {%> 
-                        <a id="firstP" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>');">First</a>
-                        <a id="prevP" style="display: none;" href="javascript:void(0);" onclick="prevPage('<%=docId%>');">Prev</a>
-                        <a id="nextP" href="javascript:void(0);" onclick="nextPage('<%=docId%>');">Next</a>
-                        <a id="lastP" href="javascript:void(0);" onclick="lastPage('<%=docId%>');">Last</a>                        
+                    <td>
+                        <div style="text-align: right; font-weight: bold">
+                        <% if( numOfPage > 1 ) {%>
+                        <a id="firstP" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>');"><bean:message key='global.First'/></a>
+                        <a id="prevP" style="display: none;" href="javascript:void(0);" onclick="prevPage('<%=docId%>');"><bean:message key='global.Prev'/></a>
+                        <a id="nextP" href="javascript:void(0);" onclick="nextPage('<%=docId%>');"><bean:message key='global.Next'/></a>
+                        <a id="lastP" href="javascript:void(0);" onclick="lastPage('<%=docId%>');"><bean:message key='global.Last'/></a>&nbsp;&nbsp;
                         <%}%>
                         </div>
-                        <a href="<%=url2%>" ><img alt="document" src="<%=url%>" id="docImg_<%=docId%>" /></a>
-              
-                        
+                        <a href="<%=url2%>" ><img alt="document" src="<%=url%>" id="docImg_<%=docId%>" ></a>
                    </td>
-                    <td align="left" valign="top">
-                        <fieldset><legend>Patient:<%=demoName%> </legend>
-                            <table border="0">
+                    <td style="vertical-align:top; text-align:left">
+                        <fieldset><legend><bean:message key="inboxmanager.document.PatientMsg"/><%=demoName%> </legend>
+                            <table style="border-width:0px;">
                                 <tr>
                                     <td><bean:message key="inboxmanager.document.DocumentUploaded"/></td>
                                     <td><%=curdoc.getDateTimeStamp()%></td>
@@ -260,22 +258,26 @@ font-size: 14px;
                                 </tr>
                                 <tr>
                                     <td><bean:message key="inboxmanager.document.NumberOfPages"/></td>
-                                    <td><span id="viewedPage_<%=docId%>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">1</span>&nbsp; of &nbsp;<span id="numPages_<%=docId %>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>"><%=numOfPageStr%></span></td>
+                                    <td><span id="viewedPage_<%=docId%>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">1</span>&nbsp; <bean:message key="global.of"/> &nbsp;<span id="numPages_<%=docId %>" class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>"><%=numOfPageStr%></span></td>
+                                </tr>
+                                <tr>
+                                    <td><bean:message key="dms.documentReport.msgCreator"/>:</td>
+                                    <td><%=curdoc.getCreatorName()%></td>
                                 </tr>
                             </table>
 
                             <form id="forms_<%=docId%>" onsubmit="return updateDocument(this.id);" >
-                                <input type="hidden" name="method" value="documentUpdate" />
-                                <input type="hidden" name="documentId" value="<%=docId%>" />
-                                <input type="hidden" name="providerNo" value="<%=providerNo%>" />
-                                <input type="hidden" name="searchProviderNo" value="<%=searchProviderNo%>" />
-                                <input type="hidden" name="status" value="<%=status%>" />
-                                <table border="0">
+                                <input type="hidden" name="method" value="documentUpdate" >
+                                <input type="hidden" name="documentId" value="<%=docId%>" >
+                                <input type="hidden" name="providerNo" value="<%=providerNo%>" >
+                                <input type="hidden" name="searchProviderNo" value="<%=searchProviderNo%>" >
+                                <input type="hidden" name="status" value="<%=status%>" >
+                                <table style="border-width:0px;">
                                     <tr>
-                                        <td><bean:message key="dms.documentReport.msgDocType" />:</td>
+                                        <td><bean:message key="dms.documentReport.msgDocType"/>:</td>
                                         <td>
                                             <select tabindex="<%=tabindex++%>" name ="docType" id="docType">
-                                                <option value=""><bean:message key="dms.addDocument.formSelect" /></option>
+                                                <option value=""><bean:message key="dms.addDocument.formSelect"/></option>
                                                 <%for (int j = 0; j < doctypes.size(); j++) {
                 String doctype = (String) doctypes.get(j);%>
                                                 <option value="<%= doctype%>" <%=(curdoc.getType().equals(doctype)) ? " selected" : ""%>><%= doctype%></option>
@@ -284,56 +286,54 @@ font-size: 14px;
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><bean:message key="dms.documentReport.msgDocDesc" />:</td>
+                                        <td><bean:message key="dms.documentReport.msgDocDesc"/>:</td>
                                         <td>
-                                            <input id="docDesc_<%=docId%>" tabindex="<%=tabindex++%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" />
+                                            <input id="docDesc_<%=docId%>" tabindex="<%=tabindex++%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" >
                                             <div id="docDescTypeahead_<%=docId%>" class="autocomplete"></div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Observation Date:</td>
-                                        <td>
-                                            <input tabindex="<%=tabindex++%>"  id="observationDate<%=docId%>" name="observationDate" type="text" value="<%=curdoc.getObservationDate()%>">
-                                            <a id="obsdate<%=docId%>" onmouseover="renderCalendar(this.id,'observationDate<%=docId%>' );" href="javascript:void(0);" ><img title="Calendar" src="<%=request.getContextPath()%>/images/cal.gif" alt="Calendar"border="0" /></a>
+                                        <td><bean:message key="inboxmanager.document.ObservationDateMsg"/></td>
+                                        <td class="input-append" id="invoke-cal">
+                                            <input tabindex="<%=tabindex++%>" style="width:90px"  id="observationDate<%=docId%>" name="observationDate" type="text" value="<%=curdoc.getObservationDate()%>" pattern="^\d{4}(-|/)((0\d)|(1[012]))(-|/)(([012]\d)|3[01])$" autocomplete="off">
+                                            <span class="add-on"><i class="icon-calendar"></i></span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Demographic:
+                                        <td><bean:message key="inboxmanager.document.DemographicMsg"/>
                                         </td>
                                         <td><%if(!demographicID.equals("-1")){%>
-                                            <input id="saved<%=docId%>" type="hidden" name="saved" value="true"/>
-                                            <input type="hidden" value="<%=demographicID%>" name="demog" id="demofind<%=docId%>" />
+                                            <input id="saved<%=docId%>" type="hidden" name="saved" value="true" >
+                                            <input type="hidden" value="<%=demographicID%>" name="demog" id="demofind<%=docId%>" >
                                             <%=demoName%><%}else{%>
-                                            <input id="saved<%=docId%>" type="hidden" name="saved" value="false"/>
-                                            <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>" />
-                                            <input tabindex="<%=tabindex++%>" type="text" id="autocompletedemo<%=docId%>" onchange="checkSave('<%=docId%>')" name="demographicKeyword" />
+                                            <input id="saved<%=docId%>" type="hidden" name="saved" value="false" >
+                                            <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>" >
+                                            <input tabindex="<%=tabindex++%>" type="text" id="autocompletedemo<%=docId%>" onchange="checkSave('<%=docId%>')" name="demographicKeyword" >
                                             <div id="autocomplete_choices<%=docId%>"class="autocomplete"></div>
                                             <%}%>
 
-                                            <input id="mrp_<%=docId%>" tabindex="<%=tabindex++%>" onclick="sendMRP(this)" type="checkbox" name="demoLink" >Send to MRP
-                                            <a id="mrp_fail_<%=docId%>" style="color:red;font-style: italic;display: none;" >Failed to send MRP</a>
+                                            <input id="mrp_<%=docId%>" tabindex="<%=tabindex++%>" onclick="sendMRP(this)" type="checkbox" name="demoLink" ><bean:message key="inboxmanager.document.SendToMRPMsg"/>
+                                            <a id="mrp_fail_<%=docId%>" style="color:red; font-style:italic; display:none;" ><bean:message key="inboxmanager.document.SendToMRPFailedMsg"/></a>
                                         </td>
                                     </tr>
-
                                     <tr>
-                                        <td valign="top">Flag Provider: </td>
+                                        <td style="vertical-align:top"><bean:message key="inboxmanager.document.FlagProviderMsg"/>  </td>
                                         <td>
-                                            <input type="hidden" name="provi" id="provfind<%=docId%>" />
-                                            <input tabindex="<%=tabindex++%>" type="text" id="autocompleteprov<%=docId%>" name="demographicKeyword"/>
+                                            <input type="hidden" name="provi" id="provfind<%=docId%>" >
+                                            <input tabindex="<%=tabindex++%>" type="text" id="autocompleteprov<%=docId%>" name="demographicKeyword" >
                                             <div id="autocomplete_choicesprov<%=docId%>" class="autocomplete"></div>
 
-                                            <script type="text/javascript">
+                                            <script>
                                             jQuery.noConflict();
-                                            
-                                            
+                                            Calendar.setup( { inputField : "observationDate<%=docId%>", ifFormat : "%Y-%m-%d", showsTime :false, button : "invoke-cal", singleClick : true, step : 1 } );
                                             function addDocComment(docId, status) {
-                                            	var url="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do";                                            	
+                                            	var url="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do";
                                             	var formid = "#acknowledgeForm_" + docId;
-                                            	
+
                                             	jQuery("#ackStatus").val(status);
                                             	var data= jQuery(formid).serialize();
                                             	data += "&method=addComment";
-                                            	
+
                                             	jQuery.ajax({
                                             		type: "POST",
                                             		url: url,
@@ -342,14 +342,14 @@ font-size: 14px;
                                             			window.location.reload();
                                             		}
                                             	});
-                                            	
+
                                             }
 
-                                            
+
                                             function forwardDocument(docId) {
                                             	var frm = "#reassignForm_" + docId;
                                             	var query = jQuery(frm).serialize();
-                                            	
+
                                             	jQuery.ajax({
                                             		type: "POST",
                                             		url:  "<%=request.getContextPath()%>/oscarMDS/ReportReassign.do",
@@ -367,7 +367,7 @@ font-size: 14px;
                                                 var totalPage=<%=numOfPage%>;
                                                 showPageImg=function(docid,pn){
                                                     if(docid&&pn){
-                                                        var e=$('docImg_'+docid);
+                                                        var e=document.getElementById('docImg_'+docid);
                                                         var url='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewDocPage&doc_no='
                                                             +docid+'&curPage='+pn;
                                                         e.setAttribute('src',url);
@@ -375,8 +375,8 @@ font-size: 14px;
                                                 }
                                                 nextPage=function(docid){
                                                     curPage++;
-                                                    
-                                                    	$('viewedPage_'+docid).innerHTML = curPage;
+
+                                                    	document.getElementById('viewedPage_'+docid).innerHTML = curPage;
                                                         showPageImg(docid,curPage);
                                                         if(curPage==totalPage){
                                                             hideNext();
@@ -392,7 +392,7 @@ font-size: 14px;
                                                         curPage=1;
                                                         hidePrev();
                                                     }
-                                                    $('viewedPage_'+docid).innerHTML = curPage;
+                                                    document.getElementById('viewedPage_'+docid).innerHTML = curPage;
                                                         showPageImg(docid,curPage);
                                                        if(curPage==1){
                                                            hidePrev();
@@ -401,49 +401,49 @@ font-size: 14px;
                                                             showPrev();
                                                             showNext();
                                                         }
-                                                    
+
                                                 }
                                                 firstPage=function(docid){
                                                     curPage=1;
-                                                    $('viewedPage_'+docid).innerHTML = 1;
+                                                    document.getElementById('viewedPage_'+docid).innerHTML = 1;
                                                     showPageImg(docid,curPage);
                                                     hidePrev();
                                                     showNext();
                                                 }
                                                 lastPage=function(docid){
                                                     curPage=totalPage;
-                                                    $('viewedPage_'+docid).innerHTML = totalPage;
+                                                    document.getElementById('viewedPage_'+docid).innerHTML = totalPage;
                                                     showPageImg(docid,curPage);
                                                     hideNext();
                                                     showPrev();
                                                 }
                                                 hidePrev=function(){
                                                     //disable previous link
-                                                    $("prevP").setStyle({display:'none'});
-                                                    $("firstP").setStyle({display:'none'});
-                                                    $("prevP2").setStyle({display:'none'});
-                                                    $("firstP2").setStyle({display:'none'});
+                                                    document.getElementById("prevP").style.display = 'none';
+                                                    document.getElementById("firstP").style.display = 'none';
+                                                    document.getElementById("prevP2").style.display = 'none';
+                                                    document.getElementById("firstP2").style.display = 'none';
                                                 }
                                                 hideNext=function(){
                                                     //disable next link
-                                                    $("nextP").setStyle({display:'none'});
-                                                    $("lastP").setStyle({display:'none'});
-                                                    $("nextP2").setStyle({display:'none'});
-                                                    $("lastP2").setStyle({display:'none'});
+                                                    document.getElementById("nextP").style.display = 'none';
+                                                    document.getElementById("lastP").style.display = 'none';
+                                                    document.getElementById("nextP2").style.display = 'none';
+                                                    document.getElementById("lastP2").style.display = 'none';
                                                 }
                                                 showPrev=function(){
                                                     //disable previous link
-                                                    $("prevP").setStyle({display:'inline'});
-                                                    $("firstP").setStyle({display:'inline'});
-                                                    $("prevP2").setStyle({display:'inline'});
-                                                    $("firstP2").setStyle({display:'inline'});
+                                                    document.getElementById("prevP").style.display = 'inline';
+                                                    document.getElementById("firstP").style.display = 'inline';
+                                                    document.getElementById("prevP2").style.display = 'inline';
+                                                    document.getElementById("firstP2").style.display = 'inline';
                                                 }
                                                 showNext=function(){
                                                     //disable next link
-                                                    $("nextP").setStyle({display:'inline'});
-                                                    $("lastP").setStyle({display:'inline'});
-                                                    $("nextP2").setStyle({display:'inline'});
-                                                    $("lastP2").setStyle({display:'inline'});
+                                                    document.getElementById("nextP").style.display = 'inline';
+                                                    document.getElementById("lastP").style.display = 'inline';
+                                                    document.getElementById("nextP2").style.display = 'inline';
+                                                    document.getElementById("lastP2").style.display = 'inline';
                                                 }
                                                 popupStart=function(vheight,vwidth,varpage,windowname) {
                                                     oscarLog("in popupStart ");
@@ -457,7 +457,7 @@ font-size: 14px;
                                                     var popup=window.open(varpage, windowname, windowprops);
                                                 }
                                                 YAHOO.example.BasicRemote = function() {
-                                                        var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
+                                                        var url = "<%=request.getContextPath()%>/provider/SearchProvider.do";
                                                         var oDS = new YAHOO.util.XHRDataSource(url,{connMethodPost:true,connXhrMode:'ignoreStaleResponses'});
                                                         oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
                                                         // Define the schema of the delimited resultsTEST, PATIENT(1985-06-15)
@@ -470,8 +470,8 @@ font-size: 14px;
                                                         //oDS.connXhrMode ="cancelStaleRequests";
                                                         //oscarLog("autocompleteprov<%=docId%>");
                                                         //oscarLog("autocomplete_choicesprov<%=docId%>");
-                                                        //oscarLog($("autocompleteprov<%=docId%>"));
-                                                        //oscarLog($("autocomplete_choicesprov<%=docId%>"));
+                                                        //oscarLog(document.getElementById("autocompleteprov<%=docId%>"));
+                                                        //oscarLog(document.getElementById("autocomplete_choicesprov<%=docId%>"));
                                                         // Instantiate the AutoComplete
                                                         var oAC = new YAHOO.widget.AutoComplete("autocompleteprov<%=docId%>", "autocomplete_choicesprov<%=docId%>", oDS);
                                                         oAC.queryMatchSubset = true;
@@ -489,8 +489,8 @@ font-size: 14px;
                                                            oscarLog(str);
                                                            oscarLog(args[2]);
                                                            var oData=args[2];
-                                                           $(str).value = args[2][0];//li.id;
-                                                           oscarLog("str value="+$(str).value);
+                                                           document.getElementById(str).value = args[2][0];//li.id;
+                                                           oscarLog("str value="+document.getElementById(str).value);
                                                            oscarLog(args[2][1]+"--"+args[2][0]);
                                                            myAC.getInputEl().value = args[2][2] + ","+args[2][1];
                                                            oscarLog("--"+args[0].getInputEl().value);
@@ -518,7 +518,7 @@ font-size: 14px;
                                                             adoc.appendChild(idoc);
 
                                                             adoc.appendChild(bdoc);
-                                                            var providerList = $('providerList<%=docId%>');
+                                                            var providerList = document.getElementById('providerList<%=docId%>');
                                                         //    console.log('Now HERE'+providerList);
                                                             providerList.appendChild(adoc);
 
@@ -533,26 +533,33 @@ font-size: 14px;
                                                         };
                                                     }();
                                                     refreshParent=function(){
-                                                    if (window.opener.autoSave) {
-                                                        window.opener.autoSave(true);
-                                                    }
+                                                        if(window.opener != null) {
+                                                            if (window.opener.autoSave) {
+                                                                window.opener.autoSave(true);
+                                                            }
+						                                }
                                                     }
                                                     updateStatus=function(formid){
                                                     var num=formid.split("_");
                                                         var doclabid=num[1];
                                                         if(doclabid){
-                                                            var demoId=$('demofind'+doclabid).value;
-                                                            var saved=$('saved'+doclabid).value;
+                                                            var demoId=document.getElementById('demofind'+doclabid).value;
+                                                            var saved=document.getElementById('saved'+doclabid).value;
                                                             if(demoId=='-1'|| saved=='false' ||saved==false){
                                                                 alert('Document is not assigned to a patient,please file it');
                                                             }else{
                                                                 var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do";
-                                                            var data=$(formid).serialize(true);
+                                                                var data=jQuery("#"+formid).serialize(true);
+                                                                jQuery.ajax( {
+                                                  	                type: "POST",
+                                                  	                url: url,
+                                                                    data: data,
+                                                                    success: function(transport) {
+                                                                        refreshParent();
+                                                                        window.close();
+	                                                                }
+                                                                });
 
-                                                            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                                                            refreshParent();
-                                                                     window.close();
-                                                                }});
                                                            }
                                                         }
                                                    }
@@ -561,8 +568,8 @@ font-size: 14px;
                                            if(docId){
                                                 docId=docId.replace(/\s/,'');
                                              if(docId.length>0){
-                                                    var demoId=$('demofind'+docId).value;
-                                                    var saved=$('saved'+docId).value;
+                                                    var demoId=document.getElementById('demofind'+docId).value;
+                                                    var saved=document.getElementById('saved'+docId).value;
                                                     var isFile=true;
                                                      if(demoId=='-1' || saved=='false' ||saved==false){
                                                         isFile=confirm('Document is not assigned and saved to any patient, do you still want to file it?');
@@ -570,12 +577,17 @@ font-size: 14px;
                                                      if(isFile) {
                                                              var type='DOC';
                                                              if(type){
-                                                                var url='../oscarMDS/FileLabs.do';
+                                                                var url='<%=request.getContextPath()%>'+'/oscarMDS/FileLabs.do';
                                                                 var data='method=fileLabAjax&flaggedLabId='+docId+'&labType='+type;
-                                                                new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
+                                                                jQuery.ajax( {
+                                                  	                type: "POST",
+                                                  	                url: url,
+                                                                    data: data,
+                                                                    success: function(transport) {
                                                                         refreshParent();
                                                                         window.close();
-                                                            }});
+	                                                                }
+                                                                });
                                                     }
                                                     }
                                               }
@@ -584,34 +596,37 @@ font-size: 14px;
 function sendMRP(ele){
                                                 var doclabid=ele.id;
                                                 doclabid=doclabid.split('_')[1];
-                                                var demoId=$('demofind'+doclabid).value;
+                                                var demoId=document.getElementById('demofind'+doclabid).value;
                                             if(demoId=='-1'){
                                                 alert('Please enter a valid demographic');
                                                 ele.checked=false;
                                             }else{
                                                 if(confirm('Send to Most Responsible Provider?')){
                                                     var type='DOC';
-                                                    var url= "../oscarMDS/SendMRP.do";
+                                                    var url= "<%=request.getContextPath()%>/oscarMDS/SendMRP.do";
                                                     var data='demoId='+demoId+'&docLabType='+type+'&docLabId='+doclabid;
-                                                    new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-                                                        ele.disabled=true;
-                                                        $('mrp_fail_'+doclabid).hide();
-                                                    },onFailure:function(transport){
-                                                        ele.checked=false;
-                                                        $('mrp_fail_'+doclabid).show();
-                                                    }});
+                                                	jQuery.ajax({
+                                                		type: "POST",
+                                                		url:  url,
+                                                		data: data,
+                                                		success: function (transport) {
+                                                			ele.disabled=true;
+                                                			document.getElementById('mrp_fail_'+doclabid).style.display = 'none';
+                                                		},
+                                                		error: function(jqXHR, err, exception) {
+                                                			ele.checked=false;
+                                                            document.getElementById('mrp_fail_'+doclabid).style.display = '';
+                                                            console.log(jqXHR.status);
+                                                		}
+                                                	});
                                                 }else{
                                                     ele.checked=false;
                                                 }
                                              }
                                           }
 
-        renderCalendar=function(id,inputFieldId){
-                Calendar.setup({ inputField : inputFieldId, ifFormat : "%Y-%m-%d", showsTime :false, button : id });
-        }
-
                                         YAHOO.example.BasicRemote = function() {
-                                          if($("autocompletedemo<%=docId%>") && $("autocomplete_choices<%=docId%>")){
+                                          if(document.getElementById("autocompletedemo<%=docId%>") && document.getElementById("autocomplete_choices<%=docId%>")){
                                                  oscarLog('in basic remote');
                                                 //var oDS = new YAHOO.util.XHRDataSource("http://localhost:8080/drugref2/test4.jsp");
                                                 var url = "../demographic/SearchDemographic.do";
@@ -650,14 +665,14 @@ function sendMRP(ele){
                                                     //oscarLog(args[0].getInputEl().id);
                                                     var str = args[0].getInputEl().id.replace("autocompletedemo","demofind");
                                                    //oscarLog(str);
-                                                   $(str).value = args[2][2];//li.id;
-                                                   //oscarLog("str value="+$(str).value);
+                                                   document.getElementById(str).value = args[2][2];//li.id;
+                                                   //oscarLog("str value="+document.getElementById(str).value);
                                                    //oscarLog(args[2][1]+"--"+args[2][0]);
                                                    args[0].getInputEl().value = args[2][0] + "("+args[2][1]+")";
                                                    //oscarLog("--"+args[0].getInputEl().value);
                                                    selectedDemos.push(args[0].getInputEl().value);
                                                    //enable Save button whenever a selection is made
-                                                   $('save<%=docId%>').enable();
+                                                   document.getElementById('save<%=docId%>').removeAttribute('disabled');
 
                                                 });
 
@@ -669,28 +684,38 @@ function sendMRP(ele){
                                             }
                                             }();
 
-                        updateDocument=function(eleId){
-                        	if (!checkObservationDate(eleId)) {
-                        		return false;
-                        	}
-                        	//save doc info
-                                                    var url="../dms/ManageDocument.do",data=$(eleId).serialize(true);
-                                                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                                                var ar=eleId.split("_");
-                                                                var num=ar[1];
-                                                                num=num.replace(/\s/g,'');
-                                                           if($("saveSucessMsg_"+num))     $("saveSucessMsg_"+num).show();
-                                                           if($('saved'+num))      $('saved'+num).value='true';
-                                                           if($('autocompletedemo'+num))
-                                                               $('autocompletedemo'+num).disabled=true;
-                                                           if($('removeProv'+num))
-                                                                    $('removeProv'+num).remove();
-
-                                                refreshParent();
-
-                                                    }});
-                                                    return false;
-                                        }
+                function updateDocument(eleId){
+                    if (!checkObservationDate(eleId)) {
+                        return false;
+                    }
+                    //save doc info
+                    var url='<%=request.getContextPath()%>'+"/dms/ManageDocument.do";
+                    var data=jQuery('#'+eleId).serialize();
+                    jQuery.ajax( {
+      	                type: "POST",
+      	                url: url,
+                        data: data,
+                        success: function(transport) {
+                            var ar=eleId.split("_");
+                            var num=ar[1];
+                            num=num.replace(/\s/g,''); //trim
+                            if(document.getElementById("saveSucessMsg_"+num)){
+                                document.getElementById("saveSucessMsg_"+num).style.display = '';
+                            }
+                            if(document.getElementById('saved'+num)){
+                                document.getElementById('saved'+num).value='true';
+                            }
+                            if(document.getElementById('autocompletedemo'+num)){
+                                document.getElementById('autocompletedemo'+num).disabled=true;
+                            }
+                            if(document.getElementById('removeProv'+num)){
+                                document.getElementById('removeProv'+num).remove();
+                            }
+                            refreshParent();
+	                    }
+                    });
+                    return false;
+                }
 
                         function checkObservationDate(formid) {
                             // regular expression to match required date format
@@ -703,7 +728,7 @@ function sendMRP(ele){
                         		form.elements["observationDate"].focus();
                         		return false;
                             }
-                            
+
                             if(!form.elements["observationDate"].value.match(re)) {
                             	if(!form.elements["observationDate"].value.match(re2)) {
                             		alert("Invalid date format: " + form.elements["observationDate"].value);
@@ -735,7 +760,7 @@ function sendMRP(ele){
                             }
                             return true;
                           }
-                          
+
                           jQuery(setupDocDescriptionTypeahead(<%=docId%>));
 
                                             </script>
@@ -747,20 +772,16 @@ function sendMRP(ele){
                                             <bean:message key="dms.documentReport.msgFlagAbnormal" />
                                         </td>
                                         <td>
-                                            <input id="abnormal<%=docId%>" type="checkbox" name="abnormalFlag" <%= curdoc.isAbnormal() ? "checked='checked'" : "" %> />
+                                            <input id="abnormal<%=docId%>" type="checkbox" name="abnormalFlag" <%= curdoc.isAbnormal() ? "checked='checked'" : "" %> >
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><bean:message key="dms.documentReport.msgCreator"/>:</td>
-                                        <td><%=curdoc.getCreatorName()%></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" align="right"><a id="saveSucessMsg_<%=docId%>" style="display:none;color:blue;"><bean:message key="inboxmanager.document.SuccessfullySavedMsg"/></a><%if(!demographicID.equals("-1")){%><input type="submit" name="save" tabindex="<%=tabindex++%>" id="save<%=docId%>" value="Save" /><%} else{%><input type="submit" name="save" tabindex="<%=tabindex++%>" id="save<%=docId%>" disabled value="Save" /> <%}%></td>
+                                        <td colspan="2" style="text-align:right"><a id="saveSucessMsg_<%=docId%>" style="display:none;color:blue;"><bean:message key="inboxmanager.document.SuccessfullySavedMsg"/></a><%if(!demographicID.equals("-1")){%><input type="submit" class="btn btn-primary" name="save" tabindex="<%=tabindex++%>" id="save<%=docId%>" value="<bean:message key="global.btnSave"/>" ><%} else{%><input type="submit" class="btn btn-primary" name="save" tabindex="<%=tabindex++%>" id="save<%=docId%>" disabled value="<bean:message key="global.btnSave"/>" title="<bean:message key="dms.incomingDocs.selectDemographicFirst"/>"> <%}%></td>
                                     </tr>
 
                                     <tr>
                                         <td colspan="2">
-                                            Linked Providers:
+                                            <bean:message key="inboxmanager.document.LinkedProvidersMsg"/>
                                             <%
             Properties p = (Properties) session.getAttribute("providerBean");
             List<ProviderInboxItem> routeList = providerInboxRoutingDao.getProvidersWithRoutingForDocument("DOC", Integer.parseInt(docId));
@@ -784,7 +805,7 @@ function sendMRP(ele){
 
 							    TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 							    List<Tickler> LabTicklers = ticklerManager.getTicklerByLabId(loggedInInfo, Integer.valueOf(documentNo), Integer.valueOf(demographicID),"DOC");
-							    
+
 							    if(LabTicklers!=null && LabTicklers.size()>0){
 							    %>
                                 <fieldset>
@@ -795,53 +816,53 @@ function sendMRP(ele){
 							   String ticklerClass;
 							   String ticklerStatus;
 							   for(Tickler tickler:LabTicklers){
-							   
+
 							   ticklerStatus = tickler.getStatus().toString();
-							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){ 
+							   if(!ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span style='color:red'>&#9873;</span>";
 							   }else if(ticklerStatus.equals("C") && tickler.getPriority().toString().equals("High")){
 							   	flag="<span>&#9873;</span>";
-							   }else{	
+							   }else{
 							   	flag="";
 							   }
-							   
+
 							   if(ticklerStatus.equals("C")){
 							  	 ticklerClass = "completedTickler";
 							   }else{
 							  	 ticklerClass="";
 							   }
-							   %>	
-							   <div style="text-align:left;background-color:#fff;padding:5px; width:600px;" class="<%=ticklerClass%>">
-							   	<table width="100%">
+							   %>
+							   <div style="text-align:left; background-color:#fff; padding:5px; width:600px;" class="<%=ticklerClass%>">
+							   	<table style="width:100%">
 							   	<tr>
-							   	<td><b>Tickler Priority:</b><br><%=flag%> <%=tickler.getPriority()%></td>
-							   	<td><b>Service Date:</b><br><%=tickler.getServiceDate()%></td>   	
-							   	<td><b>Assigned To:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
-							   	<td width="90px"><b>Status:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td> 
+							   	<td><b><bean:message key="tickler.ticklerEdit.priority"/>:</b><br><%=flag%> <%=tickler.getPriority()%></td>
+							   	<td><b><bean:message key="tickler.ticklerEdit.serviceDate"/>:</b><br><%=tickler.getServiceDate()%></td>
+							   	<td><b><bean:message key="tickler.ticklerEdit.assignedTo"/>:</b><br><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%></td>
+							   	<td style="width:90px"><b><bean:message key="tickler.ticklerEdit.status"/>:</b><br><%=ticklerStatus.equals("C") ? "Completed" : "Active" %></td>
 							   	</tr>
 							   	<tr>
 							   	<td colspan="4"><%=tickler.getMessage()%></td>
 							   	</tr>
 							   	</table>
-							   </div>	
+							   </div>
 							   <%
 							   }
 							   %>
 							   		</div><!-- end ticklerDisplay -->
-							   </div>  
-                                </fieldset> 
-							   <%}//no ticklers to display 
+							   </div>
+                                </fieldset>
+							   <%}//no ticklers to display
 
-}%> 
+}%>
 
                             <%
                             ArrayList ackList = AcknowledgementData.getAcknowledgements("DOC",docId);
 							String curAckStatus = "N";
                                             if (ackList.size() > 0){%>
                                             <fieldset>
-                                                <table width="100%" height="20" cellpadding="2" cellspacing="2">
+                                                <table style="width:100%; border-width:2px;">
                                                     <tr>
-                                                            <td align="center" bgcolor="white">
+                                                            <td style="text-align:center; padding:2px; background-color:white">
                                                             <div class="FieldData">
                                                                 <!--center-->
                                                                     <% for (int i=0; i < ackList.size(); i++) {
@@ -853,22 +874,24 @@ function sendMRP(ele){
                                                                         	    curAckStatus = ackStatus;
                                                                         	}
                                                                             if(ackStatus.equals("A")){
-                                                                                ackStatus = "Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.Acknowledged") : "Acknowledged";
                                                                             }else if(ackStatus.equals("F")){
-                                                                                ackStatus = "Filed but not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.FiledbutnotAcknowledged") : "Filed but not Acknowledged";
                                                                             }else{
-                                                                                ackStatus = "Not Acknowledged";
+                                                                                ackStatus = oscarRec.containsKey("oscarMDS.index.Acknowledged")? oscarRec.getString("oscarMDS.index.NotAcknowledged") : "Not Acknowledged";
                                                                             }
+                                                                            String nocom = oscarRec.containsKey("oscarMDS.index.nocomment")? oscarRec.getString("oscarMDS.index.nocomment") : "no comment";
+                                                                            String com = oscarRec.containsKey("oscarMDS.index.comment")? oscarRec.getString("oscarMDS.index.comment") : "comment";
                                                                         %>
-                                                                        <font color="red"><%= ackStatus %></font>
+                                                                        <span style="color:red"><%= ackStatus %></span>
                                                                        		&nbsp;
                                                                             <%= report.getTimestamp()== null ? "" : report.getTimestamp() %>,&nbsp;
-                                                                            comment: <%= ( report.getComment() == null || report.getComment().equals("") ? "no comment" : report.getComment() ) %>
-                                                                       
+                                                                            comment: <%= ( report.getComment() == null || report.getComment().equals("") ? nocom : report.getComment() ) %>
+
                                                                         <br>
                                                                     <% }
                                                                     if (ackList.size() == 0){
-                                                                        %><font color="red">N/A</font><%
+                                                                        %><span style="color:red"><bean:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.formTeamNotApplicable"/></span><%
                                                                     }
                                                                     %>
                                                                 <!--/center-->
@@ -882,69 +905,69 @@ function sendMRP(ele){
 
 
                         <fieldset>
-                            <legend><span class="FieldData"><i>Next Appointment: <oscar:nextAppt demographicNo="<%=demographicID%>"/></i></span></legend>
-                            <form id="reassignForm_<%=docId%>" name="reassignForm_<%=docId%>" method="post" action="">
-                                <input type="hidden" name="flaggedLabs" value="<%=docId%>" />
-                                <input type="hidden" name="selectedProviders" value="" />
-                                <input type="hidden" name="labType" value="DOC" />
-                                <input type="hidden" name="labType<%=docId%>DOC" value="imNotNull" />
-                                <input type="hidden" name="providerNo" value="<%=providerNo%>" />
-                                <input type="hidden" name="favorites" value="" />
-                                <input type="hidden" name="ajax" value="yes" />
+                            <!--<legend>--><br><span class="FieldData"><i><bean:message key="inboxmanager.document.NextAppointmentMsg"/> <oscar:nextAppt demographicNo="<%=demographicID%>"/></i></span><!--</legend>-->
+                            <form id="reassignForm_<%=docId%>" name="reassignForm_<%=docId%>" method="post" action="javascript:void(0);">
+                                <input type="hidden" name="flaggedLabs" value="<%=docId%>" >
+                                <input type="hidden" name="selectedProviders" value="" >
+                                <input type="hidden" name="labType" value="DOC" >
+                                <input type="hidden" name="labType<%=docId%>DOC" value="imNotNull" >
+                                <input type="hidden" name="providerNo" value="<%=providerNo%>" >
+                                <input type="hidden" name="favorites" value="" >
+                                <input type="hidden" name="ajax" value="yes" >
                             </form>
                             </fieldset>
                          <fieldset>
                          	<legend><bean:message key="inboxmanager.document.Comment"/></legend>
                                 <form name="acknowledgeForm_<%=docId%>" id="acknowledgeForm_<%=docId%>" onsubmit="updateStatus('acknowledgeForm_<%=docId%>');" method="post" action="javascript:void(0);">
 
-                                <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+                                <table style="width:100%; height:100%; border-width:0" >
                                     <tr>
-                                        <td valign="top">
-                                            <table width="100%" border="0" cellspacing="0" cellpadding="3">
+                                        <td style="vertical-align:top">
+                                            <table style="width:100%; border-width:0">
                                                 <tr>
-                                                    <td align="left" class="" width="100%">
-                                                        <input type="hidden" name="segmentID" value="<%= docId%>"/>
-                                                        <input type="hidden" name="multiID" value="<%= docId%>" />
-                                                        <input type="hidden" name="providerNo" value="<%= providerNo%>"/>
-                                                        <input type="hidden" name="status" value="A" id="ackStatus"/>
-                                                        <input type="hidden" name="labType" value="DOC"/>
-                                                        <input type="hidden" name="ajaxcall" value="yes"/>
+                                                    <td style="width:100%; text-align:left; padding:3px;" class="">
+                                                        <input type="hidden" name="segmentID" value="<%= docId%>" >
+                                                        <input type="hidden" name="multiID" value="<%= docId%>" >
+                                                        <input type="hidden" name="providerNo" value="<%= providerNo%>" >
+                                                        <input type="hidden" name="status" value="A" id="ackStatus" >
+                                                        <input type="hidden" name="labType" value="DOC" >
+                                                        <input type="hidden" name="ajaxcall" value="yes" >
                                                         <textarea  tabindex="<%=tabindex++%>" name="comment" cols="40" rows="4" style="width:400px;"></textarea>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <input type="submit"  tabindex="<%=tabindex++%>" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" >
-                                                        <input type="button"  tabindex="<%=tabindex++%>" class="smallButton" value="Comment" onclick="addDocComment('<%=docId%>','<%=curAckStatus%>')"/>
-                                                        <input type="button"  tabindex="<%=tabindex++%>" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popup(323, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>', 'providerselect')">
-                                                        <input type="button"  tabindex="<%=tabindex++%>" class="smallButton" value="<bean:message key="oscarMDS.index.btnFile"/>" onclick="fileDoc('<%=documentNo%>');" >
-                                                        <input type="button"  tabindex="<%=tabindex++%>" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
-                                                        <input type="button"  tabindex="<%=tabindex++%>" value=" <bean:message key="global.btnPrint"/> " onClick="popup(700,960,'<%=url2%>','file download')">
+                                                        <input type="submit" class="btn btn-primary" tabindex="<%=tabindex++%>" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" >
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="addDocComment('<%=docId%>','<%=curAckStatus%>')" >
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="popup(323, 685, '../oscarMDS/SelectProvider.jsp?docId=<%=docId%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>', 'providerselect')">
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value="<bean:message key="oscarMDS.index.btnFile"/>" onclick="fileDoc('<%=documentNo%>');" >
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value=" <bean:message key="global.btnPrint"/> " onClick="popup(700,960,'<%=url2%>','file download')">
                                                         <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !demographicID.equals("-1")) {
                                                         	String  eURL = "../oscarEncounter/IncomingEncounter.do?providerNo=" + providerNo + "&appointmentNo=&demographicNo=" + demographicID + "&curProviderNo=&reason=" + java.net.URLEncoder.encode("Document Notes","UTF-8") + "&encType=" + java.net.URLEncoder.encode("encounter without client","UTF-8") + "&userName=" + java.net.URLEncoder.encode( provider.getFullName(),"UTF-8") + "&curDate=" + UtilDateUtilities.getToday("yyyy-MM-dd")+ "&appointmentDate=&startTime=&status=";
                                                        	%>
-                                                        <input type="button"  tabindex="<%=tabindex++%>" value="Msg" onclick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
-                                                        <input type="button"  tabindex="<%=tabindex++%>" value="Tickler" onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>','tickler')"/>
-                                                        <input type="button"  tabindex="<%=tabindex++%>" value="eChart" onclick="popup(710,1024,'<%=eURL%>','encounter')"/>
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value="Msg" onclick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')" >
+                                                        <input type="button" class="btn" tabindex="<%=tabindex++%>" value="Tickler" onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>','tickler')">
+                                                        <!--<input type="button" class="btn" tabindex="<%=tabindex++%>" value="eChart" onclick="popup(710,1024,'<%=eURL%>','encounter')">-->
                                                         <%if(curdoc.getCreatorId().equals(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo())) {
                                                         	%>
-                                                        	<input type="button"  tabindex="<%=tabindex++%>" value="Delete" onClick="javascript: checkDelete('MultiPageDocDisplay.jsp?delDocumentNo=<%=curdoc.getDocId()%>','<%=curdoc.getDescription()%>')"/>
-                                                       
+                                                        	<input type="button" class="btn" tabindex="<%=tabindex++%>" value="Delete" onClick="javascript: checkDelete('MultiPageDocDisplay.jsp?delDocumentNo=<%=curdoc.getDocId()%>','<%=curdoc.getDescription()%>')" >
+
                                                         	<%
                                                         } else {
                                                         %>
                                                         <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.edocdelete" rights="r">
-                                                        	<input type="button"  tabindex="<%=tabindex++%>" value="Delete" onClick="javascript: checkDelete('documentReport.jsp?delDocumentNo=1&amp;function=demographic&amp;functionid=1&amp;viewstatus=active','test')"/>
+                                                        	<input type="button" class="btn" tabindex="<%=tabindex++%>" value="Delete" onClick="javascript: checkDelete('documentReport.jsp?delDocumentNo=1&amp;function=demographic&amp;functionid=1&amp;viewstatus=active','test')" >
                                                         </security:oscarSec>
                                                         <% } %>
                                                         <%if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))){
 															MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
 															boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
 														%>
-														<input type="button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> tabindex="<%=tabindex++%>" value="<bean:message key="global.btnSendToPHR"/>" onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
-				
+														<input type="button" class="btn" <%=WebUtils.getDisabledString(enabledMyOscarButton)%> tabindex="<%=tabindex++%>" value="<bean:message key="global.btnSendToPHR"/>" onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')" >
+
 														<%}
-		
+
                                                          }%>
                                                     </td>
                                                 </tr>
@@ -956,17 +979,18 @@ function sendMRP(ele){
                         </fieldset>
                         <% if (!StringUtils.isNullOrEmpty(demographicID) && !StringUtils.isNullOrEmpty(curdoc.getDescription()) && countValidProvider!=0){ %>
                         <fieldset>
-                            <script type="text/javascript">
+                            <legend><bean:message key="dms.incomingDocs.fax"/></legend>
+                            <script>
                                 jQuery.noConflict();
                                 function faxDocument(docId){
 
                                     var faxRecipients = "";
-                                    if($("faxRecipients").children.length <= 0){
+                                    if(document.getElementById("faxRecipients").children.length <= 0){
                                         alert("Please select at least one Fax Recipient");
                                         return false;
                                     }
                                     else{
-                                        for(var i=0; i<$("faxRecipients").children.length; i++){
+                                        for(var i=0; i<document.getElementById("faxRecipients").children.length; i++){
                                             faxRecipients += document.getElementsByName('faxRecipients')[i].value + ",";
                                         }
                                         document.getElementsByName('faxRecipients').length
@@ -982,9 +1006,8 @@ function sendMRP(ele){
                                     });
                                 }
                             </script>
-                            <legend><bean:message key="dms.incomingDocs.fax"/></legend>
                             <form name="faxForm_<%=docId%>" id="faxForm_<%=docId%>" onsubmit="" method="post" action="javascript:void(0);">
-                                <table border="0px">
+                                <table style="border-width:0px">
                                     <tbody>
                                     <tr>
                                         <td>
@@ -1020,15 +1043,15 @@ function sendMRP(ele){
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="submit" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
+                                            <input type="submit" class="btn" value="<bean:message key="global.btnAdd"/>" onclick="addOtherFaxProvider(); return false;">
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td><bean:message key="provider.pref.general.fax"/>:</td>
-                                        <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value=""/></td>
+                                        <td><input type="text" id="otherFaxInput" name="otherFaxInput" style="margin-left: 5px;max-width: 300px;min-width:150px;" value="" ></td>
                                         <td>
-                                            <input type="submit"  value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
+                                            <input type="submit" class="btn"  value="<bean:message key="global.btnAdd"/>" onclick="addOtherFax(); return false;">
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1041,7 +1064,7 @@ function sendMRP(ele){
                                                 if (!"".equals(rdName) && !"".equals(rdFaxNo)) {
                                             %>
 
-                                            <input type="hidden" name="faxRecipients" value="<%= rdFaxNo %>" />
+                                            <input type="hidden" name="faxRecipients" value="<%= rdFaxNo %>" >
 
                                             <%
                                                 }
@@ -1049,7 +1072,7 @@ function sendMRP(ele){
                                         </ul>
                                     </div>
                                     <div style="margin-top: 5px; text-align: center">
-                                        <input type="submit" id="fax_button" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>"/>
+                                        <input type="submit" class="btn" id="fax_button" onclick="faxDocument('<%=docId%>');" value="<bean:message key="dms.incomingDocs.fax"/>" >
                                     </div>
                                 </div>
  <%
@@ -1067,20 +1090,20 @@ function sendMRP(ele){
                     </td>
                 </tr>
                 <tr>
-                	 <td colspan="8">
-                        <div style="text-align: right; font-weight: bold"> 
-                        <% if( numOfPage > 1 ) {%> 
-                        <a id="firstP2" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>');">First</a>
-                        <a id="prevP2" style="display: none;" href="javascript:void(0);" onclick="prevPage('<%=docId%>');">Prev</a>
-                        <a id="nextP2" href="javascript:void(0);" onclick="nextPage('<%=docId%>');">Next</a>
-                        <a id="lastP2" href="javascript:void(0);" onclick="lastPage('<%=docId%>');">Last</a>                        
+                	 <td >
+                        <div style="text-align: right; font-weight: bold">
+                        <% if( numOfPage > 1 ) {%>
+                        <a id="firstP2" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>');"><bean:message key='global.First'/></a>
+                        <a id="prevP2" style="display: none;" href="javascript:void(0);" onclick="prevPage('<%=docId%>');"><bean:message key='global.Prev'/></a>
+                        <a id="nextP2" href="javascript:void(0);" onclick="nextPage('<%=docId%>');"><bean:message key='global.Next'/></a>
+                        <a id="lastP2" href="javascript:void(0);" onclick="lastPage('<%=docId%>');"><bean:message key='global.Last'/></a>
                         <%}%>
                         </div>
-                                  
+
                    </td>
                    <td>&nbsp;</td>
                 </tr>
-                <tr><td colspan="9" ><hr width="100%" color="blue"></td></tr>
+                <tr><td colspan="2" ><hr style="width:100%; color:blue"></td></tr>
             </table>
         </div>
 

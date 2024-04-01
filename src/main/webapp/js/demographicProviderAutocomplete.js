@@ -54,7 +54,7 @@ var resultFormatter = function(oResultData, sQuery, sResultMatch) {
     }
 
     return displayfname + " " + displaylname ;
-        
+
 
 };
 var resultFormatter3 = function(oResultData, sQuery, sResultMatch) {
@@ -86,7 +86,7 @@ var resultFormatter3 = function(oResultData, sQuery, sResultMatch) {
 };
 
 function checkSave(elementId){
-    var curVal=$('autocompletedemo'+elementId).value;
+    var curVal=document.getElementById('autocompletedemo'+elementId).value;
     var isCurValValid=false;
     for(var i=0;i<selectedDemos.length;i++){
         if(curVal==selectedDemos[i]){
@@ -95,12 +95,12 @@ function checkSave(elementId){
         }
     }
     if(isCurValValid)
-        $('save'+elementId).enable();
+        document.getElementById('save'+elementId).disabled = false;
     else
-        $('save'+elementId).disable();
+        document.getElementById('save'+elementId).disabled = true;
 }
-function removeProv(th){
-    var ele = th.up();
-    ele.remove();
 
+function removeProv(th){
+    var ele = th.parentNode;
+    ele.remove();
 }

@@ -113,61 +113,39 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 <html>
 
 <head>
-    <!-- main calendar program -->
-<script src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script src="<%= request.getContextPath() %>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-       adding a calendar a matter of 1 or 2 lines of code. -->
-<script src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
-<!-- calendar style sheet -->
-<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" >
+<!-- i18n calendar -->
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
+    <link href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1" rel="stylesheet" type="text/css" media="all" >
 
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script> jQuery.noConflict(); </script>
+    <script src="<%=request.getContextPath()%>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/jquery.validate.js"></script>
+    <script src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
 
-<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-<script> jQuery.noConflict(); </script>
+<!-- oscar -->
+    <script src="<%=request.getContextPath()%>/js/global.js"></script>
+    <script src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+    <script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>
+    <script src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
+    <script src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
+    <script src="<%= request.getContextPath() %>/js/documentDescriptionTypeahead.js"></script>
 
-<script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
-<script src="<%=request.getContextPath()%>/share/javascript/scriptaculous.js"></script>
-<script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>
-
-<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css"  >
-
-<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" >
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" >
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<link href="<%=request.getContextPath()%>/share/css/oscarMDSIndex.css" rel="stylesheet" media="all" >
+<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+<link href="<%=request.getContextPath()%>/css/datepicker.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/css/font-awesome.min.css" rel="stylesheet" >
 
 <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
-
 <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
-
 <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
 
-<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
-<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
-<!-- <script src="${pageContext.request.contextPath}/js/DT_bootstrap.js"></script> -->
-
-<script src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.form.js"></script>
-
-<script src="<%=request.getContextPath() %>/js/global.js"></script>
-<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
-<script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
-<script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
-<script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
-<script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
-<script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
-<script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
-<script src="<%=request.getContextPath()%>/js/documentDescriptionTypeahead.js"></script>
-
-<!--<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css">-->
-<link rel="stylesheet" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css">
-<link rel="stylesheet" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css">
-
-
-<script src="<%=request.getContextPath()%>/dms/showDocument.js"></script>
 
 <!-- important leave this last to override the css above -->
 <style>
@@ -292,7 +270,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 </style>
 
-    <script src="showDocument.js"></script>
+
 
     <script>
 
@@ -366,36 +344,38 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
         function hideLab(id) {
             jQuery('#'+id).addClass('acknowledged');
-            if (!document.getElementById('showAck').checked) {
+            if (document.getElementById('showAck') && !document.getElementById('showAck').checked) {
                 jQuery('#'+id).toggle(600,"swing",function(){updateCountTotal(0)});
             } else {
                 updateCountTotal(0);
             }
         }
 
+
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runhl7Macro(name, formid, closeOnSuccess) {
-                var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
-                var num=formid.split("_");
-				var doclabid=num[1];
-                var data = 'method=isLabLinkedToDemographic&labid='+doclabid;
-                jQuery.ajax( {
-      	                type: "POST",
-      	                url: url,
-      	                dataType: "json",
-                        data: data,
-                        success: function(result) {
-                            if(result!=null){
-                                var success=result.isLinkedToDemographic;
-                                var demoid='';
-                                if (success) {
-                                    demoid=result.demoId;
-                                    runMacroInternal(name,formid,closeOnSuccess,demoid,"hl7");
-            	                 }
+			    var url = '<%=request.getContextPath()%>/dms/inboxManage.do';
+			    var num = formid.split("_");
+			    var doclabid = num[1];
+			    var data = 'method=isLabLinkedToDemographic&labid=' + doclabid;
+			    jQuery.ajax({
+			        type: "POST",
+			        url: url,
+			        dataType: "json",
+			        data: data,
+			        success: function(result) {
+			            if (result != null) {
+			                var success = result.isLinkedToDemographic;
+			                var demoid = '';
+			                if (success) {
+			                    demoid = result.demoId;
+			                    runMacroInternal(name, formid, closeOnSuccess, demoid, "hl7");
+			                } else {
+                                alert("<bean:message key="oscarMDS.index.msgNotAttached"/>");
                             }
-	                    }});
-
-
+			            }
+			        }
+			    });
 			}
 
 			//first check to see if doc is linked, if it is, we can send the demographicNo to the macro
@@ -403,8 +383,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 				var num=formid.split("_");
 				var doclabid=num[1];
 				if(doclabid){
-					var demoId=$('demofind'+doclabid).value;
-					var saved=$('saved'+doclabid).value;
+					var demoId=document.getElementById('demofind'+doclabid).value;
+					var saved=document.getElementById('saved'+doclabid).value;
 					if(demoId=='-1'|| saved=='false'){
 						alert('<bean:message key="oscarMDS.index.msgNotAttached"/>');
 					}else{
@@ -432,8 +412,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
                                 }
                                 if (type == "hl7") {
                         	        refreshCategoryList();
-                                    //jQuery('#'+formid).toggle("blind"); // jQuery "equivalent" but
-                                    Effect.BlindUp(formid);
+                                    jQuery('#'+formid).toggle('fade'); // jQuery UI effect
+                                    //hideLab(doclabid);
                                 }
 
                                 //window.close();
@@ -582,11 +562,12 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	function handleScroll(e) {
 		if (!canLoad || loadingDocs) { return false; }
 		var evt = e || window.event;
+        if(! evt)  { console.log("ERROR: no evt"); return false; }
 		var loadMore = false;
-	    if (isListView && evt.scrollHeight > $("listViewDocs").clientHeight && evt.scrollTop > 0 && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
+	    if (isListView && evt.scrollHeight > document.getElementById("listViewDocs").clientHeight && evt.scrollTop > 0 && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
 	    	loadMore = true;
 	    }
-	    else if (isListView && evt.scrollHeight <= $("listViewDocs").clientHeight) {
+	    else if (isListView && evt.scrollHeight <= document.getElementById("listViewDocs").clientHeight) {
 	    	loadMore = true;
 	    }
 	    else if (!isListView && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
@@ -611,7 +592,8 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 	function updateListView() {
         jQuery('#summaryView').DataTable().destroy();
-		var query = getQuery();
+		var query = getQuery(); //method=prepareForContentPage&searchProviderNo=101&providerNo=101&status=N&page=1&pageSize=400&isListView=true&startDate=null&endDate=null&view=all&fname=&lname=&hnum=
+
 		if (page == 1) {
 			document.getElementById("docViews").innerHTML = "";
 			canLoad = true;
@@ -628,54 +610,62 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 		}
 		var div;
 		if (!isListView || page == 1) {
-			div = document.getElementById("docViews");
+			div = jQuery("#docViews:last-child");
 		}
 		else {
-			div = document.getElementById("summaryView");
+			div = jQuery("#summaryBody:last-child");
 		}
 		jQuery("#readerSwitcher").prop("disabled",true);
 		jQuery("#listSwitcher").prop("disabled",true);
-		return new Ajax.Updater(div,url,{method:'get',parameters:query,insertion:Insertion.Bottom,evalScripts:true,onSuccess:function(transport){
-			loadingDocs = false;
-			var tmp = jQuery("#tempLoader");
-			if (tmp != null) { tmp.remove(); }
-			if (isListView) {
-				if (page == 1) {
-                    jQuery("#tempLoader").remove();
-                }
-				else { document.getElementById("loader").style.display = "none"; }
 
-			}
-
-			if (page == 1) {
-				if (isListView) {
-					document.getElementById("docViews").style.overflow = "hidden";
-				}
-				else {
-					document.getElementById("docViews").style.overflow = "auto";
-				}
-			}
-			if (transport.responseText.indexOf("<input type=\"hidden\" name=\"NoMoreItems\" value=\"true\" />") >= 0) {
-				canLoad = false;
-
-                oTable=jQuery('#summaryView').DataTable({
-                    "bPaginate": false,
-                    "dom": "lrtip",
-                    "order": [],
-                    "language": {
-                                "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+        url = '<%=request.getContextPath()%>/dms/inboxManage.do'; //still
+	    jQuery.ajax({
+		    type: "GET",
+		    url:  url,
+		    data: query,
+		    success: function (code) {
+                div.append(code); //jQuery("#docViews").append(code);
+			    loadingDocs = false;
+			    var tmp = jQuery("#tempLoader");
+			    if (tmp != null) { tmp.remove(); }
+			    if (isListView) {
+				    if (page == 1) {
+                        jQuery("#tempLoader").remove();
+                    } else {
+                        document.getElementById("loader").style.display = "none";
+                    }
+			    }
+			    if (page == 1) {
+				    if (isListView) {
+					    document.getElementById("docViews").style.overflow = "hidden";
+				    } else {
+					    document.getElementById("docViews").style.overflow = "auto";
+				    }
+			    }
+			    if (code.indexOf("<input type=\"hidden\" name=\"NoMoreItems\" value=\"true\" />") >= 0) {
+				    canLoad = false;
+                            if (!DataTable.isDataTable('#summaryView')){
+                                oTable=jQuery('#summaryView').DataTable({
+                                    "bPaginate": false,
+                                    "dom": "lrtip",
+                                    "order": [],
+                                    "language": {
+                                                "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                                            }
+                                });
+                                jQuery('#myFilterTextField').keyup(function(){
+                                    oTable.search(jQuery(this).val()).draw();
+                                });
                             }
-                });
-			}
-			else {
-				// It is possible that the current amount of loaded items has not filled up the page enough
-				// to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
-				setTimeout("fakeScroll();", 1000);
-			}
+			    } else {
+				    // It is possible that the current amount of loaded items has not filled up the page enough
+				    // to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
+				    setTimeout("fakeScroll();", 1000);
+			    }
 
-			jQuery("#readerSwitcher").prop("disabled",false);
-			jQuery("#listSwitcher").prop("disabled",false);
-		}});
+			    jQuery("#readerSwitcher").prop("disabled",false);
+			    jQuery("#listSwitcher").prop("disabled",false);
+		 }});
 	}
         function updateLabDemoStatus(labno){
             if(document.getElementById("DemoTable"+labno)){
@@ -782,7 +772,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 		isListView = <%= (selectedCategoryPatient != null) %>;
 		jQuery('input[name=isListView]').val(isListView);
 		switchView();
-		//un_bold($("totalAll"));
+		//un_bold(document.getElementById("totalAll"));
 		currentBold = "totalAll";
 		refreshCategoryList();
 
@@ -810,7 +800,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 		var labs = jQuery("input[name='flaggedLabs']:checked");
 		for (var i = 0; i < labs.length; i++) {
 			query += "&flaggedLabs=" + labs[i].value;
-			query += "&" + labs[i].next().name + "=" + labs[i].next().value;
+			query += "&" + jQuery(labs[i]).next().name + "=" + jQuery(labs[i]).next().value;
 		}
 		jQuery.ajax({
 			type: "POST",
@@ -834,7 +824,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 	function refreshCategoryList() {
 		jQuery("#categoryHash").val("-1");
 		updateCategoryList(); //left side panel
-		updateCountTotal(-1); //Datatables counts
+		//updateCountTotal(-1); //Datatables counts
 	}
 
 	function updateCategoryList() {
@@ -850,14 +840,13 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 			}
 		});
 	}
-/* deprecated
-	window.removeReport = function (reportId) {
-		var el = jQuery("#labdoc_" + reportId);
-		if (el != null) {
-			el.remove();
+
+	function removeReport(reportId) {
+		if (document.getElementById("labdoc_" + reportId)) {
+			document.getElementById("labdoc_" + reportId).remove();
 		}
 	}
-*/
+
 </script>
 
 
@@ -1016,7 +1005,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 
 						</div>
 						<div>
-    						<a id="sortbynum" href="javascript:void(0);" onclick="document.getElementById('patientsdoclabs').toggle(); document.getElementById('patientsdoclabsB').toggle();un_bold(this);" title="Toggle sort by number of results or by name">
+    						<a id="sortbynum" href="javascript:void(0);" onclick="jQuery('#patientsdoclabs').toggle(); jQuery('#patientsdoclabsB').toggle();un_bold(this);" title="Toggle sort by number of results or by name">
     							<bean:message key="oscarMDS.index.ToggleByNo"/>
    							</a>
 
@@ -1057,7 +1046,7 @@ boolean ajax = "true".equals(request.getParameter("ajax"));
 			<% if (selectedCategoryPatient != null) { if (selectedCategoryPatient.equals(Integer.toString(info.id))) { %>
 			<script>
 				showhideSubCat('plus','<%=info.id%>');
-				un_bold($('patient<%=info.id%><%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>'));
+				un_bold(document.getElementById('patient<%=info.id%><%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>'));
 			</script>
 			<% } } %>
                    <%}%>
@@ -1126,7 +1115,7 @@ if (patients!=null) {
 			<% if (selectedCategoryPatient != null) { if (selectedCategoryPatient.equals(Integer.toString(info.id))) { %>
 			<script>
 				showhideSubCat('plus','<%=info.id%>');
-				un_bold($('patient<%=info.id%><%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>'));
+				un_bold(document.getElementById('patient<%=info.id%><%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>'));
 			</script>
 			<% } } %>
                    <%}%>

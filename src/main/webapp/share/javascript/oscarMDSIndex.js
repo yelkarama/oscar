@@ -25,11 +25,21 @@
 /************init global data methods*****************/
 var oldestLab = null;
 var popup;
+
 function  updateDocStatusInQueue(docid){//change status of queue document link row to I=inactive
     //console.log('in updateDocStatusInQueue, docid '+docid);
-          var url="../dms/inboxManage.do",data="docid="+docid+"&method=updateDocStatusInQueue";
-          new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){}});
+    var url="../dms/inboxManage.do"
+    var data="docid="+docid+"&method=updateDocStatusInQueue";
 
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (transport) {	},
+		error: function(jqXHR, err, exception) {
+			//alert("Error " + jqXHR.status + " " + err);
+		}
+	});
 
 }
 
@@ -262,7 +272,7 @@ function addPatientIdName(pid,name){
 function sendMRP(ele){
 	var doclabid=ele.id;
 	doclabid=doclabid.split('_')[1];
-	var demoId=$('demofind'+doclabid).value;
+	var demoId=document.getElementById('demofind'+doclabid).value;
 	if(demoId=='-1'){
 		alert('Please enter a valid demographic');
 		ele.checked=false;
@@ -271,13 +281,23 @@ function sendMRP(ele){
 			var type=checkType(doclabid);
 			var url=contextpath + "/oscarMDS/SendMRP.do";
 			var data='demoId='+demoId+'&docLabType='+type+'&docLabId='+doclabid;
-			new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-				ele.disabled=true;
-				$('mrp_fail_'+doclabid).hide();
-			},onFailure:function(transport){
-				ele.checked=false;
-				$('mrp_fail_'+doclabid).show();
-			}});
+
+	        jQuery.ajax({
+		        type: "POST",
+		        url:  url,
+		        data: data,
+		        success: function (transport) {
+				    ele.disabled=true;
+				    document.getElementById('mrp_fail_'+doclabid).style.display = 'none';
+                },
+		        error: function(jqXHR, err, exception) {
+			        console.log(jqXHR.status);
+				    ele.checked=false;
+				    document.getElementById('mrp_fail_'+doclabid).style.display = '';
+		        }
+	        });
+
+
 		}else{
 			ele.checked=false;
 		}
@@ -313,55 +333,81 @@ function forwardDocument(docId) {
 
 function rotate180(id) {
 	jQuery("#rotate180btn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
+    var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=rotate180&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#rotate180btn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=rotate180&document=" + id, onSuccess: function(data) {
-		jQuery("#rotate180btn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-	}});
+
 }
 
 function rotate90(id) {
 	jQuery("#rotate90btn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
-
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=rotate90&document=" + id, onSuccess: function(data) {
-		jQuery("#rotate90btn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-	}});
+	var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=rotate90&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#rotate90btn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 }
 
 function removeFirstPage(id) {
 	jQuery("#removeFirstPagebtn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
-
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=removeFirstPage&document=" + id, onSuccess: function(data) {
-		jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-		var numPages = parseInt(jQuery("#numPages_" + id).text())-1;
-		jQuery("#numPages_" + id).text("" + numPages);
-
-
-
-		if (numPages <= 1) {
-			jQuery("#numPages_" + id).removeClass("multiPage");
-			jQuery("#removeFirstPagebtn_" + id).remove();
+	var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=removeFirstPage&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                 showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+		    var numPages = parseInt(jQuery("#numPages_" + id).text())-1;
+		    jQuery("#numPages_" + id).text("" + numPages);
+    		if (numPages <= 1) {
+			    jQuery("#numPages_" + id).removeClass("multiPage");
+			    jQuery("#removeFirstPagebtn_" + id).remove();
+		    }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
 		}
-
-	}});
+	});
 }
+
 
 function split(id) {
         	var loc = contextpath+"/oscarMDS/Split.jsp?document=" + id;
@@ -369,59 +415,20 @@ function split(id) {
         }
 
 function hideTopBtn(){
-	$('topFRBtn').hide();
-	if($('topFBtn') && $('topFileBtn')){
-		$('topFBtn').hide();
-		$('topFileBtn').hide();
+	document.getElementsByName('topFRBtn').style.display = 'none';
+	if(document.getElementsByName('topFBtn') && document.getElementsByName('topFileBtn')){
+		document.getElementsByName('topFBtn').style.display = 'none';
+		document.getElementsByName('topFileBtn').style.display = 'none';
 	}
 }
 function showTopBtn(){
-	$('topFRBtn').show();
-	if($('topFBtn') && $('topFileBtn')){
-		$('topFBtn').show();
-		$('topFileBtn').show();
+	document.getElementsByName('topFRBtn').style.display = '';
+	if(document.getElementsByName('topFBtn') && document.getElementsByName('topFileBtn')){
+		document.getElementsByName('topFBtn').style.display = '';
+		document.getElementsByName('topFileBtn').style.display = '';
 	}
 }
-/*
-function changeView(){
-	if($('summaryView').getStyle('display')=='none'){
-		$('summaryView').show();
-		$('readerViewTable').hide();
 
-		$('documentCB').show();
-		$('hl7CB').show();
-		$('normalCB').show();
-		$('abnormalCB').show();
-		$('unassignedCB').show();
-		$('allCB').show();
-		var eles=document.getElementsByName('cbText');
-		for(var i=0;i<eles.length;i++){
-			var ele=eles[i];
-			ele.style.display = "inline";
-		}
-		showTopBtn();
-	}
-	else{
-		$('summaryView').hide();
-		$('readerViewTable').show();
-
-		$('documentCB').hide();
-		$('hl7CB').hide();
-		$('normalCB').hide();
-		$('abnormalCB').hide();
-		$('unassignedCB').hide();
-		$('allCB').hide();
-		var eles=document.getElementsByName('cbText');
-		for(var i=0;i<eles.length;i++){
-			var ele=eles[i];
-			ele.style.display = "none";
-		}
-		hideTopBtn();
-	}
-
-
-}
-*/
 function popupStart(vheight,vwidth,varpage) {
 	popupStart(vheight,vwidth,varpage,"helpwindow");
 }
@@ -476,7 +483,8 @@ function submitFile(doc){
 
 
 function isRowShown(rowid){
-	if($(rowid).style.display=='none')
+	if(document.getElementById(rowid).style.display=='none')
+	//if($(rowid).style.display=='none')
 		return false;
 	else
 		return true;
@@ -502,11 +510,11 @@ function showDocLab(childId,docNo,providerNo,searchProviderNo,status,demoName,sh
 	//create child element in docViews
 	docNo=docNo.replace(' ','');//trim
 	var type=checkType(docNo);
-	//oscarLog('type'+type);
+	//console.log('type'+type);
 	//var div=childId;
 
 	//var div=window.frames[0].document.getElementById(childId);
-	var div=$(childId);
+	var div=document.getElementsByName(childId);
 	//alert(div);
 	var url='';
 	if(type=='DOC')
@@ -521,68 +529,70 @@ function showDocLab(childId,docNo,providerNo,searchProviderNo,status,demoName,sh
 		url="";
 
 	docNo = docNo.replace('d', '');
-	//oscarLog('url='+url);
+	//console.log('url='+url);
 	var data="segmentID="+docNo+"&providerNo="+providerNo+"&searchProviderNo="+searchProviderNo+"&status="+status+"&demoName="+demoName;
-	//oscarLog('url='+url+'+-+ \n data='+data);
-	new Ajax.Updater(div,url,{method:'get',parameters:data,insertion:Insertion.Bottom,evalScripts:true,onSuccess:function(transport){
-		focusFirstDocLab();
-	}});
+
+	jQuery.ajax({
+		type: "GET",
+		url:  url,
+		data: data,
+		success: function (code) {
+            jQuery("#"+childid+":last-child").append(code);
+		    //jQuery("#"+childid).html(code);
+		    focusFirstDocLab();
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 
 }
 
 function createNewElement(parent,child){
-	//oscarLog('11 create new leme');
+	//console.log('11 create new leme');
 	var newdiv=document.createElement('div');
-	//oscarLog('22 after create new leme');
+	//console.log('22 after create new leme');
 	newdiv.setAttribute('id',child);
-	var parentdiv=$(parent);
+	var parentdiv=document.getElementsByName(parent);
 	parentdiv.appendChild(newdiv);
-	//oscarLog('55 after create new leme');
+	//console.log('55 after create new leme');
 }
 
 function clearDocView(){
-	var docview=$('docViews');
+	var docview=document.getElementsByName('docViews');
 	//var docview=window.frames[0].document.getElementById('docViews');
 	docview.innerHTML='';
 }
 function showhideSubCat(plus_minus,patientId){
 	if(plus_minus=='plus'){
-		//$('plus'+patientId).hide();
-		//$('minus'+patientId).show();
-		//$('labdoc'+patientId+'showSublist').show();
-        jQuery('#plus'+patientId).hide();
-		jQuery('#minus'+patientId).show();
-		jQuery('#labdoc'+patientId+'showSublist').show();
+		document.getElementById('plus'+patientId).style.display = 'none';
+		document.getElementById('minus'+patientId).style.display = '';
+		document.getElementById('labdoc'+patientId+'showSublist').style.display = '';
 	}else{
-		//$('minus'+patientId).hide();
-		//$('plus'+patientId).show();
-		//$('labdoc'+patientId+'showSublist').hide();
-		jQuery('#minus'+patientId).hide();
-		jQuery('#plus'+patientId).show();
-		jQuery('#labdoc'+patientId+'showSublist').hide();
+		document.getElementById('plus'+patientId).style.display = '';
+		document.getElementById('minus'+patientId).style.display = 'none';
+		document.getElementById('labdoc'+patientId+'showSublist').style.display = 'none';
 	}
 }
 function un_bold(ele){
-	//oscarLog('currentbold='+currentBold+'---ele.id='+ele.id);
 	if(ele == null || currentBold==ele.id){
 		;
 	}else{
-		if(currentBold && $(currentBold)!=null) {
-			$(currentBold).style.fontWeight='';
+		if(currentBold && document.getElementById(currentBold)!=null) {
+			document.getElementById(currentBold).style.fontWeight='';
 		}
 		ele.style.fontWeight='bold';
 		currentBold=ele.id;
 	}
-	//oscarLog('currentbold='+currentBold+'---ele.id='+ele.id);
 }
 function re_bold(id) {
-	if (id && $(id)!=null) {
-		$(id).style.fontWeight='bold';
+	if (id && document.getElementById(id)!=null) {
+		document.getElementById(id).style.fontWeight='bold';
 	}
 }
 
 function showPageNumber(page){
-	var totalNoRow=$('totalNumberRow').value;
+	var totalNoRow=document.getElementById('totalNumberRow').value;
 	var newStartIndex=number_of_row_per_page*(parseInt(page)-1);
 	var newEndIndex=parseInt(newStartIndex)+19;
 	var isLastPage=false;
@@ -590,14 +600,13 @@ function showPageNumber(page){
 		newEndIndex=totalNoRow;
 		isLastPage=true;
 	}
-	//oscarLog("new start="+newStartIndex+";new end="+newEndIndex);
 	for(var i=0;i<totalNoRow;i++){
-		if($('row'+i) && parseInt(newStartIndex)<=i && i<=parseInt(newEndIndex)) {
-			//oscarLog("show row-"+i);
-			jQuery('#row'+i).show();
+		if(document.getElementById('row'+i) && parseInt(newStartIndex)<=i && i<=parseInt(newEndIndex)) {
+			document.getElementById('row'+i).style.display = '';
+			//jQuery('#row'+i).show();
 		}else if(jQuery('#row'+i)){
-			//oscarLog("hide row-"+i);
-			jQuery('#row'+i).hide();
+			document.getElementById('row'+i).style.display = 'none';
+			//jQuery('#row'+i).hide();
 		}
 	}
 	//update current page
@@ -774,95 +783,16 @@ function checkBox(){
 		view = "unassigned";
 	}
 	window.location.search = replaceQueryString(window.location.search, "view", view);
-
-	/*
-	//oscarLog("in checkBox");
-	var checkedArray=new Array();
-	if($('documentCB').checked==1){
-		checkedArray.push('document');
-	}
-	if($('hl7CB').checked==1){
-		checkedArray.push('hl7');
-	}
-	if($('normalCB').checked==1){
-		checkedArray.push('normal');
-	}
-	if($('abnormalCB').checked==1){
-		checkedArray.push('abnormal');
-	}
-	if($('unassignedCB').checked==1){
-		checkedArray.push('unassigned');
-	}
-	if(checkedArray.length==0||checkedArray.length==4){
-		var endindex= number_of_row_per_page-1;
-		if(endindex>=total_rows.length)
-			endindex=total_rows.length-1;
-
-		//show all
-		for(var i=0;i<endindex+1;i++){
-			var id=total_rows[i];
-			if($(id)){
-				$(id).show();
-			}
-		}
-		for(var i=endindex+1;i<total_rows.length;i++){
-			var id=total_rows[i];
-			if($(id)){
-				$(id).hide();
-			}
-		}
-		current_numberofpages=Math.ceil(total_rows.length/number_of_row_per_page);
-		initializeNavigation();
-		current_category=new Array();
-		current_category[0]=document.getElementsByName('scannedDoc');
-		current_category[1]=document.getElementsByName('HL7lab');
-		current_category[2]=document.getElementsByClassName('NormalRes');
-		current_category[3]=document.getElementsByClassName('AbnormalRes');
-		current_category[4]=document.getElementsByClassName('UnassignedRes');
-	}
-	else{
-		//oscarLog('checkedArray='+checkedArray);
-		var eles=new Array();
-		for(var i=0;i<checkedArray.length;i++){
-			var type=checkedArray[i];
-
-			if(type=='document'){
-				var docs=document.getElementsByName('scannedDoc');
-				eles.push(docs);
-			}
-			else if(type=='hl7'){
-				var labs=document.getElementsByName('HL7lab');
-				eles.push(labs);
-			}
-			else if(type=='normal'){
-				var norm=document.getElementsByClassName('NormalRes');
-				eles.push(norm);
-
-			}
-			else if(type=='abnormal'){
-				var abn=document.getElementsByClassName('AbnormalRes');
-				eles.push(abn);
-			}
-			else if (type=='unassigned') {
-				var un=document.getElementsByClassName('UnassignedRes');
-				eles.push(un);
-			}
-		}
-		current_category=eles;
-		displayCategoryPage(1);
-		initializeNavigation();
-	}
-	*/
 }
 
 function displayCategoryPage(page){
-	//oscarLog('in displaycategorypage, page='+page);
+	//console.log('in displaycategorypage, page='+page);
 	//write all row ids to an array
 	var displayrowids=new Array();
 	for(var p=0;p<current_category.length;p++){
 		var elements=new Array();
 		elements=current_category[p];
-		//oscarLog("elements.lenght="+elements.length);
+		//console.log("elements.lenght="+elements.length);
 		for(var j=0;j<elements.length;j++){
 			var e=elements[j];
 			var rowid=e.id;
@@ -872,12 +802,12 @@ function displayCategoryPage(page){
 	//make array unique
 	displayrowids=uniqueArray(displayrowids);
 	displayrowids=sortRowId(displayrowids);
-	//oscarLog('sort and unique displaywords='+displayrowids);
+	//console.log('sort and unique displaywords='+displayrowids);
 
 	var numOfRows=displayrowids.length;
-	//oscarLog(numOfRows);
+	//console.log(numOfRows);
 	current_numberofpages=Math.ceil(numOfRows/number_of_row_per_page);
-	//oscarLog(current_numberofpages);
+	//console.log(current_numberofpages);
 	var startIndex=(parseInt(page)-1)*number_of_row_per_page;
 	var endIndex=startIndex+(number_of_row_per_page-1);
 	if(endIndex>displayrowids.length-1){
@@ -886,7 +816,7 @@ function displayCategoryPage(page){
 	//set current displaying rows
 	current_rows=new Array();
 	for(var i=startIndex;i<endIndex+1;i++){
-		if($(displayrowids[i])){
+		if(document.getElementById(displayrowids[i])){
 			current_rows.push(displayrowids[i]);
 		}
 	}
@@ -894,9 +824,9 @@ function displayCategoryPage(page){
 	for(var i=0;i<total_rows.length;i++){
 		var rowid=total_rows[i];
 		if(a_contain_b(current_rows,rowid)){
-			$(rowid).show();
+			document.getElementById('rowid').style.display = '';
 		}else
-			$(rowid).hide();
+			document.getElementById('rowid').style.display = 'none';
 	}
 }
 
@@ -913,7 +843,7 @@ function initializeNavigation(){
 		jQuery('#msgNext').hide();
 		jQuery('#msgPrevious').hide();
 	}
-	//oscarLog("current_numberofpages "+current_numberofpages);
+	//console.log("current_numberofpages "+current_numberofpages);
 	jQuery('#current_individual_pages').html()="";
 		if(current_numberofpages>1){
 			for(var i=1;i<=current_numberofpages;i++){
@@ -993,51 +923,51 @@ function syncCB(ele){
 	var id=ele.id;
 	if(id=='documentCB'){
 		if(ele.checked==1)
-			$('documentCB2').checked=1;
+			document.getElementById('documentCB2').checked=true;
 		else
-			$('documentCB2').checked=0;
+			document.getElementById('documentCB2').checked=false;
 	}
 	else if(id=='documentCB2'){
 		if(ele.checked==1)
-			$('documentCB').checked=1;
+			document.getElementById('documentCB').checked=1;
 		else
-			$('documentCB').checked=0;
+			document.getElementById('documentCB').checked=0;
 	}
 	else if(id=='hl7CB'){
 		if(ele.checked==1)
-			$('hl7CB2').checked=1;
+			document.getElementById('hl7CB2').checked=1;
 		else
-			$('hl7CB2').checked=0;
+			document.getElementById('hl7CB2').checked=0;
 	}
 	else if(id=='hl7CB2'){
 		if(ele.checked==1)
-			$('hl7CB').checked=1;
+			document.getElementById('hl7CB').checked=1;
 		else
-			$('hl7CB').checked=0;
+			document.getElementById('hl7CB').checked=0;
 	}
 	else if(id=='normalCB'){
 		if(ele.checked==1)
-			$('normalCB2').checked=1;
+			document.getElementById('normalCB2').checked=1;
 		else
-			$('normalCB2').checked=0;
+			document.getElementById('normalCB2').checked=0;
 	}
 	else if(id=='normalCB2'){
 		if(ele.checked==1)
-			$('normalCB').checked=1;
+			document.getElementById('normalCB').checked=1;
 		else
-			$('normalCB').checked=0;
+			document.getElementById('normalCB').checked=0;
 	}
 	else if(id=='abnormalCB'){
 		if(ele.checked==1)
-			$('abnormalCB2').checked=1;
+			document.getElementById('abnormalCB2').checked=1;
 		else
-			$('abnormalCB2').checked=0;
+			document.getElementById('abnormalCB2').checked=0;
 	}
 	else if(id=='abnormalCB2'){
 		if(ele.checked==1)
-			$('abnormalCB').checked=1;
+			document.getElementById('abnormalCB').checked=1;
 		else
-			$('abnormalCB').checked=0;
+			document.getElementById('abnormalCB').checked=0;
 	}
 }
 function showAb_Normal(ab_normal){
@@ -1055,7 +985,7 @@ function showAb_Normal(ab_normal){
 	}else if (ab_normal=='abnormal'){
 		childId='abnormals';
 	}
-	//oscarLog(childId);
+	//console.log(childId);
 	if(childId!=null && childId.length>0){
 		clearDocView();
 		createNewElement('docViews',childId);
@@ -1082,12 +1012,12 @@ function showSubType(patientId,subType){
 			for(var i=0;i<labdocsArr.length;i++){
 				var labdoc=labdocsArr[i];
 				labdoc=labdoc.replace(' ','');
-				//oscarLog('check type input='+labdoc);
+				//console.log('check type input='+labdoc);
 				var type=checkType(labdoc);
 				var ackStatus=getAckStatusFromDocLabId(labdoc);
 				var patientName=getPatientNameFromPatientId(patientId);
 				if(current_first_doclab==0) current_first_doclab=labdoc;
-				//oscarLog("type="+type+"--subType="+subType);
+				//console.log("type="+type+"--subType="+subType);
 				if(type==subType)
 					showDocLab(childId,labdoc,providerNo,searchProviderNo,ackStatus,patientName,'subtype'+subType+patientId+'show');
 				else;
@@ -1097,6 +1027,7 @@ function showSubType(patientId,subType){
 		}
 	}
 }
+
 function getPatientNameFromPatientId(patientId){
 	var pn=patientIdNames[patientId];
 	if(pn&&pn!=null){
@@ -1104,16 +1035,25 @@ function getPatientNameFromPatientId(patientId){
 	}else{
 		var url=contextpath+"/dms/ManageDocument.do";
 		var data='method=getDemoNameAjax&demo_no='+patientId;
-		new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-			var json=transport.responseText.evalJSON();
-			if(json!=null ){
-				var pn=json.demoName;//get name from id
-				addPatientIdName(patientId,pn);
-				addPatientId(patientId);
-				return pn;
-			}
-		}});
-	}
+
+	    jQuery.ajax({
+		    type: "POST",
+		    url:  url,
+		    data: data,
+		    success: function (transport) {
+			    var json=transport.responseText.evalJSON();
+			    if(json!=null ){
+				    var pn=json.demoName;//get name from id
+				    addPatientIdName(patientId,pn);
+				    addPatientId(patientId);
+				    return pn;
+			    }
+        	},
+		    error: function(jqXHR, err, exception) {
+			    console.log(jqXHR.status);
+		    }
+	    });
+    }
 }
 
 function getAckStatusFromDocLabId(docLabId){
@@ -1124,7 +1064,7 @@ function showAllDocLabs(){
 	clearDocView();
 	for(var i=0;i<patientIds.length;i++){
 		var id=patientIds[i];
-		//oscarLog("ids in showalldoclabs="+id);
+		//console.log("ids in showalldoclabs="+id);
 		if(id.length>0){
 			showThisPatientDocs(id,true);
 
@@ -1136,7 +1076,7 @@ function showCategory(cat){
 	if(cat.length>0){
 		var sA=getDocLabFromCat(cat);
 		if(sA && sA.length>0){
-			//oscarLog("sA="+sA);
+			//console.log("sA="+sA);
 			var childId="category"+cat;
 			//if(toggleElement(childId));
 			// else{
@@ -1145,13 +1085,13 @@ function showCategory(cat){
 			for(var i=0;i<sA.length;i++){
 				var docLabId=sA[i];
 				docLabId=docLabId.replace(/\s/g, "");
-				//oscarLog("docLabId="+docLabId);
+				//console.log("docLabId="+docLabId);
 				var patientId=getPatientIdFromDocLabId(docLabId);
-				//oscarLog("patientId="+patientId);
+				//console.log("patientId="+patientId);
 				var patientName=getPatientNameFromPatientId(patientId);
 				var ackStatus=getAckStatusFromDocLabId(docLabId);
-				//oscarLog("patientName="+patientName);
-				//oscarLog("ackStatus="+ackStatus);
+				//console.log("patientName="+patientName);
+				//console.log("ackStatus="+ackStatus);
 
 				if(patientName!=null) {
 					if(current_first_doclab==0) current_first_doclab=docLabId;
@@ -1164,9 +1104,7 @@ function showCategory(cat){
 }
 
 function getPatientIdFromDocLabId(docLabId){
-	//console.log('in getpatientidfromdoclabid='+docLabId);
-	//console.log(patientIds);
-	//console.log(patientDocs);
+
 	var notUsedPid=new Array();
 	for(var i=0;i<patientIds.length;i++){
 
@@ -1196,11 +1134,11 @@ function getLabDocFromPatientId(patientId){//return array of doc ids and lab ids
 }
 
 function showThisPatientDocs(patientId,keepPrevious){
-	//oscarLog("patientId in show this patientdocs="+patientId);
+	//console.log("patientId in show this patientdocs="+patientId);
 	var labDocsArr=getLabDocFromPatientId(patientId);
 	var patientName=getPatientNameFromPatientId(patientId);
 	if(patientName!=null && patientName.length>0 && labDocsArr!=null && labDocsArr.length>0){
-		//oscarLog(patientName);
+		//console.log(patientName);
 		var childId='patient'+patientId;
 		//if(toggleElement(childId));
 		//else{
@@ -1211,7 +1149,7 @@ function showThisPatientDocs(patientId,keepPrevious){
 			var docId=labDocsArr[i].replace(' ', '');
 			if(current_first_doclab==0) current_first_doclab=docId;
 			var ackStatus=getAckStatusFromDocLabId(docId);
-			//oscarLog('childId='+childId+',docId='+docId+',ackStatus='+ackStatus);
+			//console.log('childId='+childId+',docId='+docId+',ackStatus='+ackStatus);
 			showDocLab(childId,docId,providerNo,searchProviderNo,ackStatus,patientName,'labdoc'+patientId+'show');
 		}
 	}
@@ -1232,7 +1170,7 @@ function checkType(docNo){
 }
 function checkSelected(doc) {
 
-	//oscarLog('in checkSelected()');
+	//console.log('in checkSelected()');
 	aBoxIsChecked = false;
 	var labs = doc.getElementsByName("flaggedLabs");
 	if (labs.length == undefined) {
@@ -1242,7 +1180,7 @@ function checkSelected(doc) {
 	} else {
 		for (i=0; i < labs.length; i++) {
 			if (labs[i].checked == true) {
-				//oscarLog(document.reassignForm.flaggedLabs[i].value);
+				//console.log(document.reassignForm.flaggedLabs[i].value);
 				aBoxIsChecked = true;
 			}
 		}
@@ -1310,72 +1248,72 @@ function checkAb_normal(doclabid){
 		return 'abnormal';
 }
 function updateSideNav(doclabid){
-	//oscarLog('in updatesidenav');
-	var n=$('totalNumDocs').innerHTML;
+	//console.log('in updatesidenav');
+	var n=document.getElementById('totalNumDocs').innerHTML;
 	n=parseInt(n);
 	if(n>0){
 		n=n-1;
-		$('totalNumDocs').innerHTML=n;
+		document.getElementById('totalNumDocs').innerHTML=n;
 	}
 	var type=checkType(doclabid);
-	//oscarLog('type='+type);
+	//console.log('type='+type);
 	if(type=='DOC'){
-		n=$('totalDocsNum').innerHTML;
-		//oscarLog('n='+n);
+		n=document.getElementById('totalDocsNum').innerHTML;
+		//console.log('n='+n);
 		n=parseInt(n);
 		if(n>0){
 			n=n-1;
-			$('totalDocsNum').innerHTML=n;
+			document.getElementById('totalDocsNum').innerHTML=n;
 		}
 	}else if (type=='HL7'){
-		n=$('totalHL7Num').innerHTML;
+		n=document.getElementById('totalHL7Num').innerHTML;
 		n=parseInt(n);
 		if(n>0){
 			n=n-1;
-			$('totalHL7Num').innerHTML=n;
+			document.getElementById('totalHL7Num').innerHTML=n;
 		}
 	}
 	var ab_normal=checkAb_normal(doclabid);
-	//oscarLog('normal or abnormal?'+ab_normal);
+	//console.log('normal or abnormal?'+ab_normal);
 	if(ab_normal=='normal'){
-		n=$('normalNum').innerHTML;
-		//oscarLog('normal inner='+n);
+		n=document.getElementById('normalNum').innerHTML;
+		//console.log('normal inner='+n);
 		n=parseInt(n);
 		if(n>0){
 			n=n-1;
-			$('normalNum').innerHTML=n;
+			document.getElementById('normalNum').innerHTML=n;
 		}
 	}else if(ab_normal=='abnormal'){
-		n=$('abnormalNum').innerHTML;
+		n=document.getElementById('abnormalNum').innerHTML;
 		n=parseInt(n);
 		if(n>0){
 			n=n-1;
-			$('abnormalNum').innerHTML=n;
+			document.getElementById('abnormalNum').innerHTML=n;
 		}
 	}
 
 	//update patient and patient's subtype
 	var patientId=getPatientIdFromDocLabId(doclabid);
-	//oscarLog('xx '+patientId+'--'+n);
-	n=$('patientNumDocs'+patientId).innerHTML;
-	//oscarLog('xx xx '+patientId+'--'+n);
+	//console.log('xx '+patientId+'--'+n);
+	n=document.getElementById('patientNumDocs'+patientId).innerHTML;
+	//console.log('xx xx '+patientId+'--'+n);
 	n=parseInt(n);
 	if(n>0){
-		$('patientNumDocs'+patientId).innerHTML=n-1;
+		document.getElementById('patientNumDocs'+patientId).innerHTML=n-1;
 	}
 
 	if(type=='DOC'){
-		n=$('pDocNum_'+patientId).innerHTML;
+		n=document.getElementById('pDocNum_'+patientId).innerHTML;
 		n=parseInt(n);
 		if(n>0){
-			$('pDocNum_'+patientId).innerHTML=n-1;
+			document.getElementById('pDocNum_'+patientId).innerHTML=n-1;
 		}
 	}
 	else if(type=='HL7'){
-		n=$('pLabNum_'+patientId).innerHTML;
+		n=document.getElementById('pLabNum_'+patientId).innerHTML;
 		n=parseInt(n);
 		if(n>0){
-			$('pLabNum_'+patientId).innerHTML=n-1;
+			document.getElementById('pLabNum_'+patientId).innerHTML=n-1;
 		}
 	}
 }
@@ -1396,7 +1334,7 @@ function hideRowUsingId(doclabid){
 		var rowid;
 		doclabid=doclabid.replace(' ','');
 		rowid=getRowIdFromDocLabId(doclabid);
-		$(rowid).remove();
+		document.getElementById(rowid).remove();
 	}
 }
 function resetCurrentFirstDocLab(){
@@ -1407,8 +1345,8 @@ function focusFirstDocLab(){
 	if(current_first_doclab>0){
 		var doc_lab=checkType(current_first_doclab);
 		if(doc_lab=='DOC'){
-			//oscarLog('docDesc_'+current_first_doclab);
-			$('docDesc_'+current_first_doclab).focus();
+			//console.log('docDesc_'+current_first_doclab);
+			document.getElementById('docDesc_'+current_first_doclab).focus();
 		}
 		else if(doc_lab=='HL7'){
 			//do nothing
@@ -1432,35 +1370,37 @@ function updateGlobalDataAndSideNav(doclabid,patientId){
 	}
 }
 function  updatePatientDocLabNav(num,patientId){
-	//oscarLog(num+';;'+patientId);
+	//console.log(num+';;'+patientId);
 	if(num && patientId){
 		var changed=false;
 		var type=checkType(num);
-		//oscarLog($('patient'+patientId+'all'));
-		if($('patient'+patientId+'all')){
-			//oscarLog('if');
+		//console.log(document.getElementById('patient'+patientId+'all'));
+		if(document.getElementById('patient'+patientId+'all')){
+			//console.log('if');
 			//case 1,patientName exists
 			//check the type of doclab,
 			//check if the type is present, if yes, increase by 1; if not, create and set to 1.
 
 			if(type=='DOC'){
-				if($('patient'+patientId+'docs')){
+				if(document.getElementById('patient'+patientId+'docs')){
 					increaseCount('pDocNum_'+patientId);
 					changed=true;
 				}else{
 					var newEle=createNewDocEle(patientId);
-					//oscarLog($('labdoc'+patientId+'showSublist'));
-					new Insertion.Bottom('labdoc'+patientId+'showSublist',newEle);
+					//console.log(document.getElementById('labdoc'+patientId+'showSublist'));
+                    jQuery('#labdoc'+patientId+'showSublist:last-child').append(newEle);
+					//new Insertion.Bottom('labdoc'+patientId+'showSublist',newEle);
 					changed=true;
 				}
 			}
 			else if(type=='HL7'){
-				if($('patient'+patientId+'hl7s')){
+				if(document.getElementById('patient'+patientId+'hl7s')){
 					increaseCount('pLabNum_'+patientId);
 					changed=true;
 				}else{
 					var newEle=createNewHL7Ele(patientId);
-					new Insertion.Bottom('labdoc'+patientId+'showSublist',newEle);
+                    jQuery('#labdoc'+patientId+'showSublist:last-child').append(newEle);
+					//new Insertion.Bottom('labdoc'+patientId+'showSublist',newEle);
 					changed=true;
 				}
 			}
@@ -1468,7 +1408,7 @@ function  updatePatientDocLabNav(num,patientId){
 				increaseCount('patientNumDocs'+patientId);
 			}
 		}else{
-			//oscarLog('else');
+			//console.log('else');
 			//case 2, patientname doesn't exists in nav bar at all
 			//create patientname, check if labdoc is a lab or a doc.
 			//create lab/doc nav
@@ -1489,59 +1429,62 @@ function  updatePatientDocLabNav(num,patientId){
 function createPatientDocLabEle(patientId,doclabid){
 	var url=contextpath+"/dms/ManageDocument.do";
 	var data='method=getDemoNameAjax&demo_no='+patientId;
-	new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-		var json=transport.responseText.evalJSON();
-		//oscarLog(json);
-		if(json!=null ){
-			var patientName=json.demoName;//get name from id
-			addPatientId(patientId);
-			addPatientIdName(patientId,patientName);
-			var e='<dt><img id="plus'+patientId+'" alt="plus" src="../images/plus.png" onclick="showhideSubCat(\'plus\',\''+patientId+'\');"/><img id="minus'+patientId+'" alt="minus" style="display:none;" src="../images/minus.png" onclick="showhideSubCat(\'minus\',\''+patientId+'\');"/>'+
-			'<a id="patient'+patientId+'all" href="javascript:void(0);"  onclick="resetCurrentFirstDocLab();showThisPatientDocs(\''+patientId+'\');un_bold(this);" title="'+patientName+'">'+patientName+' (<span id="patientNumDocs'+patientId+'">1</span>)</a>'+
-			'<dl id="labdoc'+patientId+'showSublist" style="display:none" >';
-			var type=checkType(doclabid);
-			var s;
-			//oscarLog('type='+type);
-			//oscarLog('eee='+e);
-			if(type=='DOC'){
-				s=createNewDocEle(patientId);
-			}else if(type=='HL7'){
-				s=createNewHL7Ele(patientId);
-			}else{return '';}
-			e+=s;
-			e+='</dl></dt>';
-			//oscarLog('jjjjje='+e);
-			//oscarLog('before return e');
-			new Insertion.Bottom('patientsdoclabs',e);
-			return e;
-		}
-	}});
+
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+		    var json=transport.responseText.evalJSON();
+		    if(json!=null ){
+			    var patientName=json.demoName;//get name from id
+			    addPatientId(patientId);
+			    addPatientIdName(patientId,patientName);
+			    var e='<dt><img id="plus'+patientId+'" alt="plus" src="../images/plus.png" onclick="showhideSubCat(\'plus\',\''+patientId+'\');"/><img id="minus'+patientId+'" alt="minus" style="display:none;" src="../images/minus.png" onclick="showhideSubCat(\'minus\',\''+patientId+'\');"/>'+
+			    '<a id="patient'+patientId+'all" href="javascript:void(0);"  onclick="resetCurrentFirstDocLab();showThisPatientDocs(\''+patientId+'\');un_bold(this);" title="'+patientName+'">'+patientName+' (<span id="patientNumDocs'+patientId+'">1</span>)</a>'+
+			    '<dl id="labdoc'+patientId+'showSublist" style="display:none" >';
+			    var type=checkType(doclabid);
+			    var s;
+			    if(type=='DOC'){
+				    s=createNewDocEle(patientId);
+			    }else if(type=='HL7'){
+				    s=createNewHL7Ele(patientId);
+			    }else{return '';}
+			    e+=s;
+			    e+='</dl></dt>';
+                // Insert the html into the page as the last child of element.
+                jQuery("#patientsdoclabs:last-child").append(e);
+			    //new Insertion.Bottom('patientsdoclabs',e);
+			    return e;
+		    }
+        }
+    });
 
 }
 
 function createNewDocEle(patientId){
 	var newEle='<dt><a id="patient'+patientId+'docs" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\''+patientId+'\',\'DOC\');un_bold(this);" title="Documents">Documents(<span id="pDocNum_'+patientId+'">1</span>)</a></dt>';
-	//oscarLog('newEle='+newEle);
+	//console.log('newEle='+newEle);
 	return newEle;
 }
 function createNewHL7Ele(patientId){
 	var newEle='<dt><a id="patient'+patientId+'hl7s" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\''+patientId+'\',\'HL7\');un_bold(this);" title="HL7s">HL7s(<span id="pLabNum_'+patientId+'">1</span>)</a></dt>';
-	//oscarLog('newEle='+newEle);
+	//console.log('newEle='+newEle);
 	return newEle;
 }
 function   increaseCount(eleId){
-	if($(eleId)){
-		var n=$(eleId).innerHTML;
+	if(document.getElementById(eleId)){
+		var n=document.getElementById(eleId).innerHTML;
 		if(n.length>0){
 			n=parseInt(n);
 			n++;
-			$(eleId).innerHTML=n;
+			document.getElementById(eleId).innerHTML=n;
 		}
 	}
 }
 function   decreaseCount(eleId){
-	if($(eleId)){
-		var n=$(eleId).innerHTML;
+	if(document.getElementById(eleId)){
+		var n=document.getElementById(eleId).innerHTML;
 		if(n.length>0){
 			n=parseInt(n);
 			if(n>0){
@@ -1549,61 +1492,56 @@ function   decreaseCount(eleId){
 			}else{
 				n=0;
 			}
-			$(eleId).innerHTML=n;
+			document.getElementById(eleId).innerHTML=n;
 		}
 	}
 }
 function  popupStart(vheight,vwidth,varpage,windowname) {
-	//oscarLog("in popupStart ");
+	//console.log("in popupStart ");
 	if(!windowname)
 		windowname="helpwindow";
 	var page = varpage;
 	var windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-	//oscarLog(varpage);
-	//oscarLog(windowname);
-	//oscarLog(windowprops);
 	popup=window.open(varpage, windowname, windowprops);
 }
 
 function updateDocumentAndNext(eleId){//save doc info
-	var url="../dms/ManageDocument.do",data=$(eleId).serialize(true);
-	new Ajax.Request(url,
-			{
-				method:'post',
-				parameters:data,
-				onSuccess:function(transport){
-					var json=transport.responseText.evalJSON();
-					var patientId;
-					//oscarLog(json);
-					if(json!=null ){
-						patientId=json.patientId;
+	var url="../dms/ManageDocument.do";
+    var data= jQuery('#'+eleId).serialize();
 
-						var ar=eleId.split("_");
-						var num=ar[1];
-						num=num.replace(/\s/g,'');
-						$("saveSucessMsg_"+num).show();
-						$('saved'+num).value='true';
-						$("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
-						//Hide document
-						Effect.BlindUp('labdoc_'+num);
-						updateDocStatusInQueue(num);
-						var success= updateGlobalDataAndSideNav(num,patientId);
-						if(success){
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+		    var json=transport.responseText.evalJSON();
+		    //console.log(json);
+		    if(json!=null ){
+			    patientId=json.patientId;
+                var ar=eleId.split("_");
+                var num=ar[1];
+                num=num.replace(/\s/g,'');
+                document.getElementById("saveSucessMsg_"+num).style.display = '';
+                document.getElementById('saved'+num).value='true';
+                document.getElementById("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
+                //Hide document like Effect.BlindUp
+                jQuery('#labdoc_'+num).hide('fade'); //jQueryUI
+                //document.getElementById('labdoc_'+num).style.display = 'none';
+                updateDocStatusInQueue(num);
+                var success= updateGlobalDataAndSideNav(num,patientId);
+                if(success){
+                    success=updatePatientDocLabNav(num,patientId);
+                    if(success){
+                        //disable demo input
+                        document.getElementById('autocompletedemo'+num).disabled=true;
+                        //console.log('updated by save');
+                        //console.log(patientDocs);
+                    }
+                }
+		    }
+        }
+    });
 
-							success=updatePatientDocLabNav(num,patientId);
-							if(success){
-								//disable demo input
-								$('autocompletedemo'+num).disabled=true;
-
-
-								//console.log('updated by save');
-								//console.log(patientDocs);
-							}
-						}
-					}
-				}
-			}
-	);
 	return false;
 }
 
@@ -1612,45 +1550,51 @@ function updateDocument(eleId){
 		return false;
 	}
 	//save doc info
-	var url="../dms/ManageDocument.do",data=$(eleId).serialize(true);
-	new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-		var json=transport.responseText.evalJSON();
-		var patientId;
-		//oscarLog(json);
-		if(json!=null ){
-			patientId=json.patientId;
+	var url="../dms/ManageDocument.do";
+    var data= jQuery('#'+eleId).serialize();
 
-			var ar=eleId.split("_");
-			var num=ar[1];
-			num=num.replace(/\s/g,'');
-			$("saveSucessMsg_"+num).show();
-			$('saved'+num).value='true';
-			$("msgBtn_"+num).onclick = function() { popup(700,960,contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
-            // enable buttons that need a pid
-	        jQuery('a').removeClass('disabled');
-            document.getElementById('save'+num).removeAttribute('disabled');
-	        document.getElementById('saveNext'+num).removeAttribute('disabled');
-	        document.getElementById('dropdown_'+num).removeAttribute('disabled');
-	        document.getElementById('dropdown2_'+num).removeAttribute('disabled');
-	        document.getElementById('msgBtn_'+num).removeAttribute('disabled');
-	        document.getElementById('ticklerBtn_'+num).removeAttribute('disabled');
-	        document.getElementById('recallBtn_'+num).removeAttribute('disabled');
-	        document.getElementById('rxBtn_'+num).removeAttribute('disabled');
-			updateDocStatusInQueue(num);
-			var success= updateGlobalDataAndSideNav(num,patientId);
 
-			if(success){
-				success=updatePatientDocLabNav(num,patientId);
-				if(success){
-					//disable demo input
-					$('autocompletedemo'+num).disabled=true;
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+		    var json=transport.responseText.evalJSON();
+		    //console.log(json);
+		    if(json!=null ){
+			    patientId=json.patientId;
+                var ar=eleId.split("_");
+                var num=ar[1];
+                num=num.replace(/\s/g,'');
+                document.getElementById("saveSucessMsg_"+num).style.display = '';
+                document.getElementById('saved'+num).value='true';
+                document.getElementById("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
+                // enable buttons that need a pid
+	            jQuery('a').removeClass('disabled');
+                document.getElementById('save'+num).removeAttribute('disabled');
+	            document.getElementById('saveNext'+num).removeAttribute('disabled');
+	            document.getElementById('dropdown_'+num).removeAttribute('disabled');
+	            document.getElementById('dropdown2_'+num).removeAttribute('disabled');
+	            document.getElementById('msgBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('ticklerBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('recallBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('rxBtn_'+num).removeAttribute('disabled');
+			    updateDocStatusInQueue(num);
+			    var success= updateGlobalDataAndSideNav(num,patientId);
+    			if(success){
+				    success=updatePatientDocLabNav(num,patientId);
+				    if(success){
+					    //disable demo input
+					    document.getElementById('autocompletedemo'+num).disabled=true;
+    					//console.log('updated by save');
+    					//console.log(patientDocs);
+    				}
+			    }
+		    }
+        }
+    });
 
-					//console.log('updated by save');
-					//console.log(patientDocs);
-				}
-			}
-		}
-	}});
+
 	return false;
 }
 
@@ -1702,38 +1646,46 @@ function updateStatus(formid){//acknowledge Document
 	var num=formid.split("_");
 	var doclabid=num[1];
 	if(doclabid){
-		var demoId=$('demofind'+doclabid).value;
-		var saved=$('saved'+doclabid).value;
+		var demoId=document.getElementById('demofind'+doclabid).value;
+		var saved=document.getElementById('saved'+doclabid).value;
 		if(demoId=='-1'|| saved=='false'){
 			alert('Document is not assigned and saved to a patient,please file it');
 		}else{
 			var url=contextpath+"/oscarMDS/UpdateStatus.do";
-			var data=$(formid).serialize(true);
+            var data= jQuery('#'+formid).serialize();
 
-			new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
+	        jQuery.ajax({
+		        type: "POST",
+		        url:  url,
+		        data: data,
+		        success: function (transport) {
+				    if(doclabid){
+                        // hide similar to Effect.Blindup()
+					    jQuery('#labdoc_'+doclabid).hide('fade'); //jQueryUI if not loaded a simple hide will occur
+					    updateDocStatusInQueue(doclabid);
 
-				if(doclabid){
-					Effect.BlindUp('labdoc_'+doclabid);
-					updateDocStatusInQueue(doclabid);
+				    }
 
-				}
-
-				if (_in_window) {
-					jQuery(':button').prop('disabled',true);
-					jQuery(':submit').prop('disabled',true);
-					jQuery('#loader').show();
-					close = window.opener.openNext(doclabid);
-					window.opener.refreshCategoryList();
-					window.opener.updateCountTotal(0);
-					window.opener.hideLab('labdoc_'+doclabid);
-					//self.opener.removeReport(doclabid);
-					//if (close == "close" ) { popup.close(); }
-				}
-				else {
-					refreshCategoryList();
-					fakeScroll();
-				}
-			}});
+				    if (_in_window) {
+					    jQuery(':button').prop('disabled',true);
+					    jQuery(':submit').prop('disabled',true);
+					    jQuery('#loader').show();
+					    close = window.opener.openNext(doclabid);
+					    window.opener.refreshCategoryList();
+					    window.opener.updateCountTotal(0);
+					    window.opener.hideLab('labdoc_'+doclabid);
+					    //self.opener.removeReport(doclabid);
+					    //if (close == "close" ) { popup.close(); }
+				    }
+				    else {
+					    refreshCategoryList();
+					    fakeScroll();
+				    }
+            	},
+		        error: function(jqXHR, err, exception) {
+			        console.log(jqXHR.status);
+		        }
+	        });
 		}
 	}
 }
@@ -1744,7 +1696,7 @@ function fileDoc(docId){
 	if(docId){
 		docId=docId.replace(/\s/,'');
 		if(docId.length>0){
-			var demoId=$('demofind'+docId).value;
+			var demoId=document.getElementById('demofind'+docId).value;
 			var isFile=true;
 			if(demoId=='-1'){
 				isFile=confirm('Document is not assigned to any patient, do you still want to file it?');
@@ -1754,24 +1706,30 @@ function fileDoc(docId){
 				if(type){
 					var url='../oscarMDS/FileLabs.do';
 					var data='method=fileLabAjax&flaggedLabId='+docId+'&labType='+type;
-					new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-						updateDocStatusInQueue(docId);
-						if (docId) {
-							Effect.Fade('labdoc_'+docId);
-						}
-						if (_in_window) {
 
-							close = window.opener.openNext(docId);
-							if (close == "close" ) { window.close(); }
-							window.opener.updateCountTotal(0);
-							window.opener.hideLab('labdoc_'+docId);
-							//self.opener.removeReport(docId);
-						}
-						else {
-							refreshCategoryList();
-							fakeScroll();
-						}
-					}});
+	                jQuery.ajax({
+		                type: "POST",
+		                url:  url,
+		                data: data,
+		                success: function (transport) {
+						    updateDocStatusInQueue(docId);
+						    jQuery('#labdoc_'+docId).hide('fade'); // jQueryUI dependency
+						    if (_in_window) {
+							    close = window.opener.openNext(docId);
+							    if (close == "close" ) { window.close(); }
+							    window.opener.updateCountTotal(0);
+							    //window.opener.hideLab('labdoc_'+docId); //this will add acknowledged class
+							    self.opener.removeReport(docId);  //removeReport unless you want a Filed report to mix with acknowledged
+						    }
+						    else {
+							    refreshCategoryList();
+							    fakeScroll();
+						    }
+                    	},
+		                error: function(jqXHR, err, exception) {
+			                console.log(jqXHR.status);
+		                }
+	                });
 				}
 			}
 		}
@@ -1782,9 +1740,15 @@ function refileDoc(id) {
     var queueId=document.getElementById('queueList_'+id).options[document.getElementById('queueList_'+id).selectedIndex].value;
     var url=contextpath +"/dms/ManageDocument.do";
     var data='method=refileDocumentAjax&documentId='+id+"&queueId="+queueId;
-    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-        fileDoc(id);
-    }});
+
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+            fileDoc(id);
+        }
+    });
  }
 
 function addDocToList(provNo, provName, docId) {
@@ -1792,10 +1756,10 @@ function addDocToList(provNo, provName, docId) {
 	bdoc.setAttribute("onclick", "removeProv(this);");
 	bdoc.setAttribute("style", "cursor: pointer;");
 	bdoc.appendChild(document.createTextNode(" -remove- "));
-	//oscarLog("--");
+	//console.log("--");
 	var adoc = document.createElement('div');
 	adoc.appendChild(document.createTextNode(provName));
-	//oscarLog("--==");
+	//console.log("--==");
 	var idoc = document.createElement('input');
 	idoc.setAttribute("type", "hidden");
 	idoc.setAttribute("name", "flagproviders");
@@ -1804,16 +1768,22 @@ function addDocToList(provNo, provName, docId) {
 	adoc.appendChild(idoc);
 
 	adoc.appendChild(bdoc);
-	var providerList = $('providerList' + docId);
+	var providerList = document.getElementById('providerList' + docId);
 	providerList.appendChild(adoc);
 }
 
 function removeLink(docType, docId, providerNo, e) {
 	var url = "../dms/ManageDocument.do";
 	var data = 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo;
-	new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-		updateDocLabData(docId);
-	}});
+
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+            updateDocLabData(docId);
+        }
+    });
 
 	e.parentNode.remove(e);
 }
@@ -1843,37 +1813,37 @@ function reloadChangeView() {
     switch (selected_category) {
 	case CATEGORY_ALL:
 		showAllDocLabs();
-		un_bold($('totalAll'))
+		un_bold(document.getElementById('totalAll'))
 		break;
 	case CATEGORY_DOCUMENTS:
 		showCategory('DOC');
-		un_bold($('totalDocs'));
+		un_bold(document.getElementById('totalDocs'));
 		break;
 	case CATEGORY_HL7:
 		showCategory('HL7');
-		un_bold($('totalHL7s'));
+		un_bold(document.getElementById('totalHL7s'));
 		break;
 	case CATEGORY_NORMAL:
 		showAb_Normal('normal');
-		un_bold($('totalNormals'));
+		un_bold(document.getElementById('totalNormals'));
 		break;
 	case CATEGORY_ABNORMAL:
 		showAb_Normal('abnormal');
-		un_bold($('totalAbnormals'));
+		un_bold(document.getElementById('totalAbnormals'));
 		break;
 	case CATEGORY_PATIENT:
 		showThisPatientDocs(selected_category_patient);
-		un_bold($('patient'+selected_category_patient+'all'));
+		un_bold(document.getElementById('patient'+selected_category_patient+'all'));
 		break;
     case CATEGORY_PATIENT_SUB:
     	showSubType(selected_category_patient,selected_category_type);
     	showhideSubCat('plus',selected_category_patient);
     	switch (selected_category_type) {
 	    	case CATEGORY_TYPE_DOC:
-				un_bold($('patient'+selected_category_patient+'docs'));
+				un_bold(document.getElementById('patient'+selected_category_patient+'docs'));
 				break;
 	    	case CATEGORY_TYPE_HL7:
-				un_bold($('patient'+selected_category_patient+'hl7s'));
+				un_bold(document.getElementById('patient'+selected_category_patient+'hl7s'));
 				break;
     	}
     	break;
@@ -1881,7 +1851,7 @@ function reloadChangeView() {
 }
 
 function inSummaryView() {
-	return $('summaryView').getStyle('display')!='none';
+	return document.getElementById('summaryView').getStyle('display')!='none';
 }
 
 function refreshView() {
@@ -1952,14 +1922,14 @@ function showPDF(docid,cp) {
 }
 
 function showPageImg(docid,pn,cp){
-    var displayDocumentAs=$('displayDocumentAs_'+docid).value;
+    var displayDocumentAs=document.getElementById('displayDocumentAs_'+docid).value;
     if(displayDocumentAs=="PDF") {
         showPDF(docid,cp);
     }
     else
     {
         if(docid&&pn&&cp){
-            var e=$('docImg_'+docid);
+            var e=document.getElementById('docImg_'+docid);
             var url=cp+'/dms/ManageDocument.do?method=viewDocPage&doc_no='+docid+'&curPage='+pn;
             e.setAttribute('src',url);
         }
@@ -1967,16 +1937,16 @@ function showPageImg(docid,pn,cp){
 }
 
 function nextPage(docid,cp){
-	var curPage=$('curPage_'+docid).value;
-	var totalPage=$('totalPage_'+docid).value;
+	var curPage=document.getElementById('curPage_'+docid).value;
+	var totalPage=document.getElementById('totalPage_'+docid).value;
 	curPage++;
 	if(curPage>totalPage){
 		curPage=totalPage;
 		hideNext(docid);
 		showPrev(docid);
 	}
-	$('curPage_'+docid).value=curPage;
-	$('viewedPage_'+docid).innerHTML = curPage;
+	document.getElementById('curPage_'+docid).value=curPage;
+	document.getElementById('viewedPage_'+docid).innerHTML = curPage;
 
         showPageImg(docid,curPage,cp);
         if(curPage+1>totalPage){
@@ -1988,15 +1958,15 @@ function nextPage(docid,cp){
         }
 }
 function prevPage(docid,cp){
-     var curPage=$('curPage_'+docid).value;
+     var curPage=document.getElementById('curPage_'+docid).value;
     curPage--;
     if(curPage<1){
         curPage=1;
         hidePrev(docid);
         showNext(docid);
     }
-    $('curPage_'+docid).value=curPage;
-    $('viewedPage_'+docid).innerHTML = curPage;
+    document.getElementById('curPage_'+docid).value=curPage;
+    document.getElementById('viewedPage_'+docid).innerHTML = curPage;
 
         showPageImg(docid,curPage,cp);
        if(curPage==1){
@@ -2009,51 +1979,71 @@ function prevPage(docid,cp){
 
 }
 function firstPage(docid,cp){
-   $('curPage_'+docid).value=1;
-   $('viewedPage_'+docid).innerHTML = 1;
+   document.getElementById('curPage_'+docid).value=1;
+   document.getElementById('viewedPage_'+docid).innerHTML = 1;
     showPageImg(docid,1,cp);
     hidePrev(docid);
     showNext(docid);
 }
 function lastPage(docid,cp){
-    var totalPage=$('totalPage_'+docid).value;
+    var totalPage=document.getElementById('totalPage_'+docid).value;
 
-    $('curPage_'+docid).value=totalPage;
-    $('viewedPage_'+docid).innerHTML = totalPage;
+    document.getElementById('curPage_'+docid).value=totalPage;
+    document.getElementById('viewedPage_'+docid).innerHTML = totalPage;
     showPageImg(docid,totalPage,cp);
     hideNext(docid);
     showPrev(docid);
 }
 function hidePrev(docid){
     //disable previous link
-    $("prevP_"+docid).setStyle({display:'none'});
-    $("firstP_"+docid).setStyle({display:'none'});
-    $("prevP2_"+docid).setStyle({display:'none'});
-    $("firstP2_"+docid).setStyle({display:'none'});
+    document.getElementById("prevP_"+docid).style.display = 'none';
+    document.getElementById("firstP_"+docid).style.display = 'none';
+    document.getElementById("prevP2_"+docid).style.display = 'none';
+    document.getElementById("firstP2_"+docid).style.display = 'none';
+
+    //$("prevP_"+docid).setStyle({display:'none'});
+    //$("firstP_"+docid).setStyle({display:'none'});
+    //$("prevP2_"+docid).setStyle({display:'none'});
+    //$("firstP2_"+docid).setStyle({display:'none'});
 }
 function hideNext(docid){
     //disable next link
-    $("nextP_"+docid).setStyle({display:'none'});
-    $("lastP_"+docid).setStyle({display:'none'});
-    $("nextP2_"+docid).setStyle({display:'none'});
-    $("lastP2_"+docid).setStyle({display:'none'});
+    document.getElementById("nextP_"+docid).style.display = 'none';
+    document.getElementById("lastP_"+docid).style.display = 'none';
+    document.getElementById("nextP2_"+docid).style.display = 'none';
+    document.getElementById("lastP2_"+docid).style.display = 'none';
+
+    //$("nextP_"+docid).setStyle({display:'none'});
+    //$("lastP_"+docid).setStyle({display:'none'});
+    //$("nextP2_"+docid).setStyle({display:'none'});
+    //$("lastP2_"+docid).setStyle({display:'none'});
 
 }
 function showPrev(docid){
     //disable previous link
-    $("prevP_"+docid).setStyle({display:'inline'});
-    $("firstP_"+docid).setStyle({display:'inline'});
-    $("prevP2_"+docid).setStyle({display:'inline'});
-    $("firstP2_"+docid).setStyle({display:'inline'});
+    document.getElementById("prevP_"+docid).style.display = '';
+    document.getElementById("firstP_"+docid).style.display = '';
+    document.getElementById("prevP2_"+docid).style.display = '';
+    document.getElementById("firstP2_"+docid).style.display = '';
+
+    //$("prevP_"+docid).setStyle({display:'inline'});
+    //$("firstP_"+docid).setStyle({display:'inline'});
+    //$("prevP2_"+docid).setStyle({display:'inline'});
+    //$("firstP2_"+docid).setStyle({display:'inline'});
 
 }
 function showNext(docid){
 
     //disable next link
-    $("nextP_"+docid).setStyle({display:'inline'});
-    $("lastP_"+docid).setStyle({display:'inline'});
-    $("nextP2_"+docid).setStyle({display:'inline'});
-    $("lastP2_"+docid).setStyle({display:'inline'});
+    document.getElementById("nextP_"+docid).style.display = '';
+    document.getElementById("lastP_"+docid).style.display = '';
+    document.getElementById("nextP2_"+docid).style.display = '';
+    document.getElementById("lastP2_"+docid).style.display = '';
+
+    //$("nextP_"+docid).setStyle({display:'inline'});
+    //$("lastP_"+docid).setStyle({display:'inline'});
+    //$("nextP2_"+docid).setStyle({display:'inline'});
+    //$("lastP2_"+docid).setStyle({display:'inline'});
 
 }
 
@@ -2095,10 +2085,10 @@ function addDocComment(docId, providerNo, sync) {
 			    if(json!=null ){
         		    var date = json.date;
         			jQuery("#" + "timestamp_"+docId+"_"+providerNo).html(date);
-        				}
-					jQuery("#" + "status_"+docId).val("A");
-					jQuery("#" + "comment_"+docId+"_"+providerNo).html(jQuery("#" + "comment_"+docId).val());
-					jQuery("#" + "comment_"+docId).html("");
+        		}
+				jQuery("#" + "status_"+docId).val("A");
+				jQuery("#" + "comment_"+docId+"_"+providerNo).html(jQuery("#" + "comment_"+docId).val());
+				jQuery("#" + "comment_"+docId).html("");
               }
         });
 
