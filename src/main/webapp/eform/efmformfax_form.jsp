@@ -8,10 +8,10 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%--  
+<%--
 
 This Page creates the fax form for eforms.
- 
+
 --%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="java.sql.*, java.util.ArrayList, oscar.eform.data.*, oscar.SxmlMisc, org.oscarehr.common.model.Demographic, oscar.oscarDemographic.data.DemographicData,oscar.OscarProperties,org.springframework.web.context.support.WebApplicationContextUtils, org.springframework.web.context.WebApplicationContext"%>
@@ -25,8 +25,8 @@ This Page creates the fax form for eforms.
 
 	OscarProperties props = OscarProperties.getInstance();
 	if (props.isEFormFaxEnabled()) {
-		
-		displayServiceUtil.estSpecialist();		
+
+		displayServiceUtil.estSpecialist();
 		String demo = request.getParameter("demographicNo");
 		DemographicData demoData = null;
 		Demographic demographic = null;
@@ -38,14 +38,15 @@ This Page creates the fax form for eforms.
 			rdohip = SxmlMisc.getXmlContent(StringUtils.trimToEmpty(demographic.getFamilyDoctor()),"rdohip");
 			rdohip = SxmlMisc.getXmlContent(demographic.getFamilyDoctor(),"rdohip").trim();
 		}
-	  
-%> 
-<table width="100%">
+
+%>
+
+<table style="width:100%; font-family:arial; font-size:12px;">
 <tr>
 
-	<td class="tite4" width="10%">  Providers: </td>
-	<td class="tite3" width="20%">
-		<select id="otherFaxSelect">
+	<td class="tite4" style="width:110px;"> <bean:message key='global.fax.providers'/>: </td>
+	<td class="tite3" >
+		<select id="otherFaxSelect" style="width:180px;">
 		<%
 		String rdName = "";
 		String rdFaxNo = "";
@@ -62,27 +63,27 @@ This Page creates the fax form for eforms.
                             	 rdName = String.format("%s, %s", lName, fName);
                             	 rdFaxNo = fax;
                              }
-			if (!"".equals(fax)) {
+			if (!"".equals(fax) && fax != null) {
 			%>
-			<option value="<%= fax %>"> <%= String.format("%s, %s", lName, fName) %> </option>
-			<%						
+			<option value="<%= fax %>"> <%= String.format("%s, %s", lName, fName) %> <%= fax %> </option>
+			<%
 			}
-		} %>		                        
+		} %>
 		</select>
 	</td>
-	<td class="tite3">				
-		<button onclick="AddOtherFaxProvider(); return false;">Add Provider</button>
+	<td class="tite3">
+		<button class="btn" onclick="AddOtherFaxProvider(); return false;"><bean:message key='global.fax.btnaddprovider'/></button>
 	</td>
 </tr>
 <tr>
-	<td class="tite4" width="10%"> Other Fax Number: </td>											
-	<td class="tite3" width="20%">
-		<input type="text" id="otherFaxInput"></input>	
-		<font size="1">(xxx-xxx-xxxx)  </font>					
+	<td class="tite4"><bean:message key='global.fax.otherfaxno'/>: </td>
+	<td class="tite3">
+		<input type="text" id="otherFaxInput" style="width:100px;"></input>
+		<font size="1">(xxx-xxx-xxxx)  </font>
 	</td>
 	<td class="tite3">
-		<button onclick="AddOtherFax(); return false;">Add Other Fax Recipient</button>
-	</td>		
+		<button class="btn" onclick="AddOtherFax(); return false;"><bean:message key='global.fax.btnaddanotherrecipient'/></button>
+	</td>
 </tr>
 <tr>
 	<td colspan=3>
@@ -93,18 +94,18 @@ This Page creates the fax form for eforms.
         String provider = (String) request.getSession().getAttribute("user");
         UserProperty prop = userPropertyDAO.getProp(provider, UserProperty.EFORM_REFER_FAX);
         boolean eformFaxRefer = prop != null && !"no".equals(prop.getValue());
-		
+
 		if (eformFaxRefer && !"".equals(rdName) && !"".equals(rdFaxNo)) {
 			%>
 			<li>
-			<%=rdName %> <b>Fax No: </b><%= rdFaxNo %> <a href="javascript:void(0);" onclick="removeRecipient(this)">remove</a>
+			<%=rdName %> <b><bean:message key='global.fax.faxno'/>: </b><%= rdFaxNo %> <a href="javascript:void(0);" onclick="removeRecipient(this)"><bean:message key='REMOVE'/></a>
 				<input type="hidden" name="faxRecipients" value="<%= rdFaxNo %>" />
 			</li>
 			<%
 		}
 		%>
 		</ul>
-	</td>	
+	</td>
 </tr>
 </table>
 <% } // end if (props.isRichEFormFaxEnabled()) { %>
