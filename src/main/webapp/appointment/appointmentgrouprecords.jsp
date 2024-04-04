@@ -62,19 +62,110 @@
 	String curProvider_no = request.getParameter("provider_no");
 	ProviderPreference providerPreference=(ProviderPreference)session.getAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE);
 	String mygroupno = providerPreference.getMyGroupNo();
-    String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF", tableTitle = "#99ccff";
+    String tableTitle = "#99ccff";
 	boolean bEdit = request.getParameter("appointment_no") != null ? true : false;
 %>
-<%@ page
-	import="java.util.*, java.sql.*,java.net.*, oscar.*, oscar.util.*, org.oscarehr.common.OtherIdManager"
-	errorPage="errorpage.jsp"%>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.*"%>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.sql.*"%>
+<%@ page import="java.net.*"%>
+<%@ page import="oscar.*"%>
+<%@ page import="oscar.util.*"%>
 <%@ page import="oscar.log.LogConst" %>
 <%@ page import="oscar.log.LogAction" %>
-<%@ page import="java.util.Date" %>
+<%@ page import="org.oscarehr.common.OtherIdManager"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="java.text.SimpleDateFormat" %>
+<%@page errorPage="/errorpage.jsp"%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+
+
+<!DOCTYPE html>
+<html:html locale="true">
+<head>
+<title><bean:message
+	key="appointment.appointmentgrouprecords.title" /></title>
+
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
+
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+
+<!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" >
+
+<script>
+<!--
+
+function onCheck(a) {
+	var providerRowExistingAppt = $('#providerRowExistingAppt' + a.name.substring(3));
+	providerRowExistingAppt.children('#'+providerRowExistingAppt.attr('id')+'DoubleBooked').remove();
+	if (providerRowExistingAppt.text().trim() !== '' && a.checked == true) {
+		providerRowExistingAppt.css('background-color', 'gold');
+		providerRowExistingAppt.prepend('<span id="'+providerRowExistingAppt.attr('id')+'DoubleBooked" style="color: red;">Double Booked <br/></span>');
+	} else {
+		providerRowExistingAppt.css('background-color', '');
+		providerRowExistingAppt.children('#'+providerRowExistingAppt.attr('id')+'DoubleBooked').remove();
+	}
+    if (a.checked) {
+		var s ;
+        if(a.name.indexOf("one") != -1) {
+			s = "two"+a.name.substring(3) ;
+		} else {
+			s = "one"+a.name.substring(3) ;
+		}
+		unCheck(s);
+    }
+}
+function unCheck(s) {
+	document.getElementsByName(s)[0].checked = false;
+}
+function isCheck(s) {
+	return document.getElementsByName(s)[0].checked;
+}
+function checkAll(col, value, opo) {
+	var checkboxes = $('input[name^="'+col+'"]'); //name="one2"
+	for (var i=0; i < checkboxes.length; i++) {
+		if (value == 'true') {
+			var tar = checkboxes[i].name;
+			var oposite = opo + tar.substring(3);
+			if (isCheck(oposite)) continue;
+			checkboxes[i].checked = true;
+			onCheck(checkboxes[i]);
+		} else {
+			checkboxes[i].checked = false;
+			onCheck(checkboxes[i]);
+		}
+	}
+    return false;
+}
+function onExit() {
+    if (confirm("<bean:message key="appointment.appointmentgrouprecords.msgExitConfirmation"/>")) {
+        window.close()
+	}
+}
+
+var saveTemp=0;
+function onButDelete() {
+  saveTemp=1;
+}
+function onSub(e) {
+
+    if( saveTemp==1 ) {
+        e.preventDefault
+        return (confirm("<bean:message key="appointment.appointmentgrouprecords.msgDeleteConfirmation"/>")) ;
+    } else {
+        return true;
+    }
+}
+//-->
+</script>
+</head>
+
+<body onLoad="setfocus()">
+
 
 <%
   if (request.getParameter("groupappt") != null) {
@@ -109,11 +200,11 @@
 		String[] param2 = new String[7];
         for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
 	        strbuf = new StringBuffer(e.nextElement().toString());
-            if (strbuf.toString().indexOf("one")==-1 && strbuf.toString().indexOf("two")==-1) 
+            if (strbuf.toString().indexOf("one")==-1 && strbuf.toString().indexOf("two")==-1)
             	continue;
 		    datano=Integer.parseInt(request.getParameter(strbuf.toString()) );
-		    
-		    
+
+
 		    Appointment a = new Appointment();
 			a.setProviderNo(request.getParameter("provider_no"+datano));
 			a.setAppointmentDate(ConversionUtils.fromDateString(request.getParameter("appointment_date")));
@@ -131,17 +222,17 @@
 			a.setCreateDateTime(createdDateTime);
 			a.setCreator(userName);
 			a.setRemarks(request.getParameter("remarks"));
-			
+
 			if (!(request.getParameter("demographic_no").equals("")) && strbuf.toString().indexOf("one") != -1) {
 				a.setDemographicNo(Integer.parseInt(request.getParameter("demographic_no")));
      	    } else {
      	    	a.setDemographicNo(0);
      	    }
-			
+
 			a.setProgramId(Integer.parseInt((String)request.getSession().getAttribute("programId_oscarView")));
 			a.setUrgency(request.getParameter("urgency"));
 			a.setReasonCode(Integer.parseInt(request.getParameter("reasonCode")));
-			
+
 			appointmentDao.persist(a);
 
 			SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
@@ -149,7 +240,7 @@
 					";\n endTime=" + sdf.format(a.getEndTimeAsFullDate()) + ";\n status=" + a.getStatus();
 			LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), LogConst.ADD, LogConst.CON_APPT, "appointment_no=" + a.getId(), String.valueOf(a.getDemographicNo()), logData);
 			rowsAffected=1;
-		    
+
 
 			param2[0]=param[0]; //provider_no
 			param2[1]=param[1]; //appointment_date
@@ -162,12 +253,12 @@
 			int demographicNo = 0;
 			if (!(request.getParameter("demographic_no").equals("")) && strbuf.toString().indexOf("one") != -1) {
 				demographicNo = Integer.parseInt(request.getParameter("demographic_no"));
-     	    } 
-			
-			Appointment appt = appointmentDao.search_appt_no(request.getParameter("provider_no"+datano), ConversionUtils.fromDateString(request.getParameter("appointment_date")), 
-					ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")), 
+     	    }
+
+			Appointment appt = appointmentDao.search_appt_no(request.getParameter("provider_no"+datano), ConversionUtils.fromDateString(request.getParameter("appointment_date")),
+					ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")),
 					ConversionUtils.fromTimestampString(createdDateTimeStr), userName, demographicNo);
-			
+
 			if (appt != null) {
 				Integer apptNo = appt.getId();
 				String mcNumber = request.getParameter("appt_mc_number");
@@ -181,7 +272,7 @@
     		request.getParameter("groupappt").equals("Group Delete")) {
         int rowsAffected = 0, datano = 0;
         StringBuffer strbuf = null;
-		
+
 		String userName = (String) session.getAttribute("userlastname") + ", " + (String) session.getAttribute("userfirstname");
 
 		for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
@@ -208,13 +299,13 @@
 	            		appointmentArchiveDao.archiveAppointment(appt);
 	            		appointmentDao.remove(appt.getId());
 	            		rowsAffected=1;
-	            	
+
             		}
             	}
             }
 
             if (request.getParameter("groupappt").equals("Group Update")) {
-				Date createdDateTime = UtilDateUtilities.StringToDate(request.getParameter("createdatetime"),"yyyy-MM-dd HH:mm:ss");      	
+				Date createdDateTime = UtilDateUtilities.StringToDate(request.getParameter("createdatetime"),"yyyy-MM-dd HH:mm:ss");
             	if( request.getParameter("appointment_no"+datano) != null ) {
             		Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no"+datano)));
 					createdDateTime = appt.getCreateDateTime();
@@ -222,10 +313,10 @@
 	            		appointmentArchiveDao.archiveAppointment(appt);
 	            		appointmentDao.remove(appt.getId());
 	            		rowsAffected=1;
-	            	
+
             		}
             	}
-            	
+
 				String createdDateTimeStr = UtilDateUtilities.DateToString(createdDateTime,"yyyy-MM-dd HH:mm:ss");
 
             	String[] paramu = new String[20];
@@ -247,13 +338,13 @@
             	 paramu[15]=request.getParameter("remarks");
             	 paramu[17]=(String)request.getSession().getAttribute("programId_oscarView");
             	 paramu[18]=request.getParameter("urgency");
-            	 paramu[19]=request.getParameter("reasonCode");            	
-              
+            	 paramu[19]=request.getParameter("reasonCode");
+
 		    	Appointment a = new Appointment();
 				a.setProviderNo(request.getParameter("provider_no"+datano));
 				a.setAppointmentDate(ConversionUtils.fromDateString(request.getParameter("appointment_date")));
 				a.setStartTime(ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))));
-				a.setEndTime(ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")));
+				a.setEndTime(ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("end_time"))));
 				a.setName(request.getParameter("keyword"));
 				a.setNotes(request.getParameter("notes"));
 				a.setReason(request.getParameter("reason"));
@@ -266,36 +357,36 @@
 				a.setCreateDateTime(createdDateTime);
 				a.setCreator(userName);
 				a.setRemarks(request.getParameter("remarks"));
-				
+
 				 if (!(request.getParameter("demographic_no").equals("")) && strbuf.toString().indexOf("one") != -1) {
 					a.setDemographicNo(Integer.parseInt(request.getParameter("demographic_no")));
 	     	    } else {
 	     	    	a.setDemographicNo(0);
 	     	    }
-				
+
 				a.setProgramId(Integer.parseInt((String)request.getSession().getAttribute("programId_oscarView")));
 				a.setUrgency(request.getParameter("urgency"));
 				a.setReasonCode(Integer.parseInt(request.getParameter("reasonCode")));
-				
+
 				appointmentDao.persist(a);
 				SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 				String logData = "startTime=" + sdf.format(a.getStartTimeAsFullDate()) +
 						";\n endTime=" + sdf.format(a.getEndTimeAsFullDate()) + ";\n status=" + a.getStatus();
 				LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), LogConst.ADD, LogConst.CON_APPT, "appointment_no=" + a.getId(), String.valueOf(a.getDemographicNo()), logData);
 				rowsAffected=1;
-		    	
-				if (rowsAffected==1) {				
-					
+
+				if (rowsAffected==1) {
+
 					int demographicNo=0;
 					if (!(request.getParameter("demographic_no").equals("")) && strbuf.toString().indexOf("one") != -1) {
 						demographicNo = Integer.parseInt(request.getParameter("demographic_no"));
 		     	    }
-					
-					
-					Appointment appt = appointmentDao.search_appt_no(request.getParameter("provider_no"+datano), ConversionUtils.fromDateString(request.getParameter("appointment_date")), 
-							ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")), 
+
+
+					Appointment appt = appointmentDao.search_appt_no(request.getParameter("provider_no"+datano), ConversionUtils.fromDateString(request.getParameter("appointment_date")),
+							ConversionUtils.fromTimeStringNoSeconds(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")),
 							ConversionUtils.fromTimestampString(createdDateTimeStr), userName, demographicNo);
-					
+
 
 					if (appt != null) {
 						Integer apptNo = appt.getId();
@@ -311,114 +402,43 @@
 
 	if (bSucc) {
 %>
-<h1><bean:message
-	key="appointment.appointmentgrouprecords.msgAddSuccess" /></h1>
-<script LANGUAGE="JavaScript">
+<div class="alert alert-success">
+<h4><bean:message
+	key="appointment.appointmentgrouprecords.msgAddSuccess" /></h4>
+</div>
+<script>
 	self.opener.refresh();
-	self.close();
+	setTimeout("self.close()",2000);
 </script>
+</body>
+</html>
 <%
 	} else {
 %>
-<p>
-<h1><bean:message
-	key="appointment.appointmentgrouprecords.msgAddFailure" /></h1>
-
+<div class="alert alert-error" >
+<h4><bean:message
+	key="appointment.appointmentgrouprecords.msgAddFailure" /></h4>
+</div>
+</body>
+</html>
 <%
 	}
 	return;
   } // if (request.getParameter("groupappt") != null)
 %>
-<html:html locale="true">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<title><bean:message
-	key="appointment.appointmentgrouprecords.title" /></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
-<script language="JavaScript">
-<!--
-
-function onCheck(a) {
-	var providerRowExistingAppt = $('#providerRowExistingAppt' + a.name.substring(3));
-	providerRowExistingAppt.children('#'+providerRowExistingAppt.attr('id')+'DoubleBooked').remove();
-	if (providerRowExistingAppt.text().trim() !== '' && a.checked == true) {
-		providerRowExistingAppt.css('background-color', 'gold');
-		providerRowExistingAppt.prepend('<span id="'+providerRowExistingAppt.attr('id')+'DoubleBooked" style="color: red;">Double Booked <br/></span>');
-	} else {
-		providerRowExistingAppt.css('background-color', '');
-		providerRowExistingAppt.children('#'+providerRowExistingAppt.attr('id')+'DoubleBooked').remove();
-	}
-    if (a.checked) {
-		var s ;
-        if(a.name.indexOf("one") != -1) {
-			s = "two"+a.name.substring(3) ;
-		} else {
-			s = "one"+a.name.substring(3) ;
-		}
-		unCheck(s);
-    }
-}
-function unCheck(s) {
-	document.getElementsByName(s)[0].checked = false;
-}
-function isCheck(s) {
-	return document.getElementsByName(s)[0].checked;
-}
-function checkAll(col, value, opo) {
-	var checkboxes = $('input[name^="'+col+'"]');
-	for (var i=0; i < checkboxes.length; i++) {
-		if (value == 'true') {
-			var tar = checkboxes[i].name;
-			var oposite = opo + tar.substring(3);
-			if (isCheck(oposite)) continue;
-			checkboxes[i].checked = true;
-			onCheck(checkboxes[i]);
-		} else {
-			checkboxes[i].checked = false;
-			onCheck(checkboxes[i]);
-		}
-	}
-    return false;
-}
-function onExit() {
-    if (confirm("<bean:message key="appointment.appointmentgrouprecords.msgExitConfirmation"/>")) {
-        window.close()
-	}
-}
-
-var saveTemp=0;
-function onButDelete() {
-  saveTemp=1;
-}
-function onSub() {
-  if( saveTemp==1 ) {
-    return (confirm("<bean:message key="appointment.appointmentgrouprecords.msgDeleteConfirmation"/>")) ;
-  }
-}
-//-->
-</script>
-</head>
-
-<body bgcolor="ivory" onLoad="setfocus()" topmargin="0" leftmargin="0"
-	rightmargin="0">
 <form name="groupappt" method="POST"
-	action="appointmentgrouprecords.jsp" onSubmit="return ( onSub());">
+	action="appointmentgrouprecords.jsp" onsubmit="return onSub(event);">
 <INPUT TYPE="hidden" NAME="groupappt" value="">
 
-
+<h4>&nbsp;<bean:message
+			key="appointment.appointmentgrouprecords.msgLabel" /></h4>
 <table >
-	<tr >
-		<H4>&nbsp;<font face="Helvetica"><bean:message
-			key="appointment.appointmentgrouprecords.msgLabel" /></font></H4>
-	</tr>
-	<tr  id="double-booking-row" style="display: none; background-color: gold; color: red">
+	<tr id="double-booking-row" style="display: none; background-color: gold; color: red">
 		<th><bean:message key="appointment.addappointment.msgDoubleBooking" /></th>
 	</tr>
 </table>
-<div class="container-fluid well" >   
+<div class="container-fluid well" >
     <div class ="span9">
 <%
     Properties otherAppt = new Properties();
@@ -443,9 +463,9 @@ function onSub() {
 	boolean bOne = false;
 	boolean bTwo = false;
 
-	List<Appointment> otherAppts = appointmentDao.search_otherappt(ConversionUtils.fromDateString(eApptDate), ConversionUtils.fromTimeStringNoSeconds(eStartTime), ConversionUtils.fromTimeStringNoSeconds(eEndTime), 
+	List<Appointment> otherAppts = appointmentDao.search_otherappt(ConversionUtils.fromDateString(eApptDate), ConversionUtils.fromTimeStringNoSeconds(eStartTime), ConversionUtils.fromTimeStringNoSeconds(eEndTime),
 			 ConversionUtils.fromTimeStringNoSeconds(eStartTime),  ConversionUtils.fromTimeStringNoSeconds(eStartTime));
-	
+
 	for (Appointment other : otherAppts) {
         bOne = false;
 	    bTwo = false;
@@ -493,22 +513,21 @@ function onSub() {
 %>
 <table >
 	<tr>
-		<td nowrap><font color='black'><%=request.getParameter("appointment_date")%>
-		| <%=request.getParameter("start_time")%> - <%=request.getParameter(MyDateFormat.getTimeXX_XXampm("end_time"))%>
-		| <%=UtilMisc.toUpperLowerCase(request.getParameter("keyword"))%></font></td>
-		<td align='right' nowrap>Group : <%=mygroupno%></td>
+		<td style="white-space:nowrap;"><%=request.getParameter("appointment_date")%>
+		| <%=request.getParameter("start_time")%> - <%=request.getParameter("end_time")%>
+		| <%=UtilMisc.toUpperLowerCase(request.getParameter("keyword"))%></td>
+		<td style="white-space:nowrap; text-align: right">Group : <%=mygroupno%></td>
 	</tr>
 </table>
-<table BORDER="0" CELLPADDING="2" CELLSPACING="2" 
-	BGCOLOR="white" class="table table-hover table-condensed">
-	<tr BGCOLOR="<%=tableTitle%>">
-		<th width=30% nowrap><bean:message
+<table style="background-color: white; border-width: 0px; border-spacing:2px;" class="table table-hover table-condensed">
+	<tr style="background-color:<%=tableTitle%>">
+		<th style="white-space:nowrap; width:30%;"><bean:message
 			key="appointment.appointmentgrouprecords.msgProviderName" /></th>
-		<th width=11% nowrap><bean:message
+		<th style="white-space:nowrap; width:11%;"><bean:message
 			key="appointment.appointmentgrouprecords.msgFirstAppointment" /></th>
-		<th width=11% nowrap><bean:message
+		<th style="white-space:nowrap; width:11%;"><bean:message
 			key="appointment.appointmentgrouprecords.msgSecondAppointment" /></th>
-		<th width=48% nowrap><bean:message
+		<th style="white-space:nowrap; width:48%;"><bean:message
 			key="appointment.appointmentgrouprecords.msgExistedAppointment" /></th>
 	</tr>
 	<%
@@ -517,24 +536,23 @@ function onSub() {
 	boolean bDefProvider = false;
 	boolean bAvailProvider = false;
 	boolean bLooperCon = false;
-	
+
 	List<Provider> gps = myGroupDao.search_groupprovider(mygroupno);
 	for (int j = 0; j < 2; j++) {
 	  for (Provider provider : gps) {
         i++;
 
-		
+
 		ScheduleDate sd = scheduleDateDao.findByProviderNoAndDate(provider.getProviderNo(), ConversionUtils.fromDateString(request.getParameter("appointment_date")));
-		
+
 		bAvailProvider = (sd != null) ? true : false;
 		if(bAvailProvider == bLooperCon) continue;
 
         bDefProvider = curProvider_no.equals(provider.getProviderNo()) ? true : false;
 %>
-	<tr
-		BGCOLOR="<%=bDefProvider?deepcolor:(bAvailProvider?weakcolor:"#e0e0e0")%>">
-		<td align='right'>&nbsp;<%=provider.getFormattedName()%></td>
-		<td align='center'>&nbsp; <input type="checkbox" name="one<%=i%>"
+	<tr>
+		<td style="text-align: right">&nbsp;<%=provider.getFormattedName()%></td>
+		<td style="text-align: center;">&nbsp; <input type="checkbox" name="one<%=i%>"
 			value="<%=i%>"
 			<%=bEdit ? (otherAppt.getProperty(provider.getProviderNo()+"one")
 		!= null ? otherAppt.getProperty(provider.getProviderNo()+"one") : "") : (bDefProvider? "checked":"")%>
@@ -549,7 +567,7 @@ function onSub() {
 			value="<%=otherAppt.getProperty(provider.getProviderNo()+"apptno")%>">
 		<%    }    %>
 		</td>
-		<td align='center'>&nbsp; <input type="checkbox" name="two<%=i%>"
+		<td style="text-align: center;">&nbsp; <input type="checkbox" name="two<%=i%>"
 			value="<%=i%>"
 			<%=bEdit ? (otherAppt.getProperty(provider.getProviderNo()+"two")
 		!= null ? otherAppt.getProperty(provider.getProviderNo()+"two") : "") : ""%>
@@ -578,30 +596,29 @@ function onSub() {
 	</tr>
 </table>
 
-<table width="100%" >
+<table style="width: 100%;" >
 	<tr>
-		<TD>
-		<%    if (bEdit) {    %> <INPUT TYPE="button" class="btn btn-primary"
+		<td>
+		<%    if (bEdit) {    %> <input type="button" class="btn btn-primary"
 			onclick="document.forms['groupappt'].groupappt.value='Group Update'; document.forms['groupappt'].submit();"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupUpdate"/>">
-		<INPUT TYPE="button" class="btn"
+		<input type="button" class="btn"
 			onclick="document.forms['groupappt'].groupappt.value='Group Cancel'; document.forms['groupappt'].submit();"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupCancel"/>">
-		<INPUT TYPE="button"  class="btn"
-			onclick="document.forms['groupappt'].groupappt.value='Group Delete'; document.forms['groupappt'].submit();"
+		<input type="submit" class="btn btn-danger"
+			onclick="onButDelete(); document.forms['groupappt'].groupappt.value='Group Delete';"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupDelete"/>"
-			onClick="onButDelete()"> <%    } else {    %> <INPUT
-			TYPE="button" class="btn btn-primary"
+            "> <%    } else {    %> <input type="button" class="btn btn-primary"
 			onclick="document.forms['groupappt'].groupappt.value='Add Group Appointment'; document.forms['groupappt'].submit();"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnAddGroupAppt"/>">
 		<%    }    %>
-		</TD>
-		<TD align="right"><INPUT TYPE="button"  class="btn"
+		</td>
+		<td style="text-align: right"><input type="button" class="btn"
 			VALUE=" <bean:message key="global.btnBack"/> "
-			onClick="window.history.go(-1);return false;"> 
-            <INPUT TYPE="button" class="btn btn-link" 
+			onClick="window.history.go(-1);return false;">
+            <input type="button" class="btn btn-link"
             VALUE=" <bean:message key="global.btnCancel"/> "
-			onClick="onExit()"></TD>
+			onClick="onExit()"></td>
 	</tr>
 </table>
 </div></div>
