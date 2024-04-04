@@ -44,17 +44,70 @@
   String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF", tableTitle = "#99ccff";
   boolean bEdit = request.getParameter("appointment_no") != null ? true : false;
 %>
-<%@ page import="java.util.*, oscar.*, oscar.util.*"
-	errorPage="errorpage.jsp"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@page import="java.util.*"%>
+<%@page import="oscar.*"%>
+<%@page import="oscar.util.*"%>
 <%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%@page import="org.oscarehr.common.model.Appointment" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="oscar.util.ConversionUtils" %>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page errorPage="/errorpage.jsp"%>
 
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+
+<!DOCTYPE html>
+<html:html locale="true">
+<head>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<title><bean:message
+	key="appointment.appointmentgrouprecords.title" /></title>
+<script language="JavaScript">
+<!--
+
+function onCheck(a, b) {
+    if (a.checked) {
+		document.getElementById("everyUnit").value = b;
+		//document.groupappt.everyUnit.value = b;
+    }
+}
+
+
+function onExit() {
+    if (confirm("<bean:message key="appointment.appointmentgrouprecords.msgExitConfirmation"/>")) {
+        window.close()
+	}
+}
+
+var saveTemp=0;
+function onButDelete() {
+  saveTemp=1;
+}
+
+function onSub(e) {
+    e.preventDefault
+    if( saveTemp==1 ) {
+        return (confirm("<bean:message key="appointment.appointmentgrouprecords.msgDeleteConfirmation"/>")) ;
+    } else {
+        return true;
+    }
+}
+//-->
+</script>
+
+<!-- i18n calendar -->
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
+    <link href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" rel="stylesheet" media="all" >
+
+<!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" >
+</head>
+
+<body>
 
 <%
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
@@ -105,12 +158,12 @@
 		    } else {
 		    	a.setDemographicNo(0);
 		    }
-			
+
 			a.setProgramId(Integer.parseInt((String)request.getSession().getAttribute("programId_oscarView")));
 			a.setUrgency(null);
-			
+
 			appointmentDao.persist(a);
-			
+
 
             gCalDate.setTime(a.getAppointmentDate());
 			if (everyUnit.equals("day")) {
@@ -123,12 +176,12 @@
 				break;
 			}
 
-			if (gCalDate.after(gEndDate)) 
+			if (gCalDate.after(gEndDate))
 				break;
-			else 
+			else
 				iDate = gCalDate.getTime();
 		}
-        
+
         bSucc = true;
 	}
 
@@ -164,7 +217,7 @@
 	        		appointmentDao.remove(appt.getId());
 	        		rowsAffected=1;
 	        	}
-       
+
             }
 
             if (request.getParameter("groupappt").equals("Group Update")) {
@@ -175,7 +228,7 @@
 	        		appointmentDao.remove(appt.getId());
 	        		rowsAffected=1;
 	        	}
-            	
+
 		    	Appointment a = new Appointment();
 				a.setProviderNo(request.getParameter("provider_no")+datano);
 				a.setAppointmentDate( ConversionUtils.fromDateString(request.getParameter("appointment_date")));
@@ -198,12 +251,12 @@
 			    } else {
 			    	a.setDemographicNo(0);
 			    }
-				
+
 				a.setProgramId(Integer.parseInt((String)request.getSession().getAttribute("programId_oscarView")));
 				a.setUrgency(request.getParameter("urgency"));
-				
+
 				appointmentDao.persist(a);
-				
+
 
 			}
 	    	if (rowsAffected != 1) break;
@@ -213,106 +266,46 @@
 
     if (bSucc) {
 %>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
 <div class="alert alert-success">
 <h4><bean:message
 	key="appointment.appointmentgrouprecords.msgAddSuccess" /></h4>
-<script LANGUAGE="JavaScript">
+</div>
+<script>
 	self.opener.refresh();
 	setTimeout("self.close()",2000);
 </script>
-</div>
+</body>
+</html>
 <%
     } else {
 %>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<p>
 <div class="alert alert-error" >
-<h4><bean:message
+<h4>&nbsp;<bean:message
 	key="appointment.appointmentgrouprecords.msgAddFailure" /></h4>
 </div>
+</body>
+</html>
 <%
     }
     return;
   } // if (request.getParameter("groupappt") != null)
 %>
-<html:html locale="true">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="appointment.appointmentgrouprecords.title" /></title>
-<script language="JavaScript">
-<!--
 
-function onCheck(a, b) {
-    if (a.checked) {
-		document.getElementById("everyUnit").value = b;
-		//document.groupappt.everyUnit.value = b;
-    }
-}
-
-
-function onExit() {
-    if (confirm("<bean:message key="appointment.appointmentgrouprecords.msgExitConfirmation"/>")) {
-        window.close()
-	}
-}
-
-var saveTemp=0;
-function onButDelete() {
-  saveTemp=1;
-}
-function onSub() {
-  if( saveTemp==1 ) {
-    return (confirm("<bean:message key="appointment.appointmentgrouprecords.msgDeleteConfirmation"/>")) ;
-  }
-}
-//-->
-</script>
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="<%=request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1" />
-
-<!-- main calendar program -->
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-
-<!-- language for the calendar -->
-<script type="text/javascript"
-	src="<%=request.getContextPath() %>/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-
-<!-- the following script defines the Calendar.setup helper function, which makes
-       adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-</head>
-
-<body bgcolor="ivory" onLoad="setfocus()" topmargin="0" leftmargin="0"
-	rightmargin="0">
 <form name="groupappt" method="POST"
-	action="appointmentrepeatbooking.jsp" onSubmit="return ( onSub());">
-<INPUT TYPE="hidden" NAME="groupappt" value="">
+	action="appointmentrepeatbooking.jsp" onsubmit="return onSub(event);">
+<input type="hidden" name="groupappt" value="">
 
+<h4>&nbsp;<bean:message key="appointment.appointmenteditrepeatbooking.title"/></h4>
 
+<div class="container-fluid well" >
 
-		<H4>&nbsp;<bean:message key="appointment.appointmenteditrepeatbooking.title"/></H4>
-
-<div class="container-fluid well" >   
-
-    <div class ="span8"> 
-
-<table border="0" cellspacing="1" cellpadding="2" width="100%" class="table table-hover">
+<table style="width:100%">
 	<tr>
-		<td width="20%"></td>
-		<td nowrap><bean:message key="appointment.appointmenteditrepeatbooking.howoften"/></td>
-	</tr>
-
-</table>
-
-<table border="0" cellspacing="1" cellpadding="2" width="100%">
-	<tr>
-		<td width="20%"></td>
-		<td width="16%" nowrap><bean:message key="appointment.appointmenteditrepeatbooking.every"/></td>
-		<td nowrap><select name="everyNum" style="width: 100px">
+		<td style="width:20%"></td>
+		<td style="width:16%; white-space: nowrap;"><bean:message key="appointment.appointmenteditrepeatbooking.every"/></td>
+		<td style="white-space: nowrap;"><select name="everyNum" style="width: 70px">
 			<%
 for (int i = 1; i < 12; i++) {
 %>
@@ -320,72 +313,70 @@ for (int i = 1; i < 12; i++) {
 			<%
 }
 %>
-		</select> <input type="hidden" name="everyUnit" id="everyUnit" 
+		</select> <input type="hidden" name="everyUnit" id="everyUnit"
 			value="<%="day"%>" ></td>
 	</tr>
 	<tr>
 		<td></td>
 		<td></td>
-		<td nowrap>&nbsp;&nbsp; 
-		
-		<input type="radio" name="dateUnit" value="<bean:message key="day"/>"   <%="checked"%> onclick='onCheck(this, "day")'><bean:message key="day"/> &nbsp;&nbsp; 
-		<input type="radio" name="dateUnit" value="<bean:message key="week"/>"  <%=""%>        onclick='onCheck(this, "week")'><bean:message key="week"/> &nbsp;&nbsp; 
-		<input type="radio" name="dateUnit" value="<bean:message key="month"/>" <%=""%>        onclick='onCheck(this, "month")'><bean:message key="month"/> &nbsp;&nbsp; 
-		<input type="radio" name="dateUnit" value="<bean:message key="year"/>"  <%=""%>        onclick='onCheck(this, "year")'><bean:message key="year"/></td>
+		<td style="white-space: nowrap;">&nbsp;&nbsp;
+
+		<input type="radio" name="dateUnit" value="<bean:message key="day"/>"   <%="checked"%> onclick='onCheck(this, "day")'><bean:message key="day"/> &nbsp;&nbsp;
+		<input type="radio" name="dateUnit" value="<bean:message key="week"/>"  <%=""%>        onclick='onCheck(this, "week")'><bean:message key="week"/> &nbsp;&nbsp;
+		<input type="radio" name="dateUnit" value="<bean:message key="month"/>" <%=""%>        onclick='onCheck(this, "month")'><bean:message key="month"/> &nbsp;&nbsp;
+		<input type="radio" name="dateUnit" value="<bean:message key="year"/>"  <%=""%>        onclick='onCheck(this, "year")'><bean:message key="year"/>
+<br><br></td>
 	</tr>
-    <tr><td>&nbsp;</td></tr>
 	<tr>
 		<td></td>
 		<td><bean:message key="appointment.appointmenteditrepeatbooking.endon"/> &nbsp;&nbsp;
         </td>
-        <td nowrap >
-            <!-- tempting to replace with a date field however the expected format for the value is dd/MM/yyyy 
+        <td class="input-append" id="invoke-cal">
+            <!-- tempting to replace with a date field however the expected format for the value is the non ISO dd/MM/yyyy
                 way easier to obtain with a i18n calander -->
-           	<img id="f_trigger_b" src="<%=request.getContextPath() %>/images/cal.gif">
-		    <input type="text" name="endDate" style="height:22px; width:120px;" 
+		    <input type="text" name="endDate"
+                class="input-small"
 			    id="endDate"
+                title="<bean:message key="ddmmyyyy"/>"
 			    value="<%=UtilDateUtilities.DateToString(new java.util.Date(),"dd/MM/yyyy")%>"
-			    readonly>
-                <font size="-1"><bean:message key="ddmmyyyy"/></font>
+                pattern="^(([012]\d)|3[01])(/)((0\d)|(1[012]))(/)\d{4}$" autocomplete="off"
+			    >
+             <span class="add-on"><i class="icon-calendar"></i></span>
         </td>
 	</tr>
 </table>
-<div>
-<p>
-<p>
+<br>
 
-<table width="100%" BGCOLOR="silver">
+<table style="width:100%" >
 	<tr>
-		<TD>
+		<td>
 		<%    if (bEdit) {    %> <INPUT TYPE="button" class="btn btn-primary"
-			onclick="document.forms['groupappt'].groupappt.value='Group Update'; document.forms['groupappt'].submit();"
+			onclick="document.forms['groupappt'].groupappt.value='Group Update'; document.forms['groupappt'].requestSubmit();"
 			VALUE="1<bean:message key="appointment.appointmentgrouprecords.btnGroupUpdate"/>">
 		<INPUT TYPE="button" class="btn"
-			onclick="document.forms['groupappt'].groupappt.value='Group Cancel'; document.forms['groupappt'].submit();"
+			onclick="document.forms['groupappt'].groupappt.value='Group Cancel'; document.forms['groupappt'].requestSubmit();"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupCancel"/>">
-		<INPUT TYPE="button" class="btn"
-			onclick="document.forms['groupappt'].groupappt.value='Group Delete'; document.forms['groupappt'].submit();"
-			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupDelete"/>"
-			onClick="onButDelete()"> 
-        <%    } else {    %> 
+		<INPUT TYPE="button" class="btn btn-danger"
+			onclick="onButDelete(); document.forms['groupappt'].groupappt.value='Group Delete'; document.forms['groupappt'].requestSubmit();"
+			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnGroupDelete"/>">
+        <%    } else {    %>
         <INPUT
 			TYPE="button" class="btn btn-primary"
-			onclick="document.forms['groupappt'].groupappt.value='Add Group Appointment'; document.forms['groupappt'].submit();"
+			onclick="document.forms['groupappt'].groupappt.value='Add Group Appointment'; document.forms['groupappt'].requestSubmit();"
 			VALUE="<bean:message key="appointment.appointmentgrouprecords.btnAddGroupAppt"/>">
 		<%    }    %>
-		</TD>
-		<TD align="right">
-        <INPUT TYPE="button" class="btn btn-link"
-			VALUE=" <bean:message key="global.btnCancel"/> "
-			onClick="window.history.go(-1);return false;">
-        <!-- <INPUT
-			TYPE="button" class="btn btn-link" VALUE=" <bean:message key="global.btnExit"/> "
-			onClick="onExit()">-->
-        </TD>
+		</td>
+		<td style="text-align: right">
+            <input type="button" class="btn"
+    			value=" <bean:message key="global.btnBack"/> "
+    			onClick="window.history.go(-1);return false;">
+            <!--<input type="button"class="btn btn-link"
+                value=" <bean:message key="global.btnExit"/> "
+			    onClick="onExit()">-->
+        </td>
 	</tr>
 </table>
-</div>
-</div>
+
 
 <%
 String temp = null;
@@ -395,13 +386,14 @@ for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
 	out.println("<input type='hidden' name='"+temp+"' value=\"" + UtilMisc.htmlEscape(request.getParameter(temp)) + "\">");
 }
 %>
+</div>
 </form>
 <script type="text/javascript">
     Calendar.setup({
         inputField     :    "endDate",      // id of the input field
         ifFormat       :    "%d/%m/%Y",       // format of the input field
         showsTime      :    false,            // will display a time selector
-        button         :    "f_trigger_b",   // trigger for the calendar (button ID)
+        button         :    "invoke-cal",   // trigger for the calendar (button ID)
         singleClick    :    true,           // double-click mode
         step           :    1                // show all years in drop-down boxes (instead of every other year as default)
     });
