@@ -799,7 +799,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
                                             <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>">
                                             <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>">
 
-                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion()">Active Only<br>
+                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion(<%=docId%>)">Active Only<br>
                                             <input type="text" id="autocompletedemo<%=docId%>" onchange="checkSave('<%=docId%>');" name="demographicKeyword" />
                                             <div id="autocomplete_choices<%=docId%>" class="autocomplete"></div>
 											<input type="button" id="createNewDemo" value="<bean:message key="inboxmanager.document.CreateNewDemographic" />"  class="btn" onclick="popup(700,960,'<%=request.getContextPath()%>/demographic/demographicaddarecordhtm.jsp','demographic')" >
@@ -1263,37 +1263,37 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 
         var tmp;
 
-        function setupDemoAutoCompletion() {
-        	if(jQuery("#autocompletedemo<%=docId%>") ){
+        function setupDemoAutoCompletion(docId) {
+        	if(jQuery("#autocompletedemo" + docId) ){
 
         		var url;
-                if( jQuery("#activeOnly<%=docId%>").is(":checked") ) {
-                	url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=" + jQuery("#activeOnly<%=docId%>").val();
+                if( jQuery("#activeOnly" + docId).is(":checked") ) {
+                	url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=" + jQuery("#activeOnly" + docId).val();
                 }
                 else {
                 	url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do?jqueryJSON=true";
                 }
 
-	            jQuery( "#autocompletedemo<%=docId%>" ).autocomplete({
+	            jQuery( "#autocompletedemo" + docId ).autocomplete({
 	              source: url,
 	              minLength: 2,
 
 	              focus: function( event, ui ) {
-	            	  jQuery( "#autocompletedemo<%=docId%>" ).val( ui.item.label );
+	            	  jQuery( "#autocompletedemo" + docId ).val( ui.item.label );
 	                  return false;
 	              },
 	              select: function(event, ui) {
-	            	  jQuery( "#autocompletedemo<%=docId%>" ).val(ui.item.label);
-	            	  jQuery( "#demofind<%=docId%>").val(ui.item.value);
-	            	  jQuery( "#demofindName<%=docId%>" ).val(ui.item.formattedName);
+	            	  jQuery( "#autocompletedemo<" + docId ).val(ui.item.label);
+	            	  jQuery( "#demofind" + docId).val(ui.item.value);
+	            	  jQuery( "#demofindName" + docId ).val(ui.item.formattedName);
 	            	  selectedDemos.push(ui.item.label);
 	            	  console.log(ui.item.providerNo);
 	            	  if( ui.item.providerNo != undefined && ui.item.providerNo != null &&ui.item.providerNo != "" && ui.item.providerNo != "null" ) {
-	            		  addDocToList(ui.item.providerNo, ui.item.provider + " (MRP)", "<%=docId%>");
+	            		  addDocToList(ui.item.providerNo, ui.item.provider + " (MRP)", docId);
 	            	  }
 
 	            	  //enable Save button whenever a selection is made
-	                  document.getElementById('save<%=docId%>').removeAttribute('disabled');
+	                  document.getElementById("save" + docId).removeAttribute('disabled');
                       //enable pid dependent buttons once saved in oscarMDSIndex.js
 	                  return false;
 	              }
@@ -1302,7 +1302,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
           }
 
 	jQuery(document).ready(function() {
-        setupDemoAutoCompletion();
+        setupDemoAutoCompletion(<%=docId%>);
         setupDocDescriptionTypeahead(<%=docId%>);
 	});
         function setupProviderAutoCompletion() {
