@@ -535,6 +535,7 @@
     <script>
         document.getElementById('next_<%=docId%>').style.display="none";
         console.log("In Preview Mode so disabling Next");
+        var _in_window = false;
     </script>
 <% } %>
         <div id="labdoc_<%=docId%>">
@@ -1283,7 +1284,7 @@ popup2(710,1024,0,0,'<%=request.getContextPath()%>/dms/incomingDocs.jsp?pdfDir=R
 	                  return false;
 	              },
 	              select: function(event, ui) {
-	            	  jQuery( "#autocompletedemo<" + docId ).val(ui.item.label);
+	            	  jQuery( "#autocompletedemo" + docId ).val(ui.item.label);
 	            	  jQuery( "#demofind" + docId).val(ui.item.value);
 	            	  jQuery( "#demofindName" + docId ).val(ui.item.formattedName);
 	            	  selectedDemos.push(ui.item.label);
