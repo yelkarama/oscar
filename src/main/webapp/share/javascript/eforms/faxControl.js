@@ -140,7 +140,7 @@ function AddOtherFaxProvider() {
 	_AddOtherFax(selected.text(),selected.val());
 }
 function AddOtherFax() {
-	var number = jQuery("#otherFaxInput").val();
+	var number = document.getElementById("otherFaxInput").value.trim();
 	if (checkPhone(number)) {
 		_AddOtherFax(number,number);
 	}
