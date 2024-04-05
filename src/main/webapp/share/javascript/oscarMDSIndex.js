@@ -1041,7 +1041,7 @@ function getPatientNameFromPatientId(patientId){
 		    url:  url,
 		    data: data,
 		    success: function (transport) {
-			    var json=transport.responseText.evalJSON();
+			    var json=jQuery.parseJSON(transport);
 			    if(json!=null ){
 				    var pn=json.demoName;//get name from id
 				    addPatientIdName(patientId,pn);
@@ -1435,7 +1435,7 @@ function createPatientDocLabEle(patientId,doclabid){
         url:  url,
         data: data,
         success: function (transport) {
-		    var json=transport.responseText.evalJSON();
+		    var json=jQuery.parseJSON(transport);
 		    if(json!=null ){
 			    var patientName=json.demoName;//get name from id
 			    addPatientId(patientId);
@@ -1514,7 +1514,7 @@ function updateDocumentAndNext(eleId){//save doc info
         url:  url,
         data: data,
         success: function (transport) {
-		    var json=transport.responseText.evalJSON();
+		    var json=jQuery.parseJSON(transport);
 		    //console.log(json);
 		    if(json!=null ){
 			    patientId=json.patientId;
@@ -1559,7 +1559,7 @@ function updateDocument(eleId){
         url:  url,
         data: data,
         success: function (transport) {
-		    var json=transport.responseText.evalJSON();
+		    var json=jQuery.parseJSON(transport);
 		    //console.log(json);
 		    if(json!=null ){
 			    patientId=json.patientId;
@@ -1568,11 +1568,14 @@ function updateDocument(eleId){
                 num=num.replace(/\s/g,'');
                 document.getElementById("saveSucessMsg_"+num).style.display = '';
                 document.getElementById('saved'+num).value='true';
+                document.getElementById('demofind'+num).value=patientId;
+                document.getElementById('demofindName'+num).value=document.getElementById('autocompletedemo'+num).value;
+                document.getElementById('assignedPId_'+num).textContent=document.getElementById('autocompletedemo'+num).value;
                 document.getElementById("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
                 // enable buttons that need a pid
 	            jQuery('a').removeClass('disabled');
                 document.getElementById('save'+num).removeAttribute('disabled');
-	            document.getElementById('saveNext'+num).removeAttribute('disabled');
+	            //document.getElementById('saveNext'+num).removeAttribute('disabled');
 	            document.getElementById('dropdown_'+num).removeAttribute('disabled');
 	            document.getElementById('dropdown2_'+num).removeAttribute('disabled');
 	            document.getElementById('msgBtn_'+num).removeAttribute('disabled');
@@ -1582,7 +1585,7 @@ function updateDocument(eleId){
 			    updateDocStatusInQueue(num);
 			    var success= updateGlobalDataAndSideNav(num,patientId);
     			if(success){
-				    success=updatePatientDocLabNav(num,patientId);
+				    success=updatePatientDocLabNav(num,patientId); /// PHC
 				    if(success){
 					    //disable demo input
 					    document.getElementById('autocompletedemo'+num).disabled=true;
