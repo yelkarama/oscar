@@ -39,8 +39,7 @@
 	}
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page	import="org.springframework.web.context.WebApplicationContext,
 		org.springframework.web.context.support.WebApplicationContextUtils,
 		org.oscarehr.casemgmt.model.CaseManagementNote,
@@ -53,6 +52,7 @@
 		java.util.Date, java.util.List"%>
 <%@page import="oscar.log.LogAction, oscar.log.LogConst"%>
 <%@page import="oscar.dms.EDocUtil"%>
+<%@page import="org.owasp.encoder.Encode"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -72,7 +72,7 @@
     Long tableId = 0L;
     if (filled(tid)) tableId = Long.valueOf(tid);
     else tid = "";
-    
+
     String oid = request.getParameter("other_id");
     if(oid==null) {oid="";}
 
@@ -94,7 +94,7 @@
     }
     CaseManagementNote p_cmn = null;
     CaseManagementNote p_cmn_dump = null;
-    
+
     for (CaseManagementNoteLink link : cmll) {
 
         CaseManagementNote cmnote = cmm.getNote(link.getNoteId().toString());
@@ -150,9 +150,9 @@
                     cml.setTableName(tableName);
                     cml.setTableId(tableId);
                     cml.setNoteId(cmn.getId());
-                    cml.setOtherId(oid);                    
+                    cml.setOtherId(oid);
                     cmm.saveNoteLink(cml);
-                    LogAction.addLog(user_no,LogConst.ANNOTATE, display, String.valueOf(tableId), request.getRemoteAddr(), demo, cmn.getNote());                
+                    LogAction.addLog(user_no,LogConst.ANNOTATE, display, String.valueOf(tableId), request.getRemoteAddr(), demo, cmn.getNote());
 	    }
 	}
 	response.sendRedirect("../close.html");
@@ -179,19 +179,20 @@
 
 <html:html locale="true">
 <head>
-    <title>Annotation</title>
+    <title><bean:message key="WriteScript.msgAnnotation"/></title>
+
     <% if (isMobileOptimized) { %>
         <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardMobileLayout.css" />
+        <link rel="stylesheet" href="../share/css/OscarStandardMobileLayout.css" />
     <% } else { %>
-    <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
-        <style type="text/css">
-            body { font-size: x-small; }
+        <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+        <style>
             textarea { width: 100%; margin: 5px 0; }
-            div.label { float: left; }
+            div.alabel { float: left; font-size:10px; }
         </style>
     <% } %>
-    <script type="text/javascript">
+
+    <script>
 	function showHistory(uuid,display) {
 	    if (uuid=="") {
 		alert("Annotation History Not Found!");
@@ -205,36 +206,38 @@
     </script>
 </head>
 
-<body bgcolor="#EEEEFF" onload="document.forms[0].note.focus();">
+<body onload="document.forms[0].note.focus();">
     <form action="annotation.jsp" method="post">
-	<input type="hidden" name="atbname" value="<%=attrib_name%>" />
-	<input type="hidden" name="demo" value="<%=demo%>" />
-	<input type="hidden" name="display" value="<%=display%>" />
-	<input type="hidden" name="table_id" value="<%=tid%>" />
-	<input type="hidden" name="other_id" value="<%=oid%>" />
-	<input type="hidden" name="saved" />
-        <div class="header"></div>
+	<input type="hidden" name="atbname" value="<%=attrib_name%>" >
+	<input type="hidden" name="demo" value="<%=demo%>" >
+	<input type="hidden" name="display" value="<%=display%>" >
+	<input type="hidden" name="table_id" value="<%=tid%>" >
+	<input type="hidden" name="other_id" value="<%=oid%>" >
+	<input type="hidden" name="saved" >
+    <h4 title="<%=display%> <bean:message key="WriteScript.msgAnnotation"/>">&nbsp;<bean:message key="WriteScript.msgAnnotation"/>:</h4>
+    <div class="well">
         <div class="panel">
-            <%=display%> Annotation:
             <%if(lastCmn!=null){%>
-            <div class="label">Documentation Date: <%=lastCmn.getCreate_date()%></div>
-            <div class="label">Saved by <%=lastCmn.getProviderName()%></div>
+            <div class="alabel"><bean:message key="eform.download.msgCreated"/>: <%=lastCmn.getCreate_date()%>&nbsp;</div>
+            <div class="alabel"><bean:message key="eform.download.msgCreator"/>: <%=Encode.forHtml(lastCmn.getProviderName())%></div>
             <%}%>
-            <textarea name="note" rows="10"><%=note%></textarea>
-            <input type="submit" class="rightButton blueButton top"value="Save" onclick="this.form.saved.value='true';"/> &nbsp;
-            <input type="button" class="leftButton top" value="Cancel" onclick="window.close();"/>
+            <textarea name="note" rows="8"><%=Encode.forHtmlContent(note)%></textarea>
+            <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSave"/>" onclick="this.form.saved.value='true';"> &nbsp;
+            <input type="button" class="btn" value="<bean:message key="global.btnCancel"/>" onclick="window.close();">
             <p>&nbsp;</p>
             <p>
-                Extra data from Import:<br>
-                <textarea rows="10" name="dump" readonly="readonly"><%=dump%></textarea>
+                <bean:message key="admin.admin.learning.importPatient"/>:<br>
+                <textarea rows="2" name="dump" readonly="readonly"><%=Encode.forHtml(dump)%></textarea>
             </p>
 	<% if (rev>0) { %>
             <div class="revision" style="float: right;">
-		    rev<a href="#" onclick="showHistory('<%=uuid%>','<%=display%>');"><%=rev%></a>
+		    <bean:message key="global.Version"/>&nbsp;<a href="#" onclick="showHistory('<%=uuid%>','<%=display%>');"><%=rev%></a>
             </div>
 	<% } %>
         </div>
+    </div>
     </form>
+
 </body>
 
 </html:html>
@@ -252,11 +255,11 @@
 	    cmNote.setSigning_provider_no(provider);
 	    cmNote.setSigned(true);
 	    cmNote.setProgram_no(program_no);
-	    
+
 	    SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
-		SecRole doctorRole = secRoleDao.findByName("doctor");		
+		SecRole doctorRole = secRoleDao.findByName("doctor");
 		cmNote.setReporter_caisi_role(doctorRole.getId().toString());
-	    	    
+
 	    cmNote.setReporter_program_team("0");
 	    cmNote.setNote(note);
             String historyStr;
