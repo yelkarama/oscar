@@ -1317,12 +1317,12 @@ function locale(){
 			value="<bean:message key="appointment.editappointment.btnNoShow"/>"
 			onClick="window.location='appointmentcontrol.jsp?buttoncancel=No Show&displaymode=Update Appt&appointment_no=<%=appointment_no%>'">
 		<br>
-			 <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=appointment_no%>','anwin','width=400,height=500');">
+			 <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=appointment_no%>&amp;demo='+document.EDITAPPT.demographic_no.value,'anwin','width=400,height=500');">
             	<img src="<%=request.getContextPath() %>/images/notes.gif" alt="Annotation" height="16" width="13" >
             </a>
             <a class="btn"
 			onClick="window.location='appointmentcontrol.jsp?displaymode=PrintCard&appointment_no=<%=appointment_no%>'">
-			<i class="icon-print"></i>&nbsp;<bean:message key="appointment.editappointment.btnPrintCard"/>"</a>
+			<i class="icon-print"></i>&nbsp;<bean:message key="appointment.editappointment.btnPrintCard"/></a>
             <a class="btn"
 			onClick="window.open('<%=request.getContextPath() %>/demographic/demographiclabelprintsetting.jsp?demographic_no='+document.EDITAPPT.demographic_no.value, 'labelprint','height=550,width=700,location=no,scrollbars=yes,menubars=no,toolbars=no' )">
 			<i class="icon-print"></i>&nbsp;<bean:message key="appointment.editappointment.btnLabelPrint"/></a>
