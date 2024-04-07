@@ -131,7 +131,6 @@ public class OscarAppointmentDaoTest extends DaoTestFixtures {
 	}
 
 	@Test
-	@Ignore
 	public void testFind() throws Exception {
 		Appointment appt = new Appointment();
 		EntityDataGenerator.generateTestDataForModelClass(appt);
@@ -143,7 +142,7 @@ public class OscarAppointmentDaoTest extends DaoTestFixtures {
 		Integer apptId = appt.getId();
 		assertNotNull(apptId);
 
-		List<Appointment> appts = dao.find(appt.getAppointmentDate(), appt.getProviderNo(), appt.getStartTime(), appt.getEndTime(), appt.getName(), appt.getNotes(), appt.getReason(), appt.getCreateDateTime(), appt.getCreator(), appt.getDemographicNo());
+		List<Appointment> appts = dao.find(appt.getAppointmentDate(), appt.getProviderNo(), appt.getStartTime(), appt.getEndTime(), appt.getName(), appt.getNotes(), appt.getReason(), appt.getDemographicNo());
 
 		assertEquals(appts.size(), 1);
 		assertEquals(appts.get(0).getId(), apptId);

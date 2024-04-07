@@ -229,8 +229,8 @@ function onSub(e) {
 				Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
 			    appointmentArchiveDao.archiveAppointment(appt);
 
-			    List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)param[3]), (String)param[4], ConversionUtils.fromTimeStringNoSeconds((String)param[5]), ConversionUtils.fromTimeStringNoSeconds((String)param[6]),
-						(String)param[7], (String)param[8], (String)param[9], ConversionUtils.fromTimestampString((String)param[10]), (String)param[11], Integer.parseInt((String)param[12]));
+			    List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)param[3]), (String)param[4], ConversionUtils.fromTimeStringNoSeconds((String)param[5]), ConversionUtils.fromTimeStringNoSeconds((String)param[6]), (String)param[7], (String)param[8], (String)param[9], Integer.parseInt((String)param[12]));
+
 
             	for(Appointment a:appts) {
             		a.setStatus("C");
@@ -257,8 +257,8 @@ function onSub(e) {
 			// repeat doing
 			while (true) {
 
-				List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)param[0]), (String)param[1], ConversionUtils.fromTimeStringNoSeconds((String)param[2]), ConversionUtils.fromTimeStringNoSeconds((String)param[3]),
-						(String)param[4], (String)param[5], (String)param[6],  ConversionUtils.fromTimestampString((String)param[7]), (String)param[8], Integer.parseInt((String)param[9]));
+				List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)param[0]), (String)param[1], ConversionUtils.fromTimeStringNoSeconds((String)param[2]), ConversionUtils.fromTimeStringNoSeconds((String)param[3]), (String)param[4], (String)param[5], (String)param[6], Integer.parseInt((String)param[9]));
+
 				for(Appointment appt:appts) {
 					appointmentArchiveDao.archiveAppointment(appt);
 					appointmentDao.remove(appt.getId());
@@ -275,7 +275,8 @@ function onSub(e) {
 		}
 
 		if (request.getParameter("groupappt").equals("Group Update")) {
-			Object[] param = new Object[22];
+
+			Object[] param = new Object[24];
             param[0]=MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"));
             param[1]=MyDateFormat.getTimeXX_XX_XX(request.getParameter("end_time"));
             param[2]=request.getParameter("keyword");
@@ -293,8 +294,9 @@ function onSub(e) {
 
 			// repeat doing
 			while (true) {
-				List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)paramE[0]), (String)paramE[1], ConversionUtils.fromTimeStringNoSeconds((String)paramE[2]), ConversionUtils.fromTimeStringNoSeconds((String)paramE[3]),
-						(String)paramE[4], (String)paramE[5], (String)paramE[6],  ConversionUtils.fromTimestampString((String)paramE[7]), (String)paramE[8], Integer.parseInt((String)paramE[9]));
+
+				List<Appointment> appts = appointmentDao.find(dayFormatter.parse((String)param[12]), (String)paramE[1], ConversionUtils.fromTimeStringNoSeconds((String)paramE[2]), ConversionUtils.fromTimeStringNoSeconds((String)paramE[3]), (String)paramE[4], (String)paramE[5], (String)paramE[6], Integer.parseInt((String)paramE[9]));
+
 				for(Appointment appt:appts) {
 					appointmentArchiveDao.archiveAppointment(appt);
 					appt.setStartTime(ConversionUtils.fromTimeString(MyDateFormat.getTimeXX_XX_XX(request.getParameter("start_time"))));
@@ -307,17 +309,50 @@ function onSub(e) {
 					appt.setResources(request.getParameter("resources"));
 					appt.setUpdateDateTime(ConversionUtils.fromTimestampString(createdDateTime));
 					appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
-					appt.setUrgency(request.getParameter("urgency"));
+					appt.setUrgency(request.getParameter("urgency") != null ? request.getParameter("urgency") : "");
 					appt.setReasonCode(Integer.parseInt(request.getParameter("reasonCode")));
 					appointmentDao.merge(appt);
 					rowsAffected++;
 				}
                 if(appts.isEmpty()){
+                    //groupappt: "Group+Update"
+                    //everyNum: "1"
+                    //everyUnit: "day"
+                    //dateUnit: "Day"
+                    //endDate: "07/04/2024"
+                    //appointment_date: "2024-04-06"
+                    //start_time: "07:00"
+                    //end_time: "07:29"
+                    //duration: "30"
+                    //orderby: "last_name,+first_name"
+                    //originalpage: "/oscar/appointment/editappointment.jsp"
+                    //limit1: "0"
+                    //limit2: "5"
+                    //ptstatus: "active"
+                    //keyword: "PATIENT,NOT A"
+                    //reasonCode: "14"
+                    //reason: "inpatient+April+1+Endocarditis"
+                    //location: "Temiskaming+Hospital"
+                    //user_id: "Hutten-Czapski,+Peter"
+                    //createDate: "2024-04-06+12:47:20"
+                    //status: "B"
+                    //type: ""
+                    //doctorNo: "Hutten-Czapski,+Peter"
+                    //demographic_no: "5209"
+                    //notes: ""
+                    //resources: ""
+                    //lastcreatedatetime: "2024-04-06+12:47:20"
+                    //createdatetime: "2024-4-6+13:2:30"
+                    //provider_no: "101"
+                    //creator: "Hutten-Czapski,+Peter"
+                    //remarks: ""
+                    //appointment_no: "769897"
+                    //printReceipt: ""
 			        Appointment appointment = new Appointment();
-			        appointment.setProviderNo(request.getParameter("provider_no"));
-			        appointment.setAppointmentDate(gCalDate.getTime());
-			        appointment.setStartTime(ConversionUtils.fromTimeStringNoSeconds(request.getParameter("start_time")));
-			        appointment.setEndTime(ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")));
+			        appointment.setProviderNo(request.getParameter("provider_no") != null ? request.getParameter("provider_no"):"-1"); //String
+			        appointment.setAppointmentDate(gCalDate.getTime()); // Date
+			        appointment.setStartTime(ConversionUtils.fromTimeStringNoSeconds(request.getParameter("start_time"))); // Date
+			        appointment.setEndTime(ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time"))); // Date
 			        appointment.setName(request.getParameter("keyword"));
 			        appointment.setNotes(request.getParameter("notes"));
 			        appointment.setReason(request.getParameter("reason"));
@@ -333,11 +368,11 @@ function onSub(e) {
 			        if (request.getParameter("demographic_no")!=null && !(request.getParameter("demographic_no").equals(""))) {
 				        appointment.setDemographicNo(Integer.parseInt(request.getParameter("demographic_no")));
 		            } else {
-		            	appointment.setDemographicNo(0);
+		            	appointment.setDemographicNo(0); //int
 		            }
 
 			        appointment.setProgramId(Integer.parseInt((String)request.getSession().getAttribute("programId_oscarView")));
-			        appointment.setUrgency(request.getParameter("urgency"));
+			        appointment.setUrgency(request.getParameter("urgency") != null ? request.getParameter("urgency") : "");
 			        appointment.setReasonCode(Integer.parseInt(request.getParameter("reasonCode")));
 			        appointmentDao.persist(appointment);
                 }

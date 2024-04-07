@@ -296,12 +296,12 @@ public class OscarAppointmentDao extends AbstractDao<Appointment> {
 	}
 
 	public List<Appointment> find(Date date, String providerNo,Date startTime, Date endTime, String name,
-			String notes, String reason, Date createDateTime, String creator, Integer demographicNo) {
+			String notes, String reason, Integer demographicNo) {
 
 		String sql = "SELECT a FROM Appointment a " +
 				"WHERE a.appointmentDate = ? and a.providerNo=? and a.startTime=?" +
-				"and a.endTime=? and a.name=? and a.notes=? and a.reason=? and a.createDateTime=?" +
-				"and a.creator=? and a.demographicNo=?";
+				"and a.endTime=? and a.name=? and a.notes=? and a.reason=? " +
+				"and a.demographicNo=?";
 		Query query = entityManager.createQuery(sql);
 		query.setParameter(1, date);
 		query.setParameter(2, providerNo);
@@ -310,9 +310,7 @@ public class OscarAppointmentDao extends AbstractDao<Appointment> {
 		query.setParameter(5, name);
 		query.setParameter(6, notes);
 		query.setParameter(7, reason);
-		query.setParameter(8, createDateTime);
-		query.setParameter(9, creator);
-		query.setParameter(10, demographicNo);
+		query.setParameter(8, demographicNo);
 
 		
 		List<Appointment> rs = query.getResultList();
