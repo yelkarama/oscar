@@ -66,7 +66,7 @@
 <html:html locale="true">
 <head>
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
-<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"/>"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <title><bean:message key="StaticScript.title" /></title>
 <!-- jquery -->
@@ -116,11 +116,11 @@ oscar.oscarRx.pageUtil.RxSessionBean rxBean = null;
 	String curUser_no = (String) session.getAttribute("user");
 	String regionalIdentifier=request.getParameter("regionalIdentifier");
 	String cn=request.getParameter("cn");
-        String bn=request.getParameter("bn");
+	String bn=request.getParameter("bn");
 	Integer currentDemographicNo=rxBean.getDemographicNo();
 	String atc = request.getParameter("atc");
 
-        ArrayList<StaticScriptBean.DrugDisplayData> drugs=StaticScriptBean.getDrugList(loggedInInfo, currentDemographicNo, regionalIdentifier, cn,bn,atc);
+	ArrayList<StaticScriptBean.DrugDisplayData> drugs=StaticScriptBean.getDrugList(loggedInInfo, currentDemographicNo, regionalIdentifier, cn,bn,atc);
 
 	oscar.oscarRx.data.RxPatientData.Patient patient=oscar.oscarRx.data.RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
 	String annotation_display=org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
@@ -136,7 +136,7 @@ oscar.oscarRx.pageUtil.RxSessionBean rxBean = null;
         var favoriteName = window.prompt('Please enter a name for the Favorite:',  brandName);
 
        if (favoriteName.length > 0){
-            var url= '<%=request.getContextPath()%>' + "/oscarRx/addFavorite2.do?parameterValue=addFav2";
+            var url= "<%=request.getContextPath()%>" + "/oscarRx/addFavorite2.do?parameterValue=addFav2";
             oscarLog(url);
             favoriteName=encodeURIComponent(favoriteName);
             var data="drugId="+drugId+"&favoriteName="+favoriteName;
@@ -203,7 +203,7 @@ $(document).ready(function(){
 		<td style="width:100%; vertical-align:top; border-left: 2px solid #A9A9A9; padding-left:10px;">
 		<table style="width:100%; height:100%">
 			<tr>
-				<td style="width:0%; vertical-align:top;>
+				<td style="width:0%; vertical-align:top;">
 				<div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <bean:message key="SearchDrug.title" /></a> &gt; <b><bean:message key="StaticScript.title" /></b></div>
 				</td>
 			</tr>
@@ -221,11 +221,11 @@ $(document).ready(function(){
 <table id="rxtbl" class="table table-striped">
     <thead>
         <tr>
-            <th align="left"><b><bean:message key="SelectReason.table.provider" /></b></th>
-            <th align="left"><b><bean:message key="WriteScript.startDate" /></b></th>
-            <th align="left"><b><bean:message key="WriteScript.endDate" /></b></th>
-            <th align="left"><b><bean:message key="WriteScript.msgRxWrittenDate" /></b></th>
-            <th align="left"><b><bean:message key="SearchDrug.msgPrescription" /></b></th>
+            <th><b><bean:message key="SelectReason.table.provider" /></b></th>
+            <th><b><bean:message key="Appointment.formDate" /></b></th>
+            <th><b><bean:message key="WriteScript.startDate" /></b></th>
+            <th><b><bean:message key="WriteScript.endDate" /></b></th>
+            <th><b><bean:message key="SearchDrug.msgPrescription" /></b></th>
             <th></th>
             <th></th>
         </tr>
@@ -244,6 +244,11 @@ $(document).ready(function(){
 					<tr style="height:20px;<%=arch%>">
 						<td><%=drug.providerName%></td>
 						<td><%
+						if(!drug.writtenDate.equals("0001/01/01") ){
+						out.print(partialDateDao.getDatePartial(drug.writtenDate, PartialDate.DRUGS, drug.localDrugId, PartialDate.DRUGS_WRITTENDATE));
+						}
+						%></td>
+						<td><%
 						if(!drug.startDate.equals("0001/01/01") ){
 							out.print(partialDateDao.getDatePartial(drug.startDate, PartialDate.DRUGS, drug.localDrugId, PartialDate.DRUGS_STARTDATE));
 							/*
@@ -261,22 +266,17 @@ $(document).ready(function(){
 							out.print(drug.endDate);
 						}
 						%></td>
-						<td><%
-						if(!drug.writtenDate.equals("0001/01/01") ){
-						out.print(partialDateDao.getDatePartial(drug.writtenDate, PartialDate.DRUGS, drug.localDrugId, PartialDate.DRUGS_WRITTENDATE));
-						}
-						%></td>
                         <td><%if(drug.localDrugId != null){ %>
-                            <a href="javascript:void(0);"   onclick="popup(600, 425,'DisplayRxRecord.jsp?id=<%=drug.localDrugId%>','displayRxWindow')">
+                            <a href="javascript:void(0);"  title="<bean:message key="oscarencounter.guidelinelist.moreinfo" />" onclick="popup(600, 425,'DisplayRxRecord.jsp?id=<%=drug.localDrugId%>','displayRxWindow')">
                         <%}%><%=drug.prescriptionDetails%>
                         <%if(drug.localDrugId != null){ %>
                              </a>
                          <%}%>
                         <% if (drug.nonAuthoritative) { %>
-                        &nbsp;<bean:message key="WriteScript.msgNonAuthoritative"></bean:message>
+                        &nbsp;<bean:message key="WriteScript.msgNonAuthoritative" />
                         <%   } %>
                         <% if (drug.pickupDate!=null &&  !drug.pickupDate.equals("") && !drug.pickupDate.equals("0000-00-00")){%>
-                        <br><bean:message key="WriteScript.msgPickUpDate"></bean:message>&nbsp;<%=drug.pickupDate%>&nbsp;
+                        <br><bean:message key="WriteScript.msgPickUpDate" />&nbsp;<%=drug.pickupDate%>&nbsp;
                         <% if (!((drug.pickupTime).equals("")) && !((drug.pickupTime).equals("12:00 AM"))){ %>
                         &nbsp;<%=drug.pickupTime%>&nbsp;
                         <% } } %>
@@ -296,15 +296,16 @@ $(document).ready(function(){
                         <%if(drug.rxStatus != null && !drug.rxStatus.equals("null")){ %>
                         &nbsp;<bean:message key="WriteScript.msgRxStatus"/>: <%=drug.rxStatus%>
                         <%}%>
-                        <% if (drug.customName==null){
+                        <!-- <% if (drug.customName==null){
 						%> <a href="javascript:ShowDrugInfo('<%=drug.genericName%>');">Info</a> <%
 							}
-						%>
+						%> -->
 						</td>
 						<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
 						<td>
 							<%	if (drug.isLocal) { %>
-							<input type="button" value="<bean:message key="WriteScript.msgAnnotation" />" title="<bean:message key="WriteScript.msgAnnotation" />" class="btn" onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
+							<a href="javascript:void(0))" title="<bean:message key="WriteScript.msgAnnotation" />" onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
+<img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" ></a>
 									<% } %>
 						</td>
 						<td>
@@ -314,8 +315,7 @@ $(document).ready(function(){
 							<input type="hidden" name="method" value="represcribe">
                             <html:submit style="width:100px" styleClass="btn"  onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');" value="Re-prescribe" />
 										</html:form> --%>
-                         <input type="button" align="top" value="<bean:message key="SearchDrug.msgReprescribe" />" title="<bean:message key="SearchDrug.msgReprescribe" />" style="width: 100px" class="btn" onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');" />
-                         <input type="button" align="top" value="<bean:message key="oscarRx.sideLinks.msgFavorites" />" title="<bean:message key="WriteScript.msgAddtoFavorites" />" style="width: 100px" class="btn" onclick="javascript:addFavorite2(<%=drug.localDrugId%>, '<%=StringEscapeUtils.escapeJavaScript((drug.customName!=null&&(!drug.customName.equalsIgnoreCase("null")))?drug.customName:drug.brandName)%>');" />
+                         <input type="button" value="<bean:message key="SearchDrug.msgReprescribe" />" title="<bean:message key="SearchDrug.msgReprescribe" />" style="width: 100px" class="btn" onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');" /><input type="button" value="<bean:message key="WriteScript.msgAddtoFavorites" />" class="btn btn-link" onclick="javascript:addFavorite2(<%=drug.localDrugId%>, '<%=StringEscapeUtils.escapeJavaScript((drug.customName!=null&&(!drug.customName.equalsIgnoreCase("null")))?drug.customName:drug.brandName)%>');" />
                             <%
 								}
 								else
