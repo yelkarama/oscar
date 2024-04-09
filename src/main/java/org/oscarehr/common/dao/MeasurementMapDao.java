@@ -73,7 +73,7 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 	}
 
 	public List<MeasurementMap> getMapsByLoinc(String loinc) {   
-		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=?";
+		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=?1";
 		Query q = entityManager.createQuery(queryStr);
 		q.setParameter(1, loinc);
             
@@ -82,7 +82,7 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 
 		return rs;    
 	}
-	
+
 	public List<MeasurementMap> findByLoincCodeAndLabType(String loincCode,String labType) {   
 		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=? and m.labType=?";
 		Query q = entityManager.createQuery(queryStr);
@@ -94,6 +94,20 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 
 		return rs;    
 	}
+
+    public MeasurementMap findByLonicCodeLabTypeAndMeasurementName(String loincCode, String labType, String measurementName) {
+        String queryStr = "SELECT m FROM MeasurementMap m WHERE m.loincCode = ? AND m.labType = ? AND m.name = ?";
+        Query q = entityManager.createQuery(queryStr);
+        q.setParameter(1, loincCode);
+        q.setParameter(2, labType);
+        q.setParameter(3, measurementName);
+        List<MeasurementMap> resultList = q.getResultList();
+        if (resultList.isEmpty()) {
+            return null;
+        } else {
+            return resultList.get(0);
+        }
+    }
 	
 	public List<String> findDistinctLabTypes() {    
 		String queryStr = "select distinct(m.labType) FROM MeasurementMap m";
@@ -115,6 +129,16 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 		return rs;    
 	}
 
+	public List<String> findDistinctLoincCodesByLabType(MeasurementMap.LAB_TYPE lab_type) {
+		String queryStr = "select distinct(m.loincCode) FROM MeasurementMap m WHERE m.labType LIKE :labType";
+		Query q = entityManager.createQuery(queryStr);
+		q.setParameter("labType", lab_type.name());
+		@SuppressWarnings("unchecked")
+		List<String> rs = q.getResultList();
+
+		return rs;
+	}
+
 	/**
 	 * Finds measurements for the specified lab type and ident code
 	 * 
@@ -126,16 +150,34 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 	 * 		Returns a list of triples holding {@link MeasurementMap}, {@link MeasurementMap}, {@link MeasurementType}
 	 */
 	@SuppressWarnings("unchecked")
-    public List<Object[]> findMeasurements(String labType, String idCode) {
+    public List<Object[]> findMeasurements(String labType, String idCode, String name) {
 		String sql = "FROM MeasurementMap a, MeasurementMap b, " + MeasurementType.class.getSimpleName() + " type " +
 				"WHERE b.labType = :labType " +
 				"AND a.identCode = :idCode " +
+				"AND a.name LIKE :name " +
 				"AND a.loincCode = b.loincCode " +
 				"AND type.type = b.identCode";
 		Query q = entityManager.createQuery(sql);
 		q.setParameter("labType", labType);
 		q.setParameter("idCode", idCode);
+		q.setParameter("name", name);
 		return q.getResultList();
     }
+
+	public List<MeasurementMap> findMeasurementsByName(String searchString) {
+		String sql = "SELECT DISTINCT b FROM MeasurementMap b WHERE b.name LIKE ?1 ORDER BY b.name";
+		Query q = entityManager.createQuery(sql);
+		q.setParameter(1, searchString);
+
+		return q.getResultList();
+	}
+
+	public List<MeasurementMap> searchMeasurementsByName(String searchString) {
+		String sql = "SELECT DISTINCT b FROM MeasurementMap b WHERE b.loincCode = b.identCode and b.name LIKE ?1 ORDER BY b.name";
+		Query q = entityManager.createQuery(sql);
+		q.setParameter(1, searchString);
+
+		return q.getResultList();
+	}
 
 }
