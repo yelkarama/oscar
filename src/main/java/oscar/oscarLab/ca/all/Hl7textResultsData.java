@@ -140,20 +140,23 @@ public class Hl7textResultsData {
 
 				String measType = "";
 				String measInst = "";
+				identifier = StringUtils.trimToEmpty(identifier).replaceAll("null", "");
 				
-				List<Object[]> measurements = measurementMapDao.findMeasurements("FLOWSHEET", identifier);
-				if (measurements.isEmpty()) {
-					logger.warn("CODE:" + identifier + " needs to be mapped");
-				} else {
-					for (Object[] o : measurements) {
-						MeasurementMap mm = (MeasurementMap) o[1];
-						MeasurementType type = (MeasurementType) o[2];
+				if (!identifier.isEmpty()) {
+					List<Object[]> measurements = measurementMapDao.findMeasurements("FLOWSHEET", identifier, name);
+					if (measurements.isEmpty()) {
+						logger.warn("CODE:" + identifier + " needs to be mapped");
+					} else {
+						for (Object[] o : measurements) {
+							MeasurementMap mm = (MeasurementMap) o[1];
+							MeasurementType type = (MeasurementType) o[2];
 
-						measType = mm.getIdentCode();
-						measInst = type.getMeasuringInstruction();
+							measType = mm.getIdentCode();
+							measInst = type.getMeasuringInstruction();
+						}
 					}
 				}
-				
+								
 				
 				Measurement m = new Measurement();
 				m.setType(measType);
