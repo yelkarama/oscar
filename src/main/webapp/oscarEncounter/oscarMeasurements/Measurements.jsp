@@ -47,7 +47,7 @@
 <html:html locale="true">
 
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><logic:present name="groupName">
 	<bean:write name="groupName" />
 </logic:present> <bean:message key="oscarEncounter.Index.measurements" /></title>
@@ -85,12 +85,11 @@ padding:14px;
     <script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
     <script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
     <script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
-    <link rel="stylesheet" type="text/css" media="all" href="${ pageContext.request.contextPath }/share/calendar/calendar.css" title="win2k-cold-2" />
+    <link rel="stylesheet" type="text/css" media="all" href="${ pageContext.request.contextPath }/share/calendar/calendar.css" title="win2k-cold-2" >
 
-<script type="text/javascript">
+<script>
 
 function write2Parent(text){
-
     self.close();
     opener.document.encForm.enTextarea.value = opener.document.encForm.enTextarea.value + text;
  }
@@ -101,7 +100,6 @@ function getDropboxValue(ctr){
 }
 
 function popupPage(vheight,vwidth,page) { //open a new popup window
-
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
   var popup=window.open(page, "blah", windowprops);
 }
@@ -251,13 +249,13 @@ function check() {
                                         <td>
 										<input type="hidden"
 											name='<%= "value(inputType-" + ctr + ")" %>'
-											value="<bean:write name="measurementType" property="type" />" />
+											value="<bean:write name="measurementType" property="type" />" >
 										<input type="hidden"
 											name='<%= "value(inputTypeDisplayName-" + ctr + ")" %>'
-											value="<bean:write name="measurementType" property="typeDisplayName" />" />
+											value="<bean:write name="measurementType" property="typeDisplayName" />" >
 										<input type="hidden"
 											name='<%= "value(validation-" + ctr + ")" %>'
-											value="<bean:write name="measurementType" property="validation" />" />
+											value="<bean:write name="measurementType" property="validation" />" >
                                         </td>
 										<% i++; %>
 									</tr>
@@ -279,23 +277,24 @@ function check() {
 										</tr>
 									</logic:present>
 								</logic:iterate>
+							</table>
 								<input type="hidden" name="value(numType)"
-									value="<%=String.valueOf(i)%>" />
+									value="<%=String.valueOf(i)%>" >
 								<input type="hidden" name="value(groupName)"
-									value="<bean:write name="groupName"/>" />
-								<input type="hidden" name="value(parentChanged)" value="false" />
+									value="<bean:write name="groupName"/>" >
+								<input type="hidden" name="value(parentChanged)" value="false" >
 								<input type="hidden" name="value(demographicNo)"
 									value="<%=demo%>" />
-								<input type="hidden" name="demographic_no" value="<%=demo%>" />
+								<input type="hidden" name="demographic_no" value="<%=demo%>" >
 								<logic:present name="css">
 									<input type="hidden" name="value(css)"
-										value="<bean:write name="css"/>" />
+										value="<bean:write name="css"/>" >
 								</logic:present>
 								<logic:notPresent name="css">
-									<input type="hidden" name="value(css)" value="" />
+									<input type="hidden" name="value(css)" value="" >
 								</logic:notPresent>
 
-							</table>
+
                             </div> <!-- well -->
 							<table>
 								<tr>
