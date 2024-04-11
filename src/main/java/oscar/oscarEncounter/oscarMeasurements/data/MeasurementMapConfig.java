@@ -53,7 +53,7 @@ import org.oscarehr.common.model.RecycleBin;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.common.dao.MeasurementsExtDao;
-import org.oscarehr.common.model.MeasurementsExt;
+
 
 /**
  *
