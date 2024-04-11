@@ -144,10 +144,15 @@ public class MeasurementMapConfig {
 
         ArrayList<HashMap<String,String>> unmappedLabList = new ArrayList<>();
         // get all currently mapped measurements. Only PATHL7 for now
-        List<String> measurementMap = measurementMapDao.findDistinctLoincCodesByLabType(MeasurementMap.LAB_TYPE.PATHL7);
+        //List<String> measurementMap = measurementMapDao.findDistinctLoincCodesByLabType(MeasurementMap.LAB_TYPE.PATHL7);
+        //if(measurementMap == null) {
+        //    measurementMap = Collections.emptyList();
+        //}
+        List<String> measurementMap = measurementMapDao.findDistinctLoincCodes();
         if(measurementMap == null) {
             measurementMap = Collections.emptyList();
         }
+
 
         // eliminate the mapped measurements from measurementsExt to get the unmapped result
         List<Integer> measurementIdList = measurementsExtDao.findUnmappedMeasuremntIds(measurementMap);
