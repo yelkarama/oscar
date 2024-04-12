@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -31,16 +31,22 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
-
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
+    <title><bean:message
+	key="oscarEncounter.Measurements.msgAddMeasurementStyleSheet" /></title>
 
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"" rel="stylesheet">
 
 <script>
 $(function() {
@@ -48,45 +54,31 @@ $(function() {
   });
 </script>
 
-<title><bean:message
-	key="oscarEncounter.Measurements.msgAddMeasurementStyleSheet" /></title>
-
 </head>
-
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
+<body>
+<%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-<html:form
-	action="/oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.do"
-	method="POST" enctype="multipart/form-data">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
-				<tr>
-					<td><bean:message
-						key="oscarEncounter.Measurements.msgAddMeasurementStyleSheet" /></td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=800>
+    <html:form
+	    action="/oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.do"
+	    method="POST" enctype="multipart/form-data">
+        <h3><bean:message key="oscarEncounter.Measurements.msgAddMeasurementStyleSheet" /></h3>
+        <div class="well">
+			<table>
 				<tr>
 					<td>
 					<table>
 						<tr>
-							<td><logic:present name="messages">
-								<tr>
-									<logic:iterate id="msg" name="messages">
-										<td><bean:write name="msg" /></td>
-									</logic:iterate>
-								</tr>
-							</logic:present>
+					        <td>
+                                <logic:present name="messages">
+						            <logic:iterate id="msg" name="messages">
+                                        <div class="alert alert-success">
+							                <bean:write name="msg" />
+							                <a class="close" data-dismiss="alert" href="#">&times;</a>
+                                        </div>
+							            <br>
+						            </logic:iterate>
+					            </logic:present>
+                            </td>
 						<tr>
 							<td align="left"><bean:message
 								key="oscarEncounter.oscarMeasurements.createNewMeasurementStyleSheet" />
@@ -95,16 +87,16 @@ $(function() {
 						<tr>
 							<td><html:file property="file" size="35" />
 							<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../../images/icon_alertsml.gif"/></span></span>
-        
+
 							</td>
 						</tr>
 						<tr>
 							<td>
 							<table>
 								<tr>
-									<td><input type="button" name="Button"
+									<td><!--<input type="button" name="Button"
 										value="<bean:message key="global.btnClose"/>"
-										onClick="window.close()"></td>
+										onClick="window.close()">--></td>
 									<td><input type="button" name="Button"
 										value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.continueBtn"/>"
 										onclick="submit();" /></td>
@@ -112,19 +104,11 @@ $(function() {
 							</table>
 							</td>
 						</tr>
-						</td>
-						</tr>
 					</table>
 					</td>
 				</tr>
 			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
+        </div>
+    </html:form>
 </body>
 </html:html>
