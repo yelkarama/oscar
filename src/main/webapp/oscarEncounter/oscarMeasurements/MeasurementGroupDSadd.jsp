@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -55,44 +55,40 @@ String propKey = null;
 MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
 
 %>
-<!DOCTYPE html>
-<html>
+<html:html locale="true">
 <head>
+<html:base />
+    <title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
 
 </head>
-
 <body>
-<div class="container">
-
-<h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Add Decision Support to <em class="text-info"><%=groupName%></em> Group </h3>
-<p><em>The following listed decision support files are available for both the flowsheets and Health Tracker. Make a selection and press "add" to make that decision support available on the <strong><%=groupName%></strong>  measurement group.</em></p>
-
-
-<form action="MeasurementGroupDScomplete.jsp" method="post" name="formAdd">
-         <select name="htmlName">
+<%@ include file="measurementTopNav.jspf"%>
+<html:errors />
+    <form action="MeasurementGroupDScomplete.jsp" method="post" name="formAdd">
+        <h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Add Decision Support to <em class="text-info"><%=groupName%></em> Group </h3>
+        <div class="well">
+            <p><em>The following listed decision support files are available for both the flowsheets and Health Tracker. Make a selection and press "add" to make that decision support available on the <strong><%=groupName%></strong>  measurement group.</em></p>
+            <select name="htmlName">
                  <option value="-1">Select Decision Support</option>
-<%
-List<String> dsHtmlList = measurementManager.getFlowsheetDsHTML();
-for (String file : dsHtmlList) {%>
-
+            <%
+            List<String> dsHtmlList = measurementManager.getFlowsheetDsHTML();
+            for (String file : dsHtmlList) {%>
                  <option value="<%=file%>"><%=file.substring(0, file.lastIndexOf('.'))%></option>
-                 
-<%}%>
-		 </select> 	
-		 
-		 <button type="submit" name="add" class="btn btn-primary" style="margin-top:-10px">Add</button>	
-		 <a href="SetupGroupList.do" class="btn" style="margin-top:-10px">Cancel</a>	
-</form>
-
-</div><!-- container -->						
-						
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
-
+            <%}%>
+		    </select>
+            <button type="submit" name="add" class="btn btn-primary" style="margin-top:-10px"><bean:message key="global.btnAdd" /></button>
+            <a href="SetupGroupList.do" class="btn" style="margin-top:-10px">Cancel</a>
+        </div><!-- well -->
+    </form>
 </body>
-</html>
+</html:html>
