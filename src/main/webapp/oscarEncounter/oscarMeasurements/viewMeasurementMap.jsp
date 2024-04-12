@@ -220,12 +220,13 @@ window.onload = stripe;
 				List<String> list =map.getDistinctLoincCodes();
 				boolean odd = true;
 				for(String s:list){
-					List<HashMap<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
+					List<Hashtable<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
 				    String desc = "";
 				    if (codesHash.size() > 0 ){
 				        desc = getDesc(codesHash.get(0));
 				    }
-				    HashMap<String, HashMap<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
+				    String mappings = getCodeMap(codesHash);
+				    Hashtable<String, Hashtable<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
 				    String measurement = getDisplay(h,"FLOWSHEET");
 				%>
 				<tr>
