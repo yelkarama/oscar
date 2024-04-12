@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -31,89 +31,69 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
 <title><bean:message key="oscarEncounter.Measurements.msgDefineNewMeasurementGroup" /></title>
-</head>
 
-<body class="BodyStyle" vlink="#0000FF">
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+
+</head>
+<body>
+<%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-<html:form action="/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.do" onsubmit="return validateForm()">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn" width="400">
-			<table class="TopStatusBar">
+    <html:form action="/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.do" onsubmit="return validateForm()">
+        <h3><bean:message key="oscarEncounter.Measurements.msgDefineNewMeasurementGroup" /></h3>
+        <div class="well">
+			<table>
+				<tr>
+					<td align="left"><bean:message
+						key="oscarEncounter.oscarMeasurements.addMeasurementGroup.createNewMeasurementGroupName" />
+					</td>
+				</tr>
+				<tr>
+					<td><html:text property="groupName" styleClass="input-large" /></td>
+				</tr>
 				<tr>
 					<td><bean:message
-						key="oscarEncounter.Measurements.msgDefineNewMeasurementGroup" /></td>
+						key="oscarEncounter.oscarMeasurements.addMeasurementGroup.selectStyleSheet" />
+					</td>
 				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=800>
+				<tr>
+					<td><html:select property="styleSheet" style="width:250">
+					<html:option value=""></html:option>
+						<html:options collection="allStyleSheets" property="cssId"
+							labelProperty="styleSheetName" />
+					</html:select></td>
+				</tr>
 				<tr>
 					<td>
 					<table>
 						<tr>
-							<td>
-						<tr>
-							<td align="left"><bean:message
-								key="oscarEncounter.oscarMeasurements.addMeasurementGroup.createNewMeasurementGroupName" />
-							</td>
-						</tr>
-						<tr>
-							<td><html:text property="groupName" size="35"/></td>
-						</tr>
-						<tr>
-							<td align="left"><bean:message
-								key="oscarEncounter.oscarMeasurements.addMeasurementGroup.selectStyleSheet" />
-							</td>
-						</tr>
-						<tr>
-							<td><html:select property="styleSheet" style="width:250">
-							<html:option value=""></html:option>
-								<html:options collection="allStyleSheets" property="cssId"
-									labelProperty="styleSheetName" />
-							</html:select></td>
-						</tr>
-						<tr>
-							<td>
-							<table>
-								<tr>
-									<td><input type="button" name="Button"
-										value="<bean:message key="global.btnClose"/>"
-										onClick="window.close()"></td>
-									<td><input type="submit" name="submit"
-										value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.continueBtn"/>"/></td>
-								</tr>
-							</table>
-							</td>
+							<td><!--<input type="button" name="Button" class="btn"
+						value="<bean:message key="global.btnClose"/>"
+						onClick="window.close()">--></td>
+							<td><input type="submit" name="submit" class="btn btn-primary"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.continueBtn"/>"/></td>
 						</tr>
 					</table>
 					</td>
 				</tr>
 			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
-
-<script type="text/javascript">
+        </div>
+    </html:form>
+<script>
 function validateForm()
 {
   var a=document.forms[0]["groupName"].value;
-  if (a==null || a==""){	
+  if (a==null || a==""){
   	alert("Please enter a group name");
   	return false;
   }
