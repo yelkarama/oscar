@@ -30,39 +30,10 @@
 <%@ page
 	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils"%>
 
-<%!
-  String rowColour(Boolean b){
-      if (b.booleanValue()){
-          b = Boolean.valueOf(!b);
-          return "#DDDDDD";
-      }else{
+<%
 
-          return "#FFFFFF";
-      }
-
-  }
-
-
-
-  String getDesc(HashMap<String,String> h){
-      return h.get("name");
-  }
-
-  String getDisplay(HashMap<String, HashMap<String,String>> h, String type){
-      HashMap<String,String> data = h.get(type);
-      if (data == null ){ return "&nbsp;";}
-      return data.get("name")+": "+data.get("ident_code");
-  }
-
-  String getCodeMap(List<HashMap<String,String>> list){
-      StringBuffer sb = new StringBuffer();
-
-        for(HashMap<String,String> h : list){
-            sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
-        }
-        return sb.toString();
-  }
 %>
+
 <html:html locale="true">
 <head>
 <html:base />
@@ -93,46 +64,46 @@
     });
 </script>
 <script>
-            function newWindow(varpage, windowname){
-                var page = varpage;
-                windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
-                var popup=window.open(varpage, windowname, windowprops);
-            }
+function newWindow(varpage, windowname){
+    var page = varpage;
+    windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
+    var popup=window.open(varpage, windowname, windowprops);
+}
 
-            function addLoinc(){
-                var loinc_code = document.LOINC.loinc_code.value;
-                var name = document.LOINC.name.value;
+function addLoinc(){
+    var loinc_code = document.LOINC.loinc_code.value;
+    var name = document.LOINC.name.value;
 
-                if (loinc_code.length > 0 && name.length > 0){
-                    if (modCheck(loinc_code)){
+    if (loinc_code.length > 0 && name.length > 0){
+        if (modCheck(loinc_code)){
 				document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
 				return true;
-                    }
-                }else{
-                    alert("Please specify both a loinc code and a name before adding.");
-                }
+        }
+    }else{
+        alert("Please specify both a loinc code and a name before adding.");
+    }
 
-                return false;
-            }
+    return false;
+}
 
-            function modCheck(code){
-                if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
-                    return true;
-                }else{
+function modCheck(code){
+    if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
+        return true;
+    }else{
 
-                    var codeArray = new Array();
-                    codeArray = code.split('-');
-                    var length = codeArray[0].length;
+        var codeArray = new Array();
+        codeArray = code.split('-');
+        var length = codeArray[0].length;
 
-                    var even = false;
-                    if ( (length % 2) == 0 ) even = true;
+        var even = false;
+        if ( (length % 2) == 0 ) even = true;
 
 
-                    var oddNums = '';
-                    var evenNums = '';
+        var oddNums = '';
+        var evenNums = '';
 
-                    length--;
-                    for (length; length >= 0; length--){
+        length--;
+        for (length; length >= 0; length--){
 				if (even){
 				    even = false;
 				    evenNums = evenNums+codeArray[0].charAt(length);
@@ -140,59 +111,59 @@
 				    even = true;
 				    oddNums = oddNums+codeArray[0].charAt(length);
 				}
-                    }
+        }
 
-                    oddNums = oddNums*2;
-                    var newNum = evenNums+oddNums;
-                    var sum = 0;
+        oddNums = oddNums*2;
+        var newNum = evenNums+oddNums;
+        var sum = 0;
 
 
-                    for (var i=0; i < newNum.length; i++){
+        for (var i=0; i < newNum.length; i++){
 				sum = sum + parseInt(newNum.charAt(i));
-                    }
+        }
 
-                    var newSum = sum;
+        var newSum = sum;
 
-                    while((newSum % 10) != 0){
+        while((newSum % 10) != 0){
 				newSum++;
-                    }
+        }
 
-                    var checkDigit = newSum - sum;
-                    if (checkDigit == codeArray[1]){
+        var checkDigit = newSum - sum;
+        if (checkDigit == codeArray[1]){
 				return true;
-                    }else{
+        }else{
 				alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
 				return false;
-                    }
+        }
 
-                }
+    }
 
-            }
+}
 
-            <%String outcome = request.getParameter("outcome");
-            if (outcome != null){
-                if (outcome.equals("success")){
-                    %>
-                      alert("Successfully added loinc code");
-                      window.opener.location.reload()
-                      window.close();
-                    <%
-                }else if (outcome.equals("failedcheck")){
-                    %>
-                      alert("Unable to add code: The specified code already exists in the database");
-                    <%
-                }else{
-                    %>
-                      alert("Failed to add the new code");
-                    <%
-                }
-            }%>
+<%String outcome = request.getParameter("outcome");
+if (outcome != null){
+    if (outcome.equals("success")){
+        %>
+          alert("Successfully added loinc code");
+          window.opener.location.reload()
+          window.close();
+        <%
+    }else if (outcome.equals("failedcheck")){
+        %>
+          alert("Unable to add code: The specified code already exists in the database");
+        <%
+    }else{
+        %>
+          alert("Failed to add the new code");
+        <%
+    }
+}%>
 
 
 
 window.onload = stripe;
 
-        </script>
+</script>
 </head>
 <body>
 <%@ include file="measurementTopNav.jspf"%>
@@ -252,3 +223,36 @@ window.onload = stripe;
     </form>
 </body>
 </html:html>
+<%!
+  String rowColour(Boolean b){
+      if (b.booleanValue()){
+          b = Boolean.valueOf(!b);
+          return "#DDDDDD";
+      }else{
+
+          return "#FFFFFF";
+      }
+
+  }
+
+
+
+  String getDesc(Hashtable<String,String> h){
+      return h.get("name");
+  }
+
+  String getDisplay(Hashtable<String, Hashtable<String,String>> h, String type){
+      Hashtable<String,String> data = h.get(type);
+      if (data == null ){ return "&nbsp;";}
+      return data.get("name")+": "+data.get("ident_code");
+  }
+
+  String getCodeMap(List<Hashtable<String,String>> list){
+      StringBuffer sb = new StringBuffer();
+
+        for(Hashtable<String,String> h : list){
+            sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
+        }
+        return sb.toString();
+  }
+%>
