@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -34,44 +34,34 @@
 	import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
 
 <html:html locale="true">
-
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
 <title><bean:message
 	key="oscarEncounter.Measurements.msgProcessEditMeasurementGroupAction" />
 </title>
-<html:base />
-</head>
 
-<script language="javascript">
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
 
+<script>
 function submitForm(){
-    
     document.forms[0].submit();
-    
  }
-
-
 </script>
-
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
+</head>
+<body>
 <html:errors />
-<table>
-	<form action="SetupEditMeasurementGroup.do">
-	<tr>
-		<input type="hidden" name="value(groupName)"
-			value="<bean:write name="groupName"/>" />
-		<td>Processing...</td>
-		<script>
-                submitForm();
-            </script>
-	</tr>
-	</form>
-</table>
-
-
-
-
+    <html:form action="SetupEditMeasurementGroup.do">
+    <table>
+	    <tr>
+		    <input type="hidden" name="value(groupName)"
+			    value="<bean:write name="groupName"/>" />
+		    <td><bean:message key="eform.uploadimages.processing" /></td>
+	    </tr>
+    </table>
+    </html:form>
+<script>
+    submitForm();
+</script>
 </body>
 </html:html>
