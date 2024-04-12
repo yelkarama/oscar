@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -31,106 +31,80 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
 <title><bean:message
 	key="oscarEncounter.Measurements.msgAddMeasurementGroup" /></title>
-<script type="text/javascript">
+
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+
+<script>
     function set(target) {
      document.forms[0].forward.value=target;
 };
 </script>
-<style>
-select {
-min-width:400px;	
-}	
-</style>
 
 </head>
-
-<body class="BodyStyle" vlink="#0000FF"
-	onload="window.resizeTo(1000,500)";>
-<!--  -->
+<body>
+<%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-<html:form
+    <html:form
 	action="/oscarEncounter/oscarMeasurements/AddMeasurementGroup.do">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
+	    <input type="hidden" name="forward" value="error" >
+	    <input type="hidden" name="groupName" value="<bean:write name='groupName'/>" >
+        <h3><bean:message key="oscarEncounter.Measurements.msgAddMeasurementGroup" /></h3>
+        <div class="well">
+			<table>
+				<tr>
+					<th style="text-align:left;" ><bean:message
+						key="oscarEncounter.oscarMeasurements.MeasurementGroup.allTypes" />
+					</th>
+					<th style="text-align:left;" ><bean:write
+						name="groupName" /></th>
+				</tr>
 				<tr>
 					<td><bean:message
-						key="oscarEncounter.Measurements.msgAddMeasurementGroup" /></td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=800>
+						key="oscarEncounter.oscarMeasurements.MeasurementGroup.add2Group" /><bean:write
+						name="groupName" /></td>
+					<td><bean:message
+						key="oscarEncounter.oscarMeasurements.MeasurementGroup.deleteTypes" /><bean:write
+						name="groupName" /></td>
 				<tr>
-					<td>
-					<table>
-						<tr>
-							<th align="left" class="td.tite"><bean:message
-								key="oscarEncounter.oscarMeasurements.MeasurementGroup.allTypes" />
-							</th>
-
-							<th align="left" class="td.tite"><bean:write
-								name="groupName" /></th>
-						</tr>
-						<tr>
-							<td><bean:message
-								key="oscarEncounter.oscarMeasurements.MeasurementGroup.add2Group" /><bean:write
-								name="groupName" /></td>
-							<td><bean:message
-								key="oscarEncounter.oscarMeasurements.MeasurementGroup.deleteTypes" /><bean:write
-								name="groupName" /></td>
-						<tr>
-							<td><html:select multiple="true" property="selectedAddTypes"
-								size="10">
-								<html:options collection="allTypeDisplayNames"
-									property="typeDisplayName" labelProperty="typeDisplayName" />
-							</html:select></td>
-							<td><html:select multiple="true"
-								property="selectedDeleteTypes" size="10">
-								<html:options collection="existingTypeDisplayNames"
-									property="typeDisplayName" labelProperty="typeDisplayName" />
-							</html:select></td>
-						</tr>
-						<tr>
-							<input type="hidden" name="forward" value="error" />
-							<td><input type="button" name="button"
-								value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.addBtn"/>"
-								onclick="set('add');submit();" /></td>
-							<td><input type="button" name="button"
-								value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.deleteBtn"/>"
-								onclick="set('delete');submit();" /></td>
-						</tr>
-						<tr>
-							<td><input type="button" name="Button"
-								value="<bean:message key="global.btnClose"/>"
-								onClick="window.close()"></td>
-							<td></td>
-						</tr>
-						<input type="hidden" name="groupName"
-							value="<bean:write name="groupName"/>" />
-					</table>
-					</td>
+					<td><html:select multiple="true" property="selectedAddTypes"
+						style="height:200px;">
+						<html:options collection="allTypeDisplayNames"
+							property="typeDisplayName" labelProperty="typeDisplayName" />
+					</html:select></td>
+					<td><html:select multiple="true"
+						property="selectedDeleteTypes" style="height:200px;">
+						<html:options collection="existingTypeDisplayNames"
+							property="typeDisplayName" labelProperty="typeDisplayName" />
+					</html:select></td>
+				</tr>
+				<tr>
+					<td><input type="button" name="button" class="btn btn-primary"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.addBtn"/>"
+						onclick="set('add');submit();" /></td>
+					<td><input type="button" name="button" class="btn"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.deleteBtn"/>"
+						onclick="set('delete');submit();" /></td>
+				</tr>
+				<tr>
+					<td><!--<input type="button" name="Button" class="btn"
+						value="<bean:message key="global.btnClose"/>"
+						onClick="window.close()">--></td>
+					<td></td>
 				</tr>
 			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
+        </div>
+    </html:form>
 </body>
 </html:html>
