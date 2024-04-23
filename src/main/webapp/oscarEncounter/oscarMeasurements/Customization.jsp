@@ -67,346 +67,58 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
 }
 
 </script>
-
-<script>
-    $(document).ready(function(){
-        oTable=jQuery('#measTbl').DataTable({
-            "order": [],
-            "lengthMenu": [ [15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
-            "language": {
-            "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
-            }
-        });
-    });
-</script>
-<script>
-function newWindow(varpage, windowname){
-    var page = varpage;
-    windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
-    var popup=window.open(varpage, windowname, windowprops);
-}
-
-function addLoinc(){
-    var loinc_code = document.LOINC.loinc_code.value;
-    var name = document.LOINC.name.value;
-
-    if (loinc_code.length > 0 && name.length > 0){
-        if (modCheck(loinc_code)){
-				document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
-				return true;
-        }
-    }else{
-        alert("Please specify both a loinc code and a name before adding.");
-    }
-
-    return false;
-}
-
-function modCheck(code){
-    if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
-        return true;
-    }else{
-
-        var codeArray = new Array();
-        codeArray = code.split('-');
-        var length = codeArray[0].length;
-
-        var even = false;
-        if ( (length % 2) == 0 ) even = true;
-
-
-        var oddNums = '';
-        var evenNums = '';
-
-        length--;
-        for (length; length >= 0; length--){
-				if (even){
-				    even = false;
-				    evenNums = evenNums+codeArray[0].charAt(length);
-				}else{
-				    even = true;
-				    oddNums = oddNums+codeArray[0].charAt(length);
-				}
-        }
-
-        oddNums = oddNums*2;
-        var newNum = evenNums+oddNums;
-        var sum = 0;
-
-
-        for (var i=0; i < newNum.length; i++){
-				sum = sum + parseInt(newNum.charAt(i));
-        }
-
-        var newSum = sum;
-
-        while((newSum % 10) != 0){
-				newSum++;
-        }
-
-        var checkDigit = newSum - sum;
-        if (checkDigit == codeArray[1]){
-				return true;
-        }else{
-				alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
-				return false;
-        }
-
-    }
-
-}
-
-<%String outcome = request.getParameter("outcome");
-if (outcome != null){
-    if (outcome.equals("success")){
-        %>
-          alert("Successfully added loinc code");
-          window.opener.location.reload()
-          window.close();
-        <%
-    }else if (outcome.equals("failedcheck")){
-        %>
-          alert("Unable to add code: The specified code already exists in the database");
-        <%
-    }else{
-        %>
-          alert("Failed to add the new code");
-        <%
-    }
-}%>
-
-
-
-window.onload = stripe;
-
-</script>
-</head>
 <body>
 <%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-
-    <form method="post" name="LOINC" action="NewMeasurementMap.do">
-        <input type="hidden" name="identifier" value="">
-        <h3>Measurement Mapping Table</h3>
-		<table class="table table-striped table-condensed" id="measTbl">
-            <thead>
-                <tr>
-                    <th valign="bottom" class="Header">MEAS</th>
-					<th valign="bottom" class="Header">Loinc Code</th>
-					<th valign="bottom" class="Header">Desc</th>
-					<th valign="bottom" class="Header">--</th>
-					<%
-					MeasurementMapConfig map = new MeasurementMapConfig();
-					List<String> types = map.getLabTypes();
-					types.remove("FLOWSHEET");
-					for(String type:types){%>
-					<th valign="bottom" class="Header"><%=type%></th>
-					<%}%>
-                </tr>
-            </thead>
-            <tbody>
-				<%
-				List<String> list =map.getDistinctLoincCodes();
-				boolean odd = true;
-				for(String s:list){
-					List<Hashtable<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
-				    String desc = "";
-				    if (codesHash.size() > 0 ){
-				        desc = getDesc(codesHash.get(0));
-				    }
-				    String mappings = getCodeMap(codesHash);
-				    Hashtable<String, Hashtable<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
-				    String measurement = getDisplay(h,"FLOWSHEET");
-				%>
+    <html:form action="/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.do" onsubmit="return validateForm()">
+        <h3><bean:message key="oscarEncounter.Measurements.msgDefineNewMeasurementGroup" /></h3>
+        <div class="well">
+			<table>
 				<tr>
-				    <td class="Cell" >
-				        <% if (measurement != null && !measurement.equals("&nbsp;")){%>
-				        <%=measurement%>
-				        <%}else{%>
-				        <a href="addMeasurementMap2.jsp?loinc=<%=s%>">map</a>
-				        <%}%>
-				    </td>
-				    <td class="Cell"><%=s%></td>
-				    <td class="Cell"><%=desc%></td>
-				    <td class="Cell">&nbsp;</td>
-				    <%for(String type:types){%>
-				        <td class="Cell" ><%=getDisplay(h,type)%></td>
-				    <%}%>
+					<td align="left"><bean:message
+						key="oscarEncounter.oscarMeasurements.addMeasurementGroup.createNewMeasurementGroupName" />
+					</td>
 				</tr>
-				<%
-				odd = !odd;
-				}%>
-            </tbody>
-		</table>
-    </form>
-
-<%!
-  String rowColour(Boolean b){
-      if (b.booleanValue()){
-          b = Boolean.valueOf(!b);
-          return "#DDDDDD";
-      }else{
-
-          return "#FFFFFF";
-      }
-
+				<tr>
+					<td><html:text property="groupName" styleClass="input-large" /></td>
+				</tr>
+				<tr>
+					<td><bean:message
+						key="oscarEncounter.oscarMeasurements.addMeasurementGroup.selectStyleSheet" />
+					</td>
+				</tr>
+				<tr>
+					<td><html:select property="styleSheet" style="width:250">
+					<html:option value=""></html:option>
+						<html:options collection="allStyleSheets" property="cssId"
+							labelProperty="styleSheetName" />
+					</html:select></td>
+				</tr>
+				<tr>
+					<td>
+					<table>
+						<tr>
+							<td><!--<input type="button" name="Button" class="btn"
+						value="<bean:message key="global.btnClose"/>"
+						onClick="window.close()">--></td>
+							<td><input type="submit" name="submit" class="btn btn-primary"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.continueBtn"/>"/></td>
+						</tr>
+					</table>
+					</td>
+				</tr>
+			</table>
+        </div>
+    </html:form>
+<script>
+function validateForm()
+{
+  var a=document.forms[0]["groupName"].value;
+  if (a==null || a==""){
+  	alert("Please enter a group name");
+  	return false;
   }
-
-
-
-  String getDesc(Hashtable<String,String> h){
-      return h.get("name");
-  }
-
-  String getDisplay(Hashtable<String, Hashtable<String,String>> h, String type){
-      Hashtable<String,String> data = h.get(type);
-      if (data == null ){ return "&nbsp;";}
-      return data.get("name")+": "+data.get("ident_code");
-  }
-
-  String getCodeMap(List<Hashtable<String,String>> list){
-      StringBuffer sb = new StringBuffer();
-
-        for(Hashtable<String,String> h : list){
-            sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
-        }
-        return sb.toString();
-  }
-%>
-
-<!--
-
-    <table>
-	    <tr>
-		    <td class=Title colspan="2"><bean:message
-			    key="oscarEncounter.Measurements.msgGroup" /></td>
-	    </tr>
-	    <tr>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA"><a href=#
-    onClick="popupOscarConS(300,1000,'SetupStyleSheetList.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.addMeasurementGroup" /></a></td>
-			    </tr>
-		    </table>
-		    </td>
-		    <td>
-		    <table class=messButtonsA cellspacing=0 cellpadding=3>
-			    <tr>
-				    <td class="messengerButtonsA"><a href=#
-    onClick="popupOscarConS(300,1000,'SetupGroupList.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.editMeasurementGroup" /></a></td>
-			    </tr>
-			    <tr>
-				    <td class="messengerButtonsA"><a href=#
-    onClick="popupOscarConS(300,1000,'AddMeasurementGroup.do')"
-    class="messengerButtons">Add group ik</a></td>
-			    </tr>
-		    </table>
-		    </td>
-	    </tr>
-	    <tr>
-		    <td class=Title colspan="2"><bean:message
-			    key="oscarEncounter.Measurements.msgType" /></td>
-	    </tr>
-	    <tr>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA" ><a href=#
-    onClick="popupOscarConS(700,1000,'SetupDisplayMeasurementTypes.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.viewMeasurementType" /></a></td>
-			    </tr>
-		    </table>
-		    </td>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA" width="200"><a href=#
-    onClick="popupOscarConS(300,1000,'SetupAddMeasurementType.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.addMeasurementType" /></a></td>
-			    </tr>
-		    </table>
-		    </td>
-	    </tr>
-	    <tr>
-		    <td class=Title colspan="2">Mappings --
-                    <a href=# onClick="popupOscarConS(300,1000,'viewMeasurementMap.jsp')" class="messengerButtons">View Mapping</a></td>
-	    </tr>
-	    <tr>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA" width="200"><a href=#
-    onClick="popupOscarConS(700,1000,'AddMeasurementMap.do')"
-    class="messengerButtons">Add Measurement Mapping</a></td>
-			    </tr>
-		    </table>
-		    </td>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA" width="200"><a href=#
-    onClick="popupOscarConS(600,700,'RemoveMeasurementMap.do')"
-    class="messengerButtons">Remove/Remap Measurement Mapping</a></td>
-			    </tr>
-		    </table>
-		    </td>
-	    </tr>
-	    <tr>
-		    <td class=Title colspan="2"><bean:message
-			    key="oscarEncounter.Measurements.msgMeasuringInstruction" /></td>
-	    </tr>
-	    <tr>
-		    <td>
-		    <table>
-			    <tr>
-				    <td class="messengerButtonsA" ><a href=#
-    onClick="popupOscarConS(300,1000,'SetupAddMeasuringInstruction.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.addMeasuringInstruction" /></a>
-				    </td>
-			    </tr>
-		    </table>
-		    </td>
-	    </tr>
-	    <tr>
-		    <td class=Title colspan="2"><bean:message
-			    key="oscarEncounter.Measurements.msgStyleSheets" /></td>
-	    </tr>
-	    <tr>
-		    <td>
-		    <table class=messButtonsA cellspacing=0 cellpadding=3>
-			    <tr>
-				    <td class="messengerButtonsA" ><a href=#
-    onClick="popupOscarConS(300,1000,'SetupDisplayMeasurementStyleSheet.do')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.viewMeasurementStyleSheet" /></a>
-				    </td>
-			    </tr>
-		    </table>
-		    </td>
-		    <td>
-		    <table class=messButtonsA cellspacing=0 cellpadding=3>
-			    <tr>
-				    <td class="messengerButtonsA" ><a href=#
-    onClick="popupOscarConS(300,1000,'AddMeasurementStyleSheet.jsp')"
-    class="messengerButtons"><bean:message
-    key="oscarEncounter.Index.measurements.addMeasurementStyleSheet" /></a>
-				    </td>
-			    </tr>
-		    </table>
-		    </td>
-	    </tr>
-	    <tr>
-		    <td></td>
-	    </tr>
-    </table>
--->
+}
+</script>
 </body>
 </html:html>
