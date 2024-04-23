@@ -43,19 +43,11 @@ if (name == null) name = "";
 if (type == null) type = "";
 
 %>
+
 <html:html locale="true">
 <head>
 <html:base />
     <title>Measurement Mapping Configuration</title>
-
-<!-- jquery -->
-    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
-    <script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
-
-<!-- css -->
-    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
-    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
 
 <script>
 
@@ -87,7 +79,7 @@ if (type == null) type = "";
                     <%
                 }else if (outcome.equals("failedcheck")){
                     %>
-                      alert("Unable to remap the measurement: A measurement is already mapped to the specified code for that measurement type");
+                      alert("Unable to remap the measurement: A measurement is already mapped to the specified code for that mesasurement type");
                     <%
                 }else{
                     %>
@@ -97,6 +89,7 @@ if (type == null) type = "";
             }%>
 
         </script>
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
 </head>
 <body>
 <form method="post" name="CONFIG" action="RemapMeasurementMap.do">
@@ -104,52 +97,55 @@ if (type == null) type = "";
 <input type="hidden" name="identifier" value="<%= identifier %>">
 <input type="hidden" name="name" value="<%= name %>">
 <input type="hidden" name="type" value="<%= type %>">
-<h3>Remap Identifier
-				Code</h3>
+
+<h3>Remap Identifier Code</h3>
 <div class="well">
 		<table>
 			<tr>
-				<td class="Cell" >Identifier:</td>
-				<td class="Cell" ><%= identifier %></td>
+				<td colspan="2" valign="bottom" class="Header">Remap Identifier
+				Code</td>
 			</tr>
 			<tr>
-				<td class="Cell" >Name:</td>
-				<td class="Cell" ><%= name %></td>
+				<td class="Cell" style="width:20%">Identifier:</td>
+				<td class="Cell" style="width:80%"><%= identifier %></td>
 			</tr>
 			<tr>
-				<td class="Cell" >Lab Type:</td>
-				<td class="Cell" ><%= type %></td>
+				<td class="Cell" style="width:20%">Name:</td>
+				<td class="Cell" style="width:80%"><%= name %></td>
 			</tr>
 			<tr>
-				<td class="Cell" >Search codes by name:</td>
-				<td class="Cell" >
+				<td class="Cell" style="width:20%">Lab Type:</td>
+				<td class="Cell" style="width:80%"><%= type %></td>
+			</tr>
+			<tr>
+				<td class="Cell" style="width:20%">Search codes by name:</td>
+				<td class="Cell" style="width:80%">
 				<%String searchstring = request.getParameter("searchstring");
                                                 if (searchstring == null)
                                                     searchstring = "";%>
 				<input type="text" size="30" name="searchstring"
-					value="<%= searchstring %>" > <input type="submit" value="Search" class="btn"
-					onclick="return reloadPage()" ></td>
+					value="<%= searchstring %>" /> <input type="submit" value="Search" class="btn"
+					onclick="return reloadPage()" /></td>
 			<tr>
-				<td class="Cell">Select code to map to:</td>
-				<td class="Cell"><select name="loinc_code">
+				<td class="Cell" style="width:20%">Select code to map to:</td>
+				<td class="Cell" style="width:80%"><select name="loinc_code">
 					<option value="0">None Selected</option>
-					<%List<MeasurementMap> loincCodes = mmc.getLoincCodes(searchstring);
-                                                for (MeasurementMap loincCode : loincCodes) {%>
-					<option value="<%= loincCode.getLoincCode() %>"><%= loincCode.getLoincCode()+" - "+loincCode.getName()%></option>
+					<%ArrayList loincCodes = mmc.getLoincCodes(searchstring);
+                                                for (int i=0; i < loincCodes.size(); i++) {
+                                                Hashtable ht = (Hashtable) loincCodes.get(i);%>
+					<option value="<%= (String) ht.get("code") %>"><%= (String) ht.get("code")+" - "+((String) ht.get("name")).trim()%></option>
 					<% }%>
 				</select></td>
 			</tr>
 			<tr>
-				<td colspan="2" class="Cell" style="text-align:center"><input type="button"  class="btn"
-					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"><input class="btn"
+				<td colspan="2" class="Cell" align="center"><input class="btn"
 					type="submit" value=" Remap Measurement "> <input class="btn"
 					type="button" value=" Add New Loinc Code "
 					onclick="javascript:popupStart('300','600','newMeasurementMap.jsp','Add New Loinc Code')">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" class="Cell" style="text-align:center">NOTE: <a
+				<td colspan="2" class="Cell" align="center">NOTE: <a
 					href="javascript:newWindow('http://www.regenstrief.org/medinformatics/loinc/relma','RELMA')">It
 				is suggested that you use the RELMA application to help determine
 				correct loinc codes.</a></td>
