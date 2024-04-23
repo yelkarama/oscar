@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -63,44 +63,38 @@ propKey = "mgroup.ds.html."+groupId;
 
 }//if groupName
 %>
-<!DOCTYPE html>
-<html>
+<html:html locale="true">
 <head>
+<html:base />
+    <title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
 
-		<title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
 
 </head>
-
 <body>
+<%@ include file="measurementTopNav.jspf"%>
+<html:errors />
 <div class="container">
-
-<h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Remove Decision Support from Group </h3>
+    <h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Remove Decision Support from Group </h3>
 <%
 	propValue = measurementManager.getPropertyValue(propKey);
 	valueDisplay = propValue.substring(0, propValue.lastIndexOf('.'));
 %>
-
-
-<form action="MeasurementGroupDScomplete.jsp" method="post" name="formRemove">
-	<input type="hidden" name="property" value="<%=propKey%>">
-	
-	
-	    <div class="alert alert-warning alert-block">
-      <h4>Warning!</h4>
-      Measurement group <em><strong><%=groupName%></strong></em> is associated with the <em><strong><%=valueDisplay%></strong></em> decision support. To remove this association please click on the remove button.
-     
-      <div style="width:100%;text-align:right;margin-top:10px"><button class="btn" onclick="window.close();">Cancel</button>  <button type="submit" name="remove" class="btn btn-danger">Remove</button>	</div>
-      
-    </div>
-</form>
-
-</div><!-- container -->						
-						
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
-
+    <form action="MeasurementGroupDScomplete.jsp" method="post" name="formRemove">
+	    <input type="hidden" name="property" value="<%=propKey%>">
+        <div class="alert alert-warning alert-block">
+            <h4>Warning!</h4>
+          Measurement group <em><strong><%=groupName%></strong></em> is associated with the <em><strong><%=valueDisplay%></strong></em> decision support. To remove this association please click on the remove button.
+        <div style="width:100%; text-align:right; margin-top:10px"><!--<button class="btn" onclick="window.close();">Cancel</button>-->  <button type="submit" name="remove" class="btn btn-danger"><bean:message key="REMOVE" /></button>	</div>
+        </div>
+    </form>
+</div><!-- container -->
 </body>
-</html>
+</html:html>

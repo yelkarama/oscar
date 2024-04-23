@@ -23,124 +23,108 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
-<%@ page import="java.util.*,oscar.oscarReport.pageUtil.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message
-	key="oscarEncounter.Measurements.msgDisplayMeasurementTypes" /></title>
+	key="oscarEncounter.Measurements.msgCustomization" /></title>
+<html:base />
 
-<script type="text/javascript">
-    function set(target) {
-     document.forms[0].forward.value=target;
-};
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<script>
+
+$(document).ready(function(){
+    oTable=jQuery('#measTbl').DataTable({
+        "order": [],
+        "lengthMenu": [ [15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
+        "language": {
+        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+        }
+    });
+
+});
+
 </script>
 </head>
-
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
+<body>
+<%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-<html:form
-	action="/oscarEncounter/oscarMeasurements/DeleteMeasurementTypes">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
-				<tr>
-					<td><bean:message
-						key="oscarEncounter.Measurements.msgDisplayMeasurementTypes" /></td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=800>
-				<tr>
-					<td>
-					<table>
-						<tr>
-							<logic:present name="messages">
-								<logic:iterate id="msg" name="messages">
-									<bean:write name="msg" />
-									<br>
-								</logic:iterate>
-							</logic:present>
-						</tr>
-						<tr>
-							<td>
-						<tr>
-							<th align="left" class="Header" width="5"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
-							</th>
-							<th align="left" class="Header" width="20"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingDisplayName" />
-							</th>
-							<th align="left" class="Header" width="10"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingTypeDesc" />
-							</th>
-							<th align="left" class="Header" width="300"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
-							</th>
-							<th align="left" class="Header" width="300"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingValidation" />
-							</th>
-							<th align="left" class="Header" width="10"><bean:message
-								key="oscarEncounter.oscarMeasurements.MeasurementAction.headingDelete" />
-							</th>
-						</tr>
-						<logic:iterate id="measurementType" name="measurementTypes"
-							property="measurementTypeVector" indexId="ctr">
-							<tr class="data">
-								<td width="5"><a
-									href="exportMeasurement.jsp?mType=<bean:write name="measurementType" property="type" />"
-									target="_blank"> <bean:write name="measurementType"
-									property="type" /> </a></td>
-								<td width="20"><bean:write name="measurementType"
-									property="typeDisplayName" /></td>
-								<td width="10"><bean:write name="measurementType"
-									property="typeDesc" /></td>
-								<td width="300"><bean:write name="measurementType"
-									property="measuringInstrc" /></td>
-								<td width="300"><bean:write name="measurementType"
-									property="validation" /></td>
-								<td width="10"><input type="checkbox" name="deleteCheckbox"
-									value="<bean:write name="measurementType" property="id" />"</td>
-							</tr>
-						</logic:iterate>
-						<tr>
-							<td><input type="button" name="Button"
-								value="<bean:message key="global.btnClose"/>"
-								onClick="window.close()"></td>
-							<td><input type="button" name="Button"
-								value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
-								onclick="submit();" /></td>
-						</tr>
-
-						</td>
-						</tr>
-					</table>
-					</td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
+    <html:form
+	    action="/oscarEncounter/oscarMeasurements/DeleteMeasurementTypes">
+        <h3><bean:message key="oscarEncounter.Measurements.msgDisplayMeasurementTypes" /></h3>
+        <logic:present name="messages">
+            <logic:iterate id="msg" name="messages">
+	            <div class="alert-info"><bean:write name="msg" /><a href="#" class="close" data-dismiss="alert">&times;</a></div>
+            </logic:iterate>
+        </logic:present>
+        <table class="table table-compact table-striped" id="measTbl">
+            <thead>
+	            <tr>
+		            <th><bean:message
+			            key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
+		            </th>
+		            <th><bean:message
+			            key="oscarEncounter.oscarMeasurements.Measurements.headingDisplayName" />
+		            </th>
+		            <th><bean:message
+			            key="oscarEncounter.oscarMeasurements.Measurements.headingTypeDesc" />
+		            </th>
+		            <th width="300"><bean:message
+			            key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
+		            </th>
+		            <th><bean:message
+			            key="oscarEncounter.oscarMeasurements.Measurements.headingValidation" />
+		            </th>
+		            <th><bean:message
+			            key="oscarEncounter.oscarMeasurements.MeasurementAction.headingDelete" />
+		            </th>
+	            </tr>
+            </thead>
+            <tbody>
+	            <logic:iterate id="measurementType" name="measurementTypes"
+		            property="measurementTypeVector" indexId="ctr">
+		            <tr class="data">
+			            <td><a href="exportMeasurement.jsp?mType=<bean:write name="measurementType" property="type" />"
+				            title="<bean:message key="export" />&nbsp;<bean:write name="measurementType" property="type" />"
+                            target="_blank" > <bean:write name="measurementType"
+				            property="type" /> </a></td>
+			            <td><bean:write name="measurementType"
+				            property="typeDisplayName" /></td>
+			            <td><bean:write name="measurementType"
+				            property="typeDesc" /></td>
+			            <td><bean:write name="measurementType"
+				            property="measuringInstrc" /></td>
+			            <td><bean:write name="measurementType"
+				            property="validation" /></td>
+			            <td><input type="checkbox" name="deleteCheckbox"
+				            value="<bean:write name="measurementType" property="id" />"></td>
+		            </tr>
+	            </logic:iterate>
+            </tbody>
+        </table>
+        <input type="button" name="Button" class="btn"
+		    value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
+		    onclick="submit();">
+    </html:form>
 </body>
 </html:html>

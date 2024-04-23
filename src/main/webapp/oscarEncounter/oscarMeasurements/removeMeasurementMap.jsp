@@ -23,38 +23,55 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page
 	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties"%>
 
-<%
 
-%>
-
-<link rel="stylesheet" type="text/css"
-	href="../../oscarMDS/encounterStyles.css">
-
-<html>
+<html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Measurement Mapping Configuration</title>
+<html:base />
+    <title>Measurement Mapping Configuration</title>
 
-<script type="text/javascript" language=javascript>
-            
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+
+    <script>
+        $(document).ready(function(){
+            oTable=jQuery('#measTbl').DataTable({
+                "order": [],
+                "lengthMenu": [ [10, 40 , 90, -1], [10, 40, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
+                "language": {
+                "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                }
+            });
+        });
+    </script>
+
+    <script>
             function popupStart(vheight,vwidth,varpage,windowname) {
                 var page = varpage;
                 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
                 var popup=window.open(varpage, windowname, windowprops);
             }
-            
+
             function reloadPage(){
                 document.CONFIG.action = 'removeMeasurementMap.jsp';
                 return true;
             }
-            
+
             function deleteMapping(id){
                 var answer = confirm ("Are you sure you want to delete the mapping?")
                 if (answer){
@@ -63,91 +80,62 @@
                 }else{
                     return false;
                 }
-                
+
             }
-            
+
             function remap(id, identifier, name, type){
                 popupStart(300, 1000, 'remapMeasurementMap.jsp?id='+id+'&identifier='+identifier+'&name='+name+'&type='+type, 'Remap Measurement')
             }
-            
+
             <%String outcome = request.getParameter("outcome");
             if (outcome != null){
                 if (outcome.equals("success")){
                     %>
                       alert("Successfully deleted the mapping");
                     <%
-                }else{    
+                }else{
                     %>
                       alert("Failed to delete the mapping");
                     <%
-                }   
+                }
             }%>
-
         </script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 </head>
-
 <body>
+<%@ include file="measurementTopNav.jspf"%>
 <form method="post" name="CONFIG" action="RemoveMeasurementMap.do">
 <input type="hidden" name="id" value=""> <input type="hidden"
 	name="identifier" value=""> <input type="hidden" name="name"
 	value=""> <input type="hidden" name="type" value=""> <input
 	type="hidden" name="provider_no"
 	value="<%= session.getValue("user") %>">
-<table width="100%" height="100%" border="0">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRow" colspan="9" align="left">
-		<table width="100%">
-			<tr>
-				<td align="left"><input type="button"
-					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"></td>
-				<td align="right"><oscar:help keywords="measurement" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'../About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'../License.jsp')"><bean:message
-					key="global.license" /></a></td>
+ <%String searchstring = request.getParameter("searchstring");
+    if (searchstring == null) searchstring = "";%>
+<!-- Search table for name: <input type="text" size="30" name="searchstring"
+					value="<%= searchstring %>" > <input type="submit" value="Search"
+					onclick="return reloadPage()" >-->
+
+<h3>Edit Measurement Mapping Table</h3>
+    <table class="table table-striped table-condensed" id="measTbl">
+        <thead>
+            <tr>
+				<th></th>
+				<th></th>
+				<th>Identifier</th>
+				<th>Loinc Code</th>
+				<th>Name</th>
+				<th>Lab Type</th>
 			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td valign="middle">
-		<center>
-		<table width="100%">
-			<tr>
-				<td colspan="6" valign="bottom" class="Header">Measurement
-				Mapping Table</td>
-			</tr>
-			<tr>
-				<td class="Cell" colspan="6">
-				<%String searchstring = request.getParameter("searchstring");
-                                        if (searchstring == null)
-                                            searchstring = "";%> Search
-				table for name: <input type="text" size="30" name="searchstring"
-					value="<%= searchstring %>" /> <input type="submit" value="Search"
-					onclick="return reloadPage()" /></td>
-			<tr>
-			<tr>
-				<td><br />
-				</td>
-			</tr>
-			<tr>
-				<th width="5%"></th>
-				<th width="5%"></th>
-				<th class="HeaderCell" width="15%">Identifier</th>
-				<th class="HeaderCell" width="15%">Loinc Code</th>
-				<th class="HeaderCell" width="45%">Name</th>
-				<th class="HeaderCell" width="15%">Lab Type</th>
-			</tr>
+        </thead>
+        <tbody>
 			<%MeasurementMapConfig mmc = new MeasurementMapConfig();
                                 ArrayList mappings = mmc.getMeasurementMap(searchstring);
                                 for (int i=0; i < mappings.size(); i++){
                                     Hashtable ht = (Hashtable) mappings.get(i);%>
 			<tr>
-				<td class="ButtonCell"><input type="submit" value="DELETE"
+				<td class="ButtonCell"><input type="submit" value="<bean:message key="global.btnDelete"/>" class="btn-link"
 					onclick="deleteMapping(<%= (String) ht.get("id") %>)"></td>
-				<td class="ButtonCell"><input type="button" value="REMAP"
+				<td class="ButtonCell"><input type="button" value="REMAP" class="btn"
 					onclick="remap(<%= "'"+ (String) ht.get("id") +"','"+ (String) ht.get("ident_code") +"','"+ (String) ht.get("name") +"','"+ (String) ht.get("lab_type")+"'" %>)"></td>
 				<td class="TableCell"><%= (String) ht.get("ident_code") %></td>
 				<td class="TableCell"><%= (String) ht.get("loinc_code") %></td>
@@ -155,12 +143,8 @@
 				<td class="TableCell"><%= (String) ht.get("lab_type") %></td>
 			</tr>
 			<%}%>
-
-		</table>
-		</center>
-		</td>
-	</tr>
-</table>
+        </tbody>
+    </table>
 </form>
 </body>
-</html>
+</html:html>

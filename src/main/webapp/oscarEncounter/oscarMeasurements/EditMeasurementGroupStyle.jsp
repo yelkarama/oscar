@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -31,12 +31,21 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html:base />
 <title><bean:message
 	key="oscarEncounter.Measurements.msgSelectMeasurementGroup" /></title>
+
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-migrate-3.4.0.js"></script><!-- needed for bootstrap.min.js -->
+    <script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> <!-- needed for dropdown -->
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
 
 <script type="text/javascript">
     function set(target) {
@@ -45,79 +54,48 @@
 </script>
 
 </head>
-
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
+<body>
+<%@ include file="measurementTopNav.jspf"%>
 <html:errors />
-<html:form
+    <html:form
 	action="/oscarEncounter/oscarMeasurements/EditMeasurementStyle.do">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn" width="400">
-			<table class="TopStatusBar">
+	    <input type="hidden" name="forward" value="error" >
+	    <input type="hidden" name="groupName" value="<bean:write name='groupName'/>" >
+        <h3><bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.modifyMeasurementStyleBtn" /></h3>
+        <div class="well">
+			<table>
+				<tr>
+					<td></td>
 				<tr>
 					<td><bean:message
-						key="oscarEncounter.oscarMeasurements.MeasurementsAction.modifyMeasurementStyleBtn" /></td>
+						key="oscarEncounter.oscarMeasurements.SelectMeasurementGroup.msgCurrentStyleSheet" />
+					<bean:write name='groupName' />: <logic:present name="css">
+						<bean:write name="css" />
+					</logic:present></td>
+				<tr>
+					<td><bean:message
+						key="oscarEncounter.oscarMeasurements.SelectMeasurementGroup.msgChangeTo" />:
+					<html:select property="styleSheet" style="width:250px;">
+						<html:options collection="allStyleSheets" property="cssId"
+							labelProperty="styleSheetName" />
+					</html:select></td>
 				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=800>
 				<tr>
 					<td>
 					<table>
 						<tr>
-							<td>
-						<tr>
-							<td align="left"><bean:message
-								key="oscarEncounter.oscarMeasurements.SelectMeasurementGroup.msgCurrentStyleSheet" />
-							<bean:write name='groupName' />: <logic:present name="css">
-								<bean:write name="css" />
-							</logic:present></td>
-						<tr>
-							<td><bean:message
-								key="oscarEncounter.oscarMeasurements.SelectMeasurementGroup.msgChangeTo" />:
-							<html:select property="styleSheet" style="width:250">
-								<html:options collection="allStyleSheets" property="cssId"
-									labelProperty="styleSheetName" />
-							</html:select></td>
-						</tr>
-						</tr>
-						<tr>
-							<td>
-							<table>
-								<tr>
-									<input type="hidden" name="forward" value="error" />
-									<td><input type="button" name="Button"
-										value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.okBtn"/>"
-										onclick="set('type');submit();" /></td>
-									<td><input type="button" name="Button"
-										value="<bean:message key="global.btnCancel"/>"
-										onClick="window.close()"></td>
-									<input type="hidden" name="groupName"
-										value="<bean:write name='groupName'/>" />
-								</tr>
-							</table>
-							</td>
-						</tr>
-						</td>
+							<td><input type="button" name="Button" class="btn"
+						value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.okBtn"/>"
+						onclick="set('type');submit();" /></td>
+							<td><!--<input type="button" name="Button" class="btn"
+						value="<bean:message key="global.btnCancel"/>"
+						onClick="window.close()">--></td>
 						</tr>
 					</table>
 					</td>
 				</tr>
 			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
+        </div>
+    </html:form>
 </body>
 </html:html>

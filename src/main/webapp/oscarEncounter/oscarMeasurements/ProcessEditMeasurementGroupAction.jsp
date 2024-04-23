@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -34,43 +34,38 @@
 	import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
 
 <html:html locale="true">
-
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+
 <title><bean:message
 	key="oscarEncounter.Measurements.msgProcessEditMeasurementGroupAction" />
 </title>
 <html:base />
-</head>
 
 <script language="javascript">
 
 function submitForm(){
-    
+
     document.forms[0].submit();
-    
+
  }
 
-
 </script>
-
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
+</head>
+<body>
 <html:errors />
 <table>
 	<form action="SetupEditMeasurementGroup.do">
 	<tr>
 		<input type="hidden" name="value(groupName)"
 			value="<bean:write name="groupName"/>" />
-		<td>Processing...</td>
+		<td style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;"><bean:message
+	key="eform.uploadimages.processing" /></td>
 		<script>
                 submitForm();
             </script>
 	</tr>
 	</form>
 </table>
-
-
 
 
 </body>
