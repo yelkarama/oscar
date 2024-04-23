@@ -32,8 +32,11 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="oscar.oscarEncounter.pageUtil.*"%>
+<%@ page import="oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig"%>
 <%@ page import="oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
-<%@ page import="java.util.Vector"%>
+<%@ page import="oscar.OscarProperties"%>
+<%@ page import="oscar.util.StringUtils"%>
+<%@ page import="java.util.*"%>
 <%@ page import="org.owasp.encoder.Encode"%>
 
 <html:html locale="true">
@@ -64,18 +67,117 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
 }
 
 </script>
+
 <script>
-
-$(document).ready(function(){
-    oTable=jQuery('#measTbl').DataTable({
-        "order": [],
-        "lengthMenu": [ [15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
-        "language": {
-        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
-        }
+    $(document).ready(function(){
+        oTable=jQuery('#measTbl').DataTable({
+            "order": [],
+            "lengthMenu": [ [15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
+            "language": {
+            "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+            }
+        });
     });
+</script>
+<script>
+function newWindow(varpage, windowname){
+    var page = varpage;
+    windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
+    var popup=window.open(varpage, windowname, windowprops);
+}
 
-});
+function addLoinc(){
+    var loinc_code = document.LOINC.loinc_code.value;
+    var name = document.LOINC.name.value;
+
+    if (loinc_code.length > 0 && name.length > 0){
+        if (modCheck(loinc_code)){
+				document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
+				return true;
+        }
+    }else{
+        alert("Please specify both a loinc code and a name before adding.");
+    }
+
+    return false;
+}
+
+function modCheck(code){
+    if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
+        return true;
+    }else{
+
+        var codeArray = new Array();
+        codeArray = code.split('-');
+        var length = codeArray[0].length;
+
+        var even = false;
+        if ( (length % 2) == 0 ) even = true;
+
+
+        var oddNums = '';
+        var evenNums = '';
+
+        length--;
+        for (length; length >= 0; length--){
+				if (even){
+				    even = false;
+				    evenNums = evenNums+codeArray[0].charAt(length);
+				}else{
+				    even = true;
+				    oddNums = oddNums+codeArray[0].charAt(length);
+				}
+        }
+
+        oddNums = oddNums*2;
+        var newNum = evenNums+oddNums;
+        var sum = 0;
+
+
+        for (var i=0; i < newNum.length; i++){
+				sum = sum + parseInt(newNum.charAt(i));
+        }
+
+        var newSum = sum;
+
+        while((newSum % 10) != 0){
+				newSum++;
+        }
+
+        var checkDigit = newSum - sum;
+        if (checkDigit == codeArray[1]){
+				return true;
+        }else{
+				alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
+				return false;
+        }
+
+    }
+
+}
+
+<%String outcome = request.getParameter("outcome");
+if (outcome != null){
+    if (outcome.equals("success")){
+        %>
+          alert("Successfully added loinc code");
+          window.opener.location.reload()
+          window.close();
+        <%
+    }else if (outcome.equals("failedcheck")){
+        %>
+          alert("Unable to add code: The specified code already exists in the database");
+        <%
+    }else{
+        %>
+          alert("Failed to add the new code");
+        <%
+    }
+}%>
+
+
+
+window.onload = stripe;
 
 </script>
 </head>
@@ -83,63 +185,94 @@ $(document).ready(function(){
 <%@ include file="measurementTopNav.jspf"%>
 <html:errors />
 
-    <html:form
-	    action="/oscarEncounter/oscarMeasurements/DeleteMeasurementTypes">
-        <h3><bean:message key="oscarEncounter.Measurements.msgDisplayMeasurementTypes" /></h3>
-        <logic:present name="messages">
-            <logic:iterate id="msg" name="messages">
-	            <div class="alert-info"><bean:write name="msg" /><a href="#" class="close" data-dismiss="alert">&times;</a></div>
-            </logic:iterate>
-        </logic:present>
-        <table class="table table-compact table-striped" id="measTbl">
+    <form method="post" name="LOINC" action="NewMeasurementMap.do">
+        <input type="hidden" name="identifier" value="">
+        <h3>Measurement Mapping Table</h3>
+		<table class="table table-striped table-condensed" id="measTbl">
             <thead>
-	            <tr>
-		            <th><bean:message
-			            key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
-		            </th>
-		            <th><bean:message
-			            key="oscarEncounter.oscarMeasurements.Measurements.headingDisplayName" />
-		            </th>
-		            <th><bean:message
-			            key="oscarEncounter.oscarMeasurements.Measurements.headingTypeDesc" />
-		            </th>
-		            <th width="300"><bean:message
-			            key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
-		            </th>
-		            <th><bean:message
-			            key="oscarEncounter.oscarMeasurements.Measurements.headingValidation" />
-		            </th>
-		            <th><bean:message
-			            key="oscarEncounter.oscarMeasurements.MeasurementAction.headingDelete" />
-		            </th>
-	            </tr>
+                <tr>
+                    <th valign="bottom" class="Header">MEAS</th>
+					<th valign="bottom" class="Header">Loinc Code</th>
+					<th valign="bottom" class="Header">Desc</th>
+					<th valign="bottom" class="Header">--</th>
+					<%
+					MeasurementMapConfig map = new MeasurementMapConfig();
+					List<String> types = map.getLabTypes();
+					types.remove("FLOWSHEET");
+					for(String type:types){%>
+					<th valign="bottom" class="Header"><%=type%></th>
+					<%}%>
+                </tr>
             </thead>
             <tbody>
-	            <logic:iterate id="measurementType" name="measurementTypes"
-		            property="measurementTypeVector" indexId="ctr">
-		            <tr class="data">
-			            <td><a href="exportMeasurement.jsp?mType=<bean:write name="measurementType" property="type" />"
-				            title="<bean:message key="export" />&nbsp;<bean:write name="measurementType" property="type" />"
-                            target="_blank" > <bean:write name="measurementType"
-				            property="type" /> </a></td>
-			            <td><bean:write name="measurementType"
-				            property="typeDisplayName" /></td>
-			            <td><bean:write name="measurementType"
-				            property="typeDesc" /></td>
-			            <td><bean:write name="measurementType"
-				            property="measuringInstrc" /></td>
-			            <td><bean:write name="measurementType"
-				            property="validation" /></td>
-			            <td><input type="checkbox" name="deleteCheckbox"
-				            value="<bean:write name="measurementType" property="id" />"></td>
-		            </tr>
-	            </logic:iterate>
+				<%
+				List<String> list =map.getDistinctLoincCodes();
+				boolean odd = true;
+				for(String s:list){
+					List<Hashtable<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
+				    String desc = "";
+				    if (codesHash.size() > 0 ){
+				        desc = getDesc(codesHash.get(0));
+				    }
+				    String mappings = getCodeMap(codesHash);
+				    Hashtable<String, Hashtable<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
+				    String measurement = getDisplay(h,"FLOWSHEET");
+				%>
+				<tr>
+				    <td class="Cell" >
+				        <% if (measurement != null && !measurement.equals("&nbsp;")){%>
+				        <%=measurement%>
+				        <%}else{%>
+				        <a href="addMeasurementMap2.jsp?loinc=<%=s%>">map</a>
+				        <%}%>
+				    </td>
+				    <td class="Cell"><%=s%></td>
+				    <td class="Cell"><%=desc%></td>
+				    <td class="Cell">&nbsp;</td>
+				    <%for(String type:types){%>
+				        <td class="Cell" ><%=getDisplay(h,type)%></td>
+				    <%}%>
+				</tr>
+				<%
+				odd = !odd;
+				}%>
             </tbody>
-        </table>
-        <input type="button" name="Button" class="btn"
-		    value="<bean:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
-		    onclick="submit();">
-    </html:form>
+		</table>
+    </form>
+
+<%!
+  String rowColour(Boolean b){
+      if (b.booleanValue()){
+          b = Boolean.valueOf(!b);
+          return "#DDDDDD";
+      }else{
+
+          return "#FFFFFF";
+      }
+
+  }
+
+
+
+  String getDesc(Hashtable<String,String> h){
+      return h.get("name");
+  }
+
+  String getDisplay(Hashtable<String, Hashtable<String,String>> h, String type){
+      Hashtable<String,String> data = h.get(type);
+      if (data == null ){ return "&nbsp;";}
+      return data.get("name")+": "+data.get("ident_code");
+  }
+
+  String getCodeMap(List<Hashtable<String,String>> list){
+      StringBuffer sb = new StringBuffer();
+
+        for(Hashtable<String,String> h : list){
+            sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
+        }
+        return sb.toString();
+  }
+%>
 
 <!--
 
