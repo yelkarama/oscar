@@ -59,6 +59,8 @@ Top navigation bar for Measurements Admin
 					key="oscarEncounter.Index.measurements.viewMeasurementType" /></a></li>
 		    <li><a href='SetupAddMeasurementType.do' class="contentLink"><bean:message
 					key="oscarEncounter.Index.measurements.addMeasurementType" /></a></li>
+            <li><a href="<%= request.getContextPath() %>/oscarEncounter/oscarMeasurements/SetupAddMeasuringInstruction.do" class="contentLink"><bean:message
+			        key="oscarEncounter.Index.measurements.addMeasuringInstruction" /></a></li>
 		    </ul>
 	    </li>
 	    <li class="dropdown">
@@ -76,8 +78,6 @@ Top navigation bar for Measurements Admin
 					key="WriteScript.msgEdit" /></a></li>
 		    </ul>
 	    </li>
-        <li><a href="<%= request.getContextPath() %>/oscarEncounter/oscarMeasurements/SetupAddMeasuringInstruction.do" class="contentLink"><bean:message
-			key="oscarEncounter.Measurements.msgMeasuringInstruction" /></a></li>
 	    <li class="dropdown">
 		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-trigger="hover">
 		    <bean:message
