@@ -35,33 +35,38 @@
 
 <html:html locale="true">
 <head>
-<html:base />
+
 <title><bean:message
 	key="oscarEncounter.Measurements.msgProcessEditMeasurementGroupAction" />
 </title>
+<html:base />
 
-<!-- css -->
-    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+<script language="javascript">
 
-<script>
 function submitForm(){
+
     document.forms[0].submit();
+
  }
+
 </script>
 </head>
 <body>
 <html:errors />
-    <html:form action="SetupEditMeasurementGroup.do">
-    <table>
-	    <tr>
-		    <input type="hidden" name="value(groupName)"
-			    value="<bean:write name="groupName"/>" />
-		    <td><bean:message key="eform.uploadimages.processing" /></td>
-	    </tr>
-    </table>
-    </html:form>
-<script>
-    submitForm();
-</script>
+<table>
+	<form action="SetupEditMeasurementGroup.do">
+	<tr>
+		<input type="hidden" name="value(groupName)"
+			value="<bean:write name="groupName"/>" />
+		<td style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;"><bean:message
+	key="eform.uploadimages.processing" /></td>
+		<script>
+                submitForm();
+            </script>
+	</tr>
+	</form>
+</table>
+
+
 </body>
 </html:html>
