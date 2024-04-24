@@ -45,7 +45,6 @@
 %>
 
 <html:html locale="true">
-
 <head>
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><logic:present name="groupName">
@@ -54,12 +53,6 @@
 
 <html:base />
 
-
-<link href="/oscar/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="/oscar/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-
-
-<link rel="stylesheet" href="/oscar/css/font-awesome.min.css">
 
 <style>
 body {
@@ -143,6 +136,9 @@ function check() {
 	</logic:present>
 	<logic:notPresent name="css">
 		<!--<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">-->
+		<link href="/oscar/css/bootstrap.css" rel="stylesheet" type="text/css">
+		<link href="/oscar/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="/oscar/css/font-awesome.min.css">
 	</logic:notPresent>
 
 	<table class="MainTable" id="scrollNumber1">
