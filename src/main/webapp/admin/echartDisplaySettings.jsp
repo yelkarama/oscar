@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -56,8 +55,9 @@
 <jsp:useBean id="dataBean" class="java.util.Properties"/>
 <%
     SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
-
+    Boolean bSaved = false;
     if (request.getParameter("dboperation") != null && !request.getParameter("dboperation").isEmpty() && request.getParameter("dboperation").equals("Save")) {
+        bSaved = true;
         for(String key : SystemPreferences.ECHART_PREFERENCE_KEYS) {
             SystemPreferences preference = systemPreferencesDao.findPreferenceByName(key);
             String newValue = request.getParameter(key);
@@ -78,30 +78,25 @@
         }
     }
 %>
-
 <html:html locale="true">
-    <head>
+<head>
+    <html:base />
         <title><bean:message key="admin.admin.echartDisplaySettings"/></title>
-<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
+        <script src="<%=request.getContextPath()%>/JavaScriptServlet"></script> <!-- OWASP CSRFGuard -->
         <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-        <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-    </head>
-
+</head>
+<body class="BodyStyle">
     <%
         List<SystemPreferences> preferences = systemPreferencesDao.findPreferencesByNames(SystemPreferences.ECHART_PREFERENCE_KEYS);
         for(SystemPreferences preference : preferences) {
             dataBean.setProperty(preference.getName(), preference.getValue());
         }
     %>
-
-    <body vlink="#0000FF" class="BodyStyle">
     <h4><bean:message key="admin.admin.echartDisplaySettings.manage"/></h4>
     <form name="displaySettingsForm" method="post" action="echartDisplaySettings.jsp">
+<% if (bSaved) { %>
+    <div class="alert alert-success" id="alert1"><bean:message key="inboxmanager.document.SuccessfullySavedMsg"/></div>
+<% } %>
         <input type="hidden" name="dboperation" value="">
         <table id="displaySettingsTable" class="table table-bordered table-striped table-hover table-condensed">
             <tbody>
@@ -109,11 +104,11 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_timer"/>:</td>
                     <td>
                         <input id="echart_show_timer-true" type="radio" value="true" name="echart_show_timer"
-                                <%=(dataBean.getProperty("echart_show_timer", "true").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_timer", "true").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_show_timer-false" type="radio" value="false" name="echart_show_timer"
-                                <%=(dataBean.getProperty("echart_show_timer", "true").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_timer", "true").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -122,11 +117,11 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.groupDocumentByType"/>:</td>
                     <td>
                         <input type="radio" value="true" name="echart_show_group_document_by_type"
-                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input type="radio" value="false" name="echart_show_group_document_by_type"
-                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_group_document_by_type", "false").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -135,11 +130,11 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_DOB"/>:</td>
                     <td>
                         <input id="echart_show_DOB-true" type="radio" value="true" name="echart_show_DOB"
-                                <%=(dataBean.getProperty("echart_show_DOB", "false").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_DOB", "false").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_show_DOB-false" type="radio" value="false" name="echart_show_DOB"
-                                <%=(dataBean.getProperty("echart_show_DOB", "false").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_DOB", "false").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -148,11 +143,11 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_OLIS"/>:</td>
                     <td>
                         <input id="echart_show_OLIS-true" type="radio" value="true" name="echart_show_OLIS"
-                                <%=(dataBean.getProperty("echart_show_OLIS", "false").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_OLIS", "false").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_show_OLIS-false" type="radio" value="false" name="echart_show_OLIS"
-                                <%=(dataBean.getProperty("echart_show_OLIS", "false").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_OLIS", "false").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -161,11 +156,11 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_cell"/>:</td>
                     <td>
                         <input id="echart_show_cell-true" type="radio" value="true" name="echart_show_cell"
-                                <%=(dataBean.getProperty("echart_show_cell", "true").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_cell", "true").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_show_cell-false" type="radio" value="false" name="echart_show_cell"
-                                <%=(dataBean.getProperty("echart_show_cell", "true").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_cell", "true").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -174,25 +169,25 @@
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_HIN"/>:</td>
                     <td>
                         <input id="echart_show_HIN-true" type="radio" value="true" name="echart_show_HIN"
-                                <%=(dataBean.getProperty("echart_show_HIN", "false").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_HIN", "false").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_show_HIN-false" type="radio" value="false" name="echart_show_HIN"
-                                <%=(dataBean.getProperty("echart_show_HIN", "false").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_show_HIN", "false").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
-                </tr>  
-                                
+                </tr>
+
                 <tr>
                     <td><bean:message key="admin.admin.echartDisplaySettings.echart_email_indicator"/>:</td>
                     <td>
                         <input id="echart_email_indicator-true" type="radio" value="true" name="echart_email_indicator"
-                                <%=(dataBean.getProperty("echart_email_indicator", "false").equals("true")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_email_indicator", "false").equals("true")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                         &nbsp;&nbsp;&nbsp;
                         <input id="echart_email_indicator-false" type="radio" value="false" name="echart_email_indicator"
-                                <%=(dataBean.getProperty("echart_email_indicator", "false").equals("false")) ? "checked" : ""%> />
+                                <%=(dataBean.getProperty("echart_email_indicator", "false").equals("false")) ? "checked" : ""%> >
                         <bean:message key="admin.admin.echartDisplaySettings.no"/>
                         &nbsp;&nbsp;&nbsp;
                     </td>
@@ -202,11 +197,11 @@
                         <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_fam_doc_widget"/>:</td>
                         <td>
                             <input type="radio" value="true" name="echart_show_fam_doc_widget"
-                                    <%=(dataBean.getProperty("echart_show_fam_doc_widget", "false").equals("true")) ? "checked" : ""%> />
+                                    <%=(dataBean.getProperty("echart_show_fam_doc_widget", "false").equals("true")) ? "checked" : ""%> >
                             <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                             &nbsp;&nbsp;&nbsp;
                             <input type="radio" value="false" name="echart_show_fam_doc_widget"
-                                    <%=(dataBean.getProperty("echart_show_fam_doc_widget", "false").equals("false")) ? "checked" : ""%> />
+                                    <%=(dataBean.getProperty("echart_show_fam_doc_widget", "false").equals("false")) ? "checked" : ""%> >
                             <bean:message key="admin.admin.echartDisplaySettings.no"/>
                             &nbsp;&nbsp;&nbsp;
                         </td>
@@ -215,11 +210,11 @@
                         <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_ref_doc_widget"/>:</td>
                         <td>
                             <input type="radio" value="true" name="echart_show_ref_doc_widget"
-                                    <%=(dataBean.getProperty("echart_show_ref_doc_widget", "false").equals("true")) ? "checked" : ""%> />
+                                    <%=(dataBean.getProperty("echart_show_ref_doc_widget", "false").equals("true")) ? "checked" : ""%> >
                             <bean:message key="admin.admin.echartDisplaySettings.yes"/>
                             &nbsp;&nbsp;&nbsp;
                             <input type="radio" value="false" name="echart_show_ref_doc_widget"
-                                    <%=(dataBean.getProperty("echart_show_ref_doc_widget", "false").equals("false")) ? "checked" : ""%> />
+                                    <%=(dataBean.getProperty("echart_show_ref_doc_widget", "false").equals("false")) ? "checked" : ""%> >
                             <bean:message key="admin.admin.echartDisplaySettings.no"/>
                             &nbsp;&nbsp;&nbsp;
                         </td>
@@ -229,11 +224,11 @@
 	                    <td><bean:message key="admin.admin.echartDisplaySettings.echart_show_ocean"/>:</td>
 	                    <td>
 	                        <input id="echart_show_ocean-true" type="radio" value="true" name="echart_show_ocean"
-	                                <%=(dataBean.getProperty("echart_show_ocean", "false").equals("true")) ? "checked" : ""%> />
+	                                <%=(dataBean.getProperty("echart_show_ocean", "false").equals("true")) ? "checked" : ""%> >
 	                        <bean:message key="admin.admin.echartDisplaySettings.yes"/>
 	                        &nbsp;&nbsp;&nbsp;
 	                        <input id="echart_show_ocean-false" type="radio" value="false" name="echart_show_ocean"
-	                                <%=(dataBean.getProperty("echart_show_ocean", "false").equals("false")) ? "checked" : ""%> />
+	                                <%=(dataBean.getProperty("echart_show_ocean", "false").equals("false")) ? "checked" : ""%> >
 	                        <bean:message key="admin.admin.echartDisplaySettings.no"/>
 	                        &nbsp;&nbsp;&nbsp;
 	                    </td>
@@ -241,7 +236,7 @@
             </tbody>
         </table>
 
-        <input type="button" onclick="document.forms['displaySettingsForm'].dboperation.value='Save'; document.forms['displaySettingsForm'].submit();" name="saveDisplaySettings" value="<bean:message key="admin.admin.echartDisplaySettings.save"/>"/>
+        <input type="button" class="btn btn-primary" onclick="document.forms['displaySettingsForm'].dboperation.value='Save'; document.forms['displaySettingsForm'].submit();" name="saveDisplaySettings" value="<bean:message key="admin.admin.echartDisplaySettings.save"/>">
     </form>
-    </body>
+</body>
 </html:html>
