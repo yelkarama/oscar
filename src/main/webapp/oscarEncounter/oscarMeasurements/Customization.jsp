@@ -60,7 +60,7 @@ String help_url = (oscarVariables.getProperty("HELP_SEARCH_URL","https://oscarga
 
         <h3><bean:message key="oscarEncounter.Measurements.msgCustomization" /></h3>
         <div class="well alert">
-<strong><bean:message key="global.warning" /></strong><br>
+<strong><bean:message key="global.warning" /></strong>&nbsp;
 <bean:message key="global.First" />
 <bean:message key="oscarMessenger.DisplayMessages.msgStatusRead" />
 <a href="<%=help_url%>customize-measurements/" target="_help" ><bean:message key="global.help" /></a>
