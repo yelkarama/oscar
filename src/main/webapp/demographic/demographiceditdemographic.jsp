@@ -1227,12 +1227,11 @@ background-color: grey;
                             		alert = demographicCust.getAlert() == null ? "" : demographicCust.getAlert();;
                             		midwife = demographicCust.getMidwife() == null ? "" : demographicCust.getMidwife();;
                                 	notes = SxmlMisc.getXmlContent(demographicCust.getNotes(),"unotes") ;
-
                                 	resident = resident==null?"":resident;
                                 	nurse = nurse==null?"":nurse;
                                 	alert = alert==null?"":alert;
                                 	midwife = midwife==null?"":midwife;
-                                	notes = notes==null?"":notes;
+                                	if (null == notes || notes.isEmpty() || notes.trim().equals("null")) notes = "";
                                 }
 
                                 // Demographic demographic=demographicDao.getDemographic(demographic_no);
@@ -4349,7 +4348,7 @@ function parsedate_joined(){
         <div class="control-group span10">
             <label class="control-label" for="inputNote"><bean:message key="demographic.demographiceditdemographic.formNotes" /></label>
             <div class="controls">
-                <textarea name="notes" id="inputNote" class="span7" ><%=notes == null ? "" : notes%></textarea>
+                <textarea name="notes" id="inputNote" class="span7" ><%=Encode.forHtmlContent(notes) %></textarea>
             </div>
         </div>
 <%-- END PATIENT NOTES MODULE --%>
