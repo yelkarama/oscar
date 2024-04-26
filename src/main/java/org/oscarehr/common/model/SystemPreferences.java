@@ -46,7 +46,7 @@ public class SystemPreferences extends AbstractModel<Integer>
         "echart_email_indicator","echart_show_OLIS", "echart_show_HIN", "echart_show_fam_doc_widget", "echart_show_ref_doc_widget",
         "echart_show_ocean", "echart_show_report_module", "echart_paste_fax_note", "echart_show_larger_font_size",
         "hideEformNotes", "hideDocumentNotes", "hideInvoiceNotes", "hideFormNotes", "hideCppNotes",
-        "allergyAlertPopup", "hideEncounterLink", "echart_show_group_document_by_type",
+        "allergyAlertPopup", "hideEncounterLink", "echart_show_group_document_by_type", "echart_show_DOB", "echart_show_cell",
         "caisi_note_filter_enabled", "echartShowAppointmentTime", "echartShowRosterStatus",
         "sortMeasurementsInEChart","excludeMisc");    
     public static final List<String> MASTER_FILE_PREFERENCE_KEYS = Arrays.asList("display_former_name", "redirect_for_contact");
