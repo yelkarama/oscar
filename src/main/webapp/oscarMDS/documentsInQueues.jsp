@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -41,54 +41,105 @@ if(!authed) {
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ page import="java.util.*, oscar.util.*, oscar.OscarProperties, oscar.dms.*, oscar.dms.data.*"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 
-<html>
+
+<html:html locale="true">
     <head>
-                <title>Documents In Queues</title>
-<!-- script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/oscarMDSIndex.js"></script-->
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
-   <!-- main calendar program -->
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="../share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-       adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-<!-- calendar style sheet -->
-<link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1" />
-<link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/effects.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <html:base />
+    <title>Documents In Queues</title>
 
-        <script type="text/javascript" src="../share/javascript/controls.js"></script>
+<!-- i18n calendar -->
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/lang/<bean:message key='global.javascript.calendar'/>"></script>
+    <script src="<%=request.getContextPath()%>/share/calendar/calendar-setup.js"></script>
+    <link href="<%=request.getContextPath()%>/share/calendar/calendar.css" title="win2k-cold-1" rel="stylesheet" type="text/css" media="all" >
 
-        <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
-        <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
-        <script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script>
+<!-- jquery -->
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
-<script type="text/javascript">
+<!-- oscar -->
+    <script src="<%=request.getContextPath()%>/share/javascript/Oscar.js" ></script>
+    <script src="<%=request.getContextPath()%>/share/javascript/casemgmt/faxControl.js"> </script>
+    <script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
+    <script src="<%=request.getContextPath()%>/js/documentDescriptionTypeahead.js"></script>
+    <!--<script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>-->
+    <script src="<%=request.getContextPath()%>/dms/showDocument.js?ver=1"></script>
+
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+    <link href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+
+   <style>
+        /* Dropdown Button */
+        .dropbtns {
+        /*  background-color: #4CAF50;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;*/
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdowns {
+          position: relative;
+          display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdowns-content {
+          display: none;
+          position: absolute;
+          background-color: #f1f1f1;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdowns-content a {
+          color: black;
+          padding: 8px 12px;
+          text-decoration: none;
+          display: block;
+        }
+
+        .dropdowns-content a.disabled {
+          pointer-events: none;
+          color: grey;
+          padding: 8px 12px;
+          text-decoration: none;
+          display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdowns-content a:hover {background-color: #ddd;}
+
+        /* Show the dropdown menu on hover */
+        .dropdowns:hover .dropdowns-content {display: block;}
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdowns:hover .dropbtns {background-color: #e6e6e6;}
+
+    </style>
+<script>
 
 var contextpath = "<%=request.getContextPath()%>";
 
 function removeLink(docType, docId, providerNo, e) {
-	var url = "../dms/ManageDocument.do";
-	var data = 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo;
-	new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-		refreshView();
-	}});
-
-	//e.parentNode.remove(e);
+    jQuery.ajax({
+        type: "POST",
+        url: "<%=request.getContextPath() %>/dms/ManageDocument.do",
+        data: 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo,
+        success: function(data) {
+            refreshView();
+        }
+    });
 }
 
 function forwardDocument(docId) {
@@ -143,7 +194,7 @@ function addDocToList(provNo, provName, docId) {
 	adoc.appendChild(idoc);
 
 	adoc.appendChild(bdoc);
-	var providerList = $('providerList' + docId);
+	var providerList = document.getElementById('providerList' + docId);
 	providerList.appendChild(adoc);
 }
 
@@ -198,56 +249,83 @@ function showPDF(docid,cp) {
 
 function removeFirstPage(id) {
 	jQuery("#removeFirstPagebtn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
-
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=removeFirstPage&document=" + id, onSuccess: function(data) {
-		jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-		var numPages = parseInt(jQuery("#numPages_" + id).text())-1;
-		jQuery("#numPages_" + id).text("" + numPages);
-
-
-
-		if (numPages <= 1) {
-			jQuery("#numPages_" + id).removeClass("multiPage");
-			jQuery("#removeFirstPagebtn_" + id).remove();
+	var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=removeFirstPage&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                 showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+		    var numPages = parseInt(jQuery("#numPages_" + id).text())-1;
+		    jQuery("#numPages_" + id).text("" + numPages);
+    		if (numPages <= 1) {
+			    jQuery("#numPages_" + id).removeClass("multiPage");
+			    jQuery("#removeFirstPagebtn_" + id).remove();
+		    }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
 		}
-
-	}});
+	});
 }
+
+
 
 
 
 function rotate180(id) {
 	jQuery("#rotate180btn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
+    var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=rotate180&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#rotate180btn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=rotate180&document=" + id, onSuccess: function(data) {
-		jQuery("#rotate180btn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-	}});
+
 }
 
 function rotate90(id) {
 	jQuery("#rotate90btn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
-
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=rotate90&document=" + id, onSuccess: function(data) {
-		jQuery("#rotate90btn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-	}});
+	var displayDocumentAs=document.getElementById('displayDocumentAs_'+id).value;
+    var url = contextpath + "/dms/SplitDocument.do";
+    var data = "method=rotate90&document=" + id;
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (data) {
+		    jQuery("#rotate90btn_" + id).removeAttr('disabled');
+            if(displayDocumentAs=="PDF") {
+                showPDF(id,contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 }
 
 function split(id,demoName) {
@@ -256,16 +334,16 @@ function split(id,demoName) {
 }
 
 var nowChildId;
-var nowDocLabIds=new Array();
+var nowDocLabIds=[];
 var nowMultiple=1;
 var queueID;
 
 function showDocInQueue(qid){
-    $('docs').innerHTML='';
+    document.getElementById('docs').innerHTML='';
     var docs=queueDocNos[qid];
     nowChildId='docs';
     nowMultiple=1;
-    nowDocLabIds=new Array();
+    nowDocLabIds=[];
     for(var i=docs.length-1;i>-1;i--){
          var docid=docs[i];
          nowDocLabIds.push(docid);
@@ -514,93 +592,139 @@ function initPatientIds(s){
                              }
 
                          }
-                        function sendMRP(ele){
-                                                var doclabid=ele.id;
-                                                doclabid=doclabid.split('_')[1];
-                                                var demoId=$('demofind'+doclabid).value;
-                                            if(demoId=='-1'){
-                                                alert('Please enter a valid demographic');
-                                                ele.checked=false;
-                                            }else{
-                                                if(confirm('Send to Most Responsible Provider?')){
-                                                    var type=checkType(doclabid);
-                                                    var url=contextpath + "/oscarMDS/SendMRP.do";
-                                                    var data='demoId='+demoId+'&docLabType='+type+'&docLabId='+doclabid;
-                                                    new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-                                                        ele.disabled=true;
-                                                        $('mrp_fail_'+doclabid).hide();
-                                                    },onFailure:function(transport){
-                                                        ele.checked=false;
-                                                        $('mrp_fail_'+doclabid).show();
-                                                    }});
-                                                }else{
-                                                    ele.checked=false;
-                                                }
-                                             }
-                                          }
+
+			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
+			function runMacro(name,formid, closeOnSuccess) {
+				var num=formid.split("_");
+				var doclabid=num[1];
+				if(doclabid){
+					var demoId=document.getElementById('demofind'+doclabid).value;
+					var saved=document.getElementById('saved'+doclabid).value;
+					if(demoId=='-1'|| saved=='false'){
+						alert('<bean:message key="oscarMDS.index.msgNotAttached"/>');
+					}else{
+						runMacroInternal(name,formid,closeOnSuccess,demoId);
+					}
+				}
+			}
+
+			function runMacroInternal(name,formid,closeOnSuccess,demographicNo) {
+				var url='<%=request.getContextPath()%>'+"/oscarMDS/RunMacro.do?name=" + name + (demographicNo.length>0 ? "&demographicNo=" + demographicNo : "");
+	            var data=jQuery('#'+formid).serialize();
+                var num=formid.split("_");
+	            var labid=num[1];
+
+
+                jQuery.ajax( {
+      	                type: "POST",
+      	                url: url,
+      	                dataType: "json",
+                        data: data,
+                        success: function(result) {
+                            jQuery('#labdoc_'+labid).hide('fade'); //jQueryUI
+
+	                    }});
+			}
+
+
+function sendMRP(ele){
+	var doclabid=ele.id;
+	doclabid=doclabid.split('_')[1];
+	var demoId=document.getElementById('demofind'+doclabid).value;
+	if(demoId=='-1'){
+		alert('Please enter a valid demographic');
+		ele.checked=false;
+	}else{
+		if(confirm('Send to Most Responsible Provider?')){
+			var type=checkType(doclabid);
+			var url=contextpath + "/oscarMDS/SendMRP.do";
+			var data='demoId='+demoId+'&docLabType='+type+'&docLabId='+doclabid;
+
+	        jQuery.ajax({
+		        type: "POST",
+		        url:  url,
+		        data: data,
+		        success: function (transport) {
+				    ele.disabled=true;
+				    document.getElementById('mrp_fail_'+doclabid).style.display = 'none';
+                },
+		        error: function(jqXHR, err, exception) {
+			        console.log(jqXHR.status);
+				    ele.checked=false;
+				    document.getElementById('mrp_fail_'+doclabid).style.display = '';
+		        }
+	        });
+
+
+		}else{
+			ele.checked=false;
+		}
+	}
+}
+
+
 
 function hideTopBtn(){
-    $('topFRBtn').hide();
-    if($('topFBtn') && $('topFileBtn')){
-    $('topFBtn').hide();
-    $('topFileBtn').hide();
+	document.getElementById('topFRBtn').style.display = 'none';
+	if(document.getElementById('topFBtn') && document.getElementById('topFileBtn')){
+		document.getElementById('topFBtn').style.display = 'none';
+		document.getElementById('topFileBtn').style.display = 'none';
+	}
 }
-}
+
 function showTopBtn(){
-    $('topFRBtn').show();
-    if($('topFBtn') && $('topFileBtn')){
-    $('topFBtn').show();
-    $('topFileBtn').show();
+	document.getElementById('topFRBtn').style.display = '';
+	if(document.getElementById('topFBtn') && document.getElementById('topFileBtn')){
+		document.getElementById('topFBtn').style.display = '';
+		document.getElementById('topFileBtn').style.display = '';
+	}
 }
+
+function changeView(){
+    if(document.getElementById('scrollNumber1').getStyle('display')=='none'){
+        document.getElementById('scrollNumber1').style.display = '';
+        document.getElementById('readerViewTable').style.display = 'none';
+        document.getElementById('documentCB').style.display = '';
+        document.getElementById('hl7CB').style.display = '';
+        document.getElementById('normalCB').style.display = '';
+        document.getElementById('abnormalCB').style.display = '';
+        document.getElementById('notAssignedDocCB').style.display = '';
+        document.getElementById('documentCB2').style.display = '';
+        document.getElementById('hl7CB2').style.display = '';
+        document.getElementById('normalCB2').style.display = '';
+        document.getElementById('abnormalCB2').style.display = '';
+        document.getElementById('notAssignedDocCB2').style.display = '';
+        var eles=document.getElementsByName('cbText');
+            for(var i=0;i<eles.length;i++){
+            var ele=eles[i];
+            ele.style.display = '';
+        }
+        showTopBtn();
+    }else{
+        document.getElementById('scrollNumber1').style.display = 'none';
+        document.getElementById('readerViewTable').style.display = '';
+        document.getElementById('documentCB').style.display = 'none';
+        document.getElementById('hl7CB').style.display = 'none';
+        document.getElementById('normalCB').style.display = 'none';
+        document.getElementById('abnormalCB').style.display = 'none';
+        document.getElementById('notAssignedDocCB').style.display = 'none';
+        document.getElementById('documentCB2').style.display = 'none';
+        document.getElementById('hl7CB2').style.display = 'none';
+        document.getElementById('normalCB2').style.display = 'none';
+        document.getElementById('abnormalCB2').style.display = 'none';
+        document.getElementById('notAssignedDocCB2').style.display = 'none';
+        var eles=document.getElementsByName('cbText');
+        for(var i=0;i<eles.length;i++){
+            var ele=eles[i];
+            ele.style.display = 'none';
+        }
+        hideTopBtn();
+    }
 }
-  function changeView(){
-                                if($('scrollNumber1').getStyle('display')=='none'){
-                                     $('scrollNumber1').show();
-                                     $('readerViewTable').hide();
-
-                                     $('documentCB').show();
-                                     $('hl7CB').show();
-                                     $('normalCB').show();
-                                     $('abnormalCB').show();
-                                     $('notAssignedDocCB').show();
-                                     $('documentCB2').show();
-                                     $('hl7CB2').show();
-                                     $('normalCB2').show();
-                                     $('abnormalCB2').show();
-                                     $('notAssignedDocCB2').show();
-                                     var eles=document.getElementsByName('cbText');
-                                     for(var i=0;i<eles.length;i++){
-                                         var ele=eles[i];
-                                         ele.show();
-                                     }
-                                      showTopBtn();
-                                }
-                                else{
-                                     $('scrollNumber1').hide();
-                                     $('readerViewTable').show();
-
-                                     $('documentCB').hide();
-                                     $('hl7CB').hide();
-                                     $('normalCB').hide();
-                                     $('abnormalCB').hide();
-                                     $('notAssignedDocCB').hide();
-                                     $('documentCB2').hide();
-                                     $('hl7CB2').hide();
-                                     $('normalCB2').hide();
-                                     $('abnormalCB2').hide();
-                                     $('notAssignedDocCB2').hide();
-                                     var eles=document.getElementsByName('cbText');
-                                     for(var i=0;i<eles.length;i++){
-                                         var ele=eles[i];
-                                         ele.hide();
-                                     }
-                                    hideTopBtn();
-                                 }
-                            }
 
 function popupMsg(width, height,docid) {
-    var dn=$('demofind'+docid).value;
-    var saved=$('saved'+docid).value;
+    var dn=document.getElementById('demofind'+docid).value;
+    var saved=document.getElementById('saved'+docid).value;
     var b=false;
     //console.log('saved'+saved);
     if(dn==-1 || saved=='false'){
@@ -617,8 +741,8 @@ function popupMsg(width, height,docid) {
 }
 
 function popupTickler(width, height,docid) {
-        var dn=$('demofind'+docid).value;
-        var saved=$('saved'+docid).value;
+        var dn=document.getElementById('demofind'+docid).value;
+        var saved=document.getElementById('saved'+docid).value;
     if(dn==-1 || saved=='false'){
         alert('Please link document with a patient');
     }else{
@@ -691,7 +815,7 @@ function submitFile(){
 
 
 function isRowShown(rowid){
-    if($(rowid).style.display=='none')
+    if(document.getElementById(rowid).style.display=='none')
         return false;
     else
         return true;
@@ -791,7 +915,7 @@ function f_filterResults(n_win, n_docel, n_body) {
                                 //var div=childId;
 
                                 //var div=window.frames[0].document.getElementById(childId);
-                                var div=$(childId);
+                                var div=document.getElementById(childId);
                                 //alert(div);
                                 var url='';
                                 if(type=='DOC')
@@ -810,9 +934,18 @@ function f_filterResults(n_win, n_docel, n_body) {
                                         if(inQueue)
                                             data+="&inQueue=" + inQueue;
                                        // oscarLog('url='+url+'+-+ \n data='+data+"----div:"+div);
-                                        new Ajax.Updater(div,url,{method:'get',parameters:data,insertion:Insertion.Bottom,evalScripts:true,onSuccess:function(transport){
-                                                focusFirstDocLab();
-                                        }});
+    jQuery.ajax({
+		type: "GET",
+		url:  url,
+		data: data,
+		success: function (code) {
+            jQuery("#"+childId+":last-child").append(code);
+		    focusFirstDocLab();
+    	},
+		error: function(jqXHR, err, exception) {
+			console.log(jqXHR.status);
+		}
+	});
 
                             }
 
@@ -821,25 +954,25 @@ function f_filterResults(n_win, n_docel, n_body) {
                                 var newdiv=document.createElement('div');
                                 //oscarLog('22 after create new leme');
                                 newdiv.setAttribute('id',child);
-                               var parentdiv=$(parent);
+                               var parentdiv=document.getElementById(parent);
                                 parentdiv.appendChild(newdiv);
                                 //oscarLog('55 after create new leme');
                             }
 
          function clearDocView(){
-                            var docview=$('docViews');
+                            var docview=document.getElementById('docViews');
                                //var docview=window.frames[0].document.getElementById('docViews');
                                docview.innerHTML='';
                             }
                                     function showhideSubCat(plus_minus,patientId){
                                 if(plus_minus=='plus'){
-                                    $('plus'+patientId).hide();
-                                    $('minus'+patientId).show();
-                                    $('labdoc'+patientId+'showSublist').show();
+                                    document.getElementById('plus'+patientId).style.display = 'none';
+                                    document.getElementById('minus'+patientId).style.display = '';
+                                    document.getElementById('labdoc'+patientId+'showSublist').style.display = '';
                                 }else{
-                                    $('minus'+patientId).hide();
-                                    $('plus'+patientId).show();
-                                    $('labdoc'+patientId+'showSublist').hide();
+                                    document.getElementById('minus'+patientId).style.display = 'none';
+                                    document.getElementById('plus'+patientId).style.display = '';
+                                    document.getElementById('labdoc'+patientId+'showSublist').style.display = 'none';
                                 }
                             }
               function un_bold(ele){
@@ -847,15 +980,15 @@ function f_filterResults(n_win, n_docel, n_body) {
                                 if(currentBold==ele.id){
                                     ;
                                 }else{
-                                  if($(currentBold)!=null)
-                                      $(currentBold).style.fontWeight='';
+                                  if(document.getElementById(currentBold)!=null)
+                                      document.getElementById(currentBold).style.fontWeight='';
                                     ele.style.fontWeight='bold';
                                     currentBold=ele.id;
                                 }
                                 //oscarLog('currentbold='+currentBold+'---ele.id='+ele.id);
                             }
                 function showPageNumber(page){
-                                    var totalNoRow=$('totalNumberRow').value;
+                                    var totalNoRow=document.getElementById('totalNumberRow').value;
                                     var newStartIndex=number_of_row_per_page*(parseInt(page)-1);
                                     var newEndIndex=parseInt(newStartIndex)+19;
                                     var isLastPage=false;
@@ -865,27 +998,27 @@ function f_filterResults(n_win, n_docel, n_body) {
                                     }
                                     //oscarLog("new start="+newStartIndex+";new end="+newEndIndex);
                                    for(var i=0;i<totalNoRow;i++){
-                                       if($('row'+i) && parseInt(newStartIndex)<=i && i<=parseInt(newEndIndex)) {
+                                       if(document.getElementById('row'+i) && parseInt(newStartIndex)<=i && i<=parseInt(newEndIndex)) {
                                            //oscarLog("show row-"+i);
-                                           $('row'+i).show();
-                                       }else if($('row'+i)){
+                                           document.getElementById('row'+i).style.display = '';
+                                       }else if(document.getElementById('row'+i)){
                                            //oscarLog("hide row-"+i);
-                                           $('row'+i).hide();
+                                           document.getElementById('row'+i).style.display = 'none';
                                        }
                                    }
                                //update current page
-                               $('currentPageNum').innerHTML=page;
+                               document.getElementById('currentPageNum').innerHTML=page;
                                if(page==1)
                                {
-                                  if($('msgPrevious')) $('msgPrevious').hide();
+                                  if(document.getElementById('msgPrevious')) document.getElementById('msgPrevious').style.display = 'none';
                                }else if(page>1){
-                                  if($('msgPrevious')) $('msgPrevious').show();
+                                  if(document.getElementById('msgPrevious')) document.getElementById('msgPrevious').style.display = '';
                                }
                                if(isLastPage){
-                                    if($('msgNext'))    $('msgNext').hide();
+                                    if(document.getElementById('msgNext'))    document.getElementById('msgNext').style.display = 'none';
                                }
                                else{
-                                    if($('msgNext'))    $('msgNext').show();
+                                    if(document.getElementById('msgNext'))    document.getElementById('msgNext').style.display = '';
                                }
                            }
                            function showTypePageNumber(page,type){
@@ -1073,19 +1206,19 @@ function f_filterResults(n_win, n_docel, n_body) {
 
                                                     //oscarLog("in checkBox");
                                                     var checkedArray=new Array();
-                                                    if($('documentCB').checked==1){
+                                                    if(document.getElementById('documentCB').checked==1){
                                                         checkedArray.push('assignedDoc');
                                                     }
-                                                    if($('hl7CB').checked==1){
+                                                    if(document.getElementById('hl7CB').checked==1){
                                                         checkedArray.push('hl7');
                                                     }
-                                                    if($('normalCB').checked==1){
+                                                    if(document.getElementById('normalCB').checked==1){
                                                         checkedArray.push('normal');
                                                     }
-                                                    if($('abnormalCB').checked==1){
+                                                    if(document.getElementById('abnormalCB').checked==1){
                                                         checkedArray.push('abnormal');
                                                     }
-                                                    if($('notAssignedDocCB').checked==1){
+                                                    if(document.getElementById('notAssignedDocCB').checked==1){
                                                         checkedArray.push('notAssignedDoc');
                                                     }
                                                     //console.log('length='+checkedArray.length);
@@ -1098,14 +1231,14 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                         //show all
                                                         for(var i=0;i<endindex+1;i++){
                                                             var id=total_rows[i];
-                                                            if($(id)){
-                                                                $(id).show();
+                                                            if(document.getElementById(id)){
+                                                                document.getElementById(id).style.display = '';
                                                             }
                                                         }
                                                         for(var i=endindex+1;i<total_rows.length;i++){
                                                             var id=total_rows[i];
-                                                            if($(id)){
-                                                                $(id).hide();
+                                                            if(document.getElementById(id)){
+                                                                document.getElementById(id).style.display = 'none';
                                                             }
                                                         }
                                                         current_numberofpages=Math.ceil(total_rows.length/number_of_row_per_page);
@@ -1193,45 +1326,45 @@ function f_filterResults(n_win, n_docel, n_body) {
                                                     current_rows=new Array();
 
                                                     for(var i=startIndex;i<endIndex+1;i++){
-                                                        if($(displayrowids[i])){
+                                                        if(document.getElementById(displayrowids[i])){
                                                             current_rows.push(displayrowids[i]);
                                                         }
                                                     }
 
                                                     if(current_rows.length<20)//show blank row to fill in empty space
-                                                        $('blankrow').show();
-                                                    else $('blankrow').hide();
+                                                        document.getElementById('blankrow').style.display = '';
+                                                    else document.getElementById('blankrow').style.display = 'none';
                                                     //loop through every thing,if it's in displayrowids, show it , if it's not hide it.
                                                     for(var i=0;i<total_rows.length;i++){
                                                         var rowid=total_rows[i];
                                                         if(a_contain_b(current_rows,rowid)){
-                                                            if($(rowid)) $(rowid).show();
+                                                            if(document.getElementById(rowid)) document.getElementById(rowid).style.display = '';
                                                         }else
-                                                            if($(rowid)) $(rowid).hide();
+                                                            if(document.getElementById(rowid)) document.getElementById(rowid).style.display = 'none';
                                                     }
                                             }
 
                                             function initializeNavigation(){
-                                                   $('currentPageNum').innerHTML=1;
+                                                   document.getElementById('currentPageNum').innerHTML=1;
                                                     //update the page number shown and update previous and next words
                                                     if(current_numberofpages>1){
-                                                       if($('msgNext'))   $('msgNext').show();
-                                                       if($('msgPrevious'))   $('msgPrevious').hide();
+                                                       if(document.getElementById('msgNext'))   document.getElementById('msgNext').style.display = '';
+                                                       if(document.getElementById('msgPrevious'))   document.getElementById('msgPrevious').style.display = 'none';
                                                     }else if(current_numberofpages<1){
-                                                       if($('msgNext'))   $('msgNext').hide();
-                                                       if($('msgPrevious'))    $('msgPrevious').hide();
+                                                       if(document.getElementById('msgNext'))   document.getElementById('msgNext').style.display = 'none';
+                                                       if(document.getElementById('msgPrevious'))    document.getElementById('msgPrevious').style.display = 'none';
                                                     }else if(current_numberofpages==1){
-                                                       if($('msgNext'))   $('msgNext').hide();
-                                                       if($('msgPrevious'))    $('msgPrevious').hide();
+                                                       if(document.getElementById('msgNext'))   document.getElementById('msgNext').style.display = 'none';
+                                                       if(document.getElementById('msgPrevious'))    document.getElementById('msgPrevious').style.display = 'none';
                                                     }
                                                     //oscarLog("current_numberofpages "+current_numberofpages);
-                                                    if($('current_individual_pages'))   $('current_individual_pages').innerHTML="";
+                                                    if(document.getElementById('current_individual_pages'))   document.getElementById('current_individual_pages').innerHTML="";
                                                    if(current_numberofpages>1){
                                                 	   var html = "";
                                                        for(var i=1;i<=current_numberofpages;i++){
-                                                        if($('current_individual_pages'))  html+="<a style=\"text-decoration:none;\" href=\"javascript:void(0);\" onclick=\"navigatePage("+i+")\"> [ "+i+" ] </a>";
+                                                        if(document.getElementById('current_individual_pages'))  html+="<a style=\"text-decoration:none;\" href=\"javascript:void(0);\" onclick=\"navigatePage("+i+")\"> [ "+i+" ] </a>";
                                                        }
-                                                       $('current_individual_pages').update(html);
+                                                       document.getElementById('current_individual_pages').update(html);
                                                    }
                                             }
                                             function sortRowId(a){
@@ -1270,100 +1403,100 @@ function f_filterResults(n_win, n_docel, n_body) {
                                             }
 
                                             function navigatePage(p){
-                                                var pagenum=parseInt($('currentPageNum').innerHTML);
+                                                var pagenum=parseInt(document.getElementById('currentPageNum').innerHTML);
                                                 if(p=='Previous'){
                                                     displayCategoryPage(pagenum-1);
-                                                    $('currentPageNum').innerHTML=pagenum-1
+                                                    document.getElementById('currentPageNum').innerHTML=pagenum-1
                                                 }
                                                 else if(p=='Next'){
                                                     displayCategoryPage(pagenum+1);
-                                                    $('currentPageNum').innerHTML=pagenum+1
+                                                    document.getElementById('currentPageNum').innerHTML=pagenum+1
                                                 }
                                                 else if(parseInt(p)>0){
                                                     displayCategoryPage(parseInt(p));
-                                                    $('currentPageNum').innerHTML=p;
+                                                    document.getElementById('currentPageNum').innerHTML=p;
                                                 }
                                                 changeNavigationBar();
                                             }
                                             function changeNavigationBar(){
-                                                var pagenum=parseInt($('currentPageNum').innerHTML);
+                                                var pagenum=parseInt(document.getElementById('currentPageNum').innerHTML);
                                                 if(current_numberofpages==1){
-                                                    if($('msgNext'))  $('msgNext').hide();
-                                                   if($('msgPrevious'))    $('msgPrevious').hide();
+                                                    if(document.getElementById('msgNext'))  document.getElementById('msgNext').style.display = 'none';
+                                                   if(document.getElementById('msgPrevious'))    document.getElementById('msgPrevious').style.display = 'none';
                                                 }
                                                 else if(current_numberofpages>1 && current_numberofpages==pagenum){
-                                                    if($('msgNext'))  $('msgNext').hide();
-                                                    if($('msgPrevious'))   $('msgPrevious').show();
+                                                    if(document.getElementById('msgNext'))  document.getElementById('msgNext').style.display = 'none';
+                                                    if(document.getElementById('msgPrevious'))   document.getElementById('msgPrevious').style.display = '';
                                                 }
                                                 else if(current_numberofpages>1 && pagenum==1){
-                                                    if($('msgNext'))  $('msgNext').show();
-                                                    if($('msgPrevious'))   $('msgPrevious').hide();
+                                                    if(document.getElementById('msgNext'))  document.getElementById('msgNext').style.display = '';
+                                                    if(document.getElementById('msgPrevious'))   document.getElementById('msgPrevious').style.display = 'none';
                                                 }else if(pagenum<current_numberofpages && pagenum>1){
-                                                    if($('msgNext'))  $('msgNext').show();
-                                                    if($('msgPrevious'))   $('msgPrevious').show();
+                                                    if(document.getElementById('msgNext'))  document.getElementById('msgNext').style.display = '';
+                                                    if(document.getElementById('msgPrevious'))   document.getElementById('msgPrevious').style.display = '';
                                                 }
                                             }
                                             function syncCB(ele){
                                                 var id=ele.id;
                                                 if(id=='documentCB'){
                                                     if(ele.checked==1)
-                                                        $('documentCB2').checked=1;
+                                                        document.getElementById('documentCB2').checked=1;
                                                     else
-                                                        $('documentCB2').checked=0;
+                                                        document.getElementById('documentCB2').checked=0;
                                                 }
                                                 else if(id=='documentCB2'){
                                                     if(ele.checked==1)
-                                                        $('documentCB').checked=1;
+                                                        document.getElementById('documentCB').checked=1;
                                                     else
-                                                        $('documentCB').checked=0;
+                                                        document.getElementById('documentCB').checked=0;
                                                 }
                                                 else if(id=='notAssignedDocCB'){
                                                     if(ele.checked==1)
-                                                        $('notAssignedDocCB2').checked=1;
+                                                        document.getElementById('notAssignedDocCB2').checked=1;
                                                     else
-                                                        $('notAssignedDocCB2').checked=0;
+                                                        document.getElementById('notAssignedDocCB2').checked=0;
                                                 }
                                                 else if(id=='notAssignedDocCB2'){
                                                     if(ele.checked==1)
-                                                        $('notAssignedDocCB').checked=1;
+                                                        document.getElementById('notAssignedDocCB').checked=1;
                                                     else
-                                                        $('notAssignedDocCB').checked=0;
+                                                        document.getElementById('notAssignedDocCB').checked=0;
                                                 }
                                                 else if(id=='hl7CB'){
                                                     if(ele.checked==1)
-                                                        $('hl7CB2').checked=1;
+                                                        document.getElementById('hl7CB2').checked=1;
                                                     else
-                                                        $('hl7CB2').checked=0;
+                                                        document.getElementById('hl7CB2').checked=0;
                                                 }
                                                 else if(id=='hl7CB2'){
                                                     if(ele.checked==1)
-                                                        $('hl7CB').checked=1;
+                                                        document.getElementById('hl7CB').checked=1;
                                                     else
-                                                        $('hl7CB').checked=0;
+                                                        document.getElementById('hl7CB').checked=0;
                                                 }
                                                 else if(id=='normalCB'){
                                                     if(ele.checked==1)
-                                                        $('normalCB2').checked=1;
+                                                        document.getElementById('normalCB2').checked=1;
                                                     else
-                                                        $('normalCB2').checked=0;
+                                                        document.getElementById('normalCB2').checked=0;
                                                 }
                                                 else if(id=='normalCB2'){
                                                     if(ele.checked==1)
-                                                        $('normalCB').checked=1;
+                                                        document.getElementById('normalCB').checked=1;
                                                     else
-                                                        $('normalCB').checked=0;
+                                                        document.getElementById('normalCB').checked=0;
                                                 }
                                                 else if(id=='abnormalCB'){
                                                     if(ele.checked==1)
-                                                        $('abnormalCB2').checked=1;
+                                                        document.getElementById('abnormalCB2').checked=1;
                                                     else
-                                                        $('abnormalCB2').checked=0;
+                                                        document.getElementById('abnormalCB2').checked=0;
                                                 }
                                                 else if(id=='abnormalCB2'){
                                                     if(ele.checked==1)
-                                                        $('abnormalCB').checked=1;
+                                                        document.getElementById('abnormalCB').checked=1;
                                                     else
-                                                        $('abnormalCB').checked=0;
+                                                        document.getElementById('abnormalCB').checked=0;
                                                 }
                                             }
                         function showAb_Normal(ab_normal){
@@ -1431,29 +1564,34 @@ function f_filterResults(n_win, n_docel, n_body) {
                                   }
                                 }
                             }
-                            function getPatientNameFromPatientId(patientId){
-                                var pn=patientIdNames[patientId];
-                                //console.log("in getpatientnamefrompatientid");
-                                //console.log(patientIdNames);
-                                if(pn&&pn!=null){
-                                    return pn;
-                                }else{
-                                    var url=contextpath+"/dms/ManageDocument.do";
-                                    var data='method=getDemoNameAjax&demo_no='+patientId;
-                                    //console.log('in getp '+patientId);
-                                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                         var json=transport.responseText.evalJSON();
-                                         //console.log("onsuccess=="+json);
-                                         if(json!=null ){
-                                           var pn=json.demoName;//get name from id
-                                           addPatientIdName(patientId,pn);
-                                           addPatientId(patientId);
-                                           //console.log("PN ="+pn);
-                                           return pn;
-                                         }
-                                     }});
-                                }
-                            }
+function getPatientNameFromPatientId(patientId){
+	var pn=patientIdNames[patientId];
+	if(pn&&pn!=null){
+		return pn;
+	}else{
+		var url=contextpath+"/dms/ManageDocument.do";
+		var data='method=getDemoNameAjax&demo_no='+patientId;
+
+	    jQuery.ajax({
+		    type: "POST",
+		    url:  url,
+		    data: data,
+		    success: function (transport) {
+			    var json=jQuery.parseJSON(transport);
+			    if(json!=null ){
+				    var pn=json.demoName;//get name from id
+				    addPatientIdName(patientId,pn);
+				    addPatientId(patientId);
+				    return pn;
+			    }
+        	},
+		    error: function(jqXHR, err, exception) {
+			    console.log(jqXHR.status);
+		    }
+	    });
+    }
+}
+
 
                             function getAckStatusFromDocLabId(docLabId){
                                 return docStatus[docLabId];
@@ -1693,13 +1831,13 @@ for(var i in queueDocNos){
 //console.log('foundQ='+foundQ);
         //descrease the queue's doc number by 1
         if(foundQ.length>0){
-            var n=$('docNo_'+foundQ).innerHTML;
+            var n=document.getElementById('docNo_'+foundQ).innerHTML;
             //console.log('not found11');
             n=parseInt(n);
             //console.log('not found22');
             if(n>0){
                 //console.log('not found33');
-                $('docNo_'+foundQ).innerHTML=n-1;
+                document.getElementById('docNo_'+foundQ).innerHTML=n-1;
             }
         }
         //console.log('not found44');
@@ -1710,71 +1848,71 @@ function updateSideNav(doclabid, inqueue){
         updateSideNavInQueue(doclabid);
     else{
     //oscarLog('in updatesidenav');
-    var n=$('totalNumDocs').innerHTML;
+    var n=document.getElementById('totalNumDocs').innerHTML;
     n=parseInt(n);
     if(n>0){
         n=n-1;
-        $('totalNumDocs').innerHTML=n;
+        document.getElementById('totalNumDocs').innerHTML=n;
     }
     var type=checkType(doclabid);
     //oscarLog('type='+type);
     if(type=='DOC'){
-        n=$('totalDocsNum').innerHTML;
+        n=document.getElementById('totalDocsNum').innerHTML;
         //oscarLog('n='+n);
         n=parseInt(n);
         if(n>0){
             n=n-1;
-            $('totalDocsNum').innerHTML=n;
+            document.getElementById('totalDocsNum').innerHTML=n;
         }
     }else if (type=='HL7'){
-        n=$('totalHL7Num').innerHTML;
+        n=document.getElementById('totalHL7Num').innerHTML;
         n=parseInt(n);
         if(n>0){
             n=n-1;
-            $('totalHL7Num').innerHTML=n;
+            document.getElementById('totalHL7Num').innerHTML=n;
         }
     }
     var ab_normal=checkAb_normal(doclabid);
     //oscarLog('normal or abnormal?'+ab_normal);
     if(ab_normal=='normal'){
-        n=$('normalNum').innerHTML;
+        n=document.getElementById('normalNum').innerHTML;
         //oscarLog('normal inner='+n);
         n=parseInt(n);
         if(n>0){
             n=n-1;
-            $('normalNum').innerHTML=n;
+            document.getElementById('normalNum').innerHTML=n;
         }
     }else if(ab_normal=='abnormal'){
-        n=$('abnormalNum').innerHTML;
+        n=document.getElementById('abnormalNum').innerHTML;
         n=parseInt(n);
         if(n>0){
             n=n-1;
-            $('abnormalNum').innerHTML=n;
+            document.getElementById('abnormalNum').innerHTML=n;
         }
     }
 
     //update patient and patient's subtype
     var patientId=getPatientIdFromDocLabId(doclabid);
     //oscarLog('xx '+patientId+'--'+n);
-    n=$('patientNumDocs'+patientId).innerHTML;
+    n=document.getElementById('patientNumDocs'+patientId).innerHTML;
     //oscarLog('xx xx '+patientId+'--'+n);
     n=parseInt(n);
     if(n>0){
-        $('patientNumDocs'+patientId).innerHTML=n-1;
+        document.getElementById('patientNumDocs'+patientId).innerHTML=n-1;
     }
 
     if(type=='DOC'){
-        n=$('pDocNum_'+patientId).innerHTML;
+        n=document.getElementById('pDocNum_'+patientId).innerHTML;
         n=parseInt(n);
         if(n>0){
-            $('pDocNum_'+patientId).innerHTML=n-1;
+            document.getElementById('pDocNum_'+patientId).innerHTML=n-1;
         }
     }
     else if(type=='HL7'){
-        n=$('pLabNum_'+patientId).innerHTML;
+        n=document.getElementById('pLabNum_'+patientId).innerHTML;
         n=parseInt(n);
         if(n>0){
-            $('pLabNum_'+patientId).innerHTML=n-1;
+            document.getElementById('pLabNum_'+patientId).innerHTML=n-1;
         }
     }
 }
@@ -1796,7 +1934,7 @@ function hideRowUsingId(doclabid){
         var rowid;
         doclabid=doclabid.replace(' ','');
         rowid=getRowIdFromDocLabId(doclabid);
-        if($(rowid)) $(rowid).remove();
+        if(document.getElementById(rowid)) document.getElementById(rowid).remove();
 }
 }
 function resetCurrentFirstDocLab(){
@@ -1808,7 +1946,7 @@ function focusFirstDocLab(){
             var doc_lab=checkType(current_first_doclab);
             if(doc_lab=='DOC'){
                 //oscarLog('docDesc_'+current_first_doclab);
-                $('docDesc_'+current_first_doclab).focus();
+                document.getElementById('docDesc_'+current_first_doclab).focus();
             }
             else if(doc_lab=='HL7'){
                 //do nothing
@@ -1835,26 +1973,26 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                      if(num && patientId){
                                          var changed=false;
                                          var type=checkType(num);
-                                         //oscarLog($('patient'+patientId+'all'));
-                                         if($('patient'+patientId+'all')){
+                                         //oscarLog(document.getElementById('patient'+patientId+'all'));
+                                         if(document.getElementById('patient'+patientId+'all')){
                                              //oscarLog('if');
                                              //case 1,patientName exists
                                          //check the type of doclab,
                                          //check if the type is present, if yes, increase by 1; if not, create and set to 1.
 
                                              if(type=='DOC'){
-                                                 if($('patient'+patientId+'docs')){
+                                                 if(document.getElementById('patient'+patientId+'docs')){
                                                      increaseCount('pDocNum_'+patientId);
                                                      changed=true;
                                                  }else{
                                                      var newEle=createNewDocEle(patientId);
-                                                     //oscarLog($('labdoc'+patientId+'showSublist'));
+                                                     //oscarLog(document.getElementById('labdoc'+patientId+'showSublist'));
                                                      new Insertion.Bottom('labdoc'+patientId+'showSublist',newEle);
                                                      changed=true;
                                                  }
                                              }
                                              else if(type=='HL7'){
-                                                 if($('patient'+patientId+'hl7s')){
+                                                 if(document.getElementById('patient'+patientId+'hl7s')){
                                                      increaseCount('pLabNum_'+patientId);
                                                      changed=true;
                                                  }else{
@@ -1885,39 +2023,42 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                          }
                                      }
                                  }
-                                 function createPatientDocLabEle(patientId,doclabid){
-                                    var url=contextpath+"/dms/ManageDocument.do";
-                                    var data='method=getDemoNameAjax&demo_no='+patientId;
-                                    //console.log('in cre '+patientId);
-                                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                        var json=transport.responseText.evalJSON();
-                                              //oscarLog(json);
-                                              if(json!=null ){
-                                                 var patientName=json.demoName;//get name from id
-                                                 addPatientId(patientId);
-                                                 addPatientIdName(patientId,patientName);
-                                                 var e='<dt><img id="plus'+patientId+'" alt="plus" src="../images/plus.png" onclick="showhideSubCat(\'plus\',\''+patientId+'\');"/><img id="minus'+patientId+'" alt="minus" style="display:none;" src="../images/minus.png" onclick="showhideSubCat(\'minus\',\''+patientId+'\');"/>'+
-                                                     '<a id="patient'+patientId+'all" href="javascript:void(0);"  onclick="resetCurrentFirstDocLab();showThisPatientDocs(\''+patientId+'\');un_bold(this);" title="'+patientName+'">'+patientName+' (<span id="patientNumDocs'+patientId+'">1</span>)</a>'+
-                                                    '<dl id="labdoc'+patientId+'showSublist" style="display:none" >';
-                                                var type=checkType(doclabid);
-                                                var s;
-                                                //oscarLog('type='+type);
-                                                //oscarLog('eee='+e);
-                                                if(type=='DOC'){
-                                                    s=createNewDocEle(patientId);
-                                                }else if(type=='HL7'){
-                                                    s=createNewHL7Ele(patientId);
-                                                }else{return '';}
-                                                e+=s;
-                                                e+='</dl></dt>';
-                                                //oscarLog('jjjjje='+e);
-                                                //oscarLog('before return e');
-                                                new Insertion.Bottom('patientsdoclabs',e);
-                                                return e;
-                                        }
-                                    }});
+function createPatientDocLabEle(patientId,doclabid){
+	var url=contextpath+"/dms/ManageDocument.do";
+	var data='method=getDemoNameAjax&demo_no='+patientId;
 
-                                 }
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+		    var json=jQuery.parseJSON(transport);
+		    if(json!=null ){
+			    var patientName=json.demoName;//get name from id
+			    addPatientId(patientId);
+			    addPatientIdName(patientId,patientName);
+			    var e='<dt><img id="plus'+patientId+'" alt="plus" src="../images/plus.png" onclick="showhideSubCat(\'plus\',\''+patientId+'\');"/><img id="minus'+patientId+'" alt="minus" style="display:none;" src="../images/minus.png" onclick="showhideSubCat(\'minus\',\''+patientId+'\');"/>'+
+			    '<a id="patient'+patientId+'all" href="javascript:void(0);"  onclick="resetCurrentFirstDocLab();showThisPatientDocs(\''+patientId+'\');un_bold(this);" title="'+patientName+'">'+patientName+' (<span id="patientNumDocs'+patientId+'">1</span>)</a>'+
+			    '<dl id="labdoc'+patientId+'showSublist" style="display:none" >';
+			    var type=checkType(doclabid);
+			    var s;
+			    if(type=='DOC'){
+				    s=createNewDocEle(patientId);
+			    }else if(type=='HL7'){
+				    s=createNewHL7Ele(patientId);
+			    }else{return '';}
+			    e+=s;
+			    e+='</dl></dt>';
+                // Insert the html into the page as the last child of element.
+                jQuery("#patientsdoclabs:last-child").append(e);
+			    //new Insertion.Bottom('patientsdoclabs',e);
+			    return e;
+		    }
+        }
+    });
+
+}
+
 
                             function createNewDocEle(patientId){
                                        var newEle='<dt><a id="patient'+patientId+'docs" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\''+patientId+'\',\'DOC\');un_bold(this);" title="Documents">Documents(<span id="pDocNum_'+patientId+'">1</span>)</a></dt>';
@@ -1930,18 +2071,18 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                        return newEle;
                                  }
                               function   increaseCount(eleId){
-                                    if($(eleId)){
-                                         var n=$(eleId).innerHTML;
+                                    if(document.getElementById(eleId)){
+                                         var n=document.getElementById(eleId).innerHTML;
                                          if(n.length>0){
                                              n=parseInt(n);
                                              n++;
-                                             $(eleId).innerHTML=n;
+                                             document.getElementById(eleId).innerHTML=n;
                                          }
                                      }
                                  }
                               function   decreaseCount(eleId){
-                                    if($(eleId)){
-                                         var n=$(eleId).innerHTML;
+                                    if(document.getElementById(eleId)){
+                                         var n=document.getElementById(eleId).innerHTML;
                                          if(n.length>0){
                                              n=parseInt(n);
                                              if(n>0){
@@ -1949,7 +2090,7 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                              }else{
                                                  n=0;
                                              }
-                                             $(eleId).innerHTML=n;
+                                             document.getElementById(eleId).innerHTML=n;
                                          }
                                      }
                                  }
@@ -1958,120 +2099,166 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                 updateDocument('forms_'+docid,true);
 
 }
-  function  updateDocStatusInQueue(docid){//change status of queue document link row to I=inactive
-      //console.log('in updateDocStatusInQueue, docid '+docid);
-            var url="../dms/inboxManage.do",data="docid="+docid+"&method=updateDocStatusInQueue";
-            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){}});
+
+function  updateDocStatusInQueue(docid){//change status of queue document link row to I=inactive
+    //console.log('in updateDocStatusInQueue, docid '+docid);
+    var url="../dms/inboxManage.do"
+    var data="docid="+docid+"&method=updateDocStatusInQueue";
+
+	jQuery.ajax({
+		type: "POST",
+		url:  url,
+		data: data,
+		success: function (transport) {	},
+		error: function(jqXHR, err, exception) {
+			//alert("Error " + jqXHR.status + " " + err);
+		}
+	});
+
+}
+function updateDocument(eleId){
+	if (!checkObservationDate(eleId)) {
+		return false;
+	}
+	//save doc info
+	var url="../dms/ManageDocument.do";
+    var data= jQuery('#'+eleId).serialize();
 
 
-  }
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+		    var json=jQuery.parseJSON(transport);
+		    //console.log(json);
+		    if(json!=null ){
+			    patientId=json.patientId;
+                var ar=eleId.split("_");
+                var num=ar[1];
+                num=num.replace(/\s/g,'');
+                document.getElementById("saveSucessMsg_"+num).style.display = '';
+                document.getElementById('saved'+num).value='true';
+                document.getElementById('demofind'+num).value=patientId;
+                document.getElementById('demofindName'+num).value=document.getElementById('autocompletedemo'+num).value;
+                document.getElementById('assignedPId_'+num).textContent=document.getElementById('autocompletedemo'+num).value;
+                document.getElementById("msgBtn_"+num).onclick = function() { popup(700,960, contextpath +'/oscarMessenger/SendDemoMessage.do?demographic_no='+patientId,'msg'); };
+                // enable buttons that need a pid
+	            jQuery('a').removeClass('disabled');
+                document.getElementById('save'+num).removeAttribute('disabled');
+	            //document.getElementById('saveNext'+num).removeAttribute('disabled');
+	            document.getElementById('dropdown_'+num).removeAttribute('disabled');
+	            document.getElementById('dropdown2_'+num).removeAttribute('disabled');
+	            document.getElementById('msgBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('ticklerBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('recallBtn_'+num).removeAttribute('disabled');
+	            document.getElementById('rxBtn_'+num).removeAttribute('disabled');
+			    updateDocStatusInQueue(num);
+			    var success= updateGlobalDataAndSideNav(num,patientId);
+    			if(success){
+				    success=updatePatientDocLabNav(num,patientId); /// PHC
+				    if(success){
+					    //disable demo input
+					    document.getElementById('autocompletedemo'+num).disabled=true;
+    					//console.log('updated by save');
+    					//console.log(patientDocs);
+    					//Effect.BlindUp('labdoc_'+num);
+    					jQuery('#labdoc_'+num).hide('fade'); //jQueryUI
+    					updateDocStatusInQueue(num);
+    					updateSideNav(num,true);
+    					removeDocFromQueue(num);
+    				}
+			    }
+		    }
+        }
+    });
 
-                                               function updateDocument(eleId,isNext){//save doc info
-                                                    var url="../dms/ManageDocument.do",data=$(eleId).serialize(true);
-                                                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                                            var json=transport.responseText.evalJSON();
-                                                            var patientId;
-                                                            //oscarLog(json);
-                                                            if(json!=null ){
-                                                                patientId=json.patientId;
 
-                                                                var ar=eleId.split("_");
-                                                                var num=ar[1];
-                                                                num=num.replace(/\s/g,'');
-                                                                $("saveSucessMsg_"+num).show();
-                                                                $('saved'+num).value='true';
-                                                                //console.log('before update global data');
-                                                                var success= addDocToPatient(num,patientId);
-                                                                //console.log('result of update global data='+success);
-                                                                if(success){
-                                                                    success=updatePatientDocLabNav(num,patientId);
-                                                                    //console.log('result of update patient doc lab nav '+success);
-                                                                    if(success){
-                                                                        //console.log('before disable autocompletedemo '+num+'--'+$('autocompletedemo'+num));
-                                                                        //disable demo input
-                                                                        if($('autocompletedemo'+num))
-                                                                            $('autocompletedemo'+num).disabled=true;
-                                                                        //console.log('updated by save');
-                                                                        //console.log(patientDocs);
-                                                                        //console.log("isNext "+isNext);
-                                                                        if(isNext){
-                                                                            //console.log("isNext is true");
-                                                                            //blind up
-                                                                             Effect.BlindUp('labdoc_'+num);
-                                                                            //make the document out of the queue
-                                                                            updateDocStatusInQueue(num);
-                                                                            //update side navigation for queue
-                                                                            updateSideNav(num,true);
-                                                                            //remove doc from queueDocNos
-                                                                            removeDocFromQueue(num);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                    }});
-                                                    return false;
-                                                }
+	return false;
+}
 
-                                             function updateStatus(formid,inQueue){//acknowledge
-                                                 if(inQueue)
-                                                     //console.log('inqueue is boolean true');
-                                                 if(inQueue=='true')
-                                                     //console.log('inqueue is string true');
-                                                 var num=formid.split("_");
-                                                        var doclabid=num[1];
-                                                        if(doclabid){
-                                                            var demoId=$('demofind'+doclabid).value;
-                                                            var saved=$('saved'+doclabid).value;
-                                                            if(demoId=='-1'|| saved=='false'){
-                                                                alert('Document is not assigned and saved to a patient,please file it');
-                                                            }else{
-                                                        var url=contextpath+"/oscarMDS/UpdateStatus.do";
-                                                        var data=$(formid).serialize(true);
+function updateStatus(formid){//acknowledge Document
+	var num=formid.split("_");
+	var doclabid=num[1];
+	if(doclabid){
+		var demoId=document.getElementById('demofind'+doclabid).value;
+		var saved=document.getElementById('saved'+doclabid).value;
+		if(demoId=='-1'|| saved=='false'){
+			alert('Document is not assigned and saved to a patient,please file it');
+		}else{
+			var url=contextpath+"/oscarMDS/UpdateStatus.do";
+            var data= jQuery('#'+formid).serialize();
 
-                                                        new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                                                                //console.log('after updatestatus ,doclabid '+doclabid);
-                                                                         if(doclabid){
-                                                                             Effect.BlindUp('labdoc_'+doclabid);
-                                                                             updateDocLabData(doclabid,inQueue);
-                                                                             if(inQueue){
-                                                                                 //console.log(' inqueue is true ');
-                                                                                 //make the document out of the queue
-                                                                                 updateDocStatusInQueue(doclabid);
-                                                                                 //remove doc from queueDocNos
-                                                                                 removeDocFromQueue(doclabid);
-                                                                         }else{
-                                                                             //console.log('inqueue is false');
-                                                                         }
-                                                            }
-                                                        }});
-                                                    }
-                                             }
-                                                }
+	        jQuery.ajax({
+		        type: "POST",
+		        url:  url,
+		        data: data,
+		        success: function (transport) {
+				    if(doclabid){
+                        // hide similar to Effect.Blindup()
+					    jQuery('#labdoc_'+doclabid).hide('fade'); //jQueryUI if not loaded a simple hide will occur
+					    updateDocStatusInQueue(doclabid);
+                        removeDocFromQueue(doclabid);
+				    }
+            	},
+		        error: function(jqXHR, err, exception) {
+			        console.log(jqXHR.status);
+		        }
+	        });
+		}
+	}
+}
 
-                                       function fileDoc(docId){
-                                           if(docId){
-                                                docId=docId.replace(/\s/,'');
-                                                if(docId.length>0){
-                                                     var demoId=$('demofind'+docId).value;
-                                                     var isFile=true;
-                                                    if(demoId=='-1'){
-                                                        isFile=confirm('Document is not assigned to any patient, do you still want to file it?');
-                                                    }
-                                                    if(isFile) {
-                                                             var type='DOC';
-                                                             if(type){
-                                                                 var url='../oscarMDS/FileLabs.do';
-                                                                var data='method=fileLabAjax&flaggedLabId='+docId+'&labType='+type;
-                                                                new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-                                                                        Effect.Fade('labdoc_'+docId);
-                                                                        updateDocLabData(docId,true);
-                                                                        removeDocFromQueue(doclabid);
-                                                                }});
-                                                        }
-                                                    }
-                                               }
-                                            }
-                                       }
+function refileDoc(id) {
+    var queueId=document.getElementById('queueList_'+id).options[document.getElementById('queueList_'+id).selectedIndex].value;
+    var url=contextpath +"/dms/ManageDocument.do";
+    var data='method=refileDocumentAjax&documentId='+id+"&queueId="+queueId;
+
+    jQuery.ajax({
+        type: "POST",
+        url:  url,
+        data: data,
+        success: function (transport) {
+            fileDoc(id);
+        }
+    });
+ }
+
+
+function fileDoc(docId){
+	if(docId){
+		docId=docId.replace(/\s/,'');
+		if(docId.length>0){
+			var demoId=document.getElementById('demofind'+docId).value;
+			var isFile=true;
+			if(demoId=='-1'){
+				isFile=confirm('Document is not assigned to any patient, do you still want to file it?');
+			}
+			if(isFile) {
+				var type='DOC';
+				if(type){
+					var url='../oscarMDS/FileLabs.do';
+					var data='method=fileLabAjax&flaggedLabId='+docId+'&labType='+type;
+
+	                jQuery.ajax({
+		                type: "POST",
+		                url:  url,
+		                data: data,
+		                success: function (transport) {
+						    jQuery('#labdoc_'+docId).hide('fade'); // jQueryUI dependency
+						    updateDocLabData(docId,true);
+						    removeDocFromQueue(docId);
+                    	},
+		                error: function(jqXHR, err, exception) {
+			                console.log(jqXHR.status);
+		                }
+	                });
+				}//if Type
+			} //isFile
+		} //if length>0
+	}//if(docId)
+}//fcn
+
 
                                        function forceFileDoc(docId){
                                            if(docId){
@@ -2123,22 +2310,22 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
 
                                        function showPageImg(docid,pn,cp){
                                                     if(docid&&pn&&cp){
-                                                        var e=$('docImg_'+docid);
+                                                        var e=document.getElementById('docImg_'+docid);
                                                         var url=cp+'/dms/ManageDocument.do?method=viewDocPage&doc_no='+docid+'&curPage='+pn;
                                                         e.setAttribute('src',url);
                                                     }
                                                 }
 
                                        function nextPage(docid,cp){
-                                           var curPage=$('curPage_'+docid).value;
-                                           var totalPage=$('totalPage_'+docid).value;
+                                           var curPage=document.getElementById('curPage_'+docid).value;
+                                           var totalPage=document.getElementById('totalPage_'+docid).value;
                                            curPage++;
                                            if(curPage>totalPage){
                                                curPage=totalPage;
                                                hideNext(docid);
                                                showPrev(docid);
                                            }
-                                                  $('curPage_'+docid).value=curPage;
+                                                  document.getElementById('curPage_'+docid).value=curPage;
 
                                                         showPageImg(docid,curPage,cp);
                                                         if(curPage>=totalPage){
@@ -2150,14 +2337,14 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
                                                         }
                                                 }
                                                 function prevPage(docid,cp){
-                                                     var curPage=$('curPage_'+docid).value;
+                                                     var curPage=document.getElementById('curPage_'+docid).value;
                                                     curPage--;
                                                     if(curPage<1){
                                                         curPage=1;
                                                         hidePrev(docid);
                                                         showNext(docid);
                                                     }
-                                                    $('curPage_'+docid).value=curPage;
+                                                    document.getElementById('curPage_'+docid).value=curPage;
                                                         showPageImg(docid,curPage,cp);
                                                        if(curPage==1){
                                                            hidePrev(docid);
@@ -2169,48 +2356,48 @@ function addDocToPatient(doclabid,patientId){//if doc is previously not assigned
 
                                                 }
                                                 function firstPage(docid,cp){
-                                                   $('curPage_'+docid).value=1;
+                                                   document.getElementById('curPage_'+docid).value=1;
                                                     showPageImg(docid,1,cp);
                                                     hidePrev(docid);
                                                     showNext(docid);
                                                 }
                                                 function lastPage(docid,cp){
-                                                    var totalPage=$('totalPage_'+docid).value;
+                                                    var totalPage=document.getElementById('totalPage_'+docid).value;
 
-                                                    $('curPage_'+docid).value=totalPage;
+                                                    document.getElementById('curPage_'+docid).value=totalPage;
                                                     showPageImg(docid,totalPage,cp);
                                                     hideNext(docid);
                                                     showPrev(docid);
                                                 }
                                                 function hidePrev(docid){
                                                     //disable previous link
-                                                    $("prevP_"+docid).setStyle({display:'none'});
-                                                    $("firstP_"+docid).setStyle({display:'none'});
+                                                    document.getElementById("prevP_"+docid).setStyle({display:'none'});
+                                                    document.getElementById("firstP_"+docid).setStyle({display:'none'});
                                                 }
                                                 function hideNext(docid){
                                                     //disable next link
-                                                    $("nextP_"+docid).setStyle({display:'none'});
-                                                    $("lastP_"+docid).setStyle({display:'none'});
+                                                    document.getElementById("nextP_"+docid).setStyle({display:'none'});
+                                                    document.getElementById("lastP_"+docid).setStyle({display:'none'});
                                                 }
                                                 function showPrev(docid){
                                                     //disable previous link
-                                                    $("prevP_"+docid).setStyle({display:'inline'});
-                                                    $("firstP_"+docid).setStyle({display:'inline'});
+                                                    document.getElementById("prevP_"+docid).setStyle({display:'inline'});
+                                                    document.getElementById("firstP_"+docid).setStyle({display:'inline'});
                                                 }
                                                 function showNext(docid){
 
                                                     //disable next link
-                                                    $("nextP_"+docid).setStyle({display:'inline'});
-                                                    $("lastP_"+docid).setStyle({display:'inline'});
+                                                    document.getElementById("nextP_"+docid).setStyle({display:'inline'});
+                                                    document.getElementById("lastP_"+docid).setStyle({display:'inline'});
                                                 }
 </script>
-<script type="text/javascript" src="../dms/showDocument.js"></script>
+<script src="../dms/showDocument.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"  />
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/oscarMDSIndex.css"  />
-          <style type="text/css">
+        <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css">
+        <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css">
+        <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css">
+        <link rel="stylesheet" type="text/css" media="all" href="../share/css/oscarMDSIndex.css">
+          <style>
             .Cell{
                 background-color:#9999CC;
 border-color:#CCCCFF #6666CC #6666CC #CCCCFF;
@@ -2242,15 +2429,15 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
 
 %>
 
-        <table id="pendingDocs" width="100%">
-             <tr oldclass="MainTableTopRow">
-                <td class="MainTableTopRowRightColumn" colspan="2" align="left">
-                 <table width="100%">
+        <table id="pendingDocs" style="width:100%">
+             <tr class="MainTableTopRow">
+                <td class="MainTableTopRowRightColumn" colspan="2">
+                 <table style="width:100%">
                      <tr >
-                         <td align="center" colspan="2" class="Nav" valign="center"><span class="white"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
+                         <td style="text-align:center; vertical-align:center;" colspan="2" class="Nav"><span class="white"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
                      </tr>
                         <tr>
-                            <td align="left" valign="center" >
+                            <td style="text-align:left; vertical-align:center;" >
                                 <input type="hidden" name="providerNo" value="<%= providerNo %>">
                                 <input type="hidden" name="searchProviderNo" value="<%= searchProviderNo %>">
                                 <%= (request.getParameter("lname") == null ? "" : "<input type=\"hidden\" name=\"lname\" value=\""+request.getParameter("lname")+"\">") %>
@@ -2259,11 +2446,11 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
 
                                 <input type="hidden" name="selectedProviders">
 
-                                <input type="button" class="smallButton" onclick="window.close();" value="<bean:message key="oscarMDS.index.btnClose"/>">
+                                <input type="button" class="btn" onclick="window.close();" value="<bean:message key="oscarMDS.index.btnClose"/>">
 
                             </td>
 
-                            <td align="right" valign="center" width="30%">
+                            <td style="text-align:right; vertical-align:center; width:30%">
                                 <oscar:help keywords="inbox queue" key="app.top1"/>
                                 | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>
                             </td>
@@ -2272,11 +2459,11 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
                 </td>
             </tr>
             <tr>
-                <th class="Cell" align="left" valign="bottom"  nowrap>Queues</th>
-                <th class="Cell" align="left" valign="bottom"  nowrap>Documents</th>
+                <th class="Cell" style="text-align:left; vertical-align:bottom; white-space: nowrap;">Queues</th>
+                <th class="Cell" style="text-align:left; vertical-align:bottom; white-space: nowrap;">Documents</th>
             </tr>
             <tr >
-                <td valign="top"  id="queueNames" width="10%">
+                <td id="queueNames" style="vertical-align: top; width:10%">
                     <%
                     while(itr.hasNext()){
                         Integer qId=(Integer)itr.next();
@@ -2284,15 +2471,15 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
                         List dos=(List)queueDocNos.get(qId);
                         Integer numberOfDocs=dos.size();
 %>
-<a href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showDocInQueue('<%=qId%>')"><%=name%>&nbsp;(<span id="docNo_<%=qId%>"><%=numberOfDocs%></span>)</a><br/>
+<a href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showDocInQueue('<%=qId%>')"><%=name%>&nbsp;(<span id="docNo_<%=qId%>"><%=numberOfDocs%></span>)</a><br>
                     <%}%>
 
                 </td>
 
-                <td valign="top" id="docs" width="90%"></td>
+                <td style="vertical-align: top; width:90%" id="docs"></td>
             </tr>
         </table>
-                    <script type="text/javascript">
+                    <script>
                             var current_first_doclab=0;
                            var typeDocLab=initTypeDocLab('<%=typeDocLab%>');   //{DOC=[357, 317, 316], HL7=[38, 33, 30, 28]}
                            var docType=initDocType('<%=docType%>');   //{357=DOC, 38=HL7, 317=DOC, 316=DOC, 33=HL7, 30=HL7, 28=HL7}
@@ -2320,13 +2507,15 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
                            var types=['DOC'];
 
                         var contextpath='<%=request.getContextPath()%>';
-Event.observe(window,'scroll',function(){//check for scrolling
+//Event.observe(window,'scroll',function(){//check for scrolling
+ //   bufferAndShow();
+//});
+window.addEventListener('scroll', function(evt) {
     bufferAndShow();
 });
 
 
 
-
 </script>
     </body>
-</html>
+</html:html>
