@@ -55,7 +55,6 @@
 
 $(document).ready(function(){
     oTable=jQuery('#measTbl').DataTable({
-        "order": [],
         "lengthMenu": [ [15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
         "language": {
         "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
