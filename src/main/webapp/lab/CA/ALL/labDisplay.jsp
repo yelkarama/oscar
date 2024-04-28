@@ -263,7 +263,7 @@ else // remote lab
 	}
 }
 
-/********************** Converted to this sport *****************************/
+/********************** Converted to this spot *****************************/
 DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 Demographic demographic = demographicDao.getDemographic(demographicID);
 
@@ -280,7 +280,6 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 	CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
 
 %>
-
 <!DOCTYPE html>
 
 <html>
@@ -642,6 +641,11 @@ input[id^='acklabel_']{
                                 window.popup(700, 980, '<%=request.getContextPath()%>/oscarPrevention/AddPreventionData.jsp?demographic_no=' + demoid + '&prevention=PSA', 'prevention');
                                 window.popup(450, 1280, '<%=request.getContextPath()%>/tickler/ticklerDemoMain.jsp?demoview=' + demoid);
                             }
+                        } else if (action == 'fileLab') {
+                            demoid = json.demoId;
+                            if (demoid != null && demoid.length > 0) {
+                                fileDoc(labid);
+                            }
                         }
 
                     } else { // not successfully linked to a demographic
@@ -653,6 +657,12 @@ input[id^='acklabel_']{
                                 matchMe();
                             }
 
+                        } else if (action == 'fileLab') {
+                            if (confirmFileUnmatched()) {
+                                fileDoc(labid);
+                            } else {
+                                matchMe();
+                            }
                         } else {
                             alert("<bean:message key="oscarMDS.index.msgNotAttached"/>");
                             matchMe();
@@ -679,6 +689,35 @@ input[id^='acklabel_']{
     function confirmAckUnmatched(){
         return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledgeUnmatched"/>');
     }
+
+    function confirmFileUnmatched(){
+        return confirm('This lab has not been matched to a patient. Are you sure you want to File it? OK to File and Cancel to match to a patient');
+    }
+
+    function fileDoc(labid){
+        jQuery.ajax({
+            type: "POST",
+            url: "<%= request.getContextPath() %>/oscarMDS/FileLabs.do",
+            data: "method=fileLabAjax&flaggedLabId=" + labid + "&labType=HL7",
+            success: function (data) {
+                if( window.opener.document.getElementById('labdoc_'+labid) != null ) {
+                    window.opener.hideLab('labdoc_'+labid);
+                    window.opener.refreshCategoryList();
+                    window.opener.updateCountTotal(0);
+                    jQuery(':button').prop('disabled',true);
+                    jQuery('#loader').show();
+                    close = window.opener.openNext(labid);
+            	} else {
+                	window.close();
+                }
+            },
+		    error: function(jqXHR, err, exception) {
+            	console.log(jqXHR.status);
+		    }
+        });
+    }
+
+
 
     function updateStatus(formid,labid){
             var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do";
@@ -1090,6 +1129,7 @@ input[id^='acklabel_']{
                             <% } %>
                                     <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:;" onclick="unlinkDemographic(<%=segmentID%>);//handleLab('','<%=segmentID%>','unlinkDemo');"><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="javascript:;" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" >Req# <%=reqTableID%></a>
+                                    <a href="javascript:;" onclick="handleLab('','<%=segmentID%>','fileLab'); return false;"><bean:message key="global.File"/></a>
                                 </div>
                             </div>
 
@@ -2364,6 +2404,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                             <% } %>
                                     <a <%=isLinkedToDemographic ? "" : "class='disabled'" %> href="javascript:;" onclick="handleLab('','<%=segmentID%>','unlinkDemo');"><bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/></a>
                                     <a href="javascript:;" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" >Req# <%=reqTableID%></a>
+                                    <a href="javascript:;" onclick="handleLab('','<%=segmentID%>','fileLab'); return false;"><bean:message key="global.File"/></a>
                                 </div>
                             </div>
                                    	<% if (bShortcutForm) { %>
