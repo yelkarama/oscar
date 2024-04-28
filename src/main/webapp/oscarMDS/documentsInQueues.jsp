@@ -49,7 +49,7 @@ if(!authed) {
 <html:html locale="true">
     <head>
     <html:base />
-    <title>Documents In Queues</title>
+    <title><bean:message key="inboxmanager.documentsInQueues"/></title>
 
 <!-- i18n calendar -->
     <script src="<%=request.getContextPath()%>/share/calendar/calendar.js"></script>
@@ -66,7 +66,6 @@ if(!authed) {
     <script src="<%=request.getContextPath()%>/share/javascript/casemgmt/faxControl.js"> </script>
     <script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
     <script src="<%=request.getContextPath()%>/js/documentDescriptionTypeahead.js"></script>
-    <!--<script src="<%=request.getContextPath()%>/share/javascript/oscarMDSIndex.js"></script>-->
     <script src="<%=request.getContextPath()%>/dms/showDocument.js?ver=1"></script>
 
 <!-- css -->
@@ -75,7 +74,11 @@ if(!authed) {
     <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
 
-   <style>
+    <style>
+        .Cell{
+            background-color:#ADADB3;
+        }
+
         /* Dropdown Button */
         .dropbtns {
         /*  background-color: #4CAF50;
@@ -2391,50 +2394,33 @@ function fileDoc(docId){
                                                     document.getElementById("lastP_"+docid).setStyle({display:'inline'});
                                                 }
 </script>
-<script src="../dms/showDocument.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css">
-        <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/oscarMDSIndex.css">
-          <style>
-            .Cell{
-                background-color:#9999CC;
-border-color:#CCCCFF #6666CC #6666CC #CCCCFF;
-border-left:thin solid #CCCCFF;
-border-right:thin solid #6666CC;
-border-style:solid;
-border-width:thin;
-height:0px;
-            }
-            </style>
     </head>
-
     <body>
-        <%
-        HashMap queueIdNames=(HashMap)request.getAttribute("queueIdNames");//each queue id has a corresponding name
-        HashMap queueDocNos=(HashMap)request.getAttribute("queueDocNos");//one queue id is linked to a list of docs
-        String providerNo=(String)request.getAttribute("providerNo");
-        String searchProviderNo=(String)request.getAttribute("searchProviderNo");
-        Set keys=queueDocNos.keySet();
-        Iterator itr=keys.iterator();
-String patientIdNamesStr=(String)request.getAttribute("patientIdNamesStr");
-HashMap docStatus=(HashMap)request.getAttribute("docStatus");
-String patientIdStr =(String)request.getAttribute("patientIdStr");
-HashMap typeDocLab =(HashMap)request.getAttribute("typeDocLab");
-HashMap docType=(HashMap)request.getAttribute("docType");
-HashMap patientDocs=(HashMap)request.getAttribute("patientDocs");
-List<String> normals=(List<String>)request.getAttribute("normals");
-List<String> abnormals=(List<String>)request.getAttribute("abnormals");
+    <%
+    HashMap queueIdNames=(HashMap)request.getAttribute("queueIdNames");//each queue id has a corresponding name
+    HashMap queueDocNos=(HashMap)request.getAttribute("queueDocNos");//one queue id is linked to a list of docs
+    String providerNo=(String)request.getAttribute("providerNo");
+    String searchProviderNo=(String)request.getAttribute("searchProviderNo");
+    Set keys=queueDocNos.keySet();
+    Iterator itr=keys.iterator();
+    String patientIdNamesStr=(String)request.getAttribute("patientIdNamesStr");
+    HashMap docStatus=(HashMap)request.getAttribute("docStatus");
+    String patientIdStr =(String)request.getAttribute("patientIdStr");
+    HashMap typeDocLab =(HashMap)request.getAttribute("typeDocLab");
+    HashMap docType=(HashMap)request.getAttribute("docType");
+    HashMap patientDocs=(HashMap)request.getAttribute("patientDocs");
+    List<String> normals=(List<String>)request.getAttribute("normals");
+    List<String> abnormals=(List<String>)request.getAttribute("abnormals");
 
 %>
 
-        <table id="pendingDocs" style="width:100%">
+        <table id="pendingDocs" style="width:100%;">
              <tr class="MainTableTopRow">
                 <td class="MainTableTopRowRightColumn" colspan="2">
-                 <table style="width:100%">
+                 <table style="width:100%; background-color:gainsboro;">
                      <tr >
-                         <td style="text-align:center; vertical-align:center;" colspan="2" class="Nav"><span class="white"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
+                         <td style="text-align:center; vertical-align:center;" colspan="2" class="Nav"><span style="font-weight:bold;"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
                      </tr>
                         <tr>
                             <td style="text-align:left; vertical-align:center;" >
@@ -2452,7 +2438,7 @@ List<String> abnormals=(List<String>)request.getAttribute("abnormals");
 
                             <td style="text-align:right; vertical-align:center; width:30%">
                                 <oscar:help keywords="inbox queue" key="app.top1"/>
-                                | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>
+                                | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')"  ><bean:message key="global.about"/></a>
                             </td>
                         </tr>
                     </table>
