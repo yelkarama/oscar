@@ -1,3 +1,7 @@
+-- match archive table to prevent truncation errors
+ALTER TABLE `favorites` CHANGE `BN` `BN` VARCHAR(255);
+ALTER TABLE `measurementTypeDeleted` CHANGE `typeDisplayName` `typeDisplayName` VARCHAR(255);
+
 -- without UNIQUE indices this can only be run once
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
