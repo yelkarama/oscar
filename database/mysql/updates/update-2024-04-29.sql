@@ -11,31 +11,31 @@ WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'ECTP', 'Ectopic Pregnancies', 'ECTP', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'ECTP', 'Ectopic Pregnancies', 'ECTP', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'PRET', 'Preterm deliveries', 'PRET', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'PRET', 'Preterm deliveries', 'PRET', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'TERM', 'Term Pregnancies', 'TERM', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'TERM', 'Term Pregnancies', 'TERM', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'TOP', 'Termination of Preg', 'TOP', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'TOP', 'Termination of Preg', 'TOP', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'CAT', 'CAT', 'CAT score', '', `validations`.`id`, '2020-01-01 00:00:01'
+SELECT 'CAT', 'CAT', 'CAT score', 'score', `validations`.`id`, '2020-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
@@ -53,37 +53,37 @@ WHERE `validations`.`name` = "No Validations"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'SCRD', 'SCRD', '', '', `validations`.`id`, '2020-01-01 00:00:01'
+SELECT 'SCRD', 'SCRD', 'SCRD', 'SCRD', `validations`.`id`, '2020-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'PBNP', 'NTproBNP', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'PBNP', 'NTproBNP', 'NTproBNP', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'Zn', 'Serum Zinc', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'Zn', 'Serum Zinc', 'Zn', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'VANC', 'Vancomycin Serum', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'VANC', 'Vancomycin Serum', 'Vanco', 'level', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'VALP', 'Valproic Acid Serum', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'VALP', 'Valproic Acid Serum', 'Valproate', 'level', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'HCGS', 'HCG Serum', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'BHCG', 'HCG Serum', 'HCG', 'level', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
@@ -149,31 +149,31 @@ WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'E2', 'Estradiol', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'ESDL', 'Estradiol', 'E2', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'CORT', 'AM Cortisol', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'CORT', 'AM Cortisol', 'cortisol', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'CARB', 'Carbamazepine level', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'CARB', 'Carbamazepine level', 'Carbamazepine', 'level', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'AMYL', 'Amylase', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'AMYL', 'Amylase', 'Amylase', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'VITD', '1 25(OH)Vitamin D', '', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'VITD', '1 25(OH)Vitamin D', 'Vit D', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
@@ -185,13 +185,13 @@ WHERE `validations`.`name` = "No Validations"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'HDAB', 'Hep D Virus Ab', 'Hep D Virus Antibody', '', `validations`.`id`, '2024-01-01 00:00:01'
+SELECT 'HDAB', 'Hep D Virus Ab', 'Hep D Virus Antibody', 'number', `validations`.`id`, '2024-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
 
 INSERT INTO `measurementType`( `type`, `typeDisplayName`, `typeDescription`, `measuringInstruction`, `validation`, `createDate`) 
-SELECT 'Epworth', 'Epworth Sleepiness Scale', '', '', `validations`.`id`, '2020-01-01 00:00:01'
+SELECT 'Epworth', 'Epworth Sleepiness Scale', 'Epworth', 'score', `validations`.`id`, '2020-01-01 00:00:01'
 FROM `validations`
 WHERE `validations`.`name` = "Numeric Value: 0 to 100"
 ON DUPLICATE KEY UPDATE `type`=`type`;
