@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -55,28 +55,27 @@
 
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkPassword.js.jsp"></script>
+<script src="<%= request.getContextPath() %>/js/checkPassword.js.jsp"></script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.12.3.js"></script>
-        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/jqBootstrapValidation-1.3.7.min.js"></script>
 <title><bean:message key="admin.securityupdatesecurity.title" /></title>
-<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/JavaScriptServlet"></script>
   <script>
 
      $(function () { $("input,textarea,select").jqBootstrapValidation(
                     {
                         preventSubmit: true,
                         submitError: function($form, event, errors) {
-                            // Here I do nothing, but you could do something like display 
+                            // Here I do nothing, but you could do something like display
                             // the error messages to the user, log, etc.
                             event.preventDefault();
                         },
 
                         submitSuccess: function($form, event) {
-	                     
+
                         },
                         filter: function() {
                             return $(this).is(":visible");
@@ -90,7 +89,7 @@
                     $(this).tab("show");
                 });
 
-            });          
+            });
 
 </script>
 
@@ -160,14 +159,14 @@
 		} else {
 			pin1.style.display= "block";
 			pin2.style.display= "block";
-            document.getElementById("reset2fa").style.display = "none";			
+            document.getElementById("reset2fa").style.display = "none";
 		}
 	}
 </script>
 </head>
 
-<body onLoad="togglePins();" topmargin="0" leftmargin="0" rightmargin="0">
-<div width="100%">
+<body onLoad="togglePins();" >
+<div style="width:100%">
     <div id="header"><H4><i class="icon-lock"></i>&nbsp;<bean:message
 			key="admin.securityupdatesecurity.description" /></H4>
     </div>
@@ -176,12 +175,12 @@
 
 	<form method="post" action="securityupdate.jsp" name="updatearecord" autocomplete="off"
 	novalidate>
-<table width="400px" align="center">
+<table style="width:400px; text-align:center">
 <%
 	SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 	Integer securityId = Integer.valueOf(request.getParameter("keyword"));
 	Security security = securityDao.find(securityId);
-	
+
 	if(security == null) {
 %>
 	<tr>
@@ -192,75 +191,75 @@
         </td>
 	</tr>
 <%
-	} 
+	}
 	else {
 %>
 <tr><td>
 <div class="container-fluid well form-horizontal" >
     <div class="control-group span7">
-        <label class="control-label" for="user_name"><bean:message 
+        <label class="control-label" for="user_name"><bean:message
                 key="admin.securityrecord.formUserName" /><span style="color:red">*</span></label>
         <div class="controls">
-		    <input type="text" name="user_name" 
-		    value="<%= Encode.forHtmlContent(security.getUserName()) %>" 
-		    maxlength="30" required ="required" 
+		    <input type="text" name="user_name" id="user_name"
+		    value="<%= Encode.forHtmlContent(security.getUserName()) %>"
+		    maxlength="30" required ="required"
             data-validation-required-message='<bean:message key="admin.securityrecord.formUserName" /> <bean:message key="admin.securityrecord.msgIsRequired"/>'>
             <p class="help-block text-danger"></p>
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="password"><bean:message 
+        <label class="control-label" for="password"><bean:message
                 key="admin.securityrecord.formPassword" /><span style="color:red">*</span></label>
         <div class="controls">
-		    <input type="password" 
-            autocomplete="new-password" name="password" required ="required" 
+		    <input type="password"
+            autocomplete="new-password" name="password" id="password" required ="required"
 value="*********"
             data-validation-required-message='<bean:message key="admin.securityrecord.formPassword" /> <bean:message key="admin.securityrecord.msgIsRequired"/>'
-            data-validation-compexity-regex="\*{9}|(?=.*\d)(?=.*[a-z])(?=.*[\W]).*" 
-            data-validation-compexity-message="<bean:message key="password.policy.violation.msgPasswordStrengthError"/> 
-        <%=op.getProperty("password_min_groups")%>   <bean:message key="password.policy.violation.msgPasswordGroups"/>" 
+            data-validation-compexity-regex="^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\d\W])|(?=.*\W)(?=.*\d))|(?=.*\W)(?=.*[A-Z])(?=.*\d)).{8,}$"
+            data-validation-compexity-message="<bean:message key="password.policy.violation.msgPasswordStrengthError"/>
+        <%=op.getProperty("password_min_groups")%>   <bean:message key="password.policy.violation.msgPasswordGroups"/>"
             data-validation-length-regex=".{<%=op.getProperty("password_min_length")%>,255}"
             data-validation-length-message="<bean:message key="password.policy.violation.msgPasswordStrengthError"/> <%=op.getProperty("password_min_length")%> <bean:message key="admin.securityrecord.msgSymbols" />"
-		    > 
+		    >
             <p class="help-block text-danger"></p>
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="conPassword"><bean:message 
+        <label class="control-label" for="conPassword"><bean:message
                 key="admin.securityrecord.formConfirm"  /><span style="color:red">*</span></label>
         <div class="controls">
 		    <input type="password"
-            autocomplete="off" name="conPassword"
-            value="*********" 
+            autocomplete="off" name="conPassword" id="conPassword"
+            value="*********"
 		    data-validation-match-match="password"
             data-validation-match-message='<bean:message key="admin.securityrecord.msgPasswordNotConfirmed" />'
-            required ="required" 
-            data-validation-required-message="<bean:message key="global.missing" /> <bean:message key="admin.securityrecord.formConfirm" />"> 
+            required ="required"
+            data-validation-required-message="<bean:message key="global.missing" /> <bean:message key="admin.securityrecord.formConfirm" />">
             <p class="help-block text-danger"></p>
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="provider_no"><bean:message 
+        <label class="control-label"><bean:message
                 key="admin.securityrecord.formProviderNo" /><span style="color:red">*</span></label>
         <div class="controls">
 		    <%=  Encode.forHtmlContent(security.getProviderNo()) %>
-		<input type="hidden" name="provider_no"
+		<input type="hidden" name="provider_no" id="provider_no"
 			value="<%= security.getProviderNo() %>">
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="date_ExpireDate"><bean:message 
+        <label class="control-label" for="date_ExpireDate"><bean:message
                 key="admin.securityrecord.formExpiryDate" /></label>
         <div class="controls">
 		    <input type="checkbox" name="b_ExpireSet" value="1" <%= security.getBExpireset()==0?"":"checked" %>>
             <bean:message
 			key="admin.securityrecord.formDate" />: <input type="date" name="date_ExpireDate" id="date_ExpireDate"
-			value="<%=  security.getDateExpiredate() ==null?"": security.getDateExpiredate()  %>" class="input-medium" /> 
+			value="<%=  security.getDateExpiredate() ==null?"": security.getDateExpiredate()  %>" class="input-medium" >
             <p class="help-block text-danger"></p>
         </div>
     </div>
         <div class="control-group span7">
-        <label class="control-label" for="2fa"><bean:message 
+        <label class="control-label" for="2fa"><bean:message
                 key="admin.provider.2fa" /></label>
         <div class="controls">
 			<select name="2fa" id="2fa" onchange="togglePins()">
@@ -275,27 +274,27 @@ value="*********"
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="b_RemoteLockSet"><bean:message 
+        <label class="control-label" for="b_RemoteLockSet"><bean:message
                 key="admin.securityrecord.formRemotePIN" /></label>
         <div class="controls">
-		    <input type="checkbox" name="b_RemoteLockSet" value="1" <%= security.getBRemotelockset()==0?"":"checked" %>> 
+		    <input type="checkbox" name="b_RemoteLockSet" id="b_RemoteLockSet" value="1" <%= security.getBRemotelockset()==0?"":"checked" %>>
             <p class="help-block text-danger"></p>
         </div>
     </div>
     <div class="control-group span7">
-        <label class="control-label" for="b_LocalLockSet"><bean:message 
+        <label class="control-label" for="b_LocalLockSet"><bean:message
                 key="admin.securityrecord.formLocalPIN" /></label>
         <div class="controls">
-		    <input type="checkbox" name="b_LocalLockSet"
-			value="1" <%= security.getBLocallockset()==0?"":"checked" %>> 
+		    <input type="checkbox" name="b_LocalLockSet" id="b_LocalLockSet"
+			value="1" <%= security.getBLocallockset()==0?"":"checked" %>>
             <p class="help-block text-danger"></p>
         </div>
     </div>
     <div id="pin1" class="control-group span7">
-        <label class="control-label" for="pin"><bean:message 
+        <label class="control-label" for="pin"><bean:message
                 key="admin.securityrecord.formPIN"  /></label>
         <div class="controls">
-		    <input type="password" name="pin" 
+		    <input type="password" name="pin" id="pin"
             autocomplete="off"
             value="****"
             minlength="<%=op.getProperty("password_pin_min_length")%>"
@@ -308,10 +307,10 @@ value="*********"
         </div>
     </div>
     <div id="pin2" class="control-group span7">
-        <label class="control-label" for="conPin"><bean:message 
+        <label class="control-label" for="conPin"><bean:message
                 key="admin.securityrecord.formConfirm"  /></label>
         <div class="controls">
-		    <input type="password" name="conPin" 
+		    <input type="password" name="conPin" id="conPin"
             autocomplete="off"
             value="****"
 		    data-validation-match-match="pin"
@@ -319,15 +318,15 @@ value="*********"
              >
             <p class="help-block text-danger"></p>
         </div>
-    </div>	
+    </div>
 	<%
 		if (!OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false")) {
-	%>	
+	%>
     <div class="control-group span7">
-        <label class="control-label" for="forcePasswordReset"><bean:message 
+        <label class="control-label" for="forcePasswordReset"><bean:message
                 key="admin.provider.forcePasswordReset"  /></label>
         <div class="controls">
-			<select name="forcePasswordReset">
+			<select name="forcePasswordReset" id="forcePasswordReset">
 								<option value="1" <% if (security != null && security.isForcePasswordReset()!= null && security.isForcePasswordReset()) { %>
 					                          SELECTED <%}%>><bean:message key="global.yes" /></option>
 								<option value="0" <% if (security != null && security.isForcePasswordReset()!= null && !security.isForcePasswordReset()) { %>
@@ -340,22 +339,19 @@ value="*********"
    <%} %>
 </div>
 
-		<div align="center" class="span9">
+		<div style="text-align:center" class="span9">
             <input type="hidden" name="security_no" value="<%= security.getSecurityNo() %>">
-			<input type="submit" name="subbutton"class="btn btn-primary" value='<bean:message key="admin.securityupdatesecurity.btnSubmit"/>'>
+			<input type="submit" name="subbutton" class="btn btn-primary" value='<bean:message key="admin.securityupdatesecurity.btnSubmit"/>'>
 			<input type="button" class="btn" value="<bean:message key="admin.securityupdatesecurity.btnDelete"/>" onclick="window.location='securitydelete.jsp?keyword=<%=security.getSecurityNo()%>'">
-		</div>	
-	
+		</div>
+
 
 <%
 		}
 %>
-	</form>
 </td></tr>
 </table>
-
+	</form>
 <p></p>
-
-
 </body>
 </html:html>
