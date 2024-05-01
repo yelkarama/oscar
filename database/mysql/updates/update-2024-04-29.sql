@@ -206,7 +206,7 @@ INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VA
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14684-5', '-CREA-U', 'CREATININE-24 HR URINE', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14715-7', '-ESTRA', 'ESTRADIOL-17 BETA', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14749-6', '-GLU-R', 'GLUCOSE-RANDOM', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
-INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14754-6', '-GLU 1HR', '1 HR', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14756-1', '-GLU 1HR', '1 HR', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14866-8', '-PTH', 'PARATHYROID HORMONE', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14877-5', '-DILAN', 'PHENYTOIN (DILANTIN)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14915-3', '-THEO', 'THEOPHYLLINE', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
@@ -223,8 +223,17 @@ INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VA
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('2579-1', '-LH', 'LUTROPIN (LH)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('30522-7', '-HS-CRP', 'HS-CRP', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('4269-7', '4269-7', 'GLUCOSE DOSE', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
-INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('X3948-7', '-PHENOB', 'PHENOBARBITAL', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14874-2', '-PHENOB', 'PHENOBARBITAL', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('24108-3', '-CA 19-9', 'CA 19-9', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('31017-7', '-TISSUE', 'TISSUE TRANSGLUTAMINASE IgA', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('57803-9', '-FIT', 'FECAL IMMUNOCHEMICAL TEST', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
 INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('33762-6', '-NTPROBNP', 'NT-PRO BNP', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14630-8', '-BILI-IN', 'INDIRECT BILIRUBIN', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('14678-7', '-CORT-2', 'CORTISOL PM', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('16128-1', '-ANTI HCV', 'HEPATITIS C (ANTI-HCV)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS'; 
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('16935-9', '-HBSAB', 'SURFACE ANTIBODY (ANTI-HBs)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('22314-9', '-HAVIGM', 'IgM ANTIBODY(ANTI-HAV IgM)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('31844-4', '-HBEAG', '\'E\' ANTIGEN (HBeAg)', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('1884-6', '-APO-B', 'APOLIPOPROTEIN B', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
+INSERT INTO `measurementMap` (`loinc_code`, `ident_code`, `name`, `lab_type`) VALUES ('1834-1', '-AFP', 'AFP ONCOLOGY', 'MDS') ON DUPLICATE KEY UPDATE `lab_type`='MDS';
