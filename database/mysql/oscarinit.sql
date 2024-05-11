@@ -13379,8 +13379,7 @@ CREATE TABLE `security` (
 
 CREATE TABLE `serviceSpecialists` (
   `serviceId` int(10) DEFAULT NULL,
-  `specId` int(10) DEFAULT NULL,
-  PRIMARY KEY (`serviceId`)
+  `specId` int(10) DEFAULT NULL
 );
 
 
