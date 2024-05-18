@@ -2406,13 +2406,13 @@ document.forms[1].r_doctor_ohip.value = refNo;
                 <span style="color:red"><bean:message key="demographic.demographiceditdemographic.formAlert" /></span>
             </label>
             <div class="controls">
-                <textarea name="alert" id="inputAlert" class="span8" ></textarea>
+                <textarea name="inputAlert" id="inputAlert" class="span8" ></textarea>
             </div>
         </div>
         <div class="control-group span12">
             <label class="control-label" for="inputNote"><bean:message key="demographic.demographiceditdemographic.formNotes" /></label>
             <div class="controls">
-                <textarea name="notes" id="inputNote" class="span8" ></textarea>
+                <textarea name="inputNotes" id="inputNotes" class="span8" ></textarea>
             </div>
         </div>
 <%-- END PATIENT NOTES MODULE --%>
