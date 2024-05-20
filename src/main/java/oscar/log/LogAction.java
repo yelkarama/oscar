@@ -183,8 +183,8 @@ public class LogAction {
 		oscarLog.setDemographicId(demographicNo);
 		oscarLog.setAction(action);
 		oscarLog.setContent(module);
-		oscarLog.setStatus(status);
-		oscarLog.setContentId(contentId);
+		//oscarLog.setStatus(status);
+		oscarLog.setContentId(status + contentId);
 		oscarLog.setIp(ip);
 		oscarLog.setSecurityId(securityId);
 		oscarLog.setData(data);
