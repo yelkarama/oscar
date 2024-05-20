@@ -85,7 +85,11 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 	@Column(name = "patient_independent")
 	private boolean patientIndependent;
 
+	@Column(name = "roleType")
 	private String roleType;
+
+	@Column(name="instanced")
+	private boolean instanced = false;
 
 	@Override
 	public Integer getId() {
@@ -178,6 +182,16 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 
 	public void setRoleType(String roleType) {
 		this.roleType = roleType;
+	}
+
+	public boolean isInstanced()
+	{
+		return instanced;
+	}
+
+	public void setInstanced(boolean instanced)
+	{
+		this.instanced = instanced;
 	}
 
 	@PreRemove
