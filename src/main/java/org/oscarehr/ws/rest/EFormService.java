@@ -122,7 +122,7 @@ public class EFormService extends AbstractServiceImpl {
 		String roleType = jsonObject.optString("roleType", null);
 		Boolean showLatestFormOnly = jsonObject.optBoolean("showLatestFormOnly", false);
 		Boolean patientIndependent = jsonObject.optBoolean("patientIndependant", false);
-		Boolean instanced = jsonObject.optBoolean("instanced", true);
+		
 
 		EForm nameMatch = eFormDao.findByName(formName);
 		if(nameMatch != null) {
@@ -140,7 +140,7 @@ public class EFormService extends AbstractServiceImpl {
 		eForm.setCurrent(true);
 		eForm.setShowLatestFormOnly(showLatestFormOnly);
 		eForm.setPatientIndependent(patientIndependent);
-		eForm.setInstanced(instanced);
+		
 		eForm.setRoleType(roleType);
 
 		if(isValidEformData(eForm)) {
@@ -205,7 +205,7 @@ public class EFormService extends AbstractServiceImpl {
 			String roleType = jsonObject.optString("roleType", eForm.getRoleType());
 			Boolean showLatestFormOnly = jsonObject.optBoolean("showLatestFormOnly", eForm.isShowLatestFormOnly());
 			Boolean patientIndependant = jsonObject.optBoolean("patientIndependant", eForm.isPatientIndependent());
-			Boolean instanced = jsonObject.optBoolean("instanced", eForm.isInstanced());
+			
 
 			eForm.setFormName(formName);
 			eForm.setFormHtml(formHtml);
@@ -213,7 +213,7 @@ public class EFormService extends AbstractServiceImpl {
 			eForm.setCurrent(current);
 			eForm.setShowLatestFormOnly(showLatestFormOnly);
 			eForm.setPatientIndependent(patientIndependant);
-			eForm.setInstanced(instanced);
+			
 			eForm.setRoleType(roleType);
 
 			if(isValidEformData(eForm)) {
