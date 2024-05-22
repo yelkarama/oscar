@@ -181,16 +181,6 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 		this.roleType = roleType;
 	}
 
-	public boolean isInstanced()
-	{
-		return instanced;
-	}
-
-	public void setInstanced(boolean instanced)
-	{
-		this.instanced = instanced;
-	}
-
 	@PreRemove
 	protected void jpa_preventDelete() {
 		throw (new UnsupportedOperationException("Remove is not allowed for this type of item."));
