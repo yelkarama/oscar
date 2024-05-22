@@ -88,9 +88,6 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 	@Column(name = "roleType")
 	private String roleType;
 
-	@Column(name="instanced")
-	private boolean instanced = false;
-
 	@Override
 	public Integer getId() {
 		return (id);
