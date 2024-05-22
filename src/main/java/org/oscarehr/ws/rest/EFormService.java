@@ -116,7 +116,7 @@ public class EFormService extends AbstractServiceImpl {
 		JSONObject jsonObject = JSONObject.fromObject(jsonString);
 
 		String formName = jsonObject.getString("formName");
-		String formSubject = jsonObject.optString("formSubject", null);
+		String formSubject = jsonObject.optString("formSubject");
 		String formHtml = jsonObject.getString("formHtml");
 
 		String roleType = jsonObject.optString("roleType", null);
