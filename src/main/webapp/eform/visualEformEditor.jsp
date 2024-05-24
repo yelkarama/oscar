@@ -42,7 +42,7 @@
 
 <!DOCTYPE html>
 <html>
-<!-- Eform Generator 0.2.075 -->
+<!-- Eform Generator 0.2.077 -->
 <!--
 The origional 2852 line generator was penned by Robert Martin for OSCAR Host
 This generator incorperates numerous innovations from the OSCAR community
@@ -56,6 +56,8 @@ version 0.2.072 added funtions to set Subject first port to OSCAR 19
 version 0.2.073 multiple bugfixes
 version 0.2.074 rewritten UI for adding functions
 version 0.2.075 improved speed of loading by making a function asynchronous
+version 0.2.076 fixed BNK.png
+version 0.2.077 fixed imports with checkboxes
 -->
 <!--
 FOR STAND ALONE USE
@@ -2351,6 +2353,16 @@ FOR STAND ALONE USE
             eformName = $($.parseHTML(data)).filter('title').text();
             $("#eformNameInput").val(eformName);
 
+            // convert checkboxes to Xbox
+            const re = /class=""\stype="checkbox"/g
+            if (re.test(data)) {
+                data = data.replace(re,'class="Xbox" type="text"');
+            }
+            // convert radiocheck to Xbox check
+            const re2 = /"\stype="checkbox"/g
+            if (re2.test(data)) {
+                data = data.replace(re2,' Radio" type="text"');
+            }
 
             var $div = $(data);
 
@@ -3799,7 +3811,7 @@ FOR STAND ALONE USE
 
             var $dragFrame51 = createStitchFrame();
             var src = "BNK.png";
-            if (runStandaloneVersion){ src = OSCAR_DISPLAY_IMG_SRC + src;}
+            if (!runStandaloneVersion){ src = OSCAR_DISPLAY_IMG_SRC + src;}
             addDraggableStamp($dragFrame51, "signatureStamp", 255, 50, src, "signatureStamp");
             $tab.append($dragFrame51);
             var $label = $("<label>").text('  Add Signature Stamp: ');
