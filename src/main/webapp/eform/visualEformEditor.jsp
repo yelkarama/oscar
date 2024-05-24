@@ -22,46 +22,65 @@
     Canada
 
 --%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%
+    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed=true;
+%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin.eform" rights="w" reverse="<%=true%>">
+	<%authed=false; %>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin.eform");%>
+</security:oscarSec>
+<%
+	if(!authed) {
+		return;
+	}
+%>
+<%@ page import="oscar.OscarProperties"%>
+
 <!DOCTYPE html>
 <html>
-<!-- Eform Generator 0.2.072 -->
-<!-- Author: Robert Martin -->
-<!-- Modified by Stan Hurwitz -->
-<!-- Modified by Peter Hutten-Czapski -->
-<!-- version 0.2.059 changed CSS styling, added Tickler control, fixed radio when there is more than one grouping -->
-<!-- version 0.2.071 reworking foreign eform import -->
-<!-- version 0.2.072 added funtions to set Subject -->
+<!-- Eform Generator 0.2.075 -->
+<!--
+The origional 2852 line generator was penned by Robert Martin for OSCAR Host
+This generator incorperates numerous innovations from the OSCAR community
+with particular mention of Stan Hurwitz
+Peter Hutten-Czapski has reworked large parts of the code and ported it to OSCAR 19
+-->
+<!--
+version 0.2.059 changed CSS styling, added Tickler control, fixed radio when there is more than one grouping
+version 0.2.071 reworking foreign eform import
+version 0.2.072 added funtions to set Subject first port to OSCAR 19
+version 0.2.073 multiple bugfixes
+version 0.2.074 rewritten UI for adding functions
+version 0.2.075 improved speed of loading by making a function asynchronous
+-->
+<!--
+FOR STAND ALONE USE
+-->
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>OSCAR Visual E-form Editor</title>
+    <title>Visual E-form Editor</title>
 
-    <!-- import jQuery -->
-	<!--<script src="<%= request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script> -->
-    <!-- import jQuery UI-->
+    <!-- jQuery and UI -->
+	<script src="<%= request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 	<script src="<%= request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
-    <!-- import jQuery Theme (ui stylesheet) -->
-    <!--<link href="<%= request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet" type="text/css">  -->
+    <link href="<%= request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet" type="text/css">
+    <link href="<%= request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet" type="text/css">
 
     <!-- javascript file for the signature pads * optional * -->
-    <script src="<%= request.getContextPath() %>/share/javascript/eforms/signature_pad.min.js"></script>
-    <!-- Links to native js scripts in Oscar -->
+    <script src="<%= request.getContextPath() %>/share/javascript/signature_pad.min.js"></script>
+
     <!-- main calendar program -->
     <script src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
     <script src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <link href="<%= request.getContextPath() %>/share/calendar/calendar.css" media="all" rel="stylesheet" title="win2k-cold-1" type="text/css">
-    <!-- script to link to other pages in Oscar -->
-    <script src="${oscar_image_path}onBodyLoad.js"></script>
-    <script src="onBodyLoad.js"></script>
-    <!-- script US date calculator -->
-    <script src="${oscar_image_path}datecalculator.js"></script>
-    <script src="datecalculator.js"></script>
-    <!-- End Links to native js scripts in Oscar -->
 
     <script>
-
         var runStandaloneVersion = false;
-
         /* Load jquery requirements from jquery site when run outside of oscar */
         if (!window.jQuery){
 			document.write("\x3cscript src='https://code.jquery.com/jquery-3.6.4.min.js' integrity='sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=' crossorigin='anonymous'\x3e\x3c\/script\x3e");
@@ -69,7 +88,7 @@
             document.write("\x3clink href='https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.min.css' rel='stylesheet' type='text/css' \x3e");
             /* local javascript file for the signature pads */
             document.write("\x3cscript src='signature_pad.min.js'\x3e\x3c\/script\x3e");
-            //runStandaloneVersion = true;
+            runStandaloneVersion = true;
         }
         console.info("Run as standalone version: " + runStandaloneVersion);
     </script>
@@ -83,7 +102,28 @@
             $('#SubmitButton').attr('disabled', false);
             $('#PrintSubmitButton').attr('disabled', false);
             $('#subject').attr('disabled', false);
+
         });
+
+        function custom_alert( message, title ) {
+            if ( !title )
+                title = 'Alert';
+
+            if ( !message )
+                message = 'No Message to Display.';
+
+            $('<div></div>').html( message ).dialog({
+                title: title,
+                resizable: true,
+                modal: true,
+                buttons: {
+                    'Ok': function()  {
+                        $( this ).dialog( 'close' );
+                    }
+                }
+            });
+        }
+
 
         // open to full screen
         window.moveTo(0, 0);
@@ -98,10 +138,10 @@
 
         function dbWindow(qq) {
             if (runStandaloneVersion) {
-                var myDbWindow = window.open('Eform_dbtags1.html', 'mywindow', 'width=800, height=800,  top=0, left=0')
+                var myDbWindow = window.open('Eform_dbtags.html', 'mywindow', 'width=800, height=800,  top=0, left=0')
                 myDbWindow.moveTo(0, 0);
             } else {
-                var myDbWindow = window.open('${oscar_image_path}Eform_dbtags1.html', 'mywindow', 'width=800, height=800,  top=0, left=0')
+                var myDbWindow = window.open('${oscar_image_path}Eform_dbtags.html', 'mywindow', 'width=800, height=800,  top=0, left=0')
                 myDbWindow.moveTo(0, 0);
             }
             // Get the modal
@@ -158,15 +198,19 @@
 
         var measureArray = [];
 
-        function getMeasures(measure) { //get measurementList
-            xmlhttp = new XMLHttpRequest();
-            var elements = (window.location.pathname.split('/', 2))
-            firstElement = (elements.slice(1))
-            vPath = ("https://" + location.host + "/" + firstElement + "/")
-            var newURL = vPath + "oscarEncounter/oscarMeasurements/SetupDisplayMeasurementTypes.do"
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    var str = xmlhttp.responseText; //local variable
+        function getMeasures(measure) {
+            //scrape to get the measurements on this system
+            //converted to asynchronous to significantly speed ui load
+            var elements = (window.location.pathname.split('/', 2));
+            firstElement = (elements.slice(1));
+            vPath = ("https://" + location.host + "/" + firstElement + "/");
+            var newURL = vPath + "oscarEncounter/oscarMeasurements/SetupDisplayMeasurementTypes.do";
+            $.ajax({
+                type: "GET",
+                url: newURL,
+                async: true,
+                success: function(data) {
+                    var str = data //local variable
                     if (!str) {
                         return;
                     }
@@ -177,11 +221,14 @@
                         measureArray[i] = myArray[1];
                         i = i + 1;
                     }
+                },
+                failure: function(data) {
+                    console.error(data);
                 }
-            }
-            xmlhttp.open("GET", newURL, false);
-            xmlhttp.send();
+            });
+
         }
+
     </script>
     <script>
         //Detect browser
@@ -1199,6 +1246,9 @@
         var enableElementHighlights = false;
         var dragAndDropEnabled = false;
 
+        var etrigger;
+        var parameter;
+
         // stores the current eform id. 0 if new eform.
         var eFormFid = 0;
 
@@ -1338,7 +1388,7 @@
                 dbTagList = oscarDatabaseTags.sort()
             } else {
 
-                getMeasures() //get measurementList
+                getMeasures(); //get measurementList
 
                 $.ajax({
                     type: "GET",
@@ -1376,13 +1426,8 @@
 
         function removeOscarImagePath(string) {
             if (!runStandaloneVersion) {
-                re = new RegExp('.\{oscar_image_path\}','gm');
-                console.log(re.test(string)+" here 2");
-                return string = string.replace(re, '../eform/displayImage.do?imagefile=');
-                //return string = string.replace(/\$\.\.\/eform\/displayImage/g, '../eform/displayImage');
                 var regexFixed = OSCAR_DISPLAY_IMG_SRC.replace(/\//g, "\\/").replace(/\./g, "\\.").replace(/\?/g, "\\?");
-                return string.replace(/\$(%7B|\{)oscar_image_path(%7D|\})/gi, OSCAR_DISPLAY_IMG_SRC);
-                return string.replace(/\$(%7B|\{)oscar_image_path(%7D|\})/gi, regexFixed);
+                return string.replace(/.(%7B|\{)oscar_image_path(%7D|\})/gi, OSCAR_DISPLAY_IMG_SRC);
             } else {
                 return string.replace(/\$(%7B|\{)oscar_image_path(%7D|\})/gi, '');
             }
@@ -1551,11 +1596,13 @@
 
             var $input_elements = $(".input_elements");
             var $eform_container = $("#eform_container");
+            var htmlElements = document.getElementById('eform_container');
 
             var include_stamp = Boolean($eform_container.find(".stamp").length > 0);
             var include_signature = Boolean($eform_container.find(".signature_data").length > 0);
-            var include_xbox = Boolean($eform_container.find(".xBox").length > 0);
-            var include_radio = Boolean($eform_container.find(".cradio").length > 0);
+            var include_xbox = Boolean($eform_container.find(XBOX_INPUT_SELECTOR).length > 0);
+            var include_link = Boolean(htmlElements.innerHTML.includes('LinkXBoxfunction'));
+            var include_radio = Boolean($eform_container.find(".cradio").length > 0 || include_link);
 			var include_gender = Boolean($eform_container.find(GENDER_PRECHECK_CLASS_SELECTOR).length > 0);
 			var include_allno = Boolean($eform_container.find(".all-no-button2").length > 0);
 			var include_date = Boolean($eform_container.find(".hasDatepicker").length > 0);
@@ -1632,7 +1679,8 @@
             var signature_script = document.getElementById('signature_script');
             var stamp_script = document.getElementById('stamp_script');
             var faxno_script = document.getElementById('faxno_script');
-            var htmlElements = document.getElementById('eform_container');
+            var link_script = document.getElementById('link_script');
+
 			// style ORDER is important!
             source += baseStyle.innerHTML;
             if ($eform_container.find(".circle,.square-rounded,.square").length > 0) {
@@ -1676,6 +1724,9 @@
             }
             if (include_radio) {
 			    source += radio_script.innerHTML;
+            }
+            if (include_link) {
+			    source += link_script.innerHTML;
             }
 			if (include_allno) {
                 source += allno_script.innerHTML;
@@ -1769,15 +1820,15 @@
                     console.info(data);
                     var status = data.status;
                     if (status === "SUCCESS") {
-                        alert("EForm Save Successful!");
+                        custom_alert("EForm Save Successful!");
                         setEformId(data.body.id);
                     } else {
-                        alert(data.error);
+                        custom_alert(data.error.message);
                     }
                 },
                 failure: function(data) {
                     console.error(data);
-                    alert("EForm save failure!");
+                    custom_alert("EForm save failure!");
                 }
             });
         }
@@ -1971,10 +2022,9 @@
         function addDraggableStamp($parent, widgetId, width, height, src, customClasses) {  // May 1, 2024  TO DO buggy on resize/drag
             var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
             var imgClass = "";
-
             $widget.append($("<img>", {
                 src: src,
-				alt: "stamp",
+                alt: "stamp",
                 width: "100%",
                 height: "100%",
                 class: "stamp",
@@ -2256,6 +2306,8 @@
 
 
 		function cleanOscarTags(data) {
+		//  noborderPrint" title="age" oscardb="age" placeholder="
+		//  noborderPrint" title="age" oscardb="" "age"="" placeholder="
 			const regex = /oscarDB=([a-z_]+)/gi;
 			const replaceStr = 'oscarDB="$1"';
 			data = data.replace(regex, replaceStr);
@@ -2279,7 +2331,6 @@
 
             // remove oscar image paths in incoming data
             data = removeOscarImagePath(data);
-
 			//use regex to sanitize foreign imported oscarDb tags
 			data = cleanOscarTags(data);
 
@@ -2292,6 +2343,7 @@
 			}
 			const regex2 = /tickler_send_to/
 			if (regex2.test(data)) {
+				//$("#setTickler").prop('checked', true);
 				$("#setTickler").click();
 			}
 
@@ -2299,13 +2351,23 @@
             eformName = $($.parseHTML(data)).filter('title').text();
             $("#eformNameInput").val(eformName);
 
+
             var $div = $(data);
+
 			var imported_form = $div.find("#inputForm").html();
 			//May-01-2024 Peter Hutten-Czapski
             var ferengi = false;
             if (typeof(imported_form)=="undefined")  {
                 ferengi = true;
-				imported_form = loadPages($div);
+                if ( typeof($div.find("[id^='BGImage']").html() ) == "undefined" ){
+                    custom_alert("We are currently unable to convert eform "+eformName+" as it lacks any recognisable background images.");
+                    return;
+                }
+                if ( typeof($div.find("#page1").html() ) == "undefined"){
+                    custom_alert("We are currently unable to convert eform "+eformName+" as it lacks a recognisable page structure.");
+                    return;
+                }
+			    imported_form = loadPages($div);
             }
 
             var $inputForm = $("#inputForm");
@@ -2325,7 +2387,6 @@
 				$("[id^='BGImage']").attr( "alt", "background" );
 				$("[id^='BGImage']").addClass( "gen-layer1" );
 
-
 				$("#BottomButtons").remove();
 				var pageNo = 1;
 				var scaleX = 1;
@@ -2338,7 +2399,6 @@
 						scaleY = scaleX *.995; //PHC Fudge
 						console.log("Page "+pageNo+" has scaleX of "+scaleX+" and scaleY of "+scaleY);
 					}
-console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+scaleX+" and scaleY of "+scaleY+" "+ $('#BGImage'+pageNo).prop('outerHTML'));
 					var imgHeight = $("#BGImage"+pageNo).css('height');
 					if ( imgHeight && imgHeight.length > 3) {
 						imgHeight = imgHeight.substring(0, imgHeight.length - 2)*1;
@@ -2401,7 +2461,11 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
 						$(this).removeClass("noborder");
 					}
 					if ($(this).is('#Stamp')){
-						$(this).attr("src", "BNK.png");
+                        if (runStandaloneVersion){
+						    $(this).attr("src", "BNK.png");
+                        } else {
+						    $(this).attr("src", OSCAR_DISPLAY_IMG_SRC + "BNK.png");
+                        }
 						$(this).attr("onclick", "toggleMe(this);");
 						$(this).attr("alt", "stamp");
 						var wrap_width= $(this).attr("width");
@@ -2540,7 +2604,7 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
                                                 setEformId(data.body.id);
                                                 console.info("EForm Loaded from Server");
                                             } else {
-                                                alert(data.error);
+                                                custom_alert(data.error);
                                             }
                                         }
                                     });
@@ -2799,7 +2863,6 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
                         var status = data.status;
                         if (status === "SUCCESS") {
                             eFormImageList = data.body;
-//alert(data.body) //2021-May-08
                         }
                     },
                     failure: function(data) {
@@ -2890,24 +2953,19 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
                 //.attr('value', "boxTitle")
                 .change(function() {
                     newTitle = $('#boxTitle').val()
-                    //alert(newTitle)
-                    if (newTitle == "") {
-                        //alert("BLANK")
-                        //newTitle = 'xBox'  2020-May-14
-                    }
 
-                    //$xBoxTemplate.attr('title',newTitle );       //2020-May-12
-                    $xBoxTemplateInput.attr("title", newTitle)
-                    $rBoxTemplateInput.attr("title", newTitle) //2020-May-14
+                    if (newTitle == "") {
+                    }
+                    $xBoxTemplateInput.attr("title", newTitle);
+                    $rBoxTemplateInput.attr("title", newTitle);
                 });
 
-            var linkTitle = $('<input/>') //2020-May-05
+            var linkTitle = $('<input/>')
                 .attr('type', "input")
                 .attr('name', "linkTitle")
                 .attr('id', "linkTitle")
-                //.attr('value', "linkTitle")
                 .change(function() {
-                    alert("this changed")
+                    alert("this changed");
                 });
 
             customTitle.css("font-size", "12");
@@ -2918,7 +2976,7 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
             $label.css("fontSize", 12);
             $label.attr('id', "theLabel");
             customTitle.before($label);
-            customTitle.after(linkTitle); //2020-May-05
+            customTitle.after(linkTitle);
             var $label2 = $("<label>").text(' LinkTo:');
             $label2.css("fontSize", 12);
             $label2.attr('id', "theLabel2");
@@ -3099,18 +3157,383 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
 
             $oscarCheckbox22.on('change', function(event, ui) {
                 if ($oscarCheckbox22.is(':checked')) {
-                    //alert(this.checked)
                     setSideBar = "on"
                 } else {
-                    //alert(this.checked)
                     setSideBar = ""
                 }
 
             })
 
+
+            $( function() {
+                var dialog, form,
+
+                event_name = $( "#event_name" ),
+                parameters = $( "#parameters" ),
+                allFields = $( [] ).add( event_name ).add( parameters ),
+                tips = $( ".validateTips" );
+
+                function attachFunction() {
+		            allFields.removeClass( "ui-state-error" );
+		            etrigger=event_name.val();
+		            parameter=parameters.val();
+                    if ($('#typeFlag').text()=='Checkbox'){
+                        $('#xBoxTemplate').find(':input').attr(etrigger, parameter);
+                        $('#rBoxTemplate').find(':input').attr(etrigger, parameter);
+                    } else {
+                        $('#textBoxTemplate').find(':input').attr(etrigger, parameter);
+                        $('#textAreaTemplate').find(':input').attr(etrigger, parameter);
+                    }
+                    dialog.dialog( "close" );
+		            return
+                }
+
+                dialog = $( "#dialog-form" ).dialog({
+                  autoOpen: false,
+                  height: "auto",
+                  width: 600,
+                  modal: true,
+                  buttons: {
+                    "Attach Function": attachFunction,
+                    "Close": function() {
+                      if ($('#typeFlag').text()=='Checkbox'){
+                        $('#xBoxTemplate').find(':input').css('background-color', 'aquamarine');
+                        $('#rBoxTemplate').find(':input').attr('onclick', 'myupdate(this)');
+                        $('#rBoxTemplate').find(':input').css('background-color', 'pink');
+                      } else {
+                        $('#textBoxTemplate').find(':input').removeAttr('style');
+                        $('#textAreaTemplate').find(':input').attr('style', 'resize: none');
+                      }
+                      dialog.dialog( "close" );
+                    }
+                  },
+                  close: function() {
+                    form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );
+                  }
+                });
+
+                form = dialog.find( "form" ).on( "submit", function( event ) {
+                  event.preventDefault();
+                  attachFunction();
+                });
+
+                $( "#create-fcn" ).button().on( "click", function() {
+                  dialog.dialog( "open" );
+                });
+              } );
+
             $oscarCheckbox2.on('change', function(event, ui) {
+                var x; // placeholder for the string for the event attribute
+                var y; //placeholder for the string for the parameterized function
                 if ($oscarCheckbox2.is(':checked')) {
-                    //alert(this.checked)
+                    listfc(); //create select list of functions
+                    var e = document.getElementById('mySelect');
+                    $(e).css('background-color', 'yellow')
+                    $(e).focus();
+                    $(e).attr('size', e.length + 1);
+                    e.onclick = function() {
+                        var strUser = e.options[e.selectedIndex].text;
+                        var strContent = e.options[e.selectedIndex].value;
+
+                        //****For CheckBox******************************
+                        $( "#daFcn" ).text(strContent);
+                        $( "#typeFlag" ).text("Checkbox");
+                        switch (strUser) {
+                            case "LinkTextBoxfunction":
+                                $('#event_name').val('onblur').change();
+                                $( "#parameters" ).val(strUser + '(this)');
+                                break;
+
+                            case "LinkXBoxfunction": // if{} below
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val('myupdate(this); LinkXBoxfunction(this)');
+                                break;
+
+                            case "fixSin":
+                                //      /(\d)(?=(\d\d\d)+(?!\d))/g, '$1-')       for SIN number
+                                //      /(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'   for Phone number
+                                var myRe = "/(\\d)(?=(\\d\\d\\d)+(?!\\d))/g,'$1-'"; //2020-Mar-23
+                                zz = myRe.split(",")
+                                $('#event_name').val('onblur').change();
+                                $( "#parameters" ).val(strUser + '(this,' + zz[0] + ',' + zz[1] + ')');
+                                break;
+
+                            default:
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val(strUser + '(this)');
+
+                        }
+                        $( "#dialog-form" ).dialog( "open" );
+
+                        //**********************************
+                        $xBoxTemplate.find(':input').css('background-color', 'lime'); // 2020-May-17
+                        $rBoxTemplate.find(':input').css('background-color', 'red');
+
+
+                        if (strUser == "LinkXBoxfunction") {
+                            $rBoxTemplate.find(':input').attr('onclick', 'myupdate(this);LinkXBoxfunction(this)');
+                            $rBoxTemplate.find(':input').attr('onmouseover', 'LinkXBoxfunctionMouseover(this)');
+                            $rBoxTemplate.find(':input').attr('onmouseout', 'LinkXBoxfunctionMouseout(this)');
+                            $xBoxTemplate.find(':input').attr('onclick', 'myupdate(this);LinkXBoxfunction(this)');
+                            $xBoxTemplate.find(':input').attr('onmouseover', 'LinkXBoxfunctionMouseover(this)');
+                            $xBoxTemplate.find(':input').attr('onmouseout', 'LinkXBoxfunctionMouseout(this)');
+                        }
+
+                        $('#mySelect').remove() //close select list
+                        closeNavGen() //close side bar
+                    }
+
+                } else {
+                    $('#mySelect').remove(); //close select list
+                    closeNavGen(); //close side bar
+                    $xBoxTemplate.find(':input').css('background-color', 'aquamarine');
+                    $rBoxTemplate.find(':input').attr('onclick', 'myupdate(this)'); //2020-May-27
+                    $rBoxTemplate.find(':input').css('background-color', 'pink');
+                    if (x != null) {
+                        $xBoxTemplate.find(':input').removeAttr(x);
+                        $rBoxTemplate.find(':input').removeAttr(x);
+                    }
+                }
+
+            })
+
+        }
+
+
+        /** tab 1 setup */
+
+        function initTextboxTemplateTab($tab) {
+            var $options_menu1 = $("<div>", {
+                class: "gen-control-menu"
+            });
+
+            var $dragFrame11 = createStitchFrame().attr('id', 'dragframe11');
+            var $dragFrame12 = createStitchFrame().attr('id', 'dragframe12');
+            var $textBoxTemplate = addDraggableInputType($dragFrame11, "textBoxTemplate", "text", textBoxWidth, textBoxHeight, "");
+            var $textAreaTemplate = addDraggableInputType($dragFrame12, "textAreaTemplate", "textarea", textBoxWidth, textBoxHeight, "");
+            var $textSizeSpinnerW = createSpinnerElem("textSizeSpinnerW", "Template Width:", textBoxWidth);
+            var onTextSizeSpinnerW = function(event, ui) {
+                textBoxWidth = this.value;
+                $textBoxTemplate.css({
+                    width: textBoxWidth
+                });
+                $textAreaTemplate.css({
+                    width: textBoxWidth
+                });
+            };
+            var onTextSizeSpinnerH = function(event, ui) {
+                textBoxHeight = this.value;
+                $textBoxTemplate.css({
+                    height: textBoxHeight
+                });
+                $textAreaTemplate.css({
+                    height: textBoxHeight
+                });
+            };
+            $textSizeSpinnerW.find(":input").spinner({
+                min: textBoxSizeRange[0],
+                max: textBoxSizeRange[1],
+                stop: onTextSizeSpinnerW,
+                spin: onTextSizeSpinnerW
+            });
+            var $textSizeSpinnerH = createSpinnerElem("textSizeSpinnerH", "Template Height:", textBoxHeight);
+            $textSizeSpinnerH.find(":input").spinner({
+                min: textBoxSizeRange[0],
+                max: textBoxSizeRange[1],
+                stop: onTextSizeSpinnerH,
+                spin: onTextSizeSpinnerH
+            });
+
+            $tab.append($options_menu1);
+            $tab.append($("<label>", {
+                for: $dragFrame11.attr('id'),
+                text: "Single Line Input"
+            })).append($dragFrame11);
+            $tab.append($("<label>", {
+                for: $dragFrame12.attr('id'),
+                text: "Multi Line Input"
+            })).append($dragFrame12);
+
+            $options_menu1.append($textSizeSpinnerW)
+                .append($textSizeSpinnerH)
+                .append($("<div>").append($("<label>", {
+                    text: "Prefilled Text:",
+                    for: "gen-textBoxDefaultTextId"
+                })).append($("<input>", {
+                    id: "gen-textBoxDefaultTextId",
+                    type: "text",
+                    value: "",
+                    change: function(event, ui) {
+                        $textBoxTemplate.find(":input").val($(this).val());
+                        $textBoxTemplate.find(":input").attr("title", $(this).val());
+                        $textAreaTemplate.find("textarea").text($(this).val());
+                    }
+                }))).append($("<div>").append($("<label>", {
+                    text: "Placeholder:",
+                    for: "gen-textBoxPlaceholderId"
+                })).append($("<input>", {
+                    id: "gen-textBoxPlaceholderId",
+                    type: "text",
+                    value: "",
+                    change: function(event, ui) {
+                        $textBoxTemplate.find(":input").attr('placeholder', ($(this).val()));
+                        $textAreaTemplate.find("textarea").attr('placeholder', ($(this).val()));
+                    }
+                })));
+
+            /* set up oscar database tag selection */
+            var $oscarDbCheckbox = $("<input>", {
+                id: "toggleGOscarDbCheckbox",
+                type: "checkbox",
+                name: "radio1"
+            });
+
+            //************************************
+            var $oscarDbCheckbox2 = $('<input>', {
+                id: 'toggleGOscarDbCheckbox2',
+                type: 'checkbox'
+            });
+            var $oscarDbCheckbox3 = $('<input>', {
+                id: 'toggleGOscarDbCheckbox3',
+                type: 'checkbox'
+            });
+            var $oscarDbCheckbox4 = $('<input>', {
+                id: 'toggleGOscarDbCheckbox4',
+                type: 'checkbox'
+            });
+            //********************************
+            var y = '<label for="toggleGOscarDbCheckbox5">Measurements:</label><input id="toggleGOscarDbCheckbox5" name = "radio1" type="checkbox">' +
+                ' Push to Chart<input id="toggleGOscarDbCheckbox10" onclick="measureTagfx(this)"  type="checkbox">'
+            $('<div>').append($('<label>', {
+                text: 'Use Database Tag:',
+                for: 'toggleGOscarDbCheckbox'
+            })).append($oscarDbCheckbox).appendTo($options_menu1).append(y)
+            //***********************************
+
+            var y = '<label for="toggleGOscarDbCheckbox7">Value</label><input id="toggleGOscarDbCheckbox7" onclick="measureTagfx(this)"  name = "radio2" type="radio" checked>'
+            var z = '<label for="toggleGOscarDbCheckbox8">Date Observed</label><input id="toggleGOscarDbCheckbox8" onclick="measureTagfx(this)"  name = "radio2" type="radio">'
+            var q = '<label for="toggleGOscarDbCheckbox9">Comment</label><input id="toggleGOscarDbCheckbox9" onclick="measureTagfx(this)"  name = "radio2" type="radio">'
+            $('<div>').append($('<label>', {
+                text: 'Add function:',
+                for: 'toggleGOscarDbCheckbox2'
+            })).append($oscarDbCheckbox2).appendTo($options_menu1).append(y);
+            $('<div>').append($('<label>', {
+                text: 'Make DatePicker:',
+                for: 'toggleGOscarDbCheckbox3'
+            })).append($oscarDbCheckbox3).appendTo($options_menu1).append(z);
+            //*********************************
+            var $div1 = $('<div>').appendTo($options_menu1);
+            var $db_tag_select = addSelectMenu($div1, 'oscarDbTagSelect', 'Select Tag:', getOscarDBTags());
+            $db_tag_select.selectmenu('disable');
+            $db_tag_select.on('selectmenuchange', (function(event, data) {
+
+                $textBoxTemplate.find(':input').attr('oscarDB', $db_tag_select.val());
+                $('#someName').val($db_tag_select.val()); //2020-May-01
+                $textAreaTemplate.find('textarea').attr('oscarDB', $db_tag_select.val());
+				$textBoxTemplate.find(':input').attr('placeholder', $db_tag_select.val()); //2024-May-01
+				$textAreaTemplate.find('textarea').attr('placeholder', $db_tag_select.val()); //2024-May-01
+                $textBoxTemplate.find(':input').attr('title', $db_tag_select.val()); //2019-Feb-14
+                $textAreaTemplate.find('textarea').attr('title', $db_tag_select.val()); //2019-Feb-14
+
+            }));
+            $('#oscarDbTagSelect-button').hide() //???????????
+
+
+
+            //****************Text Box Title Snippet *************************************
+            function titleSnippet() {
+                //$textBoxTemplate.css('background-color', 'yellow')  //2020-May-01
+                $textBoxTemplate.attr('title', 'TextBox - Click to drag. DoubleClick to activate'); // 2020-May-13
+                $textAreaTemplate.attr('title', 'TextBox - Click to drag. DoubleClick to activate'); // 2020-May-17
+
+                //$('#textBoxTemplate').find(':input').attr('ondblclick', 'mydclick2(this)');
+                $textBoxTemplate.attr('ondblclick', 'mydclick2(this)'); // 2020-May-14
+                $textAreaTemplate.attr('ondblclick', 'mydclick2(this)'); // 2020-May-17 now
+                var customTitle = $('<input/>')
+                    .attr('type', "input")
+                    .attr('name', "someName")
+                    .attr('id', "someName")
+                    .attr('value', ""); // 2020-May-03
+                customTitle.css("font-size", "12");
+                $textBoxTemplate.after(customTitle);
+                //$('#someName').val($db_tag_select.val());
+
+                var $label = $("<label>").text('  Custom Title: ');
+                $label.css("fontSize", 12);
+                $label.attr('id', "theLabel");
+
+                customTitle.before($label);
+
+                document.getElementById("someName").style.width = textBoxWidth;
+                document.getElementById("someName").style.height = textBoxHeight;
+
+                $("#someName").change(function() {
+                    $textBoxTemplate.find(':input').attr('title', $('#someName').val());
+                    $textAreaTemplate.find(':input').attr('title', $('#someName').val());
+                });
+
+
+                $("#someName").focus(function() {
+                    $textBoxTemplate.find(':input').attr('title', $('#someName').val());
+                    $textAreaTemplate.find(':input').attr('title', $('#someName').val()); // 2020-May-12
+                });
+
+
+                $textBoxTemplate.find(':input').attr('title', ""); // 2020-May-03
+                $textAreaTemplate.find('textarea').attr('title', ""); //2020-May-03
+                $textBoxTemplate.find(':input').addClass('TextBox') //2020-May-14
+                $textAreaTemplate.find('textarea').addClass('TextArea') //2020-May-14
+            }
+
+            //************************************************
+            titleSnippet() //2020-May-03
+
+            $oscarDbCheckbox.on('change', function(event, ui) { //2020-May-15
+
+                if ($(this).is(':checked')) {
+
+                    dbWindow($db_tag_select) //open db tag window  //2021-May-06
+
+                    $textBoxTemplate.find(':input').val("")
+                    $textBoxTemplate.find(':input').removeAttr('oscarDB');
+                    $('#toggleGOscarDbCheckbox5').prop('checked', false);
+                    $('#toggleGOscarDbCheckbox10').prop('checked', false);
+                    $('#MeasureSelect').hide()
+                    $('#oscarDbTagSelect-button').show()
+                    $db_tag_select.selectmenu('enable');
+                    $('#oscarDbTagSelect-button').prop('disabled', false);
+
+                    $('#someName').val($db_tag_select.val()); // PHC TO DO
+                    $textBoxTemplate.find(":input").attr('placeholder', $db_tag_select.val());
+                    $textAreaTemplate.find("textarea").attr('placeholder', $db_tag_select.val());
+                    $('#someName').trigger("change"); //  2020-May-12
+
+                    //**************************************************************************************
+                    $textBoxTemplate.find(':input').attr('oscarDB', $db_tag_select.val());
+                    $textAreaTemplate.find('textarea').attr('oscarDB', $db_tag_select.val());
+                } else {
+
+                    $('#someName').val(""); // 2020-May-03
+
+                    $db_tag_select.selectmenu('disable');
+                    $textBoxTemplate.find(':input').removeAttr('oscarDB');
+                    $textAreaTemplate.find('textarea').removeAttr('oscarDB');
+                    $textBoxTemplate.find(':input').removeAttr('title');
+                    $textAreaTemplate.find('textarea').removeAttr('title');
+                    $textBoxTemplate.find(':input').removeAttr('placeholder'); //2024-May-01
+                    $textAreaTemplate.find('textarea').removeAttr('placeholder'); //2024-May-01
+                    $('#oscarDbTagSelect-button').hide()
+
+                }
+            });
+
+            //**************************************
+            var x; // placeholder for the string for the event attribute
+            var y; //placeholder for the string for the parameterized function
+            $oscarDbCheckbox2.on('change', function(event, ui) {
+                if ($(this).is(':checked')) {
+
                     listfc() //create select list of functions
                     var e = document.getElementById('mySelect');
                     $(e).css('background-color', 'yellow')
@@ -3119,3065 +3542,1480 @@ console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+s
                     e.onclick = function() {
                         var strUser = e.options[e.selectedIndex].text;
                         var strContent = e.options[e.selectedIndex].value;
-                        //alert(strUser)
-                        alert(strContent)
 
-                        /lendar/calendar.js'><\/script>";
-                source += "\<script src='../share/calendar/calendar-setup.js'><\/script>";
-                loadFunctions += " initCalendar();";
-            }
+                        //****For Textbox******************************
+                        $textBoxTemplate.find(':input').removeClass('mydateclass');
+                        $( "#daFcn" ).text(strContent);
+                        $( "#typeFlag" ).text("Text box");
+                        switch (strUser) {
+                            case "LinkTextBoxfunction":
+                                $('#event_name').val('onblur').change();
+                                $( "#parameters" ).val(strUser + '(this)');
+                                break;
 
-            if (include_fax) {
-                source += "\<script src='$\{oscar_javascript_path\}eforms/printControl.js'\>\<\/script\>";
-                source += "\<script src='$\{oscar_javascript_path\}eforms/faxControl.js'\>\<\/script\>";
-                if ($('#defaultFaxNo').val().length > 6) { loadFunctions += " setFaxNo();"; }
-            }
-            if (include_signature) {
-                source += "\<script src='$\{oscar_image_path\}signature_pad.min.js'\>\<\/script\>";
-                // source += "\<script src='$\{oscar_javascript_path\}eforms/signature_pad.min.js'\>\<\/script\>"; // OSCAR 19 and Juno
-            }
-            if (setSideBar == "on") {
-                loadFunctions += " openNav();";
-            }
+                            case "LinkXBoxfunction": // if{} below
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val('myupdate(this); LinkXBoxfunction(this)');
+                                break;
 
-            source += "<style>";
+                            case "fixSin":
+                                //      /(\d)(?=(\d\d\d)+(?!\d))/g, '$1-')       for SIN number
+                                //      /(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'   for Phone number
+                                var myRe = "/(\\d)(?=(\\d\\d\\d)+(?!\\d))/g,'$1-'"; //2020-Mar-23
+                                zz = myRe.split(",")
+                                $('#event_name').val('onblur').change();
+                                $( "#parameters" ).val(strUser + '(this,' + zz[0] + ',' + zz[1] + ')');
+                                break;
 
-            var baseStyle = document.getElementById('eform_style'); //base style
-            var shapeStyles = document.getElementById('eform_style_shapes');
-			var signatureStyles = document.getElementById('eform_style_signature');
-            var stampStyles = document.getElementById('stamp_style');
-			var sidenavStyles = document.getElementById('sidenav_style');
-			var radioStyles = document.getElementById('radio_style');
-			var allnoStyles = document.getElementById('allno_style');
-			var xboxStyles = document.getElementById('xbox_style');
+                            case "dateReformat":
+                                var zz = "'yyyy-mmm-dd'";
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val(strUser + '(this,' + zz + ')');
+                                $textBoxTemplate.find(':input').addClass('mydateclass');
+                                break;
 
-            var script = document.getElementById('eform_script'); //base javascript
-            var standAlone_script = document.getElementById('standAlone_script');
-			var date_script = document.getElementById('date_script');
-			var xbox_script = document.getElementById('xbox_script');
-			var gender_script = document.getElementById('gender_script');
-			var allno_script = document.getElementById('allno_script');
-			var radio_script = document.getElementById('radio_script');
-            var signature_script = document.getElementById('signature_script');
-            var stamp_script = document.getElementById('stamp_script');
-            var faxno_script = document.getElementById('faxno_script');
-            var htmlElements = document.getElementById('eform_container');
-			// style ORDER is important!
-            source += baseStyle.innerHTML;
-            if ($eform_container.find(".circle,.square-rounded,.square").length > 0) {
-                source += shapeStyles.innerHTML;
-            }
-            if (include_allno) {
-                source += allnoStyles.innerHTML;
-            }
-            if (setSideBar == "on") {
-                source += sidenavStyles.innerHTML;
-            }
-            if (include_xbox) {
-                source += xboxStyles.innerHTML;
-            }
-            if (include_radio) {
-                source += radioStyles.innerHTML;
-            }
-            if (include_stamp) {
-                source += stampStyles.innerHTML;
-            }
-            if ($eform_container.find(".signaturePad").length > 0) {
-                source += signatureStyles.innerHTML;
-            }
-            source += "</style>"
-            source += "<script>" + script.innerHTML;  //base javascript
-			if (include_standAlone) {
-                source += standAlone_script.innerHTML;
-				loadFunctions += " reImg(); disableButtons();";
-            }
-			if (include_date) {
-                source += date_script.innerHTML;
-				loadFunctions += " initCalendar();";
-            }
-			if (include_xbox) {
-                source += xbox_script.innerHTML;
-				loadFunctions += " initXBoxes();";
-            }
-			if (include_gender) {
-                source += gender_script.innerHTML;
-                loadFunctions += " initPrecheckedCheckboxes();";
-            }
-            if (include_radio) {
-			    source += radio_script.innerHTML;
-            }
-			if (include_allno) {
-                source += allno_script.innerHTML;
-                loadFunctions += " initAllNo();";
-            }
-            if (include_signature) {
-                source += signature_script.innerHTML;
-            }
-            if ($('#defaultFaxNo').val().length > 6) {
-                source += faxno_script.innerHTML;
-            }
-            if (include_stamp) {
-                source += stamp_script.innerHTML;
-                loadFunctions += " signForm()";
-            }
-            source += findSelectedFunctions(htmlElements.innerHTML) + "\<\/script></head><body onload='focusAll();" + loadFunctions + "'>";
-            if (setSideBar == "on") {
-                source += "<iframe src='${oscar_image_path}SideBarTemplate.html' id='mySidenavGen2' class='sidenav DoNotPrint' style='margin-top:-60px;margin-left:-100px height 600px'></iframe>";
-            }
+                            case "removeLineFeeds":
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val(strUser + '(this)');
+                                $textAreaTemplate.find(':input').attr('title', 'Double-click to compress, shift-click to reset');
+                                break;
 
-            source += "<div id='eform_container' " + "style='max-width: " + eFormPageWidth + "px'>";
-            source += htmlElements.innerHTML;
+                            case "makehyperlink":
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val(strUser + '(this)');
+                                $textBoxTemplate.find(':input').attr('style', 'color:blue;');
+                                document.getElementById('gen-textBoxDefaultTextId').value = 'http://';
+                                alert("http://www.cnn.com  -  for webpage link \nmailto:joe@cnn.com  -  for email link \nThe value of this field can be edited later for pretty printing; the html link data is retained in the field title");
+                                break;
 
-            source += "</div></body></html>";
-            source = addOscarImagePath(source);
-            source = source.replace(/>\s*</g, ">\n<");
-            //now we need to escape the html special chars
-            if (escapeHtml) {
-                source = source.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                //now we add <pre> tags to preserve whitespace
-                source = "<pre>" + source + "</pre>";
-            }
-            undestroy_gen_widgets($input_elements);
-            dragAndDropEnable(false);
+                            default:
+                                $('#event_name').val('onclick').change();
+                                $( "#parameters" ).val(strUser + '(this)');
 
-            for (var i = 0; i < detached.length; i++) {
-                toggleElement(detached[i][0], detached[i][1], true);
-            }
-            return source;
-        }
+                        }
+                        $( "#dialog-form" ).dialog( "open" );
+                        $(e).remove() //close select list
+                        closeNavGen() //close side bar
 
-        function showSource(include_fax) {
-            var source = generate_eform_source_html(true, include_fax);
-            //now open the window and set the source as the content
-            var sourceWindow = window.open('', 'Source of page', 'height=800,width=800,scrollbars=1,resizable=1');
-            sourceWindow.document.write(source);
-            sourceWindow.document.title = "eForm Source";
-            sourceWindow.document.close(); //close the document for writing, not the window
-            //give source window focus
-            if (window.focus) sourceWindow.focus();
-        }
-
-        function download(text, name, type) {
-            var a = document.createElement("a");
-            var file = new Blob([text], {
-                type: type
-            });
-            a.href = URL.createObjectURL(file);
-            a.download = name;
-            // create mouse event for initiating the download
-            var event = document.createEvent("MouseEvents");
-            event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
-            );
-            a.dispatchEvent(event);
-        }
-
-        function downloadSource(include_fax) {
-            var name = stripSpecialChars(eformName).replace(/\s/g, "_") + '.html';
-            return download(generate_eform_source_html(false, include_fax), name, 'text/html');
-        }
-
-        /** Save the eform html as a new eform */
-        function saveToOscarEforms(include_fax) {
-            var eformCode = generate_eform_source_html(false, include_fax);
-            var url = OSCAR_EFORM_ENTITY_URL + ((eFormFid > 0) ? eFormFid + "/" : "") + "json";
-            var type = (eFormFid > 0) ? "PUT" : "POST";
-
-            $.ajax({
-                type: type,
-                url: url,
-                contentType: "application/json; charset=utf-8",
-                dataType: 'json',
-                async: false,
-                data: JSON.stringify({
-                    "id": eFormFid,
-                    "formName": eformName,
-                    "formHtml": eformCode
-                }),
-                success: function(data) {
-                    console.info(data);
-                    var status = data.status;
-                    if (status === "SUCCESS") {
-                        alert("EForm Save Successful!");
-                        setEformId(data.body.id);
-                    } else {
-                        alert(data.error);
-                    }
-                },
-                failure: function(data) {
-                    console.error(data);
-                    alert("EForm save failure!");
-                }
-            });
-        }
-
-        /** make the given element draggable */
-        function makeDraggable($element, cloneable, stackClasses) {
-            $element.draggable({
-                appendTo: "body",
-                revert: "invalid",
-                revertDuration: 500,
-                stack: stackClasses,
-                scroll: false,
-                snap: ".gen-snapLine:visible",
-                snapMode: "inner",
-                snapTolerance: 10 // ".gen-snapLine:visible" 10
-           });
-            if (cloneable) {
-                $element.draggable("option", "helper", "clone");
-                $element.addClass("gen-cloneable");
-            }
-            $element.addClass("gen-draggable");
-        }
-        /** make the given element resizable */
-        function makeResizable($element) {
-            $element.resizable({
-                aspectRatio: ($element.find(':checkbox').length > 0),
-                containment: "#inputForm"
-            });
-            $element.resizable("disable");
-            $element.addClass("gen-resizable");
-        }
-        /** make the given element accept draggable elements */
-        function makeDroppable($element, hoverClasses, acceptClasses, greedy) {
-            $element.droppable({
-                accept: acceptClasses,
-                hoverClass: hoverClasses,
-                greedy: greedy,
-                drop: function(event, ui) {
-                    dropOnForm(ui, $(this));
-                }
-            });
-            $element.addClass("gen-droppable");
-        }
-
-        function makeSignatureCanvas($element) {
-
-            var $canvasFrame = $element.children(".canvas_frame");
-            var $clearBtn = $element.children(".clearBtn");
-            var canvas = $canvasFrame.children("canvas").get(0);
-            var $data = $canvasFrame.children(".signature_data");
-            var src = $data.val();
-            var $img = $("<img>", {
-                src: src,
-				alt: "signature",
-                class: "signature_image"
-            });
-            if (src && src.length > 0) {
-                $img.appendTo($canvasFrame);
-            }
-
-            if (signaturePadLoaded) {
-                $img.hide();
-                console.info("loading editable signature pads");
-                var updateSlaveSignature = function(src_canvas, dest_canvas) {
-                    // write to the destination with image scaling
-                    var dest_context = dest_canvas.getContext("2d");
-                    dest_context.clearRect(0, 0, dest_canvas.width, dest_canvas.height);
-                    dest_context.drawImage(src_canvas, 0, 0, dest_canvas.width, dest_canvas.height);
-                };
-                var setCanvasSize = function() {
-                    canvas.width = $element.width();
-                    canvas.height = $element.height();
-                    $element.trigger("signatureChange");
-                };
-                // initialize the signature pad
-                var signPad = new SignaturePad(canvas, {
-                    minWidth: 2,
-                    maxWidth: 4,
-                    onEnd: function() {
-                        $element.trigger("signatureChange");
-                    }
-                });
-                // load the image data to the canvas ofter initialization
-                if (src != null && src != "") {
-                    signPad.fromDataURL(src);
+                    };
                 } else {
-                    setCanvasSize();
+                    //alert("unchecked")
+                    var e = document.getElementById('mySelect');
+                    document.getElementById('gen-textBoxDefaultTextId').value = ''
+                    $(e).remove() //close select list
+                    closeNavGen() //close side bar
+
+                    $textBoxTemplate.find(':input').removeAttr('style');
+                    $textBoxTemplate.find(':input').removeClass('mydateclass')
                 }
-                // so that the signature image resizes correctly in generator
-                $element.on("resize", setCanvasSize);
+            });
+            $oscarDbCheckbox3.on('change', function(event, ui) {
+                if ($(this).is(':checked')) {
+                    $textBoxTemplate.find(":input").addClass("hasDatepicker");
+                } else {
+                    $textBoxTemplate.find(":input").removeClass("hasDatepicker");
+                }
+            });
+            //**************************
 
-                // define a custom update trigger action. this allows the eform to store the signature.
-                $element.on("signatureChange", function() {
-                    $data.val(signPad.toDataURL());
-                    $img.prop('src', signPad.toDataURL());
-                    if ($element.attr('slaveSigPad')) {
-                        var $slavePad = $("#" + $element.attr('slaveSigPad')); // get slave pad by id
-                        updateSlaveSignature(canvas, $slavePad.find("canvas").get(0));
-                        $slavePad.trigger("signatureChange"); // be careful of infinite loops
+            $('#toggleGOscarDbCheckbox5').on('change', function(event, ui) { //??????
+                if ($(this).is(':checked')) {
+
+                    $('#toggleGOscarDbCheckbox').prop('checked', false); //2020-May-01
+                    $db_tag_select.selectmenu('disable');
+                    $textBoxTemplate.find(':input').removeAttr('oscarDB');
+                    $textAreaTemplate.find('textarea').removeAttr('oscarDB');
+					$textBoxTemplate.find(':input').removeAttr('placeholder'); //2024-May-01
+					$textAreaTemplate.find('textarea').removeAttr('placeholder'); //2024-May-01 invalid pseudo
+                    //$('#someName').remove();  //2020-May-01
+                    //$('#theLabel').remove();  //2020-May-01
+                    $('#someName').val(""); // 2020-May-03
+
+                    measureArray = measureArray.sort()
+                    var myDiv = document.getElementById('oscarDbTagSelect-button'); //Append option list to page
+                    var selectList2 = document.createElement('select');
+                    selectList2.id = 'MeasureSelect';
+                    $(myDiv).after(selectList2);
+
+                    var e = document.getElementById("MeasureSelect");
+
+                    $(e).change(function() {
+                        var y = $(this);
+
+                        measureTagfx(y)
+                    });
+                    //Create and append the options
+                    for (var i = 0; i < measureArray.length; i++) {
+                        var option = document.createElement('option');
+                        // option.value = measureArray[i];
+                        // option.title = measureArray[i];
+                        option.text = measureArray[i]
+                        selectList2.appendChild(option);
+                        $('#oscarDbTagSelect-button').hide() //working here
                     }
-                    return false;
-                });
-                // init the clear button
-                $clearBtn.on('click', function() {
-                    signPad.clear();
-                    $element.trigger("signatureChange");
-                    return false;
-                });
-            }
-            // not loaded so not using the canvas, show signature as an image instead.
-            else {
-                $img.show(); alert("shown");
-            }
-        }
 
-        function createBasicDraggableDiv(widgetId, width, height, customClasses) {
-            return $("<div>", {
-                id: widgetId,
-                class: "gen-widget " + customClasses,
-                width: width + "px",
-                height: height + "px"
+                    measureTagfx()
+
+                } else {
+                    $('#MeasureSelect').hide()
+                    $('#oscarDbTagSelect-button').show()
+                    measureTagfx(y)
+                    $('#oscarDbTagSelect-button').hide() //working here
+                    $textBoxTemplate.find(':input').val("")
+                    $textBoxTemplate.find(':input').removeAttr('oscarDB');
+                    $textBoxTemplate.find(':input').removeAttr('title'); //2019-Feb-15
+                    //$textAreaTemplate.find('textarea').removeAttr('title'); //2019-Feb-15
+                    $('#toggleGOscarDbCheckbox10').prop('checked', false);
+                }
             });
-        }
-
-        function createInputOverrideDiv() {
-            return $("<div>", {
-                class: "inputOverride"
+            //*************************
+            $oscarDbCheckbox4.on('change', function(event, ui) {
+                if ($(this).is(':checked')) {
+                    measureArray = measureArray.sort()
+                    var myDiv = document.getElementById('oscarDbTagSelect-button'); //Append option list to page
+                    var selectList2 = document.createElement('select');
+                    selectList2.id = 'MeasureSelect';
+                    $(myDiv).after(selectList2);
+                    //Create and append the options
+                    for (var i = 0; i < measureArray.length; i++) {
+                        var option = document.createElement('option');
+                        // option.value = measureArray[i];
+                        // option.title = measureArray[i];
+                        option.text = measureArray[i]
+                        selectList2.appendChild(option);
+                    }
+                } else {
+                    $('#MeasureSelect').hide()
+                }
             });
+
+            //***************************************
         }
+        /** tab 2 setup */
+        function initLabelTemplateTab($tab) {
+            var $options_menu2 = $("<div>", {
+                class: "gen-control-menu"
+            });
+            var $dragFrame21 = createStitchFrame();
+            var $labelTemplate = addDraggableLabel($dragFrame21, "textlabelTemplate", "sample text", "label-style_1");
 
-        function addDraggableInputType($parent, widgetId, type, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
+            $tab.append($options_menu2);
+            $tab.append($dragFrame21);
 
-            if (type === "textarea") {  // TODO is resizing still a bit buggy
-                $widget.append($("<textarea>", {
-                    css: {
-                        resize: 'none'
-                    },
-                    class: 'gen_input' //2020-May-14
+            $options_menu2.append($("<label>", {
+                text: "Label Text:",
+                for: "gen-textLabelValueId"
+            })).append($("<input>", {
+                id: "gen-textLabelValueId",
+                type: "text",
+                value: "sample text",
+                change: function(event, ui) {
+                    $labelTemplate.text($(this).val());
+                }
+            }));
+        }
+        /** tab 3 setup */
+        function initShapeTemplateTab($tab) {
+            var $dragFrame31 = createStitchFrame();
+            addDraggableShape($dragFrame31, "square", defaultShapeSize, defaultShapeSize, "square");
+            addDraggableShape($dragFrame31, "square-rounded", defaultShapeSize, defaultShapeSize, "square-rounded");
+            addDraggableShape($dragFrame31, "circle", defaultShapeSize, defaultShapeSize, "circle");
+            $tab.append($dragFrame31);
+        }
+        /** tab 4 setup */
+        function initImageTemplateTab($tab) {
+
+            var $dragFrame41 = createStitchFrame();
+
+            if (!runStandaloneVersion) {
+                var options = [""];
+                for (var i = 0; i < eFormImageList.length; i++) {
+                    options.push(eFormImageList[i]);
+                }
+
+                var $widget = null;
+
+                var $fileSelector = addSelectMenu($tab, "imageSelect2", "Select Image", options);
+                $fileSelector.selectmenu();
+                $tab.append($dragFrame41);
+
+                $fileSelector.on("selectmenuchange", (function(event, data) {
+                    var src = OSCAR_DISPLAY_IMG_SRC + $fileSelector.val();
+                    if ($fileSelector.val().length < 1) {
+                        return;
+                    }
+
+                    // remove the old widget
+                    if ($widget) {
+                        $widget.remove();
+                    }
+                    // create a fake element to load the image (need to get the attributes height/width)
+                    var $img = $("<img>", {
+                        src: src,
+                        hidden: "hidden"
+                    }).appendTo($dragFrame41);
+
+                    $img.on('load', function() {
+                        $widget = addDraggableImage($dragFrame41, getUniqueId(baseImageWidgetName), $(this).width(), $(this).height(), src, "");
+                        $img.remove(); //remove the fake, not needed now
+                    });
+
                 }));
             } else {
-                $widget.append($("<input>", {
-                    type: type,
-                    class: 'gen_input'
+
+                $tab.append($("<span>", {
+                    text: "Images must be in same folder as the generator ",
+                    css: {
+                        flex: 1
+                    }
                 }));
+
+                var $fileSelector2 = $("<input>", {
+                    type: "file",
+                    accept: ".png"
+                }).change(function() {
+                    if (this.files && this.files[0]) {
+                        var reader = new FileReader();
+                        var $fileInput = $(this);
+                        reader.onload = function(readerEvt) {
+                            var img = new Image();
+                            img.src = readerEvt.target.result;
+                            var src = $fileInput.val().replace(/C:\\fakepath\\/i, '');
+                            img.onload = function() {
+                                console.log(img.width, img.height);
+                                addDraggableImage($dragFrame41, getUniqueId(baseImageWidgetName), img.width, img.height, src, "");
+                            }
+                        };
+                        reader.readAsDataURL(this.files[0]);
+
+                    }
+                }).appendTo($tab);
             }
-            $widget.append(createInputOverrideDiv());
-            $parent.append($widget);
+			$tab.append($dragFrame41);
+        }
+        /** signature tab init */  //reworked May 01 2024
+        function initSignatureTemplateTab($tab) {
 
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2, .gen-layer3");
-            return $widget;
+
+            var $dragFrame51 = createStitchFrame();
+            var src = "BNK.png";
+            if (runStandaloneVersion){ src = OSCAR_DISPLAY_IMG_SRC + src;}
+            addDraggableStamp($dragFrame51, "signatureStamp", 255, 50, src, "signatureStamp");
+            $tab.append($dragFrame51);
+            var $label = $("<label>").text('  Add Signature Stamp: ');
+            $label.css("fontSize", 12);
+            $label.attr('id', "stampLabel");
+            $dragFrame51.before($label);
+
+            if (!signaturePadLoaded) {
+                $tab.append($("<span>", {
+                    text: "Missing External Signature Source Code File for Wet Signatures",
+                    style: 'font-size:9px'
+                }));
+
+            } else {
+                var $dragFrame52 = createStitchFrame();
+                addDraggableSignaturePad($dragFrame52, "signaturePad", 255, 50, "signaturePad");
+                $tab.append($dragFrame52);
+                $label = $("<label>").text('  Add Wet Signature: ');
+                $label.css("fontSize", 12);
+                $label.attr('id', "padLabel");
+                $dragFrame52.before($label);
+            }
         }
 
-        function addDraggableShape($parent, widgetId, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer2");
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-            makeDroppable($widget, "divHighlight", ".gen-layer2, .gen-layer3", true);
-            return $widget;
-        }
+        function init_input_controls($element) {
 
-        function addDraggableLabel($parent, widgetId, text, customClasses) {
-            var $widget = $("<label>", {
-                id: widgetId,
-                class: "gen-widget gen-layer3 ui-widget-content " + customClasses,
-                text: text,
-                value: text
-            });
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2, .gen-layer3");
+            var tabNames = ["Checkbox", "Text Box", "Label", "Shapes", "Images", "Signature"];
+            var $tabs = addTabs($element, "control_menu_1-placement-tabs", tabNames);
+            /* tab 0 -- Checkbox */
+            initCheckboxTemplateTab($tabs[0]);
+            /* tab 1 -- Text Box */
+            initTextboxTemplateTab($tabs[1]);
+            /* tab 2 -- Labels */
+            initLabelTemplateTab($tabs[2]);
+            /* tab 3 -- Shapes */
+            initShapeTemplateTab($tabs[3]);
+            /* tab 4 -- Images */
+            initImageTemplateTab($tabs[4]);
+            /* tab 5 -- Signaure Pad */
+            initSignatureTemplateTab($tabs[5]);
 
-            return $widget;
-        }
+            for (var i = 0; i < $tabs.length; i++) {
+                $tabs[i].addClass("flexV");
+            }
 
-        function addDraggableImage($parent, widgetId, width, height, src, customClasses) {  // TODO something missing in the implimentation
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-            var imgClass = "";
-            $widget.append($("<img>", {
-                src: src,
-				alt: "image",
-                width: "100%",
-                height: "100%"
-            }));
-
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-			console.log("created widget "+widgetId);
-            return $widget;
-        }
-
-        function addDraggableStamp($parent, widgetId, width, height, src, customClasses) {  // May 1, 2024  TO DO buggy on resize/drag
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-            var imgClass = "";
-
-            $widget.append($("<img>", {
-                src: src,
-				alt: "stamp",
-                width: "100%",
-                height: "100%",
-                class: "stamp",
-                onclick: "toggleMe(this);"
-            }));
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-			console.log("created widget "+widgetId);
-            return $widget;
-        }
-
-        function addDraggableSignaturePad($parent, widgetId, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-
-            var $canvas = $("<canvas>");
-            var $canvasData = $("<input>", {
-                type: "hidden",
-                class: "signature_data"
-            });
-            var $clearBtn = $("<button>", {
-                type: "button",
-                text: "clear",
-                class: "clearBtn DoNotPrint"
-            });
-            var $flex = $("<div>", {
-                class: "canvas_frame"
-            });
-            $flex.append($canvas).append($canvasData);
-            $widget.append($flex).append($clearBtn);
-            $flex.append(createInputOverrideDiv());
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-            return $widget;
-        }
-
-        /** generate a unique id for new input elements. */
-        function getUniqueId(baseId) {
-            var i = 1;
-            // if you max this out your eForm is too big anyways
-            while (i < 99999) {
-                //var returnId = baseId + i;
-                var returnId = baseId + myunique + i;  //2021-Jan-10
-
-                if (!document.getElementById(returnId)) {
-                    return returnId;
+            /* input common footer */
+            var $footer = createFieldset("form-building-controls", "Controls")
+                .append($("<div>")).append($("<label>", {
+                    text: "* Hold Alt to enable Draggable Resize"
+                }))
+                .append($("<div>")).append($("<label>", {
+                    text: "* Hold Shift when resizing to maintain aspect ratio"
+                }))
+                .append($("<div>")).append($("<label>", {
+                    text: "* Use Ctrl+C while mousing over an existing widget, then make copies using Ctrl+V"
+                }));
+            var $control_fieldset = createFieldset("grid-guide_options", "Guide Options");
+            var $trash_box = createTrashFrame();
+            $trash_box.append("<span class='ui-icon ui-icon-trash' style='-webkit-transform: scale(2);'></span> Trash");
+            $trash_box.droppable({
+                accept: ".ui-draggable",
+                hoverClass: "gen-trashHover",
+                drop: function(event, ui) {
+                    var ele = $(ui.draggable);
+                    if (!ele.hasClass("gen-cloneable")) {
+                        ui.draggable.remove();
+                    }
                 }
-                i++;
-            }
-            console.error("unique ID generation failed");
-            return undefined;
-        }
-        /** create a copy of the draggable element at the given position
-         * the clone will not be re-cloneable, and will be given a generated name/id */
-        function cloneDraggableAt($newParent, position, $toClone) {
-
-            var $newDraggable = $toClone.clone();
-            var id = getUniqueId(baseWidgetName);
-            $newDraggable.attr("id", id);
-            //$newDraggable.attr("name", id);
-            $newDraggable.removeClass("gen-cloneable");
-            $newDraggable.appendTo($newParent);
-            $newDraggable.css(position);
-            // clone is made draggable with all options except the helper.
-            $newDraggable.draggable($toClone.draggable("option"));
-            $newDraggable.draggable("option", "helper", false);
-
-            // inputs must all have id's and names to work in oscar
-            $newDraggable.children(":input").each(function() {
-                var id = getUniqueId(baseInputName);
-                $(this).attr({
-                    id: id,
-                    //title: "NewBox",  //2020-May-14
-                    //oscarDB: "e$last#"+id, //2023-May-04
-                    name: id
-                });
-                mydraginput(this)
             });
-            // init signature pads when cloning
-            if ($newDraggable.hasClass("signaturePad")) {
-                // inputs must all have id's and names to work in oscar
-                $newDraggable.find(".signature_data").each(function() {
-                    var id = getUniqueId(baseSignatureDataName);
-                    $(this).attr({
-                        id: id,
-                        name: id
-                    });
-                });
-                makeSignatureCanvas($newDraggable);
-            }
-            setNoborderStyle($newDraggable.find(XBOX_INPUT_SELECTOR), xboxBordersVisibleState);
-            setNoborderStyle($newDraggable.find(TEXT_INPUT_SELECTOR), textBordersVisibleState);
-            return $newDraggable;
-        }
-        /** recursively clone widget elements and attach them to the parent selector */
-        function cloneWidgetAt($newParent, position, $toClone) {
-            var isResizable = $toClone.data('uiResizable');
-            var $childWidgets = $toClone.children(".gen-widget");
-            // remove resizable to prevent errors
-            if (isResizable) {
-                $toClone.resizable("destroy").removeClass("gen-resizable");
-            }
-            // clone the element
-            var $clone = cloneDraggableAt($newParent, position, $toClone);
-            //remove duplicated children elements (they won't be draggable etc)
-            $clone.children(".gen-widget").remove();
-            // clone all child widgets and attach them to the new clone
-            $childWidgets.each(function() {
-                var xPos = Math.round($(this).position().left); //2024-May-01
-                var yPos = Math.round($(this).position().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                cloneWidgetAt($clone, pos, $(this));
-            });
-            if (isResizable) {
-                makeResizable($toClone); //re-enable the resizable
-            }
-            makeResizable($clone); //make clone resizable
-            if ($toClone.data('uiDroppable')) {
-                $clone.droppable($toClone.droppable("option"));
-            }
-            return $clone;
-        }
-
-        /** drop a draggable object onto a droppable object, and clone/update the draggable parent */
-        function dropOnForm(ui, $new_parent) {
-            var $draggable = $(ui.draggable);
-            var $old_parent = $draggable.parent();
-
-            if ($draggable.hasClass("gen-cloneable")) {
-                var xPos = Math.round(ui.helper.offset().left - $new_parent.offset().left); //2024-May-01
-                var yPos = Math.round(ui.helper.offset().top - $new_parent.offset().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                cloneWidgetAt($new_parent, pos, $draggable);
-            } else if (!($new_parent.is($old_parent))) {
-                var xPos = Math.round($old_parent.offset().left + ui.helper.position().left - $new_parent.offset().left); //2024-May-01
-                var yPos = Math.round($old_parent.offset().top + ui.helper.position().top - $new_parent.offset().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                $draggable.appendTo($new_parent).css(pos);
-
-            }
-        }
-        /** set up a simple fixed size frame div */
-        function createTrashFrame() {
-            return $("<div>", {
-                class: "gen-trash_frame"
-            });
-        }
-        /** set up a simple frame div */
-        function createStitchFrame() {
-            return $("<div>", {
-                class: "gen-stitch_frame"
-            });
-        }
-        /** set up a drop down menu with the items from the options Array */
-        function addSelectMenu($rootElement, menuId, label, optionsArr, valuesArr) {
-            var $select = $("<select>", {
-                id: menuId
-            });
-            for (var i = 0; i < optionsArr.length; i++) {
-                $option = $("<option>").html(optionsArr[i]);
-                if (valuesArr) {
-                    $option.attr('value', valuesArr[i])
-                }
-                $select.append($option);
-            }
-            $rootElement.append($("<label>", {
-                for: menuId,
-                text: label
-            }));
-            $rootElement.append($select);
-            $select.selectmenu().selectmenu("menuWidget").addClass("gen-selectOverflow");
-            return $select;
-        }
-
-        /** set up a spinner html with the given id, label, and value
-         * call the spinner() initializer after this method */
-        function createSpinnerElem(spinnerId, label, value) {
-            return $("<p>")
+            //$trash_box.appendTo($rootElement);
+            var $guideRulerEnabled = $("<div>")
                 .append($("<label>", {
-                    for: spinnerId,
-                    text: label
+                    text: "Show Ruler Marks",
+                    for: "toggleRuler"
                 }))
                 .append($("<input>", {
-                    id: spinnerId,
-                    name: spinnerId,
-                    value: value
-                }));
-        }
-        /** set up tabs html with the given id and tab names.
-         * call the tabs() initializer after this method */
-        function addTabs($rootElement, tabBaseId, tabNames) {
-
-            var $root = $("<div>", {
-                id: tabBaseId
-            });
-            var $ul = $("<ul>").appendTo($root);
-            var tabs = [];
-
-            for (var i = 0; i < tabNames.length; i++) {
-                $ul.append($("<li>")
-                    .append($("<a>", {
-                        href: "#" + tabBaseId + "-" + i,
-                        text: tabNames[i]
-                    })));
-            }
-            for (i = 0; i < tabNames.length; i++) {
-                var newTab = $("<div>", {
-                    id: tabBaseId + "-" + i
-                }).appendTo($root);
-                tabs.push(newTab);
-            }
-            $rootElement.append($root);
-            $root.tabs();
-            return tabs;
-        }
-
-        /** creates a labeled fieldset */
-        function createFieldset(id, legend) {
-            var $fieldset = $("<fieldset>", {
-                id: id
-            });
-            if (legend != null) {
-                $fieldset.append($("<legend>", {
-                    text: legend
-                }));
-            }
-            return $fieldset;
-        }
-        /** set up radio control group, allowing for multiple
-         * options with only one selected at a time */
-        function addRadioGroup($rootElement, baseId, legendName, optionNames) {
-            var $fieldset = createFieldset(baseId, legendName);
-            var opts = [];
-
-            for (var i = 0; i < optionNames.length; i++) {
-                var id = "#" + baseId + "-" + i;
-                var $label = $("<label>", {
-                    for: id,
-                    text: optionNames[i]
-                });
-                var $input = $("<input>", {
-                    id: id,
-                    type: 'radio',
-                    name: baseId + '-radio',
-                    value: i
-                });
-                $fieldset.append($label).append($input);
-                opts.push($input);
-            }
-            $rootElement.append($fieldset);
-            $(opts).checkboxradio({
-                icon: false
-            });
-            $fieldset.controlgroup();
-
-            return $fieldset;
-        }
-        /** create a confirmation dialogue box element
-         *  call jquery dialog constructor on the returned div element selector */
-        function createConfirmationDialogueElements(title, message) {
-            return $("<div>", {
-                title: title,
-                class: "gen-alert"
-            }).append($("<p>", {
-                text: message
-            }));
-        }
-
-
-		function cleanOscarTags(data) {
-			const regex = /oscarDB=([a-z_]+)/gi;
-			const replaceStr = 'oscarDB="$1"';
-			data = data.replace(regex, replaceStr);
-			return data;
-		}
-		function loadPages($div) {
-			//iterate through possible pages of Forengi code
-			var pageNo = 1;
-			var toReturn = "";
-			var aPage;
-			while (typeof($div.find('#page'+pageNo).html()) != "undefined") {
-				aPage = $div.find('#page'+pageNo).html();
-				aPage = "<div id='page_"+pageNo+"' class='page_container ui-droppable' style='width: 800px; height: 1000px;'>"+aPage+"</div>";
-				toReturn += aPage;
-				pageNo++
-			}
-			return toReturn;
-		}
-
-        function loadEformData(data) {
-
-            // remove oscar image paths in incoming data
-            data = removeOscarImagePath(data);
-
-			//use regex to sanitize foreign imported oscarDb tags
-			data = cleanOscarTags(data);
-
-			// import the default fax number if present
-			const regex = /name="fax_no"\svalue="([\d-]*)"/
-			if (regex.test(data)) {
-				var matches = data.match(regex);
-				defaultFaxNo = matches[1];
-				$("#defaultFaxNo").val(defaultFaxNo);
-			}
-			const regex2 = /tickler_send_to/
-			if (regex2.test(data)) {
-				$("#setTickler").click();
-			}
-
-            // import the eform name
-            eformName = $($.parseHTML(data)).filter('title').text();
-            $("#eformNameInput").val(eformName);
-
-            var $div = $(data);
-			var imported_form = $div.find("#inputForm").html();
-			//May-01-2024 Peter Hutten-Czapski
-            var ferengi = false;
-            if (typeof(imported_form)=="undefined")  {
-                ferengi = true;
-				imported_form = loadPages($div);
-            }
-
-            var $inputForm = $("#inputForm");
-            $inputForm.html(imported_form);
-
-			//May-01-2024 Peter Hutten-Czapski
-            if (ferengi) {
-
-				// import the default fax number if present
-				const regex = /"otherFaxInput"\)\.value="([\d-]*)"/
-				if (regex.test(data)) {
-					var matches = data.match(regex);
-					defaultFaxNo = matches[1];
-				}
-
-                $("[id^='BGImage']").addClass("gen-layer1");
-				$("[id^='BGImage']").attr( "alt", "background" );
-				$("[id^='BGImage']").addClass( "gen-layer1" );
-
-
-				$("#BottomButtons").remove();
-				var pageNo = 1;
-				var scaleX = 1;
-				var scaleY = 1;
-				while ($("#page_"+pageNo).length > 0) {
-					var imgWidth = $("#BGImage"+pageNo).css('width');
-					if ( imgWidth && imgWidth.length > 3) {
-						imgWidth = imgWidth.substring(0, imgWidth.length - 2)*1;
-						scaleX = (eFormPageWidthPortrait/imgWidth) * 0.972;// PHC Fudge
-						scaleY = scaleX *.995; //PHC Fudge
-						console.log("Page "+pageNo+" has scaleX of "+scaleX+" and scaleY of "+scaleY);
-					}
-console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+scaleX+" and scaleY of "+scaleY+" "+ $('#BGImage'+pageNo).prop('outerHTML'));
-					var imgHeight = $("#BGImage"+pageNo).css('height');
-					if ( imgHeight && imgHeight.length > 3) {
-						imgHeight = imgHeight.substring(0, imgHeight.length - 2)*1;
-						//scaleY = eFormPageHeightPortrait/imgHeight;
-					}
-
-					ii = $("#BGImage"+pageNo).detach();
-					$("#page_"+pageNo).wrapInner("<div class='input_elements'>");
-					$("#page_"+pageNo).prepend(ii);
-					pageNo++
-				}
-				$("[id^='BGImage']").prop( "style", "width: auto; height: 100%; z-index: 0;" );
-				hh = $(':input[type=hidden]').detach();
-				pageNo = pageNo -1;
-				bb = '<div id="BottomButtons" class="DoNotPrint">\n';
-				bb += '\t<label for="subject">Subject:</label>\n\t<input id="subject" name="subject" style="width: 220px;" type="text">\n';
-				bb += '\t<input id="SubmitButton" name="SubmitButton" onclick="onEformSubmit();" type="button" value="Submit">\n';
-				bb += '\t<input id="PrintButton" name="PrintButton" onclick="onEformPrint()" type="button" value="Print">\n';
-				bb += '\t<input id="PrintSubmitButton" name="PrintSubmitButton" onclick="onEformPrintSubmit();" type="button" value="Print &amp; Submit">\n';
-				bb += '</div>\n';
-				$("#page_"+pageNo).parent().append(bb).append(hh); // get the hidden inputs out from the input_elements !important
-				var i=1;
-				$inputForm.find('input, textarea, #Stamp').not(':input[type=button], :input[type=submit], :input[type=reset], :input[type=hidden], #subject').each(function() {
-					$(this).attr("placeholder", $(this).attr("oscarDB"));
-					var wrapStyle = $(this).attr("style");
-					var wrapClass = "";
-					$(this).addClass("gen_input");
-					if ($(this).hasClass("Xbox")) {
-						$(this).addClass("xBox");
-						$(this).removeClass("Xbox");
-						wrapClass = "gen-xBox ";
-						wrapStyle += " width: 14px; height: 14px;"
-					}
-					if ($(this).hasClass("Radio")) {
-						var names = $(this).attr('class').split(/\s+/);
-						j=0
-						while (j < names.length) {
-							var name = names[j];
-							if (name.indexOf('only-one-') === 0) {
-								found = name.split('only-one-');
-								if (found[1] != "radio"  && found[1] != "") {
-									$(this).addClass("only-one-radio#"+found[1]);
-									$(this).removeClass(name);
-								}
-							}
-							++j;
-						}
-						$(this).addClass("cradio");
-						$(this).removeClass("Radio");
-						$(this).attr("autocomplete", "off");
-						$(this).attr("onclick", "myupdate(this)");
-						var wrap_top = $(this).css("top");
-						var wrap_left = $(this).css("left");
-						wrapClass = "only-one-radio ";
-						wrapStyle = " width: 14px; height: 14px; position: absolute; z-index: 10; top: "+wrap_top+"; left: "+wrap_left+";"
-
-					}
-					if ($(this).hasClass("noborder")) {
-						$(this).addClass("TextBox noborderPrint");
-						$(this).removeClass("noborder");
-					}
-					if ($(this).is('#Stamp')){
-						$(this).attr("src", "BNK.png");
-						$(this).attr("onclick", "toggleMe(this);");
-						$(this).attr("alt", "stamp");
-						var wrap_width= $(this).attr("width");
-						$(this).removeAttr("width");
-						$(this).removeAttr("id");
-						var wrap_height= $(this).attr("height");
-						$(this).removeAttr("height");
-						$(this).removeClass();
-						$(this).addClass("stamp");
-						$(this).attr("style", "width: 100%; height: 100%;");
-						var wrap_top = $(this).parent().css("top");
-						var wrap_left = $(this).parent().css("left");
-						$(this).unwrap();
-						wrapClass = "signatureStamp ";
-						wrapStyle = "width: "+wrap_width+"px; height: "+wrap_height+"px; position: absolute; z-index: 10; top: "+wrap_top+"; left: "+wrap_left+";"
-						$(this).wrap('<div id="gen_widgetIdF'+i+'" class="gen-widget signatureStamp gen-layer3 gen-resize-destroyed gen-draggable-destroyed">');
-						$("#signatureDisplay").remove();
-					} else {
-						$(this).removeAttr("style");
-						$(this).wrap('<div id="gen_widgetIdF'+i+'" class="gen-widget '+wrapClass+'gen-layer3 gen-resize-destroyed gen-draggable-destroyed" title="Click to drag. DoubleClick to activate" ondblclick="mydclick2(this)">');
-					}
-
-					$("#gen_widgetIdF"+i).attr("style",wrapStyle);
-
-					// rescale widget locations
-					widgetLeft = $("#gen_widgetIdF"+i).css("left").substring(0, $("#gen_widgetIdF"+i).css("left").length - 2);
-					$("#gen_widgetIdF"+i).css("left", Math.round(widgetLeft*scaleX)+"px");
-					widgetTop = $("#gen_widgetIdF"+i).css("top").substring(0, $("#gen_widgetIdF"+i).css("top").length - 2);
-					$("#gen_widgetIdF"+i).css("top", Math.round(widgetTop*scaleY)+"px");
-
-					i++;
-
-				});
-				console.log(i + " input elements transformed from a "+pageNo+" page Ferengi eform with scaling of "+scaleX+", "+scaleY);
-            }
-
-			//console.log($inputForm.html());
-			$('#defaultFaxNo').val(defaultFaxNo);
-			// extract the form with id of inputForm from the imported form
-            var imported_form = $div.find("#inputForm").html();
-			//var imported_form = $div.find("#formName").html();//May-01-2024
-
-            var $inputForm = $("#inputForm");
-            $inputForm.html(imported_form);
-
-            // TODO -- combine with generic makeDraggables and addNewPage
-            var $input_elements = $(".input_elements");
-			// however check if this is a foreign conversion
-
-            var $pages = $(".page_container");
-            $pages.droppable({
-                accept: ".gen-layer2, .gen-layer3",
-                drop: function(event, ui) {
-                    dropOnForm(ui, $(this).find(".input_elements"));
-                }
-            });
-            $("#pagesControlGroup").find(".page_control_item").remove();
-            $pages.each(function() { //add the grid to loaded pages
-                $("#pagesControlGroup").append(createPageControlDiv($(this)));
-                addSnapGuidesTo($(this));
-            });
-            $pages.find(XBOX_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(CHEK_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(TEXT_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(".signature_data").parent().append(createInputOverrideDiv());
-            $pages.find(".signaturePad").each(function() {
-                makeSignatureCanvas($(this));
-            });
-
-            setNoborderStyle($pages.find(XBOX_INPUT_SELECTOR), xboxBordersVisibleState);
-            setNoborderStyle($pages.find(TEXT_INPUT_SELECTOR), textBordersVisibleState);
-
-            undestroy_gen_widgets($input_elements);
-            //dragAndDropEnable(false);  //lets have it true May-01-2024
-
-            var pageW = eFormPageWidth;
-            var pageH = eFormPageHeight;
-            $pages.each(function() {
-                pageW = $(this).width();
-                pageH = $(this).height();
-            });
-            $("#gen-setPageWidth").val(pageW);
-            $("#gen-setPageHeight").val(pageH);
-            //console.info(pageW, pageH);
-            var index = 2;
-            if (pageW === eFormPageWidthPortrait && pageH === eFormPageHeightPortrait) {
-                index = 0;
-            } else if (pageW === eFormPageWidthLandscape && pageH === eFormPageHeightLandscape) {
-                index = 1;
-            }
-            setPageOrientation(index);
-            return true;
-        }
-
-        function init_form_load($element) {
-
-            if (!runStandaloneVersion) {
-                $.ajax({
-                    // populate the eform list from the server
-                    type: "GET",
-                    url: OSCAR_EFORM_SEARCH_URL,
-                    dataType: 'json',
-                    async: true,
-                    success: function(data) {
-
-                        var status = data.status;
-                        if (status === "SUCCESS") {
-                            var options = [""];
-                            var values = [0];
-                            var selectedId = 0;
-                            for (var i = 0; i < data.body.length; i++) {
-                                options.push(data.body[i].formName);
-                                values.push(data.body[i].id);
-                            }
-
-                            var $root = $("<div>", {
-                                class: "page_control_item"
-                            }).appendTo($element);
-                            var $eFormSelect = addSelectMenu($root, "eFormSelect", "Select EForm", options, values);
-                            $eFormSelect.selectmenu();
-                            var $loadButton = $("<button>", {
-                                text: "Load Selected EForm"
-                            }).button().click(function(event) {
-                                if (selectedId > 0) {
-                                    // load the selected eform from the html by id
-                                    $.ajax({
-                                        type: "GET",
-                                        url: OSCAR_EFORM_ENTITY_URL + selectedId,
-                                        dataType: 'json',
-                                        async: true,
-                                        success: function(data) {
-                                            var status = data.status;
-                                            if (status === "SUCCESS") {
-                                                // setup the generator with the existing eform data
-                                                loadEformData(data.body.formHtml);
-                                                setEformId(data.body.id);
-                                                console.info("EForm Loaded from Server");
-                                            } else {
-                                                alert(data.error);
-                                            }
-                                        }
-                                    });
-                                }
-                                event.preventDefault();
-                            }).appendTo($root);
-
-                            $eFormSelect.on("selectmenuchange", (function(event, data) {
-                                selectedId = data.item.value;
-                            }));
-                        }
-                    },
-                    failure: function(data) {
-                        console.error(data);
-                    }
-                });
-            } else {
-                $element.append($("<input>", {
-                        type: "file",
-                        accept: ".html"
-                    })
-                    .change(function() {
-                        if (this.files && this.files[0]) {
-                            var reader = new FileReader();
-                            reader.onload = function(e) {
-                                $.get(e.target.result, function(data) {
-                                    loadEformData(data);
-                                    console.info("EForm Loaded from File.");
-                                })
-                            };
-                            reader.readAsDataURL(this.files[0]);
-                        }
-                    })
-                ).append($("<div>").append(
-                    $("<label>").text("Note: any custom scripts or styles in the loaded form will not be preserved")
-                ));
-            }
-        }
-
-        function addBackgroundImage($parentElement, srcString) {
-            var id = getUniqueId(baseBackImageName);
-            var $img = $("<img>", {
-				alt: "background",
-                id: id,
-                class: "gen-layer1"
-            }).prependTo($parentElement);
-            if (srcString) {
-                $img.attr('src', encodeURI(srcString)); //escape spaces etc in the filename
-            }
-            return $img;
-        }
-
-        function createPageControlDiv($pageDiv) {
-
-            var $img = $pageDiv.children("img");
-            var $root = $("<div>", {
-                class: "page_control_item"
-            });
-
-            var $fileSelector;
-
-            if (runStandaloneVersion) {
-                $fileSelector = $("<input>", {
-                    type: "file",
-                    accept: ".png"
-                }).change(function() {
-                    if (this.files && this.files[0]) {
-                        var reader = new FileReader();
-                        var $fileInput = $(this);
-                        reader.onload = function(e) {
-                            var src = $fileInput.val().replace(/C:\\fakepath\\/i, '');
-                            if ($img == null || $img.length <= 0) {
-                                $img = addBackgroundImage($pageDiv, src);
-                            } else {
-                                $img.attr('src', src);
-                            }
-                            $img.on('load', function() {
-                                var css;
-                                var ratio = $(this).width() / $(this).height();
-                                var pratio = (eFormPageWidth / eFormPageHeight);
-                                if (ratio < pratio) css = {
-                                    width: 'auto',
-                                    height: '100%'
-                                };
-                                else css = {
-                                    width: '100%',
-                                    height: 'auto'
-                                };
-                                $(this).css(css);
-                            });
-                        };
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
-            }
-
-            var $clearButton = $("<button>", {
-                text: "Clear"
-            }).button().click(function(event) {
-                if ($img != null) {
-                    $img.remove();
-                    $img = null;
-                }
-                event.preventDefault();
-            });
-
-            var $removePageButton = $("<button>", {
-                text: "Remove Page"
-            }).button({
-                icon: "ui-icon-circle-minus",
-                showLabel: false
-            }).click(function(event) {
-                var $confirm = createConfirmationDialogueElements(CONFIRM_PAGE_REMOVE_TITLE, CONFIRM_PAGE_REMOVE_MESSAGE);
-                $confirm.dialog({
-                    resizable: false,
-                    height: "auto",
-                    width: 400,
-                    modal: true,
-                    buttons: {
-                        "Delete": function() {
-                            $pageDiv.remove();
-                            $root.remove();
-                            $(this).dialog("close");
-                        },
-                        "Cancel": function() {
-                            $(this).dialog("close");
-                        }
-                    },
-                    close: function() {
-                        $(this).remove();
-                    }
-                });
-                event.preventDefault();
-            });
-
-            $root.append($removePageButton).append($clearButton)
-            if (!runStandaloneVersion) {
-
-                var options = [""];
-                for (var i = 0; i < eFormImageList.length; i++) {
-                    options.push(eFormImageList[i]);
-                }
-
-                $fileSelector = addSelectMenu($root, "imageSelect", "Select Background Image", options);
-                $fileSelector.selectmenu();
-
-                $fileSelector.on("selectmenuchange", (function(event, data) {
-                    var src = OSCAR_DISPLAY_IMG_SRC + $fileSelector.val();
-                    if ($fileSelector.val().length < 1) {
-                        return;
-                    }
-                    if ($img == null || $img.length <= 0) {
-                        $img = addBackgroundImage($pageDiv, src);
-                    } else {
-                        $img.attr('src', src);
-                    }
-                    $img.on('load', function() {
-                        var css;
-                        var ratio = $(this).width() / $(this).height();
-                        var pratio = (eFormPageWidth / eFormPageHeight);
-                        if (ratio < pratio) css = {
-                            width: 'auto',
-                            height: '100%'
-                        };
-                        else css = {
-                            width: '100%',
-                            height: 'auto'
-                        };
-                        $(this).css(css);
-                    });
-
-                }));
-            } else {
-                $root.append($fileSelector);
-            }
-            return $root;
-        }
-
-        function setPageDimensions(newWidth, newHeight) {
-            eFormPageWidth = newWidth;
-            eFormPageHeight = newHeight;
-            $(".page_container").css({
-                width: eFormPageWidth,
-                height: eFormPageHeight
-            });
-            $("#eform_container").css({
-                'max-width': eFormPageWidth + 'px'
-            });
-
-            var $wrapper = $("#eform_view_wrapper");
-            var maxWidth = eFormPageWidth + eFormViewPadding;
-            //console.info(eFormPageWidth, eFormViewPadding, maxWidth);
-            $wrapper.resizable("option", "maxWidth", maxWidth);
-            if ($wrapper.width() > maxWidth) {
-                $wrapper.width(maxWidth);
-            }
-        }
-
-        function setEformId(id) {
-            var asInt = parseInt(id);
-            var $saveBtn = $("#saveToOscarButton")
-            if (Number.isInteger(asInt) && asInt > 0) {
-                eFormFid = asInt;
-                $saveBtn.button('option', 'label', OSCAR_SAVE_MESSAGE_UPDATE);
-            } else {
-                eFormFid = 0;
-                $saveBtn.button('option', 'label', OSCAR_SAVE_MESSAGE_NEW);
-            }
-        }
-
-        function setPageOrientation(newIndex) {
-
-            var $custWidth = $("#gen-setPageWidth");
-            var $custHeight = $("#gen-setPageHeight");
-            var $defaultShow = $("#gen-orientationLabel");
-
-            switch (newIndex) {
-                case 2: {
-                    $custWidth.parent().show();
-                    $custHeight.parent().show();
-                    $defaultShow.hide();
-                    setPageDimensions(parseInt($custWidth.val(), 10), parseInt($custHeight.val()), 10);
-                    orientationIndex = 2;
-                    break;
-                }
-                case 1: {
-                    $custWidth.parent().hide();
-                    $custHeight.parent().hide();
-                    $defaultShow.show();
-                    setPageDimensions(eFormPageWidthLandscape, eFormPageHeightLandscape);
-                    orientationIndex = 1;
-                    break;
-                }
-                default: {
-                    $custWidth.parent().hide();
-                    $custHeight.parent().hide();
-                    $defaultShow.show();
-                    setPageDimensions(eFormPageWidthPortrait, eFormPageHeightPortrait);
-                    orientationIndex = 0;
-                    break;
-                }
-            }
-            $("#gen-orientation").find("input").filter("[value='" + orientationIndex + "']").prop("checked", true).button("refresh");
-            $("#gen-orientation").find("input").checkboxradio("refresh");
-        }
-
-        function init_setup_controls($element) {
-
-            if (!runStandaloneVersion) {
-                $.ajax({
-                    type: "GET",
-                    url: OSCAR_EFORM_SEARCH_URL + 'images',
-                    dataType: 'json',
-                    async: false,
-                    success: function(data) {
-                        var status = data.status;
-                        if (status === "SUCCESS") {
-                            eFormImageList = data.body;
-//alert(data.body) //2021-May-08
-                        }
-                    },
-                    failure: function(data) {
-                        console.error(data);
-                    }
-                });
-            }
-
-
-            var $pagesControlgroup = createFieldset("pagesControlGroup", "Pages");
-            var $addPageButtonControlGroup = createFieldset("addPagesControlGroup", null);
-            var $addPageButton = $("<button>", {
-                text: "Add Page"
-            }).button({
-                icon: "ui-icon-circle-plus"
-                //showLabel: false
-            }).click(function(event) {
-                var $newPage = createNewPage();
-                $pagesControlgroup.append(createPageControlDiv($newPage));
-                event.preventDefault();
-            });
-
-            var $custDimensionX = $("<div>").append($("<label>", {
-                text: "Width:",
-                for: "gen-setPageWidth"
-            })).append($("<input>", {
-                id: "gen-setPageWidth",
-                type: "text",
-                value: eFormPageWidth
-            }));
-            var $custDimensionY = $("<div>").append($("<label>", {
-                text: "Height:",
-                for: "gen-setPageHeight"
-            })).append($("<input>", {
-                id: "gen-setPageHeight",
-                type: "text",
-                value: eFormPageHeight
-            }));
-            var $dimensionInputs = $("<div>", {
-                class: "flexH"
-            }).append($custDimensionX).append($custDimensionY);
-
-            var labels = ["Portrait", "Landscape", "Custom"];
-            var $orinetationRadioGroup = addRadioGroup($element, "gen-orientation", "Orientation", labels);
-            $orinetationRadioGroup.on("change", function(e) {
-                var value = parseInt($(e.target).val());
-                setPageOrientation(value);
-            });
-            $element.append($dimensionInputs);
-            // set inital value index
-            setPageOrientation(orientationIndex);
-
-            $element.append($addPageButtonControlGroup.append($addPageButton));
-            $addPageButtonControlGroup.append($pagesControlgroup);
-            $("<div>").append($("<label>", {
-                id: "gen-orientationLabel",
-                text: "Page Dimensions: " + eFormPageWidthPortrait + "x" + eFormPageHeightPortrait +
-                    " (Landscape: " + eFormPageWidthLandscape + "x" + eFormPageHeightLandscape + ")"
-            })).appendTo($dimensionInputs);
-
-            return $pagesControlgroup;
-        }
-
-        /** tab 0 setup */
-
-        function initCheckboxTemplateTab($tab) {
-
-            var $options_menu0 = $("<div>", {
-                class: "gen-control-menu"
-            });
-            var $dragFrame0 = createStitchFrame();
-            var $checkBoxTemplate = addDraggableInputType($dragFrame0, "checkBoxTemplate", "checkbox", checkboxSize, checkboxSize, ""); //2020-May-02
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, ""); //Spacer
-            var $rBoxTemplate = addDraggableInputType($dragFrame0, "rBoxTemplate", "text", checkboxSize, checkboxSize, "only-one-radio");
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, "");  //Spacer
-            var $xBoxTemplate = addDraggableInputType($dragFrame0, "xBoxTemplate", "text", checkboxSize, checkboxSize, "gen-xBox");
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, ""); //Spacer
-            var $bBoxTemplate = addDraggableInputType($dragFrame0, "bBoxTemplate", "button", checkboxSize, checkboxSize, "all-no-button1");
-
-            $xBoxTemplate.attr("title", "click") // 2020-May-17
-
-
-            //************************Check box Title Snippet***************************2020-May-14
-            var customTitle = $('<input/>')
-                .attr('type', "input")
-                .attr('name', "boxTitle")
-                .attr('id', "boxTitle")
-                //.attr('value', "boxTitle")
-                .change(function() {
-                    newTitle = $('#boxTitle').val()
-                    //alert(newTitle)
-                    if (newTitle == "") {
-                        //alert("BLANK")
-                        //newTitle = 'xBox'  2020-May-14
-                    }
-
-                    //$xBoxTemplate.attr('title',newTitle );       //2020-May-12
-                    $xBoxTemplateInput.attr("title", newTitle)
-                    $rBoxTemplateInput.attr("title", newTitle) //2020-May-14
-                });
-
-            var linkTitle = $('<input/>') //2020-May-05
-                .attr('type', "input")
-                .attr('name', "linkTitle")
-                .attr('id', "linkTitle")
-                //.attr('value', "linkTitle")
-                .change(function() {
-                    alert("this changed")
-                });
-
-            customTitle.css("font-size", "12");
-            linkTitle.css("font-size", "12");
-            $xBoxTemplate.after(customTitle);
-			$xBoxTemplate.before('&nbsp;');
-            var $label = $("<label>").text('  Custom Title: ');
-            $label.css("fontSize", 12);
-            $label.attr('id', "theLabel");
-            customTitle.before($label);
-            customTitle.after(linkTitle); //2020-May-05
-            var $label2 = $("<label>").text(' LinkTo:');
-            $label2.css("fontSize", 12);
-            $label2.attr('id', "theLabel2");
-            linkTitle.before($label2);
-
-
-            //************************ Add classes and functions to boxes ************************
-            $xBoxTemplate.attr('ondblclick', 'mydclick2(this)');
-            $xBoxTemplate.attr('title', 'xBox - Click to drag. DoubleClick to activate'); //2020-May-12
-            //$textBoxTemplate.attr('title', 'TextBox - Click to drag. DoubleClick to activate');  //2020-May-12
-            //$checkBoxTemplate.attr('title', 'Pre-check by Gender');
-            $checkBoxTemplate.attr('title', 'Not in use - use pre-check box'); //2020-Sep-23
-            $checkBoxTemplate.hide() //2020-Sep-23
-            $rBoxTemplate.attr('ondblclick', 'mydclick(this)');
-            //$rBoxTemplate.attr('onmouseover', 'mymso(this)' );
-            $rBoxTemplate.attr('title', 'Radio Box - Click to drag. DoubleClick to activate');
-            $bBoxTemplate.attr('ondblclick', 'myextrastep(this)');
-            //$rBoxTemplate.attr('onkeypress','GetKeyCode(event.keyCode)')
-            $bBoxTemplate.removeClass("gen-widget")
-            //$bBoxTemplate.removeClass("cradio")
-            $bBoxTemplate.addClass("DoNotPrint")
-            $bBoxTemplate.attr('title', 'Click on WHITE FRAME to drag. DoubleClick to activate');
-            //$bBoxTemplate.attr('id', 'gen_buttonWidget' )
-
-            //***************************************************************
-            var $checkBoxTemplateInput = $checkBoxTemplate.find(":input");
-            var $xBoxTemplateInput = $xBoxTemplate.find(":input");
-            var $rBoxTemplateInput = $rBoxTemplate.find(":input");
-            var $bBoxTemplateInput = $bBoxTemplate.find(":input");
-            $xBoxTemplateInput.attr("title", "click") // 2020-May-17
-            $checkBoxTemplateInput.addClass("GenderBox") //2020-May-14
-            $xBoxTemplateInput.addClass("xBox").attr('autocomplete', 'off');
-            $rBoxTemplateInput.addClass("only-one-radio").attr('autocomplete', 'off');
-            //$rBoxTemplateInput.addClass("cradio").attr('autocomplete', 'off');
-            $rBoxTemplateInput.addClass("cradio").attr('onclick', 'myupdate(this)'); //newwork
-
-            $bBoxTemplateInput.addClass("all-no-button2").attr('value', 'All No');
-			$bBoxTemplateInput.attr('onclick', 'allno();');
-            $bBoxTemplateInput.removeClass("gen_input")
-			$bBoxTemplate.hide();
-            //$bBoxTemplateInput.removeClass("cradio")
-
-            var $checkboxSizeSpinner = createSpinnerElem("checkboxSizeSpinner", "Template Size:", checkboxSize);
-            var changeTemplateSize = function(event, ui) {
-                checkboxSize = this.value;
-                $checkBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $xBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $xBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-                $rBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $rBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-                $bBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $bBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-            };
-            $checkboxSizeSpinner.find(":input").spinner({
-                min: checkboxSizeRange[0],
-                max: checkboxSizeRange[1],
-                stop: changeTemplateSize,
-                spin: changeTemplateSize
-            });
-            var $checkByGenderChkbox = $("<input>", {
-                id: "gen-precheckByGender",
-                type: "checkbox",
-                checked: false
-            });
-            var $allNoChkbox = $("<input>", {
-                id: "gen-all-no",
-                type: "checkbox",
-                checked: false,
-				change: function(event, ui) {
-					$bBoxTemplate.toggle();
-					// PHC TODO
-				}
-            });
-            var $preCheckCheckbox = $("<input>", {
-                id: "gen-precheckCheckboxId",
-                type: "checkbox",
-                checked: false,
-                change: function(event, ui) {
-                    var $xbox = $xBoxTemplate.find(":input");
-                    //var $chkbox = $checkBoxTemplate.find(":input");
-					var $rbox = $rBoxTemplate.find(":input");
-                    $xbox.val($xbox.val() === 'X' ? '' : 'X');
-					$rbox.val($rbox.val() === 'X' ? '' : 'X');
-                    //$chkbox.prop('checked', !($chkbox.is(':checked')));
-                    if ($(this).is(':checked') && $checkByGenderChkbox.is(':checked')) {
-                        $checkByGenderChkbox.prop('checked', false);
-                        $checkByGenderChkbox.change();
-                    }
-                }
-            });
-            $tab.append($options_menu0);
-            $tab.append($dragFrame0);
-            $options_menu0.append($checkboxSizeSpinner);
-            $options_menu0.append($("<div>").append($("<label>", {
-                text: "Pre-Check:",
-                for: "gen-precheckCheckboxId"
-            })).append($preCheckCheckbox));
-            $options_menu0.append($("<div>").append($("<label>", {
-                for: "gen-all-no",
-                text: "All No function"
-            })).append($allNoChkbox));
-            $options_menu0.append($("<div>").append($("<label>", {
-                for: "gen-precheckByGender",
-                text: "Pre-Check by Gender"
-            })).append($checkByGenderChkbox));
-            var $div01 = $("<div>").appendTo($options_menu0);
-            var $gender_select = addSelectMenu($div01, "genderSelect0", "Check When", ["M", "F", "T", "O", "U"]);
-            $gender_select.selectmenu("disable");
-            var removeGenderPrecheckClasses = function(index, curclass) {
-                return (curclass.match(/(^|\s)gender_precheck_\S+/g) || []).join(' ');
-            };
-            $gender_select.on("selectmenuchange", (function(event, data) {
-                $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-				$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-            }));
-            $checkByGenderChkbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    $gender_select.selectmenu("enable");
-                    $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-					$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                    $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                    if ($preCheckCheckbox.is(':checked')) {
-                        $preCheckCheckbox.prop('checked', false);
-                        $preCheckCheckbox.change();
-                    }
-                } else {
-                    $gender_select.selectmenu("disable");
-                    $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-					$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-                    $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-                }
-            });
-
-
-            //************************************add function to checkbox****************************** //2020-May-02
-            var $oscarCheckbox2 = $('<input>', {
-                id: 'toggleCheckbox2',
-                type: 'checkbox'
-            });
-            var $oscarCheckbox2label = $('<label>', {
-                text: 'Add function',
-                for: 'toggleCheckbox2'
-            });
-
-            var $oscarCheckbox22 = $('<input>', { // 2020-May-19
-                id: 'toggleCheckbox22',
-                type: 'checkbox'
-            });
-            var $oscarCheckbox22label = $('<label>', {
-                text: 'Add SideBar',
-                for: 'toggleCheckbox22'
-            });
-
-            $preCheckCheckbox.after($oscarCheckbox2)
-            $('#toggleCheckbox2').before($oscarCheckbox2label)
-
-            $preCheckCheckbox.after($oscarCheckbox22) // 2020-May-19  2020-Sep-23
-            $('#toggleCheckbox22').before($oscarCheckbox22label)
-
-            $oscarCheckbox22.on('change', function(event, ui) {
-                if ($oscarCheckbox22.is(':checked')) {
-                    //alert(this.checked)
-                    setSideBar = "on"
-                } else {
-                    //alert(this.checked)
-                    setSideBar = ""
-                }
-
-            })
-
-            $oscarCheckbox2.on('change', function(event, ui) {
-                if ($oscarCheckbox2.is(':checked')) {
-                    //alert(this.checked)
-                    listfc() //create select list of functions
-                    var e = document.getElementById('mySelect');
-                    $(e).css('background-color', 'yellow')
-                    $(e).focus() //alert(e.length)
-                    $(e).attr('size', e.length + 1);
-                    e.onclick = function() {
-                        var strUser = e.options[e.selectedIndex].text;
-                        var strContent = e.options[e.selectedIndex].value;
-                        //alert(strUser)
-                        alert(strContent)
-
-                        /lendar/calendar.js'><\/script>";
-                source += "\<script src='../share/calendar/calendar-setup.js'><\/script>";
-                loadFunctions += " initCalendar();";
-            }
-
-            if (include_fax) {
-                source += "\<script src='$\{oscar_javascript_path\}eforms/printControl.js'\>\<\/script\>";
-                source += "\<script src='$\{oscar_javascript_path\}eforms/faxControl.js'\>\<\/script\>";
-                if ($('#defaultFaxNo').val().length > 6) { loadFunctions += " setFaxNo();"; }
-            }
-            if (include_signature) {
-                source += "\<script src='$\{oscar_image_path\}signature_pad.min.js'\>\<\/script\>";
-                // source += "\<script src='$\{oscar_javascript_path\}eforms/signature_pad.min.js'\>\<\/script\>"; // OSCAR 19 and Juno
-            }
-            if (setSideBar == "on") {
-                loadFunctions += " openNav();";
-            }
-
-            source += "<style>";
-
-            var baseStyle = document.getElementById('eform_style'); //base style
-            var shapeStyles = document.getElementById('eform_style_shapes');
-			var signatureStyles = document.getElementById('eform_style_signature');
-            var stampStyles = document.getElementById('stamp_style');
-			var sidenavStyles = document.getElementById('sidenav_style');
-			var radioStyles = document.getElementById('radio_style');
-			var allnoStyles = document.getElementById('allno_style');
-			var xboxStyles = document.getElementById('xbox_style');
-
-            var script = document.getElementById('eform_script'); //base javascript
-            var standAlone_script = document.getElementById('standAlone_script');
-			var date_script = document.getElementById('date_script');
-			var xbox_script = document.getElementById('xbox_script');
-			var gender_script = document.getElementById('gender_script');
-			var allno_script = document.getElementById('allno_script');
-			var radio_script = document.getElementById('radio_script');
-            var signature_script = document.getElementById('signature_script');
-            var stamp_script = document.getElementById('stamp_script');
-            var faxno_script = document.getElementById('faxno_script');
-            var htmlElements = document.getElementById('eform_container');
-			// style ORDER is important!
-            source += baseStyle.innerHTML;
-            if ($eform_container.find(".circle,.square-rounded,.square").length > 0) {
-                source += shapeStyles.innerHTML;
-            }
-            if (include_allno) {
-                source += allnoStyles.innerHTML;
-            }
-            if (setSideBar == "on") {
-                source += sidenavStyles.innerHTML;
-            }
-            if (include_xbox) {
-                source += xboxStyles.innerHTML;
-            }
-            if (include_radio) {
-                source += radioStyles.innerHTML;
-            }
-            if (include_stamp) {
-                source += stampStyles.innerHTML;
-            }
-            if ($eform_container.find(".signaturePad").length > 0) {
-                source += signatureStyles.innerHTML;
-            }
-            source += "</style>"
-            source += "<script>" + script.innerHTML;  //base javascript
-			if (include_standAlone) {
-                source += standAlone_script.innerHTML;
-				loadFunctions += " reImg(); disableButtons();";
-            }
-			if (include_date) {
-                source += date_script.innerHTML;
-				loadFunctions += " initCalendar();";
-            }
-			if (include_xbox) {
-                source += xbox_script.innerHTML;
-				loadFunctions += " initXBoxes();";
-            }
-			if (include_gender) {
-                source += gender_script.innerHTML;
-                loadFunctions += " initPrecheckedCheckboxes();";
-            }
-            if (include_radio) {
-			    source += radio_script.innerHTML;
-            }
-			if (include_allno) {
-                source += allno_script.innerHTML;
-                loadFunctions += " initAllNo();";
-            }
-            if (include_signature) {
-                source += signature_script.innerHTML;
-            }
-            if ($('#defaultFaxNo').val().length > 6) {
-                source += faxno_script.innerHTML;
-            }
-            if (include_stamp) {
-                source += stamp_script.innerHTML;
-                loadFunctions += " signForm()";
-            }
-            source += findSelectedFunctions(htmlElements.innerHTML) + "\<\/script></head><body onload='focusAll();" + loadFunctions + "'>";
-            if (setSideBar == "on") {
-                source += "<iframe src='${oscar_image_path}SideBarTemplate.html' id='mySidenavGen2' class='sidenav DoNotPrint' style='margin-top:-60px;margin-left:-100px height 600px'></iframe>";
-            }
-
-            source += "<div id='eform_container' " + "style='max-width: " + eFormPageWidth + "px'>";
-            source += htmlElements.innerHTML;
-
-            source += "</div></body></html>";
-            source = addOscarImagePath(source);
-            source = source.replace(/>\s*</g, ">\n<");
-            //now we need to escape the html special chars
-            if (escapeHtml) {
-                source = source.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                //now we add <pre> tags to preserve whitespace
-                source = "<pre>" + source + "</pre>";
-            }
-            undestroy_gen_widgets($input_elements);
-            dragAndDropEnable(false);
-
-            for (var i = 0; i < detached.length; i++) {
-                toggleElement(detached[i][0], detached[i][1], true);
-            }
-            return source;
-        }
-
-        function showSource(include_fax) {
-            var source = generate_eform_source_html(true, include_fax);
-            //now open the window and set the source as the content
-            var sourceWindow = window.open('', 'Source of page', 'height=800,width=800,scrollbars=1,resizable=1');
-            sourceWindow.document.write(source);
-            sourceWindow.document.title = "eForm Source";
-            sourceWindow.document.close(); //close the document for writing, not the window
-            //give source window focus
-            if (window.focus) sourceWindow.focus();
-        }
-
-        function download(text, name, type) {
-            var a = document.createElement("a");
-            var file = new Blob([text], {
-                type: type
-            });
-            a.href = URL.createObjectURL(file);
-            a.download = name;
-            // create mouse event for initiating the download
-            var event = document.createEvent("MouseEvents");
-            event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
-            );
-            a.dispatchEvent(event);
-        }
-
-        function downloadSource(include_fax) {
-            var name = stripSpecialChars(eformName).replace(/\s/g, "_") + '.html';
-            return download(generate_eform_source_html(false, include_fax), name, 'text/html');
-        }
-
-        /** Save the eform html as a new eform */
-        function saveToOscarEforms(include_fax) {
-            var eformCode = generate_eform_source_html(false, include_fax);
-            var url = OSCAR_EFORM_ENTITY_URL + ((eFormFid > 0) ? eFormFid + "/" : "") + "json";
-            var type = (eFormFid > 0) ? "PUT" : "POST";
-
-            $.ajax({
-                type: type,
-                url: url,
-                contentType: "application/json; charset=utf-8",
-                dataType: 'json',
-                async: false,
-                data: JSON.stringify({
-                    "id": eFormFid,
-                    "formName": eformName,
-                    "formHtml": eformCode
-                }),
-                success: function(data) {
-                    console.info(data);
-                    var status = data.status;
-                    if (status === "SUCCESS") {
-                        alert("EForm Save Successful!");
-                        setEformId(data.body.id);
-                    } else {
-                        alert(data.error);
-                    }
-                },
-                failure: function(data) {
-                    console.error(data);
-                    alert("EForm save failure!");
-                }
-            });
-        }
-
-        /** make the given element draggable */
-        function makeDraggable($element, cloneable, stackClasses) {
-            $element.draggable({
-                appendTo: "body",
-                revert: "invalid",
-                revertDuration: 500,
-                stack: stackClasses,
-                scroll: false,
-                snap: ".gen-snapLine:visible",
-                snapMode: "inner",
-                snapTolerance: 10 // ".gen-snapLine:visible" 10
-           });
-            if (cloneable) {
-                $element.draggable("option", "helper", "clone");
-                $element.addClass("gen-cloneable");
-            }
-            $element.addClass("gen-draggable");
-        }
-        /** make the given element resizable */
-        function makeResizable($element) {
-            $element.resizable({
-                aspectRatio: ($element.find(':checkbox').length > 0),
-                containment: "#inputForm"
-            });
-            $element.resizable("disable");
-            $element.addClass("gen-resizable");
-        }
-        /** make the given element accept draggable elements */
-        function makeDroppable($element, hoverClasses, acceptClasses, greedy) {
-            $element.droppable({
-                accept: acceptClasses,
-                hoverClass: hoverClasses,
-                greedy: greedy,
-                drop: function(event, ui) {
-                    dropOnForm(ui, $(this));
-                }
-            });
-            $element.addClass("gen-droppable");
-        }
-
-        function makeSignatureCanvas($element) {
-
-            var $canvasFrame = $element.children(".canvas_frame");
-            var $clearBtn = $element.children(".clearBtn");
-            var canvas = $canvasFrame.children("canvas").get(0);
-            var $data = $canvasFrame.children(".signature_data");
-            var src = $data.val();
-            var $img = $("<img>", {
-                src: src,
-				alt: "signature",
-                class: "signature_image"
-            });
-            if (src && src.length > 0) {
-                $img.appendTo($canvasFrame);
-            }
-
-            if (signaturePadLoaded) {
-                $img.hide();
-                console.info("loading editable signature pads");
-                var updateSlaveSignature = function(src_canvas, dest_canvas) {
-                    // write to the destination with image scaling
-                    var dest_context = dest_canvas.getContext("2d");
-                    dest_context.clearRect(0, 0, dest_canvas.width, dest_canvas.height);
-                    dest_context.drawImage(src_canvas, 0, 0, dest_canvas.width, dest_canvas.height);
-                };
-                var setCanvasSize = function() {
-                    canvas.width = $element.width();
-                    canvas.height = $element.height();
-                    $element.trigger("signatureChange");
-                };
-                // initialize the signature pad
-                var signPad = new SignaturePad(canvas, {
-                    minWidth: 2,
-                    maxWidth: 4,
-                    onEnd: function() {
-                        $element.trigger("signatureChange");
-                    }
-                });
-                // load the image data to the canvas ofter initialization
-                if (src != null && src != "") {
-                    signPad.fromDataURL(src);
-                } else {
-                    setCanvasSize();
-                }
-                // so that the signature image resizes correctly in generator
-                $element.on("resize", setCanvasSize);
-
-                // define a custom update trigger action. this allows the eform to store the signature.
-                $element.on("signatureChange", function() {
-                    $data.val(signPad.toDataURL());
-                    $img.prop('src', signPad.toDataURL());
-                    if ($element.attr('slaveSigPad')) {
-                        var $slavePad = $("#" + $element.attr('slaveSigPad')); // get slave pad by id
-                        updateSlaveSignature(canvas, $slavePad.find("canvas").get(0));
-                        $slavePad.trigger("signatureChange"); // be careful of infinite loops
-                    }
-                    return false;
-                });
-                // init the clear button
-                $clearBtn.on('click', function() {
-                    signPad.clear();
-                    $element.trigger("signatureChange");
-                    return false;
-                });
-            }
-            // not loaded so not using the canvas, show signature as an image instead.
-            else {
-                $img.show(); alert("shown");
-            }
-        }
-
-        function createBasicDraggableDiv(widgetId, width, height, customClasses) {
-            return $("<div>", {
-                id: widgetId,
-                class: "gen-widget " + customClasses,
-                width: width + "px",
-                height: height + "px"
-            });
-        }
-
-        function createInputOverrideDiv() {
-            return $("<div>", {
-                class: "inputOverride"
-            });
-        }
-
-        function addDraggableInputType($parent, widgetId, type, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-
-            if (type === "textarea") {  // TODO is resizing still a bit buggy
-                $widget.append($("<textarea>", {
+                    id: "toggleRuler",
+                    type: "checkbox",
+                    checked: defaultShowRuler,
                     css: {
-                        resize: 'none'
-                    },
-                    class: 'gen_input' //2020-May-14
+                        width: "16px",
+                        height: "16px"
+                    }
+                }).change(function() {
+                    $(".gen-snapGuide").find(".handle").toggleClass("ruler", $(this).is(':checked'));
                 }));
-            } else {
-                $widget.append($("<input>", {
-                    type: type,
-                    class: 'gen_input'
-                }));
-            }
-            $widget.append(createInputOverrideDiv());
-            $parent.append($widget);
-
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2, .gen-layer3");
-            return $widget;
-        }
-
-        function addDraggableShape($parent, widgetId, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer2");
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-            makeDroppable($widget, "divHighlight", ".gen-layer2, .gen-layer3", true);
-            return $widget;
-        }
-
-        function addDraggableLabel($parent, widgetId, text, customClasses) {
-            var $widget = $("<label>", {
-                id: widgetId,
-                class: "gen-widget gen-layer3 ui-widget-content " + customClasses,
-                text: text,
-                value: text
-            });
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2, .gen-layer3");
-
-            return $widget;
-        }
-
-        function addDraggableImage($parent, widgetId, width, height, src, customClasses) {  // TODO something missing in the implimentation
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-            var imgClass = "";
-            $widget.append($("<img>", {
-                src: src,
-				alt: "image",
-                width: "100%",
-                height: "100%"
-            }));
-
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-			console.log("created widget "+widgetId);
-            return $widget;
-        }
-
-        function addDraggableStamp($parent, widgetId, width, height, src, customClasses) {  // May 1, 2024  TO DO buggy on resize/drag
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-            var imgClass = "";
-
-            $widget.append($("<img>", {
-                src: src,
-				alt: "stamp",
-                width: "100%",
-                height: "100%",
-                class: "stamp",
-                onclick: "toggleMe(this);"
-            }));
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-			console.log("created widget "+widgetId);
-            return $widget;
-        }
-
-        function addDraggableSignaturePad($parent, widgetId, width, height, customClasses) {
-            var $widget = createBasicDraggableDiv(widgetId, width, height, customClasses + " gen-layer3");
-
-            var $canvas = $("<canvas>");
-            var $canvasData = $("<input>", {
-                type: "hidden",
-                class: "signature_data"
-            });
-            var $clearBtn = $("<button>", {
-                type: "button",
-                text: "clear",
-                class: "clearBtn DoNotPrint"
-            });
-            var $flex = $("<div>", {
-                class: "canvas_frame"
-            });
-            $flex.append($canvas).append($canvasData);
-            $widget.append($flex).append($clearBtn);
-            $flex.append(createInputOverrideDiv());
-            $parent.append($widget);
-            makeDraggable($widget, true, ".gen-layer1, .gen-layer2");
-            return $widget;
-        }
-
-        /** generate a unique id for new input elements. */
-        function getUniqueId(baseId) {
-            var i = 1;
-            // if you max this out your eForm is too big anyways
-            while (i < 99999) {
-                //var returnId = baseId + i;
-                var returnId = baseId + myunique + i;  //2021-Jan-10
-
-                if (!document.getElementById(returnId)) {
-                    return returnId;
-                }
-                i++;
-            }
-            console.error("unique ID generation failed");
-            return undefined;
-        }
-        /** create a copy of the draggable element at the given position
-         * the clone will not be re-cloneable, and will be given a generated name/id */
-        function cloneDraggableAt($newParent, position, $toClone) {
-
-            var $newDraggable = $toClone.clone();
-            var id = getUniqueId(baseWidgetName);
-            $newDraggable.attr("id", id);
-            //$newDraggable.attr("name", id);
-            $newDraggable.removeClass("gen-cloneable");
-            $newDraggable.appendTo($newParent);
-            $newDraggable.css(position);
-            // clone is made draggable with all options except the helper.
-            $newDraggable.draggable($toClone.draggable("option"));
-            $newDraggable.draggable("option", "helper", false);
-
-            // inputs must all have id's and names to work in oscar
-            $newDraggable.children(":input").each(function() {
-                var id = getUniqueId(baseInputName);
-                $(this).attr({
-                    id: id,
-                    //title: "NewBox",  //2020-May-14
-                    //oscarDB: "e$last#"+id, //2023-May-04
-                    name: id
-                });
-                mydraginput(this)
-            });
-            // init signature pads when cloning
-            if ($newDraggable.hasClass("signaturePad")) {
-                // inputs must all have id's and names to work in oscar
-                $newDraggable.find(".signature_data").each(function() {
-                    var id = getUniqueId(baseSignatureDataName);
-                    $(this).attr({
-                        id: id,
-                        name: id
-                    });
-                });
-                makeSignatureCanvas($newDraggable);
-            }
-            setNoborderStyle($newDraggable.find(XBOX_INPUT_SELECTOR), xboxBordersVisibleState);
-            setNoborderStyle($newDraggable.find(TEXT_INPUT_SELECTOR), textBordersVisibleState);
-            return $newDraggable;
-        }
-        /** recursively clone widget elements and attach them to the parent selector */
-        function cloneWidgetAt($newParent, position, $toClone) {
-            var isResizable = $toClone.data('uiResizable');
-            var $childWidgets = $toClone.children(".gen-widget");
-            // remove resizable to prevent errors
-            if (isResizable) {
-                $toClone.resizable("destroy").removeClass("gen-resizable");
-            }
-            // clone the element
-            var $clone = cloneDraggableAt($newParent, position, $toClone);
-            //remove duplicated children elements (they won't be draggable etc)
-            $clone.children(".gen-widget").remove();
-            // clone all child widgets and attach them to the new clone
-            $childWidgets.each(function() {
-                var xPos = Math.round($(this).position().left); //2024-May-01
-                var yPos = Math.round($(this).position().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                cloneWidgetAt($clone, pos, $(this));
-            });
-            if (isResizable) {
-                makeResizable($toClone); //re-enable the resizable
-            }
-            makeResizable($clone); //make clone resizable
-            if ($toClone.data('uiDroppable')) {
-                $clone.droppable($toClone.droppable("option"));
-            }
-            return $clone;
-        }
-
-        /** drop a draggable object onto a droppable object, and clone/update the draggable parent */
-        function dropOnForm(ui, $new_parent) {
-            var $draggable = $(ui.draggable);
-            var $old_parent = $draggable.parent();
-
-            if ($draggable.hasClass("gen-cloneable")) {
-                var xPos = Math.round(ui.helper.offset().left - $new_parent.offset().left); //2024-May-01
-                var yPos = Math.round(ui.helper.offset().top - $new_parent.offset().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                cloneWidgetAt($new_parent, pos, $draggable);
-            } else if (!($new_parent.is($old_parent))) {
-                var xPos = Math.round($old_parent.offset().left + ui.helper.position().left - $new_parent.offset().left); //2024-May-01
-                var yPos = Math.round($old_parent.offset().top + ui.helper.position().top - $new_parent.offset().top); //2024-May-01
-                var pos = {
-                    top: yPos,
-                    left: xPos,
-                    position: "absolute"
-                };
-                $draggable.appendTo($new_parent).css(pos);
-
-            }
-        }
-        /** set up a simple fixed size frame div */
-        function createTrashFrame() {
-            return $("<div>", {
-                class: "gen-trash_frame"
-            });
-        }
-        /** set up a simple frame div */
-        function createStitchFrame() {
-            return $("<div>", {
-                class: "gen-stitch_frame"
-            });
-        }
-        /** set up a drop down menu with the items from the options Array */
-        function addSelectMenu($rootElement, menuId, label, optionsArr, valuesArr) {
-            var $select = $("<select>", {
-                id: menuId
-            });
-            for (var i = 0; i < optionsArr.length; i++) {
-                $option = $("<option>").html(optionsArr[i]);
-                if (valuesArr) {
-                    $option.attr('value', valuesArr[i])
-                }
-                $select.append($option);
-            }
-            $rootElement.append($("<label>", {
-                for: menuId,
-                text: label
-            }));
-            $rootElement.append($select);
-            $select.selectmenu().selectmenu("menuWidget").addClass("gen-selectOverflow");
-            return $select;
-        }
-
-        /** set up a spinner html with the given id, label, and value
-         * call the spinner() initializer after this method */
-        function createSpinnerElem(spinnerId, label, value) {
-            return $("<p>")
+            $(".gen-snapGuide").find(".handle").toggleClass("ruler", defaultShowRuler); //initialize
+            var $guideToggleCheckbox = $("<div>")
                 .append($("<label>", {
-                    for: spinnerId,
-                    text: label
+                    text: "Enable Snap-to Guides",
+                    for: "toggleSnapGuides"
                 }))
                 .append($("<input>", {
-                    id: spinnerId,
-                    name: spinnerId,
-                    value: value
+                    id: "toggleSnapGuides",
+                    type: "checkbox",
+                    checked: defaultEnableSnapGuides,
+                    css: {
+                        width: "16px",
+                        height: "16px"
+                    }
+                }).change(function() {
+                    $(".gen-snapGuide").toggle($(this).is(':checked'));
                 }));
-        }
-        /** set up tabs html with the given id and tab names.
-         * call the tabs() initializer after this method */
-        function addTabs($rootElement, tabBaseId, tabNames) {
+            $control_fieldset.append($guideToggleCheckbox).append($guideRulerEnabled);
 
-            var $root = $("<div>", {
-                id: tabBaseId
-            });
-            var $ul = $("<ul>").appendTo($root);
-            var tabs = [];
-
-            for (var i = 0; i < tabNames.length; i++) {
-                $ul.append($("<li>")
-                    .append($("<a>", {
-                        href: "#" + tabBaseId + "-" + i,
-                        text: tabNames[i]
-                    })));
-            }
-            for (i = 0; i < tabNames.length; i++) {
-                var newTab = $("<div>", {
-                    id: tabBaseId + "-" + i
-                }).appendTo($root);
-                tabs.push(newTab);
-            }
-            $rootElement.append($root);
-            $root.tabs();
-            return tabs;
+            var $hbox = $("<div>").append($trash_box).append($control_fieldset).append($footer);
+            $element.append($hbox);
         }
 
-        /** creates a labeled fieldset */
-        function createFieldset(id, legend) {
-            var $fieldset = $("<fieldset>", {
-                id: id
+        function setNoborderStyle($selector, value) {
+            // sets radiobox border to Always Visible
+            var x = $selector.attr('class')
+            if (x) {
+                var n = x.indexOf('cradio');
+                if (n > 0) {
+                    value = 3
+                }
+            }
+
+            if ($selector == null) return false;
+            switch (value) {
+                case 2:
+                    $selector.toggleClass("noborder", true).toggleClass("noborderPrint", false);
+                    break;
+                case 1:
+                    $selector.toggleClass("noborder", false).toggleClass("noborderPrint", true);
+                    break;
+                case 3: // always visible
+                    $selector.toggleClass("noborder", false).toggleClass("noborderPrint", false);
+                    break;
+                default: // always visible
+                    $selector.toggleClass("noborder", false).toggleClass("noborderPrint", false); //2022-May-30
+                    break;
+            }
+        }
+
+        function init_style_controls($element) {
+
+            var visibilityLables = ["Always Visible", "Invisible on Print", "Always Invisible"];
+            var $textHideOptions = addRadioGroup($element, "gen-text-border-radio", "Text Borders", visibilityLables);
+            $textHideOptions.on("change", function(e) {
+                var value = parseInt($(e.target).val());
+                var $selector = $(".input_elements").find(TEXT_INPUT_SELECTOR);
+                textBordersVisibleState = value;
+                setNoborderStyle($selector, value);
             });
-            if (legend != null) {
-                $fieldset.append($("<legend>", {
-                    text: legend
+            // set inital value index
+            $textHideOptions.find("input").filter("[value='" + textBordersVisibleState + "']").prop("checked", true).button("refresh");
+
+            var $xboxHideOptions = addRadioGroup($element, "gen-xbox-border-radio", "xBox Borders", visibilityLables);
+            $xboxHideOptions.on("change", function(e) {
+                var value = parseInt($(e.target).val());
+                var $selector = $(".input_elements").find(XBOX_INPUT_SELECTOR);
+                xboxBordersVisibleState = value;
+                setNoborderStyle($selector, value);
+            });
+            // set inital value index
+            $xboxHideOptions.find("input").filter("[value='" + xboxBordersVisibleState + "']").prop("checked", true).button("refresh");
+
+        }
+
+        function init_finalize_controls($element) {
+            var $options_menu = $("<div>", {
+                class: "gen-control-menu"
+            });
+            var $toggleFaxControls = $("<input>", {
+                id: "toggleFaxControls",
+                type: "checkbox",
+                css: {
+                    width: "16px",
+                    height: "16px"
+                },
+                checked: defaultIncludeFaxControl
+            })
+            var $toggleTickler = $("<input>", {
+                id: "setTickler",
+                type: "checkbox",
+                css: {
+                    width: "16px",
+                    height: "16px"
+                },
+				click: function(event) {
+                        html = "<div id='tickle_dialog'>This form will set a tickler for the MRP when faxed or PDF in <input type='number' id='tickler_weeks' size='3' required='required' pattern='^\d*$'  value='5' /> weeks </div>";
+						if ($("#tickle_dialog").length < 1) {
+							$("#BottomButtons").prepend(html);
+						} else {
+							$("#tickle_dialog").remove();
+						}
+                    }
+            })
+
+            $options_menu.append($("<div>").append($("<label>", {
+                text: "Eform Name",
+                for: "eformNameInput"
+            })).append($("<input>", {
+                id: "eformNameInput",
+                type: "text",
+                value: eformName,
+				css: {
+                    width: "160px",
+                    height: "16px"
+                },
+                change: function(event, ui) {
+                    eformName = $(this).val();
+                }
+            })));
+            $options_menu.append($("<div>").append($("<label>", {
+                text: "Include Fax Controls",
+                for: "toggleFaxControls"
+            })).append($toggleFaxControls));
+
+            $options_menu.append($("<div>").append($("<label>", {
+                text: "Default Fax No",
+                for: "defaultFaxNo"
+            })).append($("<input>", {
+                id: "defaultFaxNo",
+                type: "text",
+				css: {
+                    width: "160px",
+                    height: "16px"
+                },
+                title: "555-555-5555",
+                change: function(event, ui) {
+                    defaultFaxNo = $(this).val();
+                }
+            })));
+            $options_menu.append($("<div>").append($("<label>", {
+                text: "Include Set Tickler",
+                for: "setTickler"
+            })).append($toggleTickler));
+
+            $options_menu.append($("<div>").append($("<label>", {
+                text: "Stand alone testing",
+                for: "standAlone"
+            })).append($("<input>", {
+                id: "standAlone",
+                type: "checkbox"
+            })));
+
+            $element.append($options_menu);
+
+            $element.append($('<button>', {
+                    id: "showSource",
+                    text: "View Eform Source",
+                    click: function(event) {
+                        showSource($toggleFaxControls.is(':checked'));
+                        event.preventDefault();
+                    }
+                }).button({
+                    icon: "ui-icon-newwin"
+                }))
+                .append($('<button>', {
+                    id: "downloadSource",
+                    text: "Download As File",
+                    click: function(event) {
+                        downloadSource($toggleFaxControls.is(':checked'));
+                        event.preventDefault();
+                    }
+                }).button({
+                    icon: "ui-icon-document"
+                }))
+                .append($('<button>', {
+                    id: "printPreview",
+                    text: "Print A Preview",
+                    click: function(event) {
+                        onEformPrint();
+                        event.preventDefault();
+                    }
+                }).button({
+                    icon: "ui-icon-print"
+                }));
+
+            // button for saving directly to oscar eforms
+            if (!runStandaloneVersion) {
+                $element.append($('<button>', {
+                    id: "saveToOscarButton",
+                    text: OSCAR_SAVE_MESSAGE_NEW,
+                    click: function(event) {
+                        saveToOscarEforms($toggleFaxControls.is(':checked'));
+                        event.preventDefault();
+                    }
+                }).button({
+                    icon: "ui-icon-disk"
                 }));
             }
-            return $fieldset;
         }
-        /** set up radio control group, allowing for multiple
-         * options with only one selected at a time */
-        function addRadioGroup($rootElement, baseId, legendName, optionNames) {
-            var $fieldset = createFieldset(baseId, legendName);
-            var opts = [];
 
-            for (var i = 0; i < optionNames.length; i++) {
-                var id = "#" + baseId + "-" + i;
-                var $label = $("<label>", {
-                    for: id,
-                    text: optionNames[i]
-                });
-                var $input = $("<input>", {
-                    id: id,
-                    type: 'radio',
-                    name: baseId + '-radio',
-                    value: i
-                });
-                $fieldset.append($label).append($input);
-                opts.push($input);
-            }
-            $rootElement.append($fieldset);
-            $(opts).checkboxradio({
-                icon: false
-            });
-            $fieldset.controlgroup();
-
-            return $fieldset;
-        }
-        /** create a confirmation dialogue box element
-         *  call jquery dialog constructor on the returned div element selector */
-        function createConfirmationDialogueElements(title, message) {
-            return $("<div>", {
-                title: title,
-                class: "gen-alert"
+        function addSnapGuidesTo($element) {
+            var $vertSnapBox = $("<div>", {
+                class: "gen-snapGuide",
+                height: "100%"
+            }).append($("<div>", {
+                class: "gen-snapLine vertical"
             }).append($("<p>", {
-                text: message
+                class: "handle" //ruler
+            }).disableSelection())).appendTo($element);
+            var $horzSnapBox = $("<div>", {
+                class: "gen-snapGuide",
+                width: "100%"
+            }).append($("<div>", {
+                class: "gen-snapLine horizontal"
+            }).append($("<p>", {
+                class: "handle" //ruler
+            }).disableSelection())).appendTo($element);
+            $vertSnapBox.draggable({
+                containment: $element,
+                handle: "p"
+            });
+            $horzSnapBox.draggable({
+                containment: $element,
+                handle: "p"
+            });
+            $vertSnapBox.toggle(defaultEnableSnapGuides);
+            $horzSnapBox.toggle(defaultEnableSnapGuides);
+        }
+        /** create and return html for a new eform page */
+        function createNewPageDiv() {
+            return $("<div>", {
+                id: getUniqueId(basePageName),
+                class: "page_container",
+                css: {
+                    width: eFormPageWidth,
+                    height: eFormPageHeight
+                }
+            }).append($("<div>", {
+                class: "input_elements"
             }));
         }
+        /** add a new page to the eform */
+        function createNewPage() {
+            var $newpage = createNewPageDiv();
+            //TODO better way of appending pages to the form (that won't rely on BottomButtons placement)
+            $newpage.insertBefore($("#BottomButtons"));
 
-
-		function cleanOscarTags(data) {
-			const regex = /oscarDB=([a-z_]+)/gi;
-			const replaceStr = 'oscarDB="$1"';
-			data = data.replace(regex, replaceStr);
-			return data;
-		}
-		function loadPages($div) {
-			//iterate through possible pages of Forengi code
-			var pageNo = 1;
-			var toReturn = "";
-			var aPage;
-			while (typeof($div.find('#page'+pageNo).html()) != "undefined") {
-				aPage = $div.find('#page'+pageNo).html();
-				aPage = "<div id='page_"+pageNo+"' class='page_container ui-droppable' style='width: 800px; height: 1000px;'>"+aPage+"</div>";
-				toReturn += aPage;
-				pageNo++
-			}
-			return toReturn;
-		}
-
-        function loadEformData(data) {
-
-            // remove oscar image paths in incoming data
-            data = removeOscarImagePath(data);
-
-			//use regex to sanitize foreign imported oscarDb tags
-			data = cleanOscarTags(data);
-
-			// import the default fax number if present
-			const regex = /name="fax_no"\svalue="([\d-]*)"/
-			if (regex.test(data)) {
-				var matches = data.match(regex);
-				defaultFaxNo = matches[1];
-				$("#defaultFaxNo").val(defaultFaxNo);
-			}
-			const regex2 = /tickler_send_to/
-			if (regex2.test(data)) {
-				$("#setTickler").click();
-			}
-
-            // import the eform name
-            eformName = $($.parseHTML(data)).filter('title').text();
-            $("#eformNameInput").val(eformName);
-
-            var $div = $(data);
-			var imported_form = $div.find("#inputForm").html();
-			//May-01-2024 Peter Hutten-Czapski
-            var ferengi = false;
-            if (typeof(imported_form)=="undefined")  {
-                ferengi = true;
-				imported_form = loadPages($div);
-            }
-
-            var $inputForm = $("#inputForm");
-            $inputForm.html(imported_form);
-
-			//May-01-2024 Peter Hutten-Czapski
-            if (ferengi) {
-
-				// import the default fax number if present
-				const regex = /"otherFaxInput"\)\.value="([\d-]*)"/
-				if (regex.test(data)) {
-					var matches = data.match(regex);
-					defaultFaxNo = matches[1];
-				}
-
-                $("[id^='BGImage']").addClass("gen-layer1");
-				$("[id^='BGImage']").attr( "alt", "background" );
-				$("[id^='BGImage']").addClass( "gen-layer1" );
-
-
-				$("#BottomButtons").remove();
-				var pageNo = 1;
-				var scaleX = 1;
-				var scaleY = 1;
-				while ($("#page_"+pageNo).length > 0) {
-					var imgWidth = $("#BGImage"+pageNo).css('width');
-					if ( imgWidth && imgWidth.length > 3) {
-						imgWidth = imgWidth.substring(0, imgWidth.length - 2)*1;
-						scaleX = (eFormPageWidthPortrait/imgWidth) * 0.972;// PHC Fudge
-						scaleY = scaleX *.995; //PHC Fudge
-						console.log("Page "+pageNo+" has scaleX of "+scaleX+" and scaleY of "+scaleY);
-					}
-console.log("Page "+pageNo+" has width of "+imgWidth+" which means scaleX of "+scaleX+" and scaleY of "+scaleY+" "+ $('#BGImage'+pageNo).prop('outerHTML'));
-					var imgHeight = $("#BGImage"+pageNo).css('height');
-					if ( imgHeight && imgHeight.length > 3) {
-						imgHeight = imgHeight.substring(0, imgHeight.length - 2)*1;
-						//scaleY = eFormPageHeightPortrait/imgHeight;
-					}
-
-					ii = $("#BGImage"+pageNo).detach();
-					$("#page_"+pageNo).wrapInner("<div class='input_elements'>");
-					$("#page_"+pageNo).prepend(ii);
-					pageNo++
-				}
-				$("[id^='BGImage']").prop( "style", "width: auto; height: 100%; z-index: 0;" );
-				hh = $(':input[type=hidden]').detach();
-				pageNo = pageNo -1;
-				bb = '<div id="BottomButtons" class="DoNotPrint">\n';
-				bb += '\t<label for="subject">Subject:</label>\n\t<input id="subject" name="subject" style="width: 220px;" type="text">\n';
-				bb += '\t<input id="SubmitButton" name="SubmitButton" onclick="onEformSubmit();" type="button" value="Submit">\n';
-				bb += '\t<input id="PrintButton" name="PrintButton" onclick="onEformPrint()" type="button" value="Print">\n';
-				bb += '\t<input id="PrintSubmitButton" name="PrintSubmitButton" onclick="onEformPrintSubmit();" type="button" value="Print &amp; Submit">\n';
-				bb += '</div>\n';
-				$("#page_"+pageNo).parent().append(bb).append(hh); // get the hidden inputs out from the input_elements !important
-				var i=1;
-				$inputForm.find('input, textarea, #Stamp').not(':input[type=button], :input[type=submit], :input[type=reset], :input[type=hidden], #subject').each(function() {
-					$(this).attr("placeholder", $(this).attr("oscarDB"));
-					var wrapStyle = $(this).attr("style");
-					var wrapClass = "";
-					$(this).addClass("gen_input");
-					if ($(this).hasClass("Xbox")) {
-						$(this).addClass("xBox");
-						$(this).removeClass("Xbox");
-						wrapClass = "gen-xBox ";
-						wrapStyle += " width: 14px; height: 14px;"
-					}
-					if ($(this).hasClass("Radio")) {
-						var names = $(this).attr('class').split(/\s+/);
-						j=0
-						while (j < names.length) {
-							var name = names[j];
-							if (name.indexOf('only-one-') === 0) {
-								found = name.split('only-one-');
-								if (found[1] != "radio"  && found[1] != "") {
-									$(this).addClass("only-one-radio#"+found[1]);
-									$(this).removeClass(name);
-								}
-							}
-							++j;
-						}
-						$(this).addClass("cradio");
-						$(this).removeClass("Radio");
-						$(this).attr("autocomplete", "off");
-						$(this).attr("onclick", "myupdate(this)");
-						var wrap_top = $(this).css("top");
-						var wrap_left = $(this).css("left");
-						wrapClass = "only-one-radio ";
-						wrapStyle = " width: 14px; height: 14px; position: absolute; z-index: 10; top: "+wrap_top+"; left: "+wrap_left+";"
-
-					}
-					if ($(this).hasClass("noborder")) {
-						$(this).addClass("TextBox noborderPrint");
-						$(this).removeClass("noborder");
-					}
-					if ($(this).is('#Stamp')){
-						$(this).attr("src", "BNK.png");
-						$(this).attr("onclick", "toggleMe(this);");
-						$(this).attr("alt", "stamp");
-						var wrap_width= $(this).attr("width");
-						$(this).removeAttr("width");
-						$(this).removeAttr("id");
-						var wrap_height= $(this).attr("height");
-						$(this).removeAttr("height");
-						$(this).removeClass();
-						$(this).addClass("stamp");
-						$(this).attr("style", "width: 100%; height: 100%;");
-						var wrap_top = $(this).parent().css("top");
-						var wrap_left = $(this).parent().css("left");
-						$(this).unwrap();
-						wrapClass = "signatureStamp ";
-						wrapStyle = "width: "+wrap_width+"px; height: "+wrap_height+"px; position: absolute; z-index: 10; top: "+wrap_top+"; left: "+wrap_left+";"
-						$(this).wrap('<div id="gen_widgetIdF'+i+'" class="gen-widget signatureStamp gen-layer3 gen-resize-destroyed gen-draggable-destroyed">');
-						$("#signatureDisplay").remove();
-					} else {
-						$(this).removeAttr("style");
-						$(this).wrap('<div id="gen_widgetIdF'+i+'" class="gen-widget '+wrapClass+'gen-layer3 gen-resize-destroyed gen-draggable-destroyed" title="Click to drag. DoubleClick to activate" ondblclick="mydclick2(this)">');
-					}
-
-					$("#gen_widgetIdF"+i).attr("style",wrapStyle);
-
-					// rescale widget locations
-					widgetLeft = $("#gen_widgetIdF"+i).css("left").substring(0, $("#gen_widgetIdF"+i).css("left").length - 2);
-					$("#gen_widgetIdF"+i).css("left", Math.round(widgetLeft*scaleX)+"px");
-					widgetTop = $("#gen_widgetIdF"+i).css("top").substring(0, $("#gen_widgetIdF"+i).css("top").length - 2);
-					$("#gen_widgetIdF"+i).css("top", Math.round(widgetTop*scaleY)+"px");
-
-					i++;
-
-				});
-				console.log(i + " input elements transformed from a "+pageNo+" page Ferengi eform with scaling of "+scaleX+", "+scaleY);
-            }
-
-			//console.log($inputForm.html());
-			$('#defaultFaxNo').val(defaultFaxNo);
-			// extract the form with id of inputForm from the imported form
-            var imported_form = $div.find("#inputForm").html();
-			//var imported_form = $div.find("#formName").html();//May-01-2024
-
-            var $inputForm = $("#inputForm");
-            $inputForm.html(imported_form);
-
-            // TODO -- combine with generic makeDraggables and addNewPage
-            var $input_elements = $(".input_elements");
-			// however check if this is a foreign conversion
-
-            var $pages = $(".page_container");
-            $pages.droppable({
+            $newpage.droppable({
                 accept: ".gen-layer2, .gen-layer3",
                 drop: function(event, ui) {
                     dropOnForm(ui, $(this).find(".input_elements"));
                 }
             });
-            $("#pagesControlGroup").find(".page_control_item").remove();
-            $pages.each(function() { //add the grid to loaded pages
-                $("#pagesControlGroup").append(createPageControlDiv($(this)));
-                addSnapGuidesTo($(this));
-            });
-            $pages.find(XBOX_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(CHEK_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(TEXT_INPUT_SELECTOR).parent().append(createInputOverrideDiv());
-            $pages.find(".signature_data").parent().append(createInputOverrideDiv());
-            $pages.find(".signaturePad").each(function() {
-                makeSignatureCanvas($(this));
-            });
-
-            setNoborderStyle($pages.find(XBOX_INPUT_SELECTOR), xboxBordersVisibleState);
-            setNoborderStyle($pages.find(TEXT_INPUT_SELECTOR), textBordersVisibleState);
-
-            undestroy_gen_widgets($input_elements);
-            //dragAndDropEnable(false);  //lets have it true May-01-2024
-
-            var pageW = eFormPageWidth;
-            var pageH = eFormPageHeight;
-            $pages.each(function() {
-                pageW = $(this).width();
-                pageH = $(this).height();
-            });
-            $("#gen-setPageWidth").val(pageW);
-            $("#gen-setPageHeight").val(pageH);
-            //console.info(pageW, pageH);
-            var index = 2;
-            if (pageW === eFormPageWidthPortrait && pageH === eFormPageHeightPortrait) {
-                index = 0;
-            } else if (pageW === eFormPageWidthLandscape && pageH === eFormPageHeightLandscape) {
-                index = 1;
-            }
-            setPageOrientation(index);
-            return true;
+            addSnapGuidesTo($newpage);
+            return $newpage;
         }
 
-        function init_form_load($element) {
-
-            if (!runStandaloneVersion) {
-                $.ajax({
-                    // populate the eform list from the server
-                    type: "GET",
-                    url: OSCAR_EFORM_SEARCH_URL,
-                    dataType: 'json',
-                    async: true,
-                    success: function(data) {
-
-                        var status = data.status;
-                        if (status === "SUCCESS") {
-                            var options = [""];
-                            var values = [0];
-                            var selectedId = 0;
-                            for (var i = 0; i < data.body.length; i++) {
-                                options.push(data.body[i].formName);
-                                values.push(data.body[i].id);
-                            }
-
-                            var $root = $("<div>", {
-                                class: "page_control_item"
-                            }).appendTo($element);
-                            var $eFormSelect = addSelectMenu($root, "eFormSelect", "Select EForm", options, values);
-                            $eFormSelect.selectmenu();
-                            var $loadButton = $("<button>", {
-                                text: "Load Selected EForm"
-                            }).button().click(function(event) {
-                                if (selectedId > 0) {
-                                    // load the selected eform from the html by id
-                                    $.ajax({
-                                        type: "GET",
-                                        url: OSCAR_EFORM_ENTITY_URL + selectedId,
-                                        dataType: 'json',
-                                        async: true,
-                                        success: function(data) {
-                                            var status = data.status;
-                                            if (status === "SUCCESS") {
-                                                // setup the generator with the existing eform data
-                                                loadEformData(data.body.formHtml);
-                                                setEformId(data.body.id);
-                                                console.info("EForm Loaded from Server");
-                                            } else {
-                                                alert(data.error);
-                                            }
-                                        }
-                                    });
-                                }
-                                event.preventDefault();
-                            }).appendTo($root);
-
-                            $eFormSelect.on("selectmenuchange", (function(event, data) {
-                                selectedId = data.item.value;
-                            }));
-                        }
-                    },
-                    failure: function(data) {
-                        console.error(data);
-                    }
-                });
+        function dragAndDropEnable(enable) {
+            if (enable) {
+                $('.gen-draggable').draggable("enable");
+                $('.inputOverride').attr("disabled", false);
             } else {
-                $element.append($("<input>", {
-                        type: "file",
-                        accept: ".html"
-                    })
-                    .change(function() {
-                        if (this.files && this.files[0]) {
-                            var reader = new FileReader();
-                            reader.onload = function(e) {
-                                $.get(e.target.result, function(data) {
-                                    loadEformData(data);
-                                    console.info("EForm Loaded from File.");
-                                })
-                            };
-                            reader.readAsDataURL(this.files[0]);
-                        }
-                    })
-                ).append($("<div>").append(
-                    $("<label>").text("Note: any custom scripts or styles in the loaded form will not be preserved")
-                ));
+                $('.gen-draggable').draggable("disable");
+                $('.inputOverride').attr("disabled", true);
+                //make xBoxes work in generator (have to unbind and rebind click events)
+                var $input_elements = $(".input_elements");
+                $input_elements.find(".xBox").unbind("click");
+                initXBoxes($input_elements);
+            }
+            dragAndDropEnabled = enable;
+        }
+
+        function onKeyUp(e) {
+
+            if (!e.altKey) {
+                $('.gen-resizable').resizable("disable");
+            }
+            if (!e.shiftKey) {
+                enableElementHighlights = false;
             }
         }
 
-        function addBackgroundImage($parentElement, srcString) {
-            var id = getUniqueId(baseBackImageName);
-            var $img = $("<img>", {
-				alt: "background",
-                id: id,
-                class: "gen-layer1"
-            }).prependTo($parentElement);
-            if (srcString) {
-                $img.attr('src', encodeURI(srcString)); //escape spaces etc in the filename
+        function onKeyDown(e) {
+            if (e.altKey) {
+                $('.gen-resizable').resizable("enable");
+                e.preventDefault();
             }
-            return $img;
+            if (e.shiftKey && !e.altKey) {
+                enableElementHighlights = true;
+            }
+
+            if (e.ctrlKey && e.which == 67) { //Ctrl C
+                var $widget;
+                if ($mouseTargetElement.hasClass("gen-widget")) {
+                    $widget = $mouseTargetElement;
+                } else {
+                    $widget = $mouseTargetElement.parent(".gen-widget");
+                }
+                if ($globalSelectedElement) {
+                    $globalSelectedElement.removeClass("selectedHighlight");
+                }
+                if ($widget.length > 0) {
+                    $globalSelectedElement = $widget;
+                    $globalSelectedElement.addClass("selectedHighlight");
+                } else {
+                    $globalSelectedElement = null;
+                }
+            } else if (dragAndDropEnabled && $globalSelectedElement && $mouseTargetElement && e.ctrlKey && e.which == 86) { //Ctrl V
+                // paste an element to the closest input_elements div to mouse target
+                var $appendTo;
+                if ($mouseTargetElement.hasClass("input_elements")) {
+                    $appendTo = $mouseTargetElement;
+                } else {
+                    $appendTo = $mouseTargetElement.parents(".input_elements");
+                }
+                if ($appendTo.length > 0) {
+                    var relativeXPosition =  Math.round((currentMousePos.x - $appendTo.offset().left)); //2024-May-01
+                    var relativeYPosition = Math.round((currentMousePos.y - $appendTo.offset().top)); //2024-May-01
+                    var pos = {
+                        top: relativeYPosition,
+                        left: relativeXPosition,
+                        position: "absolute"
+                    };
+
+                    var $clone = cloneWidgetAt($appendTo, pos, $globalSelectedElement);
+                    $clone.removeClass("selectedHighlight");
+                }
+            }
+            if ($mouseTargetElement && e.which == 46) { //DEL key
+                var $toDelete;
+                if ($mouseTargetElement.hasClass("gen-widget")) {
+                    $toDelete = $mouseTargetElement;
+                } else if ($mouseTargetElement.parents(".gen-widget").length > 0) {
+                    $toDelete = $mouseTargetElement.parents(".gen-widget");
+                }
+                if ($toDelete) {
+                    if ($globalSelectedElement && ($toDelete.is($globalSelectedElement) ||
+                            $.contains($toDelete.get(0), $globalSelectedElement.get(0)))) {
+                        $globalSelectedElement.removeClass("selectedHighlight");
+                        $globalSelectedElement = null;
+                    }
+                    $toDelete.remove();
+                    $mouseTargetElement = null;
+                }
+            }
         }
 
-        function createPageControlDiv($pageDiv) {
+        function onContainerMouseMove(e) {
 
-            var $img = $pageDiv.children("img");
-            var $root = $("<div>", {
-                class: "page_control_item"
-            });
-
-            var $fileSelector;
-
-            if (runStandaloneVersion) {
-                $fileSelector = $("<input>", {
-                    type: "file",
-                    accept: ".png"
-                }).change(function() {
-                    if (this.files && this.files[0]) {
-                        var reader = new FileReader();
-                        var $fileInput = $(this);
-                        reader.onload = function(e) {
-                            var src = $fileInput.val().replace(/C:\\fakepath\\/i, '');
-                            if ($img == null || $img.length <= 0) {
-                                $img = addBackgroundImage($pageDiv, src);
-                            } else {
-                                $img.attr('src', src);
-                            }
-                            $img.on('load', function() {
-                                var css;
-                                var ratio = $(this).width() / $(this).height();
-                                var pratio = (eFormPageWidth / eFormPageHeight);
-                                if (ratio < pratio) css = {
-                                    width: 'auto',
-                                    height: '100%'
-                                };
-                                else css = {
-                                    width: '100%',
-                                    height: 'auto'
-                                };
-                                $(this).css(css);
-                            });
-                        };
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
+            var elem = e.target || null;
+            if ($mouseTargetElement != null) {
+                $mouseTargetElement.removeClass("divHighlight");
             }
-
-            var $clearButton = $("<button>", {
-                text: "Clear"
-            }).button().click(function(event) {
-                if ($img != null) {
-                    $img.remove();
-                    $img = null;
+            if (elem != null) {
+                $mouseTargetElement = $(elem);
+                if (enableElementHighlights) {
+                    $mouseTargetElement.addClass("divHighlight");
                 }
-                event.preventDefault();
+            }
+        }
+
+        function init() {
+            /* browser check */
+            if (!(inFirefox || inChrome)) {
+                $("#main_container").html("This page only works when loaded in Mozilla Firefox or Google Chrome.");
+                return false;
+            }
+            signaturePadLoaded = (typeof SignaturePad !== 'undefined');
+            console.info("signature loaded: " + signaturePadLoaded);
+
+            /* set up element positioning */
+            var $eform_container = $("#eform_container");
+            $("#eform_view_wrapper").resizable({
+                handles: "e",
+                minWidth: eFormViewMinWidth,
+                maxWidth: eFormPageWidthLandscape + 25
             });
 
-            var $removePageButton = $("<button>", {
-                text: "Remove Page"
-            }).button({
-                icon: "ui-icon-circle-minus",
-                showLabel: false
-            }).click(function(event) {
-                var $confirm = createConfirmationDialogueElements(CONFIRM_PAGE_REMOVE_TITLE, CONFIRM_PAGE_REMOVE_MESSAGE);
-                $confirm.dialog({
-                    resizable: false,
-                    height: "auto",
-                    width: 400,
-                    modal: true,
-                    buttons: {
-                        "Delete": function() {
-                            $pageDiv.remove();
-                            $root.remove();
-                            $(this).dialog("close");
-                        },
-                        "Cancel": function() {
-                            $(this).dialog("close");
-                        }
-                    },
-                    close: function() {
-                        $(this).remove();
-                    }
+            var $page1 = createNewPage();
+            //add_background_image($image_frame);
+            init_form_load($('#control_menu_1-load'));
+            var $pageControl = init_setup_controls($('#control_menu_1-page_setup'));
+            $pageControl.append(createPageControlDiv($page1));
+            init_input_controls($('#control_menu_1-placement'));
+            init_style_controls($('#control_menu_1-stylize'));
+            init_finalize_controls($('#control_menu_1-finalize'));
+            //init_control_info_bar($('#control'), $eform_container);
+
+            $("#control_menu_1").accordion({
+                heightStyle: "content",
+                collapsible: true,
+                active: defaultMenuOpenIndex,
+                activate: function(event, ui) {
+                    dragAndDropEnable(ui.newPanel.hasClass("gen-allow_drag"));
+                }
+            });
+
+            $(document).keydown(onKeyDown);
+            $(document).keyup(onKeyUp);
+
+            /* In the generator we don't want to print/submit like a normal e-form
+             * so we override the functions here to disable/change their actions within the e-form generator! */
+            onEformSubmit = function() {
+                custom_alert('This would submit the eform');
+                return false;
+            };
+            onEformPrint = function() {
+                write_values_to_html();
+                var divToPrint = document.getElementById('eform_container');
+                var style1 = document.getElementById('eform_style').innerHTML;
+                var style2 = document.getElementById('eform_style_shapes').innerHTML;
+                var style3 = document.getElementById('eform_style_signature').innerHTML;
+                var newWin = window.open('', 'Print-Window');
+                newWin.document.open();
+                var htmlPrint = '<html><head><title>' + eformName + '</title><style>' + style1 + style2 + style3 +
+                    '</style></head><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>';
+                newWin.document.write(htmlPrint);
+                newWin.document.close();
+                var timeout = 1;
+                if (inFirefox) {
+                    timeout = 1000;
+                }
+                newWin.setTimeout(function() {
+                    newWin.close();
+                }, timeout);
+            };
+            onEformPrintSubmit = function() {
+                onEformPrint();
+                custom_alert('This would submit the eform');
+                return false;
+            };
+            $eform_container.mousemove(onContainerMouseMove);
+            $(document).mousemove(function(event) {
+                currentMousePos.x = event.pageX;
+                currentMousePos.y = event.pageY;
+            });
+        }
+    </script>
+
+    <script id="link_script" class="toSource">
+
+        /** This function is called on mouseover for linked xboxes and show them as yellow */
+        function LinkXBoxfunctionMouseover(e) {
+            var res = "LinkedTo-" + e.id + "-"
+            var x = '[title*="' + res + '"]'
+            var valAll = document.querySelectorAll(x)
+
+            for (i = 0; i < valAll.length; i++) {
+                $(valAll[i]).css('background-color', 'yellow')
+            }
+        }
+
+        /** This function is called on mouseout for linked xboxes to remove the background */
+        function LinkXBoxfunctionMouseout(e) {
+            var res = "LinkedTo-" + e.id + "-"
+            var x = '[title*="' + res + '"]'
+            var valAll = document.querySelectorAll(x)
+
+            for (i = 0; i < valAll.length; i++) {
+                $(valAll[i]).css('background-color', '')
+            }
+        }
+    </script>
+
+    <script id="signature_script" class="toSource">
+        /** this function is run on page load to make signature pads work. */
+        $(function() {
+            $(".signaturePad").each(function() {
+                var $this = $(this);
+                var $canvasFrame = $this.children(".canvas_frame");
+                var $clearBtn = $this.children(".clearBtn");
+                var canvas = $canvasFrame.children("canvas").get(0);
+                var $data = $canvasFrame.children(".signature_data");
+                var src = $data.val();
+                // the image is needed even when signature pads are loaded for printing/faxing
+                var $img = $("<img>", {
+                    src: src,
+					alt: "signature",
+                    class: "signature_image"
                 });
-                event.preventDefault();
-            });
-
-            $root.append($removePageButton).append($clearButton)
-            if (!runStandaloneVersion) {
-
-                var options = [""];
-                for (var i = 0; i < eFormImageList.length; i++) {
-                    options.push(eFormImageList[i]);
+                if (src && src.length > 0) {
+                    $img.appendTo($canvasFrame);
                 }
 
-                $fileSelector = addSelectMenu($root, "imageSelect", "Select Background Image", options);
-                $fileSelector.selectmenu();
-
-                $fileSelector.on("selectmenuchange", (function(event, data) {
-                    var src = OSCAR_DISPLAY_IMG_SRC + $fileSelector.val();
-                    if ($fileSelector.val().length < 1) {
-                        return;
-                    }
-                    if ($img == null || $img.length <= 0) {
-                        $img = addBackgroundImage($pageDiv, src);
-                    } else {
-                        $img.attr('src', src);
-                    }
-                    $img.on('load', function() {
-                        var css;
-                        var ratio = $(this).width() / $(this).height();
-                        var pratio = (eFormPageWidth / eFormPageHeight);
-                        if (ratio < pratio) css = {
-                            width: 'auto',
-                            height: '100%'
-                        };
-                        else css = {
-                            width: '100%',
-                            height: 'auto'
-                        };
-                        $(this).css(css);
+                // if signature pad loaded correctly and eform viewed on screen
+                /* NOTE: media type does not currently work in wkhtmltopdf
+                 See https://github.com/wkhtmltopdf/wkhtmltopdf/issues/1737 */
+                if (typeof SignaturePad !== 'undefined' && window.matchMedia("screen").matches) {
+                    console.info("editable signature pad initializing ");
+                    $img.hide();
+                    var updateSlaveSignature = function(src_canvas, dest_canvas) {
+                        // write to the destination with image scaling
+                        var dest_context = dest_canvas.getContext("2d");
+                        dest_context.clearRect(0, 0, dest_canvas.width, dest_canvas.height);
+                        dest_context.drawImage(src_canvas, 0, 0, dest_canvas.width, dest_canvas.height);
+                    };
+                    // initialize the signature pad
+                    var signPad = new SignaturePad(canvas, {
+                        minWidth: 1,
+                        maxWidth: 2,
+                        onEnd: function() {
+                            $this.trigger("signatureChange");
+                        }
                     });
-
-                }));
-            } else {
-                $root.append($fileSelector);
-            }
-            return $root;
-        }
-
-        function setPageDimensions(newWidth, newHeight) {
-            eFormPageWidth = newWidth;
-            eFormPageHeight = newHeight;
-            $(".page_container").css({
-                width: eFormPageWidth,
-                height: eFormPageHeight
-            });
-            $("#eform_container").css({
-                'max-width': eFormPageWidth + 'px'
-            });
-
-            var $wrapper = $("#eform_view_wrapper");
-            var maxWidth = eFormPageWidth + eFormViewPadding;
-            //console.info(eFormPageWidth, eFormViewPadding, maxWidth);
-            $wrapper.resizable("option", "maxWidth", maxWidth);
-            if ($wrapper.width() > maxWidth) {
-                $wrapper.width(maxWidth);
-            }
-        }
-
-        function setEformId(id) {
-            var asInt = parseInt(id);
-            var $saveBtn = $("#saveToOscarButton")
-            if (Number.isInteger(asInt) && asInt > 0) {
-                eFormFid = asInt;
-                $saveBtn.button('option', 'label', OSCAR_SAVE_MESSAGE_UPDATE);
-            } else {
-                eFormFid = 0;
-                $saveBtn.button('option', 'label', OSCAR_SAVE_MESSAGE_NEW);
-            }
-        }
-
-        function setPageOrientation(newIndex) {
-
-            var $custWidth = $("#gen-setPageWidth");
-            var $custHeight = $("#gen-setPageHeight");
-            var $defaultShow = $("#gen-orientationLabel");
-
-            switch (newIndex) {
-                case 2: {
-                    $custWidth.parent().show();
-                    $custHeight.parent().show();
-                    $defaultShow.hide();
-                    setPageDimensions(parseInt($custWidth.val(), 10), parseInt($custHeight.val()), 10);
-                    orientationIndex = 2;
-                    break;
-                }
-                case 1: {
-                    $custWidth.parent().hide();
-                    $custHeight.parent().hide();
-                    $defaultShow.show();
-                    setPageDimensions(eFormPageWidthLandscape, eFormPageHeightLandscape);
-                    orientationIndex = 1;
-                    break;
-                }
-                default: {
-                    $custWidth.parent().hide();
-                    $custHeight.parent().hide();
-                    $defaultShow.show();
-                    setPageDimensions(eFormPageWidthPortrait, eFormPageHeightPortrait);
-                    orientationIndex = 0;
-                    break;
-                }
-            }
-            $("#gen-orientation").find("input").filter("[value='" + orientationIndex + "']").prop("checked", true).button("refresh");
-            $("#gen-orientation").find("input").checkboxradio("refresh");
-        }
-
-        function init_setup_controls($element) {
-
-            if (!runStandaloneVersion) {
-                $.ajax({
-                    type: "GET",
-                    url: OSCAR_EFORM_SEARCH_URL + 'images',
-                    dataType: 'json',
-                    async: false,
-                    success: function(data) {
-                        var status = data.status;
-                        if (status === "SUCCESS") {
-                            eFormImageList = data.body;
-//alert(data.body) //2021-May-08
+                    // load the image data to the canvas ofter initialization
+                    if (src != null && src != "") {
+                        signPad.fromDataURL(src);
+                    }
+                    // define a custom update trigger action. this allows the eform to store the signature.
+                    $this.on("signatureChange", function() {
+                        $data.val(signPad.toDataURL());
+                        $img.prop('src', signPad.toDataURL());
+                        if ($this.attr('slaveSigPad')) {
+                            var $slavePad = $("#" + $this.attr('slaveSigPad')); // get slave pad by id
+                            updateSlaveSignature(canvas, $slavePad.find("canvas").get(0));
+                            $slavePad.trigger("signatureChange"); // be careful of infinite loops
                         }
-                    },
-                    failure: function(data) {
-                        console.error(data);
-                    }
-                });
-            }
-
-
-            var $pagesControlgroup = createFieldset("pagesControlGroup", "Pages");
-            var $addPageButtonControlGroup = createFieldset("addPagesControlGroup", null);
-            var $addPageButton = $("<button>", {
-                text: "Add Page"
-            }).button({
-                icon: "ui-icon-circle-plus"
-                //showLabel: false
-            }).click(function(event) {
-                var $newPage = createNewPage();
-                $pagesControlgroup.append(createPageControlDiv($newPage));
-                event.preventDefault();
+                        return false;
+                    });
+                    // init the clear button
+                    $clearBtn.on('click', function() {
+                        signPad.clear();
+                        $this.trigger("signatureChange");
+                        return false;
+                    });
+                }
+                // not using the canvas, show signature as an image instead.
+                else {
+                    console.info("static signature pad initializing");
+                    $img.show();
+                }
             });
+        });
+    </script>
 
-            var $custDimensionX = $("<div>").append($("<label>", {
-                text: "Width:",
-                for: "gen-setPageWidth"
-            })).append($("<input>", {
-                id: "gen-setPageWidth",
-                type: "text",
-                value: eFormPageWidth
-            }));
-            var $custDimensionY = $("<div>").append($("<label>", {
-                text: "Height:",
-                for: "gen-setPageHeight"
-            })).append($("<input>", {
-                id: "gen-setPageHeight",
-                type: "text",
-                value: eFormPageHeight
-            }));
-            var $dimensionInputs = $("<div>", {
-                class: "flexH"
-            }).append($custDimensionX).append($custDimensionY);
+	<script id="stamp_script" class="toSource">
+    <!-- functions to support signature stamps -->
 
-            var labels = ["Portrait", "Landscape", "Custom"];
-            var $orinetationRadioGroup = addRadioGroup($element, "gen-orientation", "Orientation", labels);
-            $orinetationRadioGroup.on("change", function(e) {
-                var value = parseInt($(e.target).val());
-                setPageOrientation(value);
-            });
-            $element.append($dimensionInputs);
-            // set inital value index
-            setPageOrientation(orientationIndex);
-
-            $element.append($addPageButtonControlGroup.append($addPageButton));
-            $addPageButtonControlGroup.append($pagesControlgroup);
-            $("<div>").append($("<label>", {
-                id: "gen-orientationLabel",
-                text: "Page Dimensions: " + eFormPageWidthPortrait + "x" + eFormPageHeightPortrait +
-                    " (Landscape: " + eFormPageWidthLandscape + "x" + eFormPageHeightLandscape + ")"
-            })).appendTo($dimensionInputs);
-
-            return $pagesControlgroup;
+        /** this function toggles visibility of the individual stamp. */
+        function toggleMe(el){
+	        if (el.src.indexOf("BNK.png")>-1){
+		        sign(el);
+	        } else {
+		        el.src = "../eform/displayImage.do?imagefile=BNK.png";
+	        }
+        }
+        /** this function stamp by delegation model */
+        function sign(el){
+	        var provNum = '';
+			if (!document.getElementById('user_ohip_no')) { return; }
+	        var userBillingNo = document.getElementById('user_ohip_no').value;
+	        if (parseInt(userBillingNo) > 100) {
+		        // then a valid billing number so use the current user id
+		        provNum = document.getElementById('user_id').value;
+		        if (provNum != document.getElementById('doctor_no').value && !!document.getElementById('doctor')) {
+			        document.getElementById('doctor').value=document.getElementById('CurrentUserName').value + ' CC: ' + document.getElementById('doctor').value;
+		        }
+	        } else {
+		        provNum = document.getElementById('doctor_no').value;
+	        }
+			if ( provNum.length > 0 ) {
+				el.src = '../eform/displayImage.do?imagefile=consult_sig_'+provNum+'.png';
+			}
         }
 
-        /** tab 0 setup */
-
-        function initCheckboxTemplateTab($tab) {
-
-            var $options_menu0 = $("<div>", {
-                class: "gen-control-menu"
+        /** this function initialises each stamp */
+        function signForm(){
+            var els = document.getElementsByClassName( "stamp" );
+            Array.prototype.forEach.call(els, function(el) {
+                sign(el);
             });
-            var $dragFrame0 = createStitchFrame();
-            var $checkBoxTemplate = addDraggableInputType($dragFrame0, "checkBoxTemplate", "checkbox", checkboxSize, checkboxSize, ""); //2020-May-02
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, ""); //Spacer
-            var $rBoxTemplate = addDraggableInputType($dragFrame0, "rBoxTemplate", "text", checkboxSize, checkboxSize, "only-one-radio");
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, "");  //Spacer
-            var $xBoxTemplate = addDraggableInputType($dragFrame0, "xBoxTemplate", "text", checkboxSize, checkboxSize, "gen-xBox");
-            //var $x = addDraggableInputType($dragFrame0, "checkBoxTemplate", "hidden", checkboxSize, checkboxSize, ""); //Spacer
-            var $bBoxTemplate = addDraggableInputType($dragFrame0, "bBoxTemplate", "button", checkboxSize, checkboxSize, "all-no-button1");
+        }
+    </script>
 
-            $xBoxTemplate.attr("title", "click") // 2020-May-17
+    <script id="faxno_script" class="toSource">
 
+        /** this function is run on page load to load a defined fax number. */
+        function setFaxNo(){
+            if (document.getElementById("fax_no")) {
+                if (document.getElementById("fax_no").value.length >1 ) {
+                    setTimeout('document.getElementById("otherFaxInput").value=document.getElementById("fax_no").value;',1000);
+                }
+            }
+        }
+    </script>
 
-            //************************Check box Title Snippet***************************2020-May-14
-            var customTitle = $('<input/>')
-                .attr('type', "input")
-                .attr('name', "boxTitle")
-                .attr('id', "boxTitle")
-                //.attr('value', "boxTitle")
-                .change(function() {
-                    newTitle = $('#boxTitle').val()
-                    //alert(newTitle)
-                    if (newTitle == "") {
-                        //alert("BLANK")
-                        //newTitle = 'xBox'  2020-May-14
-                    }
+	<script id="xbox_script" class="toSource">
 
-                    //$xBoxTemplate.attr('title',newTitle );       //2020-May-12
-                    $xBoxTemplateInput.attr("title", newTitle)
-                    $rBoxTemplateInput.attr("title", newTitle) //2020-May-14
-                });
-
-            var linkTitle = $('<input/>') //2020-May-05
-                .attr('type', "input")
-                .attr('name', "linkTitle")
-                .attr('id', "linkTitle")
-                //.attr('value', "linkTitle")
-                .change(function() {
-                    alert("this changed")
-                });
-
-            customTitle.css("font-size", "12");
-            linkTitle.css("font-size", "12");
-            $xBoxTemplate.after(customTitle);
-			$xBoxTemplate.before('&nbsp;');
-            var $label = $("<label>").text('  Custom Title: ');
-            $label.css("fontSize", 12);
-            $label.attr('id', "theLabel");
-            customTitle.before($label);
-            customTitle.after(linkTitle); //2020-May-05
-            var $label2 = $("<label>").text(' LinkTo:');
-            $label2.css("fontSize", 12);
-            $label2.attr('id', "theLabel2");
-            linkTitle.before($label2);
-
-
-            //************************ Add classes and functions to boxes ************************
-            $xBoxTemplate.attr('ondblclick', 'mydclick2(this)');
-            $xBoxTemplate.attr('title', 'xBox - Click to drag. DoubleClick to activate'); //2020-May-12
-            //$textBoxTemplate.attr('title', 'TextBox - Click to drag. DoubleClick to activate');  //2020-May-12
-            //$checkBoxTemplate.attr('title', 'Pre-check by Gender');
-            $checkBoxTemplate.attr('title', 'Not in use - use pre-check box'); //2020-Sep-23
-            $checkBoxTemplate.hide() //2020-Sep-23
-            $rBoxTemplate.attr('ondblclick', 'mydclick(this)');
-            //$rBoxTemplate.attr('onmouseover', 'mymso(this)' );
-            $rBoxTemplate.attr('title', 'Radio Box - Click to drag. DoubleClick to activate');
-            $bBoxTemplate.attr('ondblclick', 'myextrastep(this)');
-            //$rBoxTemplate.attr('onkeypress','GetKeyCode(event.keyCode)')
-            $bBoxTemplate.removeClass("gen-widget")
-            //$bBoxTemplate.removeClass("cradio")
-            $bBoxTemplate.addClass("DoNotPrint")
-            $bBoxTemplate.attr('title', 'Click on WHITE FRAME to drag. DoubleClick to activate');
-            //$bBoxTemplate.attr('id', 'gen_buttonWidget' )
-
-            //***************************************************************
-            var $checkBoxTemplateInput = $checkBoxTemplate.find(":input");
-            var $xBoxTemplateInput = $xBoxTemplate.find(":input");
-            var $rBoxTemplateInput = $rBoxTemplate.find(":input");
-            var $bBoxTemplateInput = $bBoxTemplate.find(":input");
-            $xBoxTemplateInput.attr("title", "click") // 2020-May-17
-            $checkBoxTemplateInput.addClass("GenderBox") //2020-May-14
-            $xBoxTemplateInput.addClass("xBox").attr('autocomplete', 'off');
-            $rBoxTemplateInput.addClass("only-one-radio").attr('autocomplete', 'off');
-            //$rBoxTemplateInput.addClass("cradio").attr('autocomplete', 'off');
-            $rBoxTemplateInput.addClass("cradio").attr('onclick', 'myupdate(this)'); //newwork
-
-            $bBoxTemplateInput.addClass("all-no-button2").attr('value', 'All No');
-			$bBoxTemplateInput.attr('onclick', 'allno();');
-            $bBoxTemplateInput.removeClass("gen_input")
-			$bBoxTemplate.hide();
-            //$bBoxTemplateInput.removeClass("cradio")
-
-            var $checkboxSizeSpinner = createSpinnerElem("checkboxSizeSpinner", "Template Size:", checkboxSize);
-            var changeTemplateSize = function(event, ui) {
-                checkboxSize = this.value;
-                $checkBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $xBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $xBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-                $rBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $rBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-                $bBoxTemplate.css({
-                    width: checkboxSize,
-                    height: checkboxSize
-                });
-                $bBoxTemplate.find(XBOX_INPUT_SELECTOR).css({
-                    'font-size': (checkboxSize - 1) + 'px'
-                });
-            };
-            $checkboxSizeSpinner.find(":input").spinner({
-                min: checkboxSizeRange[0],
-                max: checkboxSizeRange[1],
-                stop: changeTemplateSize,
-                spin: changeTemplateSize
+        /** initializes x-box input functionality.
+         *  should be called once on eform load */
+        function initXBoxes() {
+			var $selector = $(".input_elements");
+            $selector.find(".xBox").click(function() {
+                $(this).val($(this).val() === 'X' ? '' : 'X');
+				$(this).css("background", "white");
+            }).keypress(function(event) {
+                // any key press except tab will constitute a value change to the checkbox
+                if (event.which != 0) {
+                    $(this).click();
+                    return false;
+                }
             });
-            var $checkByGenderChkbox = $("<input>", {
-                id: "gen-precheckByGender",
-                type: "checkbox",
-                checked: false
-            });
-            var $allNoChkbox = $("<input>", {
-                id: "gen-all-no",
-                type: "checkbox",
-                checked: false,
-				change: function(event, ui) {
-					$bBoxTemplate.toggle();
-					// PHC TODO
+        }
+    </script>
+
+	<script id="gender_script" class="toSource">
+
+        /** pre-check checkboxes and xboxes based on patient gender */
+        function initPrecheckedCheckboxes() {
+            var $selector = $(".input_elements");
+            var $patientGender = $("#PatientGender");
+            if ($patientGender) {
+                var filter = ".gender_precheck_" + $patientGender.val();
+                $selector.find("input[type=checkbox]").filter(filter).prop('checked', true);
+                $selector.find(".xBox").filter(filter).val('X');
+				$selector.find(".cradio").filter(filter).val('X');
+            }
+        }
+    </script>
+
+	<script id="radio_script" class="toSource">
+
+        /** This function ensures only one box in the radio group will be checked */
+        function myupdate(vid) {
+            var x = document.getElementsByClassName(vid.getAttribute("class"));
+            var mygroup = $(x).attr("class").split(" ");
+            for (i = 0; i < mygroup.length; i++) {
+                if (mygroup[i].indexOf("only-one-radio") > -1) {
+                    var getmyclass = mygroup[i]
+                }
+            }
+            var x = document.getElementsByClassName(getmyclass);
+            if (getmyclass.indexOf("only-one-radio#") < 0) { //if there is only one member of the radiogroup...
+                alert("This will act like a checkbox");
+                if (vid.value == "X") {
+                    vid.value = "";
+                    return
+                } else {
+                    vid.value = "X"
+                    return
+                }
+            } else {
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.boxShadow = "inset 0 0 0 1000px white"
+                    x[i].value = "";
+                    vid.value = "X"
+                    //vid.style.boxShadow = "inset 0 0 0 1000px black"  //comment this line to inactivate black box*************************************
+                }
+            }
+        }
+    </script>
+
+	<script id="date_script" class="toSource">
+
+        /** This function is called on load to initialse DHTML date picker */
+		function initCalendar() {
+            var dlist = document.getElementsByClassName("hasDatepicker")
+            for (i = 0; i < dlist.length; i++) {
+                Calendar.setup( { inputField : dlist[i].id, ifFormat : "%Y-%m-%d",  button : dlist[i].id } ); //reference to calendar-setup.js
+            }
+			// Format date fields to date only
+            var dlist = document.getElementsByClassName("hasDatepicker")
+            for (i = 0; i < dlist.length; i++) {
+            dlist[i].value = dlist[i].value.substring(0, 10);
+            }
+			//update all date classes
+            var x = document.getElementsByClassName('mydateclass');
+            for (i = 0; i < x.length; i++) {
+                x[i].focus()
+            }
+        }
+    </script>
+
+	<script id="standAlone_script" class="toSource">
+
+        /** This function is called on load to change paths to local */
+        function reImg() {
+            // for stand alone development without uploading to OSCAR
+            var strLoc = window.location.href.toLowerCase();
+            if (strLoc.indexOf("https") == -1) {
+                if (document.getElementById("gen_backgroundImage1")) {
+                    var src1 = document.getElementById("gen_backgroundImage1").src;
+                    document.getElementById("gen_backgroundImage1").src = src1.replace("$%7Boscar_image_path%7D", "");
+                }
+				if (document.getElementById("BGImage1")) {
+                    var src1 = document.getElementById("BGImage1").src;
+                    document.getElementById("BGImage1").src = src1.replace("$%7Boscar_image_path%7D", "");
+                }
+				if (document.getElementById("signature")) {
+                    var src1 = document.getElementById("signature").src;
+                    document.getElementById("signature").src = src1.replace("$%7Boscar_image_path%7D", "");
+                }
+				var els = document.getElementsByClassName( "stamp" );
+				if (els.length > 0) {
+					Array.prototype.forEach.call(els, function(el) {
+						el.src = el.src.replace("$%7Boscar_image_path%7D", "");
+					});
 				}
-            });
-            var $preCheckCheckbox = $("<input>", {
-                id: "gen-precheckCheckboxId",
-                type: "checkbox",
-                checked: false,
-                change: function(event, ui) {
-                    var $xbox = $xBoxTemplate.find(":input");
-                    //var $chkbox = $checkBoxTemplate.find(":input");
-					var $rbox = $rBoxTemplate.find(":input");
-                    $xbox.val($xbox.val() === 'X' ? '' : 'X');
-					$rbox.val($rbox.val() === 'X' ? '' : 'X');
-                    //$chkbox.prop('checked', !($chkbox.is(':checked')));
-                    if ($(this).is(':checked') && $checkByGenderChkbox.is(':checked')) {
-                        $checkByGenderChkbox.prop('checked', false);
-                        $checkByGenderChkbox.change();
+                if (document.getElementById("mySidenavGen2")) {
+                    var src2 = document.getElementById("mySidenavGen2").src;
+                    document.getElementById("mySidenavGen2").src = src2.replace("$%7Boscar_image_path%7D", "");
+                }
+            }
+        }
+
+        /** This function called on init to disable form buttons */
+        function disableButtons() {
+
+            //Check if this is standalone
+            var x = window.location.toString()
+            if (x.indexOf("eform") > -1) {
+                $('#SubmitButton').prop('disabled', false);
+                $('#PrintSubmitButton').prop('disabled', false);
+
+                if ($('#SaveAsButton')) {
+                    $('#SaveAsButton').prop('hidden', false);
+                }
+            } else {
+                $('#SubmitButton').prop('disabled', true);
+                $('#PrintSubmitButton').prop('disabled', true);
+                if ($('#SaveAsButton')) {
+                    $('#SaveAsButton').prop('hidden', true);
+                }
+            }
+
+        }
+    </script>
+
+
+	<script id="allno_script" class="toSource">
+
+        /** This function is called on load to initialse all no button */
+        function initAllNo() {
+            var z = document.getElementsByClassName("all-no-button2");
+            for (var i = 0; i < z.length; i++) {
+                z[i].addEventListener("click", function() {
+                    allno();
+                });
+            }
+        }
+
+        /** This function this checks All No on click */
+        function allno() {
+            var x = document.getElementsByClassName("all-no");
+            for (var i = 0; i < x.length; i++) {
+                x[i].value = "X";
+				//x[i].style.boxShadow = "inset 0 0 0 1000px black"  //comment this line to inactivate black box
+            }
+            var x = document.getElementsByClassName("clear-yes");
+            for (var i = 0; i < x.length; i++) {
+                x[i].value = "";
+                x[i].style.boxShadow = "inset 0 0 0 1000px white";
+            }
+        }
+
+	</script>
+
+
+	<script id="eform_script" class="toSource">
+
+    <!-- a collection of standard scripts for the base eform -->
+
+        var needToConfirm = false;
+        document.onkeyup=setDirtyFlag();
+
+        /** call this to prevent closing the window without a confirmation */
+        function setDirtyFlag() {
+            needToConfirm = true;
+        }
+        /** call this to prevent the exit confirmation popup when closing the window */
+        function releaseDirtyFlag() {
+            needToConfirm = false;
+        }
+
+        window.onbeforeunload = confirmExit;
+        /** This function will prevent the window from closing
+         * without confirmation when unsaved changes have been made */
+        function confirmExit(){
+            if (needToConfirm){
+                return "You have attempted to leave this page. If you have made any changes to the fields without clicking the Save button, your changes will be lost. Are you sure you want to exit this page?";
+            }
+        }
+
+        /** This function is called onload to activate onblur events if needed */
+        function focusAll() {
+            $('.gen_input').each(function() {
+                var x = $(this).attr("onblur")
+                if (x) {
+                    if (x.indexOf("fixSin(this)") > -1) {
+                        $(this).blur()
+                    }
+                    if (x.indexOf("dateReformat(this") > -1) {
+                        $(this).blur()
                     }
                 }
             });
-            $tab.append($options_menu0);
-            $tab.append($dragFrame0);
-            $options_menu0.append($checkboxSizeSpinner);
-            $options_menu0.append($("<div>").append($("<label>", {
-                text: "Pre-Check:",
-                for: "gen-precheckCheckboxId"
-            })).append($preCheckCheckbox));
-            $options_menu0.append($("<div>").append($("<label>", {
-                for: "gen-all-no",
-                text: "All No function"
-            })).append($allNoChkbox));
-            $options_menu0.append($("<div>").append($("<label>", {
-                for: "gen-precheckByGender",
-                text: "Pre-Check by Gender"
-            })).append($checkByGenderChkbox));
-            var $div01 = $("<div>").appendTo($options_menu0);
-            var $gender_select = addSelectMenu($div01, "genderSelect0", "Check When", ["M", "F", "T", "O", "U"]);
-            $gender_select.selectmenu("disable");
-            var removeGenderPrecheckClasses = function(index, curclass) {
-                return (curclass.match(/(^|\s)gender_precheck_\S+/g) || []).join(' ');
+        }
+
+        /** This function is called when the print button is clicked */
+        function onEformPrint() {
+            window.print();
+        }
+
+        /** This function is called when the eform submit button is clicked */
+        function onEformSubmit() {
+            releaseDirtyFlag();
+            document.forms[0].submit();
+        }
+
+        /** This function is called when the eform print & submit button is clicked */
+        function onEformPrintSubmit() {
+            onEformPrint();
+            releaseDirtyFlag();
+            setTimeout('document.forms[0].submit()', 2000);
+        }
+
+    <!-- eForm specific scripts below -->
+</script>
+<script>
+       function SELECT_FUNCTION() {} //Start function list here and below
+
+       function copyToEncounter(myelement) {
+            text = myelement.value
+	          try {
+		        if( window.parent.opener.document.forms["caseManagementEntryForm"] != undefined ) {
+			        window.parent.opener.pasteToEncounterNote(text);
+		          }else if( window.parent.opener.document.encForm != undefined ){
+			        window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + text;
+		          }else if( window.parent.opener.document.getElementById(noteEditor) != undefined ){
+			        window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + text;
+		          }else if(window.parent.opener.parent.opener.document.forms["caseManagementEntryForm"] != undefined){
+			          window.parent.opener.parent.opener.pasteToEncounterNote(text);
+		          }else if( window.parent.opener.parent.opener.document.encForm != undefined ){
+			        window.parent.opener.parent.opener.document.encForm.enTextarea.value = window.parent.opener.parent.opener.document.encForm.enTextarea.value + text;
+		          }else if( window.parent.opener.parent.opener.document.getElementById(noteEditor) != undefined ){
+			        window.parent.opener.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.parent.opener.document.getElementById(noteEditor).value + text;
+			        }
+	        } catch(e) {
+		        alert(text + " could not be copied to the encounter note.");
+	        }
+       }
+
+       function maketime(myelement){  //2020-Oct-07
+           var dt=new Date();
+           //var time=dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes()
+           var time= (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes()
+           myelement.value=time
+           }
+
+        function myerror(myelement) { //not used for now. Rather use reImg()
+            //function to load image as standalone
+            var newsrc = myelement.src.split('%7D')[1]
+            myelement.src = newsrc
+        }
+
+        function makehyperlink(myelement) {  //2021-Apr-01
+            document.getElementById(myelement.id).readOnly = true;
+            document.getElementById(myelement.id).style.color = "blue";
+            window.open(myelement.value)
+        }
+
+        function removeLineFeeds(myelement) {
+            var str = myelement.value.replace(/(\r\n\t|\n|\r\t)/gm, '; ');
+            document.getElementById(myelement.id).value = str;
+            document.getElementById(myelement.id).style.fontSize = '12px';
+            $(document).click(function(e) {
+                if (e.shiftKey) {
+                    document.getElementById(myelement.id).style.fontSize = '14px';
+                }
+            });
+        }
+
+        function dateReformat(mydate, drfString) {
+            // yyyy-mmm-dd
+            var f_Str = new Array(5)
+            for (i = 0; i < 5; i++) {
+                f_Str[i] = ""
+            }
+
+            var count = 0
+            for (i = 0; i < drfString.length; i++) {
+
+                var x = drfString.charCodeAt(i)
+                var nextx = drfString.charCodeAt(i + 1)
+
+                var letter = x > 64 && x < 123
+                var nextletter = nextx > 64 && nextx < 123
+
+                switch (true) {
+                    case letter:
+                        f_Str[count] = f_Str[count] + drfString[i]
+                        if (nextletter == false) {
+                            count = count + 1
+                        }
+                        break;
+
+
+                    case !letter:
+                        f_Str[count] = f_Str[count] + drfString[i]
+                        if (nextletter == true) {
+                            count = count + 1
+                        }
+                        break;
+
+
+                    default:
+                        alert("Neither")
+
+                }
+
+            }
+
+            //Today's date
+            var month = new Array(11);
+            month[0] = "Jan";
+            month[1] = "Feb";
+            month[2] = "Mar";
+            month[3] = "Apr";
+            month[4] = "May";
+            month[5] = "Jun";
+            month[6] = "Jul";
+            month[7] = "Aug";
+            month[8] = "Sep";
+            month[9] = "Oct";
+            month[10] = "Nov";
+            month[11] = "Dec";
+
+            var today = new Date(mydate.value);
+            today.setTime(today.getTime() + (today.getTimezoneOffset() * 60 * 1000))
+            if (isNaN(today)) {
+                return false
+            }
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var mmm = month[today.getMonth()]
+            var yy = today.getFullYear().toString().substr(-2);
+            var yyyy = today.getFullYear();
+
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var today = eval(f_Str[0]) + f_Str[1] + eval(f_Str[2]) + f_Str[3] + eval(f_Str[4]); //change this manually
+            document.getElementById(mydate.id).value = today;
+
+            return today
+        }
+
+
+        //---Start Float Box
+        function openNav() {
+            window.resizeTo(1100, 900)
+            document.getElementById("mySidenavGen2").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById('mySidenavGen2').style.width = '0';
+        }
+
+        function updateReq(myelement, mytype) {
+            //alert(myelement)
+            if (myelement == 'Clear All') {
+                for (i = 48; i < 51; i++) {
+                    g = '#gen_inputId' + i
+                    //alert(g)
+                    $(g).val('')
+                }
+            }
+
+            for (i = 48; i < 51; i++) {
+                g = '#gen_inputId' + i
+                t = '#gen_inputId' + mytype
+                //alert(t)
+                if ($(g).val() == '' && myelement != 'Clear All') {
+                    $(g).val(myelement)
+                    $(t).click()
+                    return
+                }
+            }
+        }
+        //---END Float Box
+
+
+        function fixSin(elem, myexp, myexp2) {
+            var e = document.getElementById(elem.id).value
+            //alert(e)
+            if (e.indexOf('-') > -1 || e.indexOf(' ') > -1) {
+                //alert(e)
+                return
+            }
+            //**convert string of numbers to 999-999-999 format
+            //myRe = "/(\\d)(?=(\\d\\d\\d)+(?!\\d))/g, '$1-'"
+            var myRe = new RegExp(myexp)
+            var myRe2 = myexp2
+            //var newsin = e.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1-');
+            var newsin = e.replace(myRe, myRe2);
+            document.getElementById(elem.id).value = newsin
+        }
+
+        function SaveHTML(eformname) {
+            var blob = new Blob([$("html").html()], {
+                type: "text/html;charset=utf-8"
+            });
+            saveAs(blob, eformname); //saveAs() defined in FileSaver.js
+        }
+
+        function LinkXBoxfunction(e,msg) {
+            var res = "LinkedTo-" + e.id + "-"
+            var x = '[title*="' + res + '"]'
+            var valAll = document.querySelectorAll(x)
+
+            for (i = 0; i < valAll.length; i++) {
+                $(valAll[i]).css('background-color', '')
+                if(msg){
+                $(valAll[i]).val(msg)
+                }
+                if (e.value != "X") {
+                    var valAll = document.querySelectorAll(x)
+                    $(valAll[i]).css('background-color', 'lightyellow')
+                    $(valAll[i]).val("")
+                }
+            }
+        }
+
+        function LinkTextBoxfunction(e) {
+            var y = e.title.split("-")
+            document.getElementById(y[1]).title = e.value
+            document.getElementById(y[1]).value = "X"
+            if(!e.value){
+            document.getElementById(y[1]).value = ""
+            }
+        }
+
+        function stretchy(e) {
+            var width = e.parentNode.offsetWidth
+            e.onfocus = function() {
+                e.parentNode.style.width = (e.value.length + 10) * 8;
             };
-            $gender_select.on("selectmenuchange", (function(event, data) {
-                $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-				$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-            }));
-            $checkByGenderChkbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    $gender_select.selectmenu("enable");
-                    $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-					$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                    $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses).addClass("gender_precheck_" + $gender_select.val());
-                    if ($preCheckCheckbox.is(':checked')) {
-                        $preCheckCheckbox.prop('checked', false);
-                        $preCheckCheckbox.change();
-                    }
-                } else {
-                    $gender_select.selectmenu("disable");
-                    $checkBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-					$rBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-                    $xBoxTemplateInput.removeClass(removeGenderPrecheckClasses);
-                }
-            });
+            e.onkeyup = function() {
+                e.parentNode.style.width = (e.value.length + 10) * 8;
+            };
+            e.onblur = function() {
+                e.parentNode.style.width = width;
+                LinkTextBoxfunction(e)
+            };
+        }
 
+        function copyField(e) {
+            e.select();
+            document.execCommand('copy');
+            $(e).css('background-color', 'pink');
+        }
 
-            //************************************add function to checkbox****************************** //2020-May-02
-            var $oscarCheckbox2 = $('<input>', {
-                id: 'toggleCheckbox2',
-                type: 'checkbox'
-            });
-            var $oscarCheckbox2label = $('<label>', {
-                text: 'Add function',
-                for: 'toggleCheckbox2'
-            });
+        function copyToSubject(myelement) {
+            text = myelement.value;
+            $('#subject').val($('#subject').val()+text+" ");
+        }
 
-            var $oscarCheckbox22 = $('<input>', { // 2020-May-19
-                id: 'toggleCheckbox22',
-                type: 'checkbox'
-            });
-            var $oscarCheckbox22label = $('<label>', {
-                text: 'Add SideBar',
-                for: 'toggleCheckbox22'
-            });
+        function textToSubject(text) {
+            $('#subject').val($('#subject').val()+text+" ");
+        }
+    </script>
+</head>
+<body onload="init();">
+    <!--Float bar Main Gen-->
+    <div id="mySidenavGen" class="sidenav DoNotPrint">
+    </div>
+    <!--End Float bar Main Gen-->
+    <div id="main_container">
+        <div id="eform_view_wrapper">
+            <div id="eform_container" class="toSource">
+                <form id="inputForm" action="get">
+                    <div id="BottomButtons" class="DoNotPrint">
+                        <!-- Form Control Buttons -->
+						<label for="subject">Subject:</label>
+                        <input id="subject" name="subject" style="width: 220px;" type="text">
+                        <input id="SubmitButton" name="SubmitButton" onclick="onEformSubmit();" type="button" value="Submit">
+                        <input id="PrintButton" name="PrintButton" onclick="onEformPrint()" type="button" value="Print">
+                        <input id="PrintSubmitButton" name="PrintSubmitButton" onclick="onEformPrintSubmit();" type="button" value="Print &amp; Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="control">
+            <div id="control_menu_1">
+                <h3>Load Existing E-form</h3>
+                <div id="control_menu_1-load" class="flexV">
+                </div>
+                <h3>Page Setup</h3>
+                <div id="control_menu_1-page_setup" class="flexV">
+                </div>
+                <h3>Form Building</h3>
+                <div id="control_menu_1-placement" class="flexV gen-allow_drag">
+                </div>
+                <h3>Form Stylization</h3>
+                <div id="control_menu_1-stylize">
+                </div>
+                <h3>Finalize</h3>
+                <div id="control_menu_1-finalize">
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="dialog-form" title="Attach New Function">
+  <p class="validateTips">Enter the particulars for the <span id="typeFlag"></span> function.  In most cases the defaults are what you want.</p>
+  <form>
+    <fieldseter>
+      <label for="event_name">Triggering Event Name</label>
+      <select name="event_name" id="event_name" style="width:100%; padding: 0.4em; height:2em; background-color: white;">
+	  <option val="onclick">onclick</option>
+	  <option val="onblur">onblur</option>
+	  <option val="onmousedown">onmousedown</option>
+	  <option val="onmouseup">onmouseup</option>
+	  <option val="onchange">onchange</option>
+	  <option val="oninput">oninput</option>
+	  <option val="onfocus">onfocus</option>
+	  </select><br><br>
+      <label for="parameters">Function &amp; Parameters</label>
+      <input type="text" name="parameters" id="parameters" value="this" style="width:100%; padding: 0.4em; height:1em;">
+        <br><br>
+        <pre id="daFcn"></pre>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
+</body>
 
-            $preCheckCheckbox.after($oscarCheckbox2)
-            $('#toggleCheckbox2').before($oscarCheckbox2label)
-
-            $preCheckCheckbox.after($oscarCheckbox22) // 2020-May-19  2020-Sep-23
-            $('#toggleCheckbox22').before($oscarCheckbox22label)
-
-            $oscarCheckbox22.on('change', function(event, ui) {
-                if ($oscarCheckbox22.is(':checked')) {
-                    //alert(this.checked)
-                    setSideBar = "on"
-                } else {
-                    //alert(this.checked)
-                    setSideBar = ""
-                }
-
-            })
-
-            $oscarCheckbox2.on('change', function(event, ui) {
-                if ($oscarCheckbox2.is(':checked')) {
-                    //alert(this.checked)
-                    listfc() //create select list of functions
-                    var e = document.getElementById('mySelect');
-                    $(e).css('background-color', 'yellow')
-                    $(e).focus() //alert(e.length)
-                    $(e).attr('size', e.length + 1);
-                    e.onclick = function() {
-                        var strUser = e.options[e.selectedIndex].text;
-                        var strContent = e.options[e.selectedIndex].value;
-                        //alert(strUser)
-                        alert(strContent)
-
-                        /
+</html>
