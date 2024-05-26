@@ -42,7 +42,7 @@
 
 <!DOCTYPE html>
 <html>
-<!-- Eform Generator 0.2.077 -->
+<!-- Eform Generator 0.2.078 -->
 <!--
 The origional 2852 line generator was penned by Robert Martin for OSCAR Host
 This generator incorperates numerous innovations from the OSCAR community
@@ -52,12 +52,14 @@ Peter Hutten-Czapski has reworked large parts of the code and ported it to OSCAR
 <!--
 version 0.2.059 changed CSS styling, added Tickler control, fixed radio when there is more than one grouping
 version 0.2.071 reworking foreign eform import
-version 0.2.072 added funtions to set Subject first port to OSCAR 19
+version 0.2.072 added funtions to set Subject
+                first test port to OSCAR 19
 version 0.2.073 multiple bugfixes
 version 0.2.074 rewritten UI for adding functions
 version 0.2.075 improved speed of loading by making a function asynchronous
 version 0.2.076 fixed BNK.png
 version 0.2.077 fixed imports with checkboxes
+version 0.2.078 fixed datepicker, and wet signature print/pdf
 -->
 <!--
 FOR STAND ALONE USE
@@ -1157,7 +1159,7 @@ FOR STAND ALONE USE
         @media print {
             .signaturePad {
                 background-color: transparent;
-                opacity: 0;
+                opacity: 1;
             }
 
             .signaturePad canvas {
@@ -1642,7 +1644,6 @@ FOR STAND ALONE USE
                 source += "\<link rel='stylesheet' href='../share/calendar/calendar.css'>";
                 source += "\<script src='../share/calendar/calendar.js'><\/script>";
                 source += "\<script src='../share/calendar/lang/calendar-en.js'><\/script>";
-                source += "\<script src='../share/calendar/calendar.js'><\/script>";
                 source += "\<script src='../share/calendar/calendar-setup.js'><\/script>";
                 loadFunctions += " initCalendar();";
             }
