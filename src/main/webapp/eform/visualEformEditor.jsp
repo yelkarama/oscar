@@ -42,7 +42,7 @@
 
 <!DOCTYPE html>
 <html>
-<!-- Eform Generator 0.2.078 -->
+<!-- Eform Generator 0.2.079 -->
 <!--
 The origional 2852 line generator was penned by Robert Martin for OSCAR Host
 This generator incorperates numerous innovations from the OSCAR community
@@ -58,8 +58,9 @@ version 0.2.073 multiple bugfixes
 version 0.2.074 rewritten UI for adding functions
 version 0.2.075 improved speed of loading by making a function asynchronous
 version 0.2.076 fixed BNK.png
-version 0.2.077 fixed imports with checkboxes
+version 0.2.077 now converts checkboxes to xBoxes
 version 0.2.078 fixed datepicker, and wet signature print/pdf
+version 0.2.079 support for converting checkboxes that are checked
 -->
 <!--
 FOR STAND ALONE USE
@@ -2357,7 +2358,7 @@ FOR STAND ALONE USE
             // convert checkboxes to Xbox
             const re = /class=""\stype="checkbox"/g
             if (re.test(data)) {
-                data = data.replace(re,'class="Xbox" type="text"');
+                data = data.replace(re,'class="Xbox xBox" type="text"');
             }
             // convert radiocheck to Xbox check
             const re2 = /"\stype="checkbox"/g
@@ -2385,6 +2386,12 @@ FOR STAND ALONE USE
 
             var $inputForm = $("#inputForm");
             $inputForm.html(imported_form);
+
+            // as checkboxes are now Xboxes the only checkboxes left are in the form controls
+            $inputForm.find('[checked]').each(function(){
+                $(this).val('X');
+                $(this).removeAttr('checked');
+            });
 
 			//May-01-2024 Peter Hutten-Czapski
             if (ferengi) {
