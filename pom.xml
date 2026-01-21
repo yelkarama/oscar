@@ -256,7 +256,7 @@
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-entitymanager</artifactId>
-         <version>3.4.0.GA</version>
+         <version>5.3.38.Final</version>
       </dependency>
       <dependency>
          <groupId>cglib</groupId>
@@ -1474,14 +1474,14 @@
                   <configuration>
                      <tasks>
                         <tstamp>
-                           <format property="build.dateTime.value" pattern="yyyy-MM-dd hh:mm aa" />
+                           <format property="build.dateTime.value" pattern="yyyy-MM-dd hh:mm aa"/>
                         </tstamp>
-                        <echo message="build time : ${build.dateTime.value}" />
-                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.dateTime}" value="${build.dateTime.value}" />
-                        <property environment="env" />
-                        <echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME} - ${env.BUILD_NUMBER}" />
-                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.JOB_NAME}" value="${env.JOB_NAME}" />
-                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.BUILD_NUMBER}" value="${env.BUILD_NUMBER}" />
+                        <echo message="build time : ${build.dateTime.value}"/>
+                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.dateTime}" value="${build.dateTime.value}"/>
+                        <property environment="env"/>
+                        <echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME} - ${env.BUILD_NUMBER}"/>
+                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.JOB_NAME}" value="${env.JOB_NAME}"/>
+                        <replace file="target/classes/oscar_mcmaster.properties" token="${build.BUILD_NUMBER}" value="${env.BUILD_NUMBER}"/>
                      </tasks>
                   </configuration>
                </execution>
@@ -1494,9 +1494,9 @@
                   </goals>
                   <configuration>
                      <tasks>
-                        <property name="build.compiler" value="extJavac" />
-                        <property name="jspc_target" value="${project.name}-${project.version}" />
-                        <ant antfile="jspc.xml" target="jspc" />
+                        <property name="build.compiler" value="extJavac"/>
+                        <property name="jspc_target" value="${project.name}-${project.version}"/>
+                        <ant antfile="jspc.xml" target="jspc"/>
                      </tasks>
                   </configuration>
                </execution>
@@ -1509,7 +1509,7 @@
                   <configuration>
                      <tasks>
                         <copy todir="catalina_base/webapps/oscar">
-                           <fileset dir="target/${project.name}-${project.version}" />
+                           <fileset dir="target/${project.name}-${project.version}"/>
                         </copy>
                      </tasks>
                   </configuration>
@@ -1519,10 +1519,10 @@
                   <phase>clean</phase>
                   <configuration>
                      <tasks>
-                        <delete dir="catalina_base/webapps/oscar" />
+                        <delete dir="catalina_base/webapps/oscar"/>
                         <delete includeemptydirs="true" quiet="true">
-                           <fileset dir="catalina_base/logs" excludes=".gitignore" />
-                           <fileset dir="catalina_base/work" excludes=".gitignore" />
+                           <fileset dir="catalina_base/logs" excludes=".gitignore"/>
+                           <fileset dir="catalina_base/work" excludes=".gitignore"/>
                         </delete>
                      </tasks>
                   </configuration>
@@ -1715,7 +1715,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -1728,7 +1728,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -1741,7 +1741,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
